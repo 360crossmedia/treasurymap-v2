@@ -1,0 +1,41 @@
+.navbar {
+  border-radius: 100px;
+  border: 1px solid #eaeaea;
+  background: #eef6fc;
+  display: flex;
+  align-items: center;
+  padding: 24px 20px;
+}
+
+.navbarA {
+  color: #626b80;
+  text-decoration: none;
+}
+
+.navbarButton {
+  border-radius: 48px;
+  background: linear-gradient(277deg, #4ab2c4 -0.01%, #094895 94.83%);
+  padding: 10px 37px;
+  color: #fff;
+  border-color: transparent;
+  border-left-color: #094895;
+  border-right-color: #91efff;
+}
+
+.navbarLeft {
+  width: 80%;
+  display: flex;
+  align-items: center;
+  gap: 48px;
+}
+
+.navbarRight {
+  width: 20%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.navbarLinks {
+  display: flex;
+  gap: 62px;
+}
