@@ -2,8 +2,16 @@
 import styles from "../styles/navbar.module.css";
 import navbarlogo from "../assets/navbarlogo.svg";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
-const Navbar = () => {
+const Navbar = ({ buttonLabel }) => {
+  const router = useRouter();
+
+  const Redirect = () => {
+    if (buttonLabel == "Sign up") router.push("/signup");
+    else router.push("/login");
+  };
+
   return (
     <nav className={styles.navbar}>
       <div className={styles.navbarLeft}>
@@ -18,7 +26,9 @@ const Navbar = () => {
         </div>
       </div>
       <div className={styles.navbarRight}>
-        <button className={styles.navbarButton}>Login</button>
+        <button onClick={() => Redirect()} className={styles.navbarButton}>
+          {buttonLabel}
+        </button>
       </div>
     </nav>
   );

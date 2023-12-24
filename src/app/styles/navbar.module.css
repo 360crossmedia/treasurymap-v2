@@ -18,9 +18,8 @@
   background: linear-gradient(277deg, #4ab2c4 -0.01%, #094895 94.83%);
   padding: 10px 37px;
   color: #fff;
-  border-color: transparent;
-  border-left-color: #094895;
-  border-right-color: #91efff;
+  border: none;
+  cursor: pointer;
 }
 
 .navbarLeft {
