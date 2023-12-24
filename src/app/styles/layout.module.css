@@ -1,0 +1,5 @@
+.mainContainer {
+  padding-top: 19px;
+  background: url("../assets/background.svg");
+  background-size: cover;
+}
