@@ -1,0 +1,25 @@
+.footer {
+  display: flex;
+  background-color: #f6fafe;
+  align-items: center;
+  padding: 20px 56px;
+}
+
+.footerLeft {
+  display: flex;
+  width: 50%;
+  gap: 8px;
+  align-items: center;
+}
+
+.footerRight {
+  display: flex;
+  width: 50%;
+  justify-content: flex-end;
+  gap: 32px;
+}
+
+.footerLink {
+  text-decoration: none;
+  color: #626b80;
+}
