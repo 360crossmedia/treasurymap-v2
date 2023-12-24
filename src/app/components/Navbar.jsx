@@ -7,11 +7,6 @@ import { useRouter } from "next/navigation";
 const Navbar = ({ buttonLabel }) => {
   const router = useRouter();
 
-  const Redirect = () => {
-    if (buttonLabel == "Sign up") router.push("/signup");
-    else router.push("/login");
-  };
-
   return (
     <nav className={styles.navbar}>
       <div className={styles.navbarLeft}>
@@ -20,13 +15,20 @@ const Navbar = ({ buttonLabel }) => {
           <a className={styles.navbarA} href="#">
             Be on the map
           </a>
-          <a className={styles.navbarA} href="#">
+          <a className={styles.navbarA} href="/contactUs">
             Contact us
           </a>
         </div>
       </div>
       <div className={styles.navbarRight}>
-        <button onClick={() => Redirect()} className={styles.navbarButton}>
+        <button
+          onClick={() =>
+            buttonLabel == "Sign up"
+              ? router.push("/signup")
+              : router.push("/login")
+          }
+          className={styles.navbarButton}
+        >
           {buttonLabel}
         </button>
       </div>
