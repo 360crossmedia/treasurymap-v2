@@ -8,6 +8,7 @@
   display: flex;
   justify-content: space-between;
   margin: 20px 0;
+  max-width: 766px;
 }
 
 .card {
@@ -32,18 +33,22 @@
 
 .cardP {
   margin: 0;
+  color: #626b80;
+  font-size: 14.758px;
 }
 
 .categoryCard {
   border-radius: 8px;
   background: #fff;
   padding: 8px 12px;
+  width: fit-content;
 }
 
 .categoryCardsContainer {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  width: 100%;
 }
 
 .title {
@@ -54,9 +59,19 @@
 
 .categoryP {
   color: #383838;
-  /* font-family: Poppins; */
   font-size: 14.758px;
-  font-style: normal;
   font-weight: 700;
-  line-height: 28.463px; /* 192.857% */
+}
+
+.span {
+  color: #0d4f98;
+  font-size: 14.758px;
+  font-weight: 600;
+}
+
+.cardBigP {
+  color: #0d4f98;
+  font-size: 40px;
+  font-weight: 700;
+  margin: 0;
 }
