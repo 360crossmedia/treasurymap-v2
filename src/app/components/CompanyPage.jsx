@@ -13,13 +13,17 @@ const Header = () => {
         <p className={styles.title}>Deloitte</p>
         <div className={styles.categoryCard}>
           <p className={styles.categoryP}>
-            Category:<span> FIDP - Financial Instrument Dealing</span>
+            Category:
+            <span className={styles.span}>
+              {" "}
+              FIDP - Financial Instrument Dealing
+            </span>
           </p>
         </div>
         <div className={styles.categoryCard}>
           <p className={styles.categoryP}>
             Category:{" "}
-            <span>
+            <span className={styles.span}>
               List types of financial instruments covered: OTC and regulated
               markets
             </span>
@@ -28,19 +32,19 @@ const Header = () => {
         <div className={styles.cardsContainer}>
           <div className={styles.card}>
             <p className={styles.cardP}>Creation</p>
-            <p className={styles.cardP}>2001</p>
+            <p className={styles.cardBigP}>2001</p>
           </div>
           <div className={styles.card}>
             <p className={styles.cardP}>Number Of employes</p>
-            <p className={styles.cardP}>5600</p>
+            <p className={styles.cardBigP}>5600</p>
           </div>
           <div className={styles.card}>
             <p className={styles.cardP}>Turnover</p>
-            <p className={styles.cardP}>5600</p>
+            <p className={styles.cardBigP}>5600</p>
           </div>
           <div className={styles.card}>
             <p className={styles.cardP}>Headquarters</p>
-            <p className={styles.cardP}>Paris</p>
+            <p className={styles.cardBigP}>Paris</p>
           </div>
         </div>
       </div>
