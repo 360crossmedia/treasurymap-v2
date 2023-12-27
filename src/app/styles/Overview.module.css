@@ -3,6 +3,7 @@
   display: flex;
   justify-content: space-between;
   margin-right: 91px;
+  margin-bottom: 20px;
 }
 
 .companyImg {
