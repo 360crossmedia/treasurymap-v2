@@ -1,13 +1,13 @@
 import React from "react";
-import styles from "../styles/BodyCompanyPage.module.css";
+import styles from "../styles/Overview.module.css";
 import Image from "next/image";
 import companyImg from "../assets/companyImg.svg";
 
-const BodyCompanyPage = () => {
+const Overview = () => {
   return (
     <div className={styles.mainContainer}>
       <div className={styles.left}>
-        <div className="main">
+        <div>
           <p className={styles.mainTitle}>About</p>
           <p className={styles.mainDescription}>
             Lorem ipsum dolor sit amet consectetur. Eu in sagittis non urna
@@ -22,58 +22,58 @@ const BodyCompanyPage = () => {
             fringilla at feugiat quam pretium mauris orci ut.
           </p>
         </div>
-        <div className="normal">
+        <div>
           <p className={styles.title}>Website</p>
           <a className={styles.link} href="https://www2.deloitte.com/">
             https://www2.deloitte.com/
           </a>
         </div>
-        <div className="normal">
+        <div>
           <p className={styles.title}>Turnover</p>
           <p className={styles.description}>€ 65 billion</p>
         </div>
-        <div className="normal">
+        <div>
           <p className={styles.title}>Name of Product</p>
           <p className={styles.description}>Product basic</p>
         </div>
-        <div className="normal">
+        <div>
           <p className={styles.title}>Version number</p>
           <p className={styles.description}>Version 1</p>
         </div>
-        <div className="normal">
+        <div>
           <p className={styles.title}>
             Do you have specific cooperation agreement with other IT vendors for
             pitching?
           </p>
           <p className={styles.description}>No</p>
         </div>
-        <div className="normal">
+        <div>
           <p className={styles.title}>
             Bank connectivity (through which types of channel - please specify)
           </p>
           <p className={styles.description}>No</p>
         </div>
-        <div className="normal">
+        <div>
           <p className={styles.title}>
             Do you have any other specific functionalities?
           </p>
           <p className={styles.description}>No</p>
         </div>
-        <div className="normal">
+        <div>
           <p className={styles.title}>
             Do you have specific integration with Fintechs? (If YES please
             specify which ones)
           </p>
           <p className={styles.description}>No</p>
         </div>
-        <div className="normal">
+        <div>
           <p className={styles.title}>
             Do you propose solutions or functionalities based on AI? (If YES
             please specify which ones)
           </p>
           <p className={styles.description}>No</p>
         </div>
-        <div className="normal">
+        <div>
           <p className={styles.title}>
             Do you propose solutions or functionalities based on AI? (If YES
             please specify which ones)
@@ -86,7 +86,7 @@ const BodyCompanyPage = () => {
             sagittis.
           </p>
         </div>
-        <div className="normal">
+        <div>
           <p className={styles.title}>
             Do you propose solutions or functionalities based on AI? (If YES
             please specify which ones)
@@ -99,7 +99,7 @@ const BodyCompanyPage = () => {
             sagittis.
           </p>
         </div>
-        <div className="normal">
+        <div>
           <p className={styles.title}>
             Do you propose solutions or functionalities based on AI? (If YES
             please specify which ones)
@@ -112,7 +112,7 @@ const BodyCompanyPage = () => {
             sagittis.
           </p>
         </div>
-        <div className="normal">
+        <div>
           <p className={styles.title}>
             Do you propose solutions or functionalities based on AI? (If YES
             please specify which ones)
@@ -133,4 +133,4 @@ const BodyCompanyPage = () => {
   );
 };
 
-export default BodyCompanyPage;
+export default Overview;

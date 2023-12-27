@@ -2,10 +2,13 @@
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import styles from "../styles/layout.module.css";
-import CompanyPage from "../components/CompanyPage";
-import Body from "../components/BodyCompanyPage";
+import Overview from "../components/Overview";
+import HeaderCompanyPage from "../components/HeaderCompanyPage";
+import MediaZone from "../components/MediaZone";
+import { useSelector } from "react-redux";
 
 const Layout = () => {
+  const isOverview = useSelector((state) => state.isOverview);
   return (
     <>
       <div
@@ -13,9 +16,10 @@ const Layout = () => {
         style={{ backgroundPosition: "bottom" }}
       >
         <Navbar buttonLabel={"Login"} />
-        <CompanyPage />
+        <HeaderCompanyPage />
       </div>
-      <Body />
+      {isOverview && <Overview />}
+      {!isOverview && <MediaZone />}
       <Footer />
     </>
   );
