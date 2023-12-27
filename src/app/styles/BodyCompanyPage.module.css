@@ -1,0 +1,63 @@
+.mainContainer {
+  margin: 0 56px;
+  display: flex;
+  justify-content: space-between;
+  margin-right: 91px;
+}
+
+.companyImg {
+  border-radius: 15px;
+  border: 1px solid #f6fafe;
+  background: #fff;
+  box-shadow: 0px 5px 11px 0px rgba(0, 0, 0, 0.1),
+    0px 20px 20px 0px rgba(0, 0, 0, 0.09), 0px 46px 27px 0px rgba(0, 0, 0, 0.05),
+    0px 81px 33px 0px rgba(0, 0, 0, 0.01), 0px 127px 36px 0px rgba(0, 0, 0, 0);
+  padding: 36px 8px;
+  margin-right: 34px;
+  width: 356.27px;
+  height: 192px;
+  flex-shrink: 0;
+}
+
+.left {
+  width: 55%;
+  margin-top: 56px;
+}
+
+.right {
+  margin-top: 48px;
+}
+
+.mainTitle {
+  color: #010101;
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.mainDescription {
+  color: #626b80;
+  font-size: 14px;
+  line-height: 24px;
+}
+
+.title {
+  color: #010101;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+  margin-bottom: 8px;
+}
+
+.link {
+  text-decoration: none;
+  color: #406cba;
+  font-size: 20px;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.description {
+  color: #626b80;
+  font-size: 16px;
+}

@@ -75,3 +75,72 @@
   font-weight: 700;
   margin: 0;
 }
+
+.headerCardDown {
+  margin: 0 56px;
+  display: flex;
+  justify-content: space-between;
+  background-color: #fff;
+  border-radius: 15px 15px 0px 0px;
+  padding-right: 30px;
+  box-shadow: 0px 4px 30.6px 0px rgba(0, 0, 0, 0.08);
+}
+
+.headerLinks {
+  display: flex;
+  align-items: center;
+}
+
+.countriesContainer {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding-left: 17px;
+  padding-right: 30px;
+}
+
+.customP {
+  margin: 0;
+  padding: 29px 0;
+  padding-left: 71px;
+  padding-right: 45px;
+  font-size: 18px;
+}
+
+.disabled {
+  color: #626b80;
+  cursor: pointer;
+}
+
+.customP2 {
+  margin: 0;
+  padding: 29px 45px;
+  font-size: 18px;
+}
+
+.active {
+  border-bottom: #ffd028 5px solid;
+}
+
+.boldP {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.blueCard {
+  border-radius: 100px;
+  background: #0d4f98;
+  color: white;
+  padding: 8px 15px;
+  font-size: 14px;
+}
+
+.blueCardP {
+  margin: 0;
+}
+
+.line {
+  border-left: #c4c5c6 1px solid;
+  height: 56px;
+}

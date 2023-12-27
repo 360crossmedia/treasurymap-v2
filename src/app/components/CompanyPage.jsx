@@ -2,6 +2,8 @@
 import Image from "next/image";
 import styles from "../styles/CompanyPage.module.css";
 import companyImg from "../assets/companyImg.svg";
+import ArrowDown from "../assets/ArrowDown.svg";
+import { useState } from "react";
 
 const Header = () => {
   return (
@@ -52,8 +54,59 @@ const Header = () => {
   );
 };
 
+const CardHeader = () => {
+  const [isOverview, setIsOverview] = useState(true);
+  return (
+    <div className={styles.headerCardDown}>
+      <div className={styles.headerLinks}>
+        <p
+          onClick={() => setIsOverview(true)}
+          className={`${styles.customP} ${
+            isOverview ? styles.active : styles.disabled
+          }`}
+        >
+          Overview
+        </p>
+        <p
+          onClick={() => setIsOverview(false)}
+          className={`${styles.customP2} ${
+            isOverview ? styles.disabled : styles.active
+          }`}
+        >
+          Media Zone
+        </p>
+      </div>
+      <div className={styles.countriesContainer}>
+        <div className={styles.line}></div>
+        <p className={styles.boldP}>Active In</p>
+        <div className={styles.blueCard}>
+          <p className={styles.blueCardP}>France</p>
+        </div>
+        <div className={styles.blueCard}>
+          <p className={styles.blueCardP}>Belgium</p>
+        </div>
+        <div className={styles.blueCard}>
+          <p className={styles.blueCardP}>Spain</p>
+        </div>
+        <div className={styles.blueCard}>
+          <p className={styles.blueCardP}>Morocco</p>
+        </div>
+        <div className={styles.blueCard}>
+          <p className={styles.blueCardP}>Germany</p>
+        </div>
+        <Image src={ArrowDown} alt="" />
+      </div>
+    </div>
+  );
+};
+
 const CompanyPage = () => {
-  return <Header />;
+  return (
+    <>
+      <Header />
+      <CardHeader />
+    </>
+  );
 };
 
 export default CompanyPage;
