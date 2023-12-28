@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import styles from "../styles/BodyForm.module.css";
-import PhotoImg from "../assets/PhotoImg.svg";
+import PhotoImg from "../assets/photoImg.svg";
 import Form from "react-bootstrap/Form";
 import { Checkbox } from "primereact/checkbox";
 import { useState } from "react";
