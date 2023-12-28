@@ -3,12 +3,18 @@ import styles from "../styles/navbar.module.css";
 import navbarlogo from "../assets/navbarlogo.svg";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import MobileMenuNavbar from "../assets/MobileMenuNavbar.svg";
 
 const Navbar = ({ buttonLabel }) => {
   const router = useRouter();
 
   return (
     <nav className={styles.navbar}>
+      <Image
+        className={styles.MobileMenuNavbar}
+        src={MobileMenuNavbar}
+        alt="logo"
+      />
       <div className={styles.navbarLeft}>
         <Image
           className={styles.navbarLogo}

@@ -43,3 +43,44 @@
 .navbarLogo {
   cursor: pointer;
 }
+
+.MobileMenuNavbar {
+  display: none;
+}
+
+@media screen and (max-width: 880px) {
+  .MobileMenuNavbar {
+    display: inherit;
+  }
+
+  .navbarA {
+    display: none;
+  }
+
+  .navbarLeft {
+    width: inherit;
+    display: inline;
+  }
+
+  .navbar {
+    justify-content: space-between;
+    margin: 0 17px;
+  }
+
+  .navbarButton {
+    padding: 6.583px 24.358px;
+    gap: 5.267px;
+    border-radius: 31.6px;
+    font-size: 10.533px;
+    font-weight: 500;
+  }
+
+  .navbarLogo {
+    width: 114px;
+    gap: 30.643px;
+  }
+
+  .navbarRight {
+    width: inherit;
+  }
+}
