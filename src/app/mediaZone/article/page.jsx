@@ -15,7 +15,7 @@ const Layout = () => {
         <Navbar buttonLabel={"Login"} />
         <HeaderArticle title={"Article"} />
       </div>
-      <BodyArticle />
+      <BodyArticle isArticle={true} />
       <Footer />
     </>
   );
