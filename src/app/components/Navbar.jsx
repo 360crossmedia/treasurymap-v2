@@ -10,9 +10,14 @@ const Navbar = ({ buttonLabel }) => {
   return (
     <nav className={styles.navbar}>
       <div className={styles.navbarLeft}>
-        <Image src={navbarlogo} alt="logo" />
+        <Image
+          className={styles.navbarLogo}
+          onClick={() => router.push("/")}
+          src={navbarlogo}
+          alt="logo"
+        />
         <div className={styles.navbarLinks}>
-          <a className={styles.navbarA} href="#">
+          <a className={styles.navbarA} href="/">
             Be on the map
           </a>
           <a className={styles.navbarA} href="/contactUs">

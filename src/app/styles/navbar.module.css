@@ -39,3 +39,7 @@
   display: flex;
   gap: 62px;
 }
+
+.navbarLogo {
+  cursor: pointer;
+}

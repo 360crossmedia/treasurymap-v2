@@ -8,7 +8,9 @@ const Footer = () => {
     <footer className={styles.footer}>
       <div className={styles.footerLeft}>
         <Image alt="" src={footerLocationIcon} />
-        <p>Simply Treasury |NY 1 rue de Chiny, L-1811 Luxembourg</p>
+        <p className={styles.footerP}>
+          Simply Treasury |NY 1 rue de Chiny, L-1811 Luxembourg
+        </p>
       </div>
       <div className={styles.footerRight}>
         <a className={styles.footerLink} href="#">
