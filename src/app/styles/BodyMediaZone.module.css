@@ -1,0 +1,54 @@
+.updateButton {
+  width: 179px;
+  height: 58px;
+  padding: 16px 22px;
+}
+
+.deleteButton {
+  border-radius: 100px;
+  border: 0.8px solid #d9d9d9;
+  background: #fff;
+  box-shadow: 0px 10px 60px 0px rgba(0, 0, 0, 0.12);
+  padding: 16.2px 22px;
+  width: 179px;
+}
+
+.buttonsContainer {
+  display: flex;
+  gap: 16px;
+}
+
+.videosList {
+  display: flex;
+  padding: 0 20px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headerList {
+  border-radius: 5px;
+  background: #f6fafe;
+  width: 1076px;
+  height: 50px;
+  margin-bottom: 41px;
+}
+
+.headerP {
+  margin: 0;
+  color: #000;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.videoP {
+  color: #8d9396;
+  font-size: 18px;
+}
+
+.mainContainer {
+  margin-bottom: 73px;
+}
+
+.middle {
+  margin-bottom: 27px;
+}

@@ -1,0 +1,47 @@
+.mainContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 60px;
+}
+
+.mediaZoneButton {
+  border-radius: 100px;
+  border: 0.8px solid #d9d9d9;
+  background: linear-gradient(89deg, #0f5199 4.29%, #44a8c0 99.49%);
+  box-shadow: 0px 10px 60px 0px rgba(0, 0, 0, 0.12);
+  color: #fff;
+  padding: 16.2px 22px;
+  width: 462px;
+}
+
+.linesContainer {
+  display: flex;
+  align-items: center;
+  margin-top: 75px;
+  margin-bottom: 58px;
+}
+
+.line {
+  border: 1px solid #e3e3e5;
+  height: 1px;
+  width: 717px;
+}
+
+.or {
+  color: #b1b1b1;
+  font-size: 14px;
+  margin: 0 15px;
+}
+
+.createCompanyButton {
+  border-radius: 100px;
+  border: 0.8px solid #d9d9d9;
+  background: linear-gradient(89deg, #0f5199 4.29%, #44a8c0 99.49%);
+  box-shadow: 0px 10px 60px 0px rgba(0, 0, 0, 0.12);
+  color: #fff;
+  width: 458px;
+  height: 58px;
+  padding: 16px 22px;
+  margin-bottom: 76px;
+}
