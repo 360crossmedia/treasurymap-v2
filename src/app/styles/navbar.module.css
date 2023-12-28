@@ -65,6 +65,8 @@
   .navbar {
     justify-content: space-between;
     margin: 0 17px;
+    height: 44px;
+    padding: 0px 16px;
   }
 
   .navbarButton {
