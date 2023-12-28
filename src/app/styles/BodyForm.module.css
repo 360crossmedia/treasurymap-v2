@@ -1,0 +1,125 @@
+.uploadPhotoContainer {
+  width: 22%;
+  display: flex;
+  justify-content: center;
+  height: fit-content;
+}
+
+.mainContainer {
+  margin: 0 56px;
+  margin-top: 52.5px;
+  display: flex;
+  gap: 8px;
+}
+
+.card {
+  border-radius: 6px;
+  background: #f6fafe;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: fit-content;
+  padding: 20px 40px;
+}
+
+.inputFile {
+  position: absolute;
+  opacity: 0;
+  height: 130px;
+  width: 171px;
+  cursor: pointer;
+}
+
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.label {
+  color: #000;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.span {
+  color: #f21d2f;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.inputText {
+  border-radius: 6px;
+  background: #f6fafe;
+  padding: 16px 32px 16px 16px;
+  border: none;
+  resize: none;
+}
+
+.inputText::placeholder {
+  color: #8d9396;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.inputText:focus {
+  box-shadow: none;
+  color: #000;
+}
+
+.inputSelect {
+  color: #8d9396;
+}
+
+.button {
+  width: 322.954px;
+  height: 59.962px;
+  padding: 18px 26px;
+  border-radius: 30px;
+  background: linear-gradient(90deg, #0d4e98 2.01%, #42a6be 98.92%);
+  border: none;
+  color: #fff;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 94px;
+  margin-top: 47px;
+}
+
+.labelCheckbox {
+  color: #8d9396;
+  font-size: 16px;
+}
+
+.categoriesContainer {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.rightContainer {
+  width: 67.5%;
+}
+
+.inputCheckboxContainer {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.inputCustom {
+  background: #fff !important;
+}
+
+.doubleInputsContainer {
+  display: flex;
+  gap: 24px;
+}
+
+.inputContainer50 {
+  width: 48.75%;
+}
