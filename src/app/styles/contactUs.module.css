@@ -180,9 +180,10 @@
   .cardBottom {
     min-height: 46.796px;
     padding: 14px 0;
+    border-radius: initial;
   }
   .linksP {
-    font-size: 14px;
+    font-size: 12px;
   }
   .cardTop {
     margin-top: 39px;
@@ -202,6 +203,16 @@
     width: 10px;
   }
   .links {
-    gap: 10.71px;
+    gap: 6px;
+  }
+  .input {
+    min-width: inherit;
+    width: 280px;
+    height: 63.118px;
+    padding: 18px 26px;
+    padding-left: 50px;
+  }
+  .button {
+    min-width: 280px;
   }
 }
