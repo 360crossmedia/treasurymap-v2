@@ -4,9 +4,11 @@ import navbarlogo from "../assets/navbarlogo.svg";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import MobileMenuNavbar from "../assets/MobileMenuNavbar.svg";
+import { useState } from "react";
 
 const Navbar = ({ buttonLabel }) => {
   const router = useRouter();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <nav className={styles.navbar}>
@@ -14,6 +16,10 @@ const Navbar = ({ buttonLabel }) => {
         className={styles.MobileMenuNavbar}
         src={MobileMenuNavbar}
         alt="logo"
+        onClick={() => {
+          setIsMenuOpen(!isMenuOpen);
+          console.log(isMenuOpen);
+        }}
       />
       <div className={styles.navbarLeft}>
         <Image
@@ -22,7 +28,11 @@ const Navbar = ({ buttonLabel }) => {
           src={navbarlogo}
           alt="logo"
         />
-        <div className={styles.navbarLinks}>
+        <div
+          className={`${styles.navbarLinks} ${
+            isMenuOpen ? styles.navbarLinksMobile : ""
+          }`}
+        >
           <a className={styles.navbarA} href="/">
             Be on the map
           </a>
