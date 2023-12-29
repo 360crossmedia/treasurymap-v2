@@ -84,3 +84,25 @@
   text-decoration: none;
   font-size: 18px;
 }
+
+@media screen and (max-width: 675px) {
+  .card {
+    display: flex;
+    width: 340px;
+    padding: 40px 50px;
+  }
+  .cardTitle {
+    color: #000;
+    font-size: 24px;
+    font-weight: 700;
+  }
+  .cardDescription,
+  .forgetPasswordA,
+  .signUpButton {
+    color: #626b80;
+    font-size: 16px;
+  }
+  .button {
+    min-width: 292px;
+  }
+}
