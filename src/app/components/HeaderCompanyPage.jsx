@@ -14,7 +14,7 @@ const HeaderCompanyPage = () => {
   return (
     <>
       <div className={styles.mainContainer}>
-        <div>
+        <div className={styles.imgContainer}>
           <Image className={styles.companyImg} alt="" src={companyImg} />
         </div>
         <div className={styles.categoryCardsContainer}>
@@ -38,19 +38,19 @@ const HeaderCompanyPage = () => {
             </p>
           </div>
           <div className={styles.cardsContainer}>
-            <div className={styles.card}>
+            <div className={`${styles.card} ${styles.cardLeft}`}>
               <p className={styles.cardP}>Creation</p>
               <p className={styles.cardBigP}>2001</p>
             </div>
-            <div className={styles.card}>
+            <div className={`${styles.card} ${styles.cardRight}`}>
               <p className={styles.cardP}>Number Of employes</p>
               <p className={styles.cardBigP}>5600</p>
             </div>
-            <div className={styles.card}>
+            <div className={`${styles.card} ${styles.cardLeft}`}>
               <p className={styles.cardP}>Turnover</p>
               <p className={styles.cardBigP}>5600</p>
             </div>
-            <div className={styles.card}>
+            <div className={`${styles.card} ${styles.cardRight}`}>
               <p className={styles.cardP}>Headquarters</p>
               <p className={styles.cardBigP}>Paris</p>
             </div>
