@@ -12,13 +12,12 @@
   background: #eef6fc;
   border-top-right-radius: 24px;
   border-bottom-right-radius: 24px;
-  padding: 20px 104px;
+  padding: 40px 104px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   margin-top: 55px;
-  margin-bottom: 160px;
   gap: 24px;
 }
 
@@ -91,7 +90,6 @@
 .cardLeft {
   background-color: #fff;
   width: 60%;
-  height: 100%;
   min-height: 834px;
   display: flex;
   flex-direction: column;
@@ -111,6 +109,7 @@
   border-radius: 0px 0px 0px 24px;
   background: linear-gradient(90deg, #0d4e98 2.01%, #42a6be 98.92%);
   min-height: 91px;
+  align-items: center;
 }
 
 .links {
@@ -118,10 +117,11 @@
   align-items: center;
   color: #fff;
   gap: 20.835px;
+  justify-content: center;
 }
 
 .cardTop {
-  padding: 0px 80px 30px 50px !important;
+  padding: 0px 80px 30px 50px;
   margin-top: 50px;
 }
 
@@ -145,4 +145,63 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.linksP {
+  margin: 0;
+}
+
+.footerCardIcon {
+  height: 25px;
+  width: 25px;
+}
+
+@media screen and (max-width: 1000px) {
+  .cardContainer {
+    flex-direction: column;
+    margin: 39px 17px 48px 17px;
+    width: inherit;
+  }
+  .cardLeft {
+    min-height: inherit;
+    width: 100%;
+  }
+  .card {
+    width: 100%;
+    border-radius: 24px;
+    padding: 20px 50px;
+  }
+  .title {
+    font-size: 24px;
+  }
+  .description {
+    font-size: 14px;
+  }
+  .cardBottom {
+    min-height: 46.796px;
+    padding: 14px 0;
+  }
+  .linksP {
+    font-size: 14px;
+  }
+  .cardTop {
+    margin-top: 39px;
+    padding: 0 19px;
+    padding-bottom: 10px;
+  }
+  .grayCircle {
+    width: 16.77px;
+    height: 16.77px;
+  }
+  .footerCardIcon {
+    height: 12px;
+    width: 12px;
+  }
+  .footerLocationIcon {
+    height: 12px;
+    width: 10px;
+  }
+  .links {
+    gap: 10.71px;
+  }
 }
