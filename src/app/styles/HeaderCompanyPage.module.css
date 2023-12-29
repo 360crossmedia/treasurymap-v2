@@ -171,21 +171,21 @@
 @media screen and (max-width: 880px) {
   .cardsContainer {
     display: grid;
-    grid-template: repeat(2, 122.14px) / repeat(2, 150px);
-    row-gap: 16px;
-    column-gap: 21px;
+    grid-template: repeat(2, 110px) / repeat(2, 120px);
+    row-gap: 20px;
+    column-gap: 29px;
     justify-content: flex-start;
   }
   .cardLeft {
-    width: 152px;
-    height: 122.14px;
+    width: 125px;
+    height: 115.14px;
   }
   .cardRight {
-    width: 188px;
-    height: 122.14px;
+    width: 130px;
+    height: 115.14px;
   }
   .cardP {
-    font-size: 14px;
+    font-size: 12px;
   }
   .mainContainer {
     margin: 0 17px;
@@ -194,20 +194,39 @@
   .headerCardDown {
     margin: 0 17px;
   }
+  .cardBigP {
+    font-size: 32px;
+  }
 }
 
 @media screen and (max-width: 451px) {
   .headerCardDown {
     height: 45px;
     padding-right: 0;
+    flex-direction: row;
   }
   .customP,
   .customP2 {
-    padding: 10px 58px;
+    padding: 10px 14vw;
     font-size: 12px;
-    display: inline;
   }
   .headerLinks {
     justify-content: space-between;
+  }
+}
+
+@media screen and (max-width: 351px) {
+  .customP,
+  .customP2 {
+    padding: 10px 13vw;
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-width: 321px) {
+  .customP,
+  .customP2 {
+    padding: 10px 12vw;
+    font-size: 12px;
   }
 }
