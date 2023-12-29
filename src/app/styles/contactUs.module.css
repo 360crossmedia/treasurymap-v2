@@ -159,7 +159,7 @@
 @media screen and (max-width: 1000px) {
   .cardContainer {
     flex-direction: column;
-    margin: 39px 17px 48px 17px;
+    margin: 0px 17px 48px 17px;
     width: inherit;
   }
   .cardLeft {
@@ -173,6 +173,7 @@
   }
   .title {
     font-size: 24px;
+    text-align: center;
   }
   .description {
     font-size: 14px;
@@ -214,5 +215,11 @@
   }
   .button {
     min-width: 280px;
+  }
+  .inputTextArea {
+    padding-left: 26px;
+    max-width: 323px;
+    resize: none;
+    height: 120px;
   }
 }
