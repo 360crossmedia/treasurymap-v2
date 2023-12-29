@@ -27,21 +27,29 @@ const ContactUs = () => {
         <div className={styles.cardBottom}>
           <div className={styles.links}>
             <div className={styles.grayCircle}>
-              <Image src={phoneIcon} alt="" width={25} height={25} />
+              <Image className={styles.footerCardIcon} src={phoneIcon} alt="" />
             </div>
-            <p>+33 125 455 45</p>
+            <p className={styles.linksP}>+33 125 455 45</p>
           </div>
           <div className={styles.links}>
             <div className={styles.grayCircle}>
-              <Image src={emailContactIcon} alt="" width={25} height={25} />
+              <Image
+                className={styles.footerCardIcon}
+                src={emailContactIcon}
+                alt=""
+              />
             </div>
-            <p>Email</p>
+            <p className={styles.linksP}>Email</p>
           </div>
           <div className={styles.links}>
             <div className={styles.grayCircle}>
-              <Image src={footerLocationIcon} alt="" />
+              <Image
+                className={styles.footerLocationIcon}
+                src={footerLocationIcon}
+                alt=""
+              />
             </div>
-            <p>Address</p>
+            <p className={styles.linksP}>Address</p>
           </div>
         </div>
       </div>
