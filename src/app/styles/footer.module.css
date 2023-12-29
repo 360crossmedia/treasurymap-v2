@@ -3,18 +3,17 @@
   background-color: #f6fafe;
   align-items: center;
   padding: 20px 56px;
+  justify-content: space-between;
 }
 
 .footerLeft {
   display: flex;
-  width: 50%;
   gap: 8px;
   align-items: center;
 }
 
 .footerRight {
   display: flex;
-  width: 50%;
   justify-content: flex-end;
   gap: 32px;
 }
@@ -26,4 +25,17 @@
 
 .footerP {
   margin: 0;
+}
+
+@media screen and (max-width: 720px) {
+  .footer {
+    flex-direction: column;
+    padding: 20px 32px;
+  }
+  .footerP,
+  .footerLink {
+    color: #626b80;
+    font-size: 12px;
+    font-weight: 500;
+  }
 }

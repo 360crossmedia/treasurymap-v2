@@ -51,6 +51,7 @@
 @media screen and (max-width: 880px) {
   .MobileMenuNavbar {
     display: inherit;
+    cursor: pointer;
   }
 
   .navbarA {
