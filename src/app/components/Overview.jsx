@@ -2,6 +2,7 @@ import React from "react";
 import styles from "../styles/Overview.module.css";
 import Image from "next/image";
 import companyImg from "../assets/companyImg.svg";
+import ArrowDown from "../assets/ArrowDown.svg";
 
 const Overview = () => {
   return (
@@ -128,6 +129,25 @@ const Overview = () => {
       </div>
       <div className={styles.right}>
         <Image className={styles.companyImg} src={companyImg} alt="" />
+      </div>
+      <div className={styles.countriesContainer}>
+        <div>
+          <p className={styles.boldP}>Active In</p>
+        </div>
+        <div className={styles.blueCardsContainer}>
+          <div className={styles.blueCard}>
+            <p className={styles.blueCardP}>France</p>
+          </div>
+          <div className={styles.blueCard}>
+            <p className={styles.blueCardP}>Belgium</p>
+          </div>
+          <div className={styles.blueCard}>
+            <p className={styles.blueCardP}>Spain</p>
+          </div>
+          <div className={styles.blueCard}>
+            <p className={styles.blueCardP}>Morocco</p>
+          </div>
+        </div>
       </div>
     </div>
   );
