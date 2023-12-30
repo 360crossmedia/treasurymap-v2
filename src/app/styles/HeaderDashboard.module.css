@@ -77,11 +77,11 @@
 
 @media screen and (max-width: 950px) {
   .input {
-    width: 361px;
+    width: 340px;
   }
   .updateButton,
   .deleteButton {
-    width: 172.778px;
+    width: 160px;
   }
 }
 
