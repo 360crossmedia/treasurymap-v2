@@ -66,3 +66,71 @@
   color: #626b80;
   font-size: 16px;
 }
+
+.countriesContainer {
+  display: none;
+}
+
+@media screen and (max-width: 1100px) {
+  .countriesContainer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-direction: column;
+    width: 100%;
+  }
+  .boldP {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+  }
+
+  .blueCard {
+    border-radius: 100px;
+    background: #0d4f98;
+    color: white;
+    padding: 8px 15px;
+    font-size: 14px;
+  }
+
+  .blueCardP {
+    margin: 0;
+  }
+
+  .mainContainer {
+    flex-direction: column-reverse;
+    margin: 0 17px;
+    margin-top: 22px;
+  }
+  .blueCardsContainer {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .left {
+    width: 100%;
+  }
+  .companyImg {
+    border-radius: 19.459px;
+    border: 1px solid #f6fafe;
+    background: #fff;
+    box-shadow: 0px 5px 11px 0px rgba(0, 0, 0, 0.1),
+      0px 20px 20px 0px rgba(0, 0, 0, 0.09),
+      0px 46px 27px 0px rgba(0, 0, 0, 0.05),
+      0px 81px 33px 0px rgba(0, 0, 0, 0.01), 0px 127px 36px 0px rgba(0, 0, 0, 0);
+    width: 240px;
+    height: 169.946px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 34px;
+    padding: 4px 10px;
+    margin-top: 48px;
+  }
+  .right {
+    width: 100%;
+    background: none;
+    box-shadow: none;
+    margin: 0px 16px;
+  }
+}

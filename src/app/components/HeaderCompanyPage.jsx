@@ -77,7 +77,6 @@ const HeaderCompanyPage = () => {
           </p>
         </div>
         <div className={styles.countriesContainer}>
-          <div className={styles.line}></div>
           <p className={styles.boldP}>Active In</p>
           <div className={styles.blueCard}>
             <p className={styles.blueCardP}>France</p>
