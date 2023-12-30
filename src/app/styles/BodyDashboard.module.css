@@ -25,7 +25,7 @@
 .line {
   border: 1px solid #e3e3e5;
   height: 1px;
-  width: 717px;
+  width: 48vw;
 }
 
 .or {
@@ -44,4 +44,38 @@
   height: 58px;
   padding: 16px 22px;
   margin-bottom: 76px;
+}
+
+@media screen and (max-width: 1270px) {
+  .mainContainer {
+    margin-top: 140px;
+  }
+}
+
+@media screen and (max-width: 950px) {
+  .mediaZoneButton,
+  .createCompanyButton {
+    width: 361px;
+  }
+  .line {
+    width: 47vw;
+  }
+}
+
+@media screen and (max-width: 710px) {
+  .line {
+    width: 46vw;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .line {
+    width: 45vw;
+  }
+}
+
+@media screen and (max-width: 420px) {
+  .line {
+    width: 150px;
+  }
 }

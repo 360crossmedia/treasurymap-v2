@@ -68,3 +68,25 @@
   padding: 16.2px 22px;
   width: 179px;
 }
+
+@media screen and (max-width: 1270px) {
+  .selectContainer {
+    flex-direction: column;
+  }
+}
+
+@media screen and (max-width: 950px) {
+  .input {
+    width: 361px;
+  }
+  .updateButton,
+  .deleteButton {
+    width: 172.778px;
+  }
+}
+
+@media screen and (max-width: 880px) {
+  .selectContainer {
+    top: 215px;
+  }
+}
