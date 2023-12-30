@@ -21,14 +21,24 @@
 }
 
 .companyImg {
+  width: 167px;
+  height: 90px;
+}
+
+.imgContainer {
   border-radius: 15px;
   border: 1px solid #f6fafe;
   background: #fff;
   box-shadow: 0px 5px 11px 0px rgba(0, 0, 0, 0.1),
     0px 20px 20px 0px rgba(0, 0, 0, 0.09), 0px 46px 27px 0px rgba(0, 0, 0, 0.05),
     0px 81px 33px 0px rgba(0, 0, 0, 0.01), 0px 127px 36px 0px rgba(0, 0, 0, 0);
-  padding: 20px 8px;
+  width: 185px;
+  height: 131px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin-right: 34px;
+  padding: 4px 10px;
 }
 
 .cardP {
@@ -80,7 +90,7 @@
   margin: 0 56px;
   display: flex;
   justify-content: space-between;
-  background-color: #fff;
+  background-color: #fbfbfb;
   border-radius: 15px 15px 0px 0px;
   padding-right: 30px;
   box-shadow: 0px 4px 30.6px 0px rgba(0, 0, 0, 0.08);
@@ -143,4 +153,80 @@
 .line {
   border-left: #c4c5c6 1px solid;
   height: 56px;
+}
+
+@media screen and (max-width: 1195px) {
+  .mainContainer {
+    flex-direction: column;
+    gap: 34px;
+  }
+  .headerCardDown {
+    flex-direction: column;
+  }
+  .countriesContainer {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 880px) {
+  .cardsContainer {
+    display: grid;
+    grid-template: repeat(2, 110px) / repeat(2, 120px);
+    row-gap: 20px;
+    column-gap: 29px;
+    justify-content: flex-start;
+  }
+  .cardLeft {
+    width: 125px;
+    height: 115.14px;
+  }
+  .cardRight {
+    width: 130px;
+    height: 115.14px;
+  }
+  .cardP {
+    font-size: 12px;
+  }
+  .mainContainer {
+    margin: 0 17px;
+    margin-top: 40px;
+  }
+  .headerCardDown {
+    margin: 0 17px;
+  }
+  .cardBigP {
+    font-size: 32px;
+  }
+}
+
+@media screen and (max-width: 451px) {
+  .headerCardDown {
+    height: 45px;
+    padding-right: 0;
+    flex-direction: row;
+  }
+  .customP,
+  .customP2 {
+    padding: 10px 14vw;
+    font-size: 12px;
+  }
+  .headerLinks {
+    justify-content: space-between;
+  }
+}
+
+@media screen and (max-width: 351px) {
+  .customP,
+  .customP2 {
+    padding: 10px 13vw;
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-width: 321px) {
+  .customP,
+  .customP2 {
+    padding: 10px 12vw;
+    font-size: 12px;
+  }
 }
