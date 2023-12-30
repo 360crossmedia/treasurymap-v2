@@ -59,3 +59,54 @@
   gap: 4.711px;
   display: inline-flex;
 }
+
+.countriesContainer {
+  display: none;
+}
+
+@media screen and (max-width: 880px) {
+  .video {
+    width: 320px;
+    height: 165.3px;
+    border-radius: 18.113px;
+  }
+  .line {
+    width: inherit;
+  }
+  .mainContainer {
+    margin: 0 17px;
+    margin-top: 22px;
+  }
+  .title {
+    margin-bottom: 36px;
+  }
+  .countriesContainer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-direction: column;
+    width: 100%;
+  }
+  .boldP {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+  }
+
+  .blueCard {
+    border-radius: 100px;
+    background: #0d4f98;
+    color: white;
+    padding: 8px 15px;
+    font-size: 14px;
+  }
+
+  .blueCardP {
+    margin: 0;
+  }
+  .blueCardsContainer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
