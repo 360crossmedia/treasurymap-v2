@@ -6,6 +6,25 @@ import ArrowRight from "../assets/arrow-right.svg";
 const MediaZone = () => {
   return (
     <div className={styles.mainContainer}>
+      <div className={styles.countriesContainer}>
+        <div>
+          <p className={styles.boldP}>Active In</p>
+        </div>
+        <div className={styles.blueCardsContainer}>
+          <div className={styles.blueCard}>
+            <p className={styles.blueCardP}>France</p>
+          </div>
+          <div className={styles.blueCard}>
+            <p className={styles.blueCardP}>Belgium</p>
+          </div>
+          <div className={styles.blueCard}>
+            <p className={styles.blueCardP}>Spain</p>
+          </div>
+          <div className={styles.blueCard}>
+            <p className={styles.blueCardP}>Morocco</p>
+          </div>
+        </div>
+      </div>
       <div className={styles.videoContainer}>
         <div>
           <p className={styles.title}>Our CEO Conference</p>
