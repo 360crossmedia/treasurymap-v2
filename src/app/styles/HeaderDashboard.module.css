@@ -89,4 +89,7 @@
   .selectContainer {
     top: 215px;
   }
+  .title {
+    text-align: center;
+  }
 }
