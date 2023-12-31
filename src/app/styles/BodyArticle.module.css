@@ -77,5 +77,6 @@
   .mainContainer {
     padding: 20px 30px;
     margin: 39px 16px;
+    border-radius: 24px;
   }
 }
