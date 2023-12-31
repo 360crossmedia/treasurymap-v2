@@ -1,21 +1,65 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import styles from "../styles/HeaderDashboard.module.css";
 import Form from "react-bootstrap/Form";
+import { useSelector } from "react-redux";
+import { apiGetCompaniesByOwner } from "../service/apiGetCompaniesByOwner";
+import { useRouter } from "next/navigation";
+import { apiDeleteCompanyById } from "../service/apiDeleteCompanyById";
 
 const HeaderDashboard = () => {
+  const router = useRouter();
+  const userId = useSelector((state) => state.user);
+  const [companies, setCompanies] = useState([]);
+  const [isSelectedAnyCompany, setIsSelectedAnyCompany] = useState(false);
+
+  useEffect(() => {
+    getCompanies();
+  }, []);
+
+  const getCompanies = async () => {
+    const companies = await apiGetCompaniesByOwner(userId);
+    setCompanies(companies?.data);
+  };
+
+  const updateButton = () => {
+    if (isSelectedAnyCompany) {
+      router.push(`/form`);
+    } else alert("Please select any company");
+  };
+
+  const deleteButton = async () => {
+    if (isSelectedAnyCompany) {
+      const result = await apiDeleteCompanyById(isSelectedAnyCompany);
+      result && result.status == 200
+        ? alert("Company deleted")
+        : alert("Error deleting company");
+    } else alert("Please select any company");
+  };
+
   return (
     <div className={styles.mainContainer}>
       <p className={styles.title}>Company Admin</p>
       <div className={styles.selectContainer}>
-        <Form.Select bsPrefix={`form-select ${styles.input}`}>
+        <Form.Select
+          onChange={(e) => setIsSelectedAnyCompany(e.target.value)}
+          bsPrefix={`form-select ${styles.input} ${
+            isSelectedAnyCompany ? styles.active : ""
+          }`}
+        >
           <option>Select Company</option>
-          <option value="1">Company 1</option>
-          <option value="2">Company 2</option>
-          <option value="3">Company 3</option>
+          {companies?.map((company, index) => (
+            <option key={index} value={company.id}>
+              {company.name}
+            </option>
+          ))}
         </Form.Select>
         <div className={styles.buttonsContainer}>
-          <button className={styles.updateButton}>Update</button>
-          <button className={styles.deleteButton}>Delete</button>
+          <button onClick={updateButton} className={styles.updateButton}>
+            Update
+          </button>
+          <button onClick={deleteButton} className={styles.deleteButton}>
+            Delete
+          </button>
         </div>
       </div>
     </div>
