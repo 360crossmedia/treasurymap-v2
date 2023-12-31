@@ -3,8 +3,23 @@ import styles from "../styles/loginCard.module.css";
 import Image from "next/image";
 import inputEmailIcon from "../assets/inputEmailIcon.svg";
 import inputPasswordIcon from "../assets/inputPasswordIcon.svg";
+import { useState } from "react";
+import { apiLogin } from "../service/apiLogin";
+import { useRouter } from "next/navigation";
 
 const LoginCard = () => {
+  const router = useRouter();
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+
+  const submit = async () => {
+    const data = await apiLogin({ email, password }).then((res) => {
+      res && res.status == 200
+        ? router.push("/dashboard")
+        : alert("Check your credentials");
+    });
+  };
+
   return (
     <div className={styles.cardContainer}>
       <div className={styles.card}>
@@ -18,6 +33,7 @@ const LoginCard = () => {
             className={styles.input}
             placeholder="Email Address"
             type="text"
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
         <div>
@@ -26,7 +42,8 @@ const LoginCard = () => {
             <input
               className={styles.input}
               placeholder="Password"
-              type="text"
+              type="password"
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <a href="#" className={styles.forgetPasswordA}>
@@ -34,12 +51,14 @@ const LoginCard = () => {
           </a>
         </div>
         <div>
-          <button className={styles.button}>Log in</button>
+          <button onClick={submit} className={styles.button}>
+            Log in
+          </button>
         </div>
         <div>
-          <p className={styles.signUpButton} href="#">
+          <p className={styles.signUpButton}>
             Don’t have account?{" "}
-            <a className={styles.signUpButton} href="#">
+            <a className={styles.signUpButton} href="/signup">
               Sign up
             </a>
           </p>
