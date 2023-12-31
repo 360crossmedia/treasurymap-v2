@@ -5,10 +5,26 @@ import PhotoImg from "../assets/photoImg.svg";
 import Form from "react-bootstrap/Form";
 import { Checkbox } from "primereact/checkbox";
 import { useState } from "react";
+import { apiCreateCompany } from "../service/apiCreateCompany";
+import { useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
 
 const BodyForm = () => {
+  const router = useRouter();
   const [image, setImage] = useState();
   const [fileName, setFileName] = useState("Upload logo");
+  const [companyName, setCompanyName] = useState("");
+  const userId = useSelector((state) => state.user);
+
+  const submit = async () => {
+    const result = await apiCreateCompany({ name: companyName, userId });
+    console.log(result);
+    if (result?.status == 201) {
+      alert("Company created successfully");
+      router.push("/dashboard");
+    } else console.log(result);
+  };
+
   return (
     <div className={styles.mainContainer}>
       <div className={styles.uploadPhotoContainer}>
@@ -50,6 +66,7 @@ const BodyForm = () => {
             className={styles.inputText}
             placeholder="Company LLC"
             type="text"
+            onChange={(e) => setCompanyName(e.target.value)}
           />
         </div>
 
@@ -509,7 +526,9 @@ const BodyForm = () => {
         </div>
 
         <div className={styles.buttonContainer}>
-          <button className={styles.button}>Save information</button>
+          <button onClick={() => submit()} className={styles.button}>
+            Save information
+          </button>
         </div>
       </div>
     </div>
