@@ -61,3 +61,21 @@
   padding: 16.2px 22px;
   width: 179px;
 }
+
+@media screen and (max-width: 1360px) {
+  .mainContainer {
+    padding: 30px 60px;
+  }
+}
+
+@media screen and (max-width: 1300px) {
+  .input,
+  .inputTextArea,
+  .buttonsContainer {
+    width: 280px;
+  }
+  .mainContainer {
+    padding: 20px 30px;
+    margin: 39px 16px;
+  }
+}
