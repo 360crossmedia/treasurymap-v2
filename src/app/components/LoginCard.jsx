@@ -6,18 +6,22 @@ import inputPasswordIcon from "../assets/inputPasswordIcon.svg";
 import { useState } from "react";
 import { apiLogin } from "../service/apiLogin";
 import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { setUser } from "../store/slices/user.slice";
 
 const LoginCard = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
 
   const submit = async () => {
-    const data = await apiLogin({ email, password }).then((res) => {
-      res && res.status == 200
-        ? router.push("/dashboard")
-        : alert("Check your credentials");
-    });
+    const data = await apiLogin({ email, password });
+
+    if (data && data.status == 200) {
+      dispatch(setUser(data.data.id));
+      router.push("/dashboard");
+    } else alert("Check your credentials");
   };
 
   return (
