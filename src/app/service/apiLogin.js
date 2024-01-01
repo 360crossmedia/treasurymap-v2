@@ -2,15 +2,16 @@ import axios from "axios";
 import { url } from "./url";
 
 export const apiLogin = async (datos) => {
-  // const headers = {
-  //   "Content-Type": "application/json; charset=utf-8",
-  //   Accept: "application/json",
-  //   Authorization: "Bearer TuTokenDeAutorización", // Ajusta esto según tus necesidades
-  //   User-Agent: "TuUserAgent", // Puedes dejar esto en blanco o establecerlo según tus necesidades
-  //   // Agrega los headers CORS necesarios
-  //   Access-Control-Allow-Origin: "*", // Ajusta según tu configuración de CORS
-  //   "Access-Control-Allow-Credentials": "true", // Ajusta según tu configuración de CORS
-  // };
+  const headers = {
+    "Content-Type": "application/json; charset=utf-8",
+    Accept: "*/*",
+    "User-Agent": "PostmanRuntime/7.36.0",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Credentials": "true",
+    "Cache-Control": "no-cache",
+    "Accept-Encoding": "gzip, deflate, br",
+    Connection: "keep-alive",
+  };
 
   let user = {
     email: datos.email,
@@ -19,7 +20,7 @@ export const apiLogin = async (datos) => {
   let userJson = JSON.stringify(user);
 
   return axios
-    .post(`${url}/api/v1/auth/login`, userJson)
+    .post(`${url}/api/v1/auth/login`, userJson, { headers })
     .then((res) => res)
     .catch((error) => console.log(error));
 };
