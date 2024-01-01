@@ -18,7 +18,7 @@ export const apiLogin = async (datos) => {
 
   const config = {
     method: "post",
-    url: "3.85.170.44/api/v1/auth/login",
+    url: "http://3.85.170.44/api/v1/auth/login",
     data: {
       email: "sebas@gmail.com",
       password: "1234",
