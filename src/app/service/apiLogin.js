@@ -5,12 +5,9 @@ export const apiLogin = async (datos) => {
   const headers = {
     "Content-Type": "application/json; charset=utf-8",
     Accept: "*/*",
-    "User-Agent": "PostmanRuntime/7.36.0",
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Credentials": "true",
     "Cache-Control": "no-cache",
-    "Accept-Encoding": "gzip, deflate, br",
-    Connection: "keep-alive",
   };
 
   let user = {
@@ -19,8 +16,18 @@ export const apiLogin = async (datos) => {
   };
   let userJson = JSON.stringify(user);
 
-  return axios
-    .post(`${url}/api/v1/auth/login`, userJson, { headers })
-    .then((res) => res)
-    .catch((error) => console.log(error));
+  const config = {
+    method: "post",
+    url: "3.85.170.44/api/v1/auth/login",
+    data: {
+      email: "sebas@gmail.com",
+      password: "1234",
+    },
+    withCredentials: true,
+    headers: headers,
+  };
+
+  return axios(config)
+    .then((response) => response)
+    .catch((error) => console.error("Error:", error));
 };
