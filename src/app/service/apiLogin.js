@@ -3,7 +3,13 @@ import { url } from "./url";
 
 export const apiLogin = async (datos) => {
   const headers = {
-    "Content-Type": "application/json",
+    "Content-Type": "application/json; charset=utf-8",
+    Accept: "application/json",
+    Authorization: "Bearer TuTokenDeAutorización", // Ajusta esto según tus necesidades
+    "User-Agent": "TuUserAgent", // Puedes dejar esto en blanco o establecerlo según tus necesidades
+    // Agrega los headers CORS necesarios
+    "Access-Control-Allow-Origin": "*", // Ajusta según tu configuración de CORS
+    "Access-Control-Allow-Credentials": "true", // Ajusta según tu configuración de CORS
   };
 
   let user = {
