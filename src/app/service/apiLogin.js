@@ -4,7 +4,6 @@ import { url } from "./url";
 export const apiLogin = async (datos) => {
   const headers = {
     "Content-Type": "application/json",
-    "Content-Security-Policy": "upgrade-insecure-requests",
   };
 
   let user = {
