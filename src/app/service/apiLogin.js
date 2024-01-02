@@ -3,11 +3,7 @@ import { url } from "./url";
 
 export const apiLogin = async (datos) => {
   const headers = {
-    "Content-Type": "application/json; charset=utf-8",
-    Accept: "*/*",
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Credentials": "true",
-    "Cache-Control": "no-cache",
+    "Content-Type": "application/json",
   };
 
   let user = {
