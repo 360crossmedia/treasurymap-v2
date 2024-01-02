@@ -147,9 +147,17 @@ const BodyForm = () => {
             bsPrefix={`form-select ${styles.inputText} ${styles.inputSelect}`}
           >
             <option>Select type of media</option>
-            <option value="1">Media 1</option>
-            <option value="2">Media 2</option>
-            <option value="3">Media 3</option>
+            <option value="1">Europe</option>
+            <option value="2">North America</option>
+            <option value="3">South America</option>
+            <option value="4">Eurasia</option>
+            <option value="5">Asia</option>
+            <option value="6">Oceania</option>
+            <option value="7">Caribbean</option>
+            <option value="8">Australia</option>
+            <option value="9">Africa</option>
+            <option value="10">Middle East</option>
+            <option value="11">Central America</option>
           </Form.Select>
         </div>
 
