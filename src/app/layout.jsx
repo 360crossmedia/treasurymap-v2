@@ -14,6 +14,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <meta
+        http-equiv="Content-Security-Policy"
+        content="upgrade-insecure-requests"
+      />
       <PrimeReactProvider value={{ unstyled: false }}>
         <Providers>
           <body className={inter.className}>{children}</body>
