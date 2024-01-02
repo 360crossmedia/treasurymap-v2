@@ -13,16 +13,13 @@ export const apiLogin = async (datos) => {
   let userJson = JSON.stringify(user);
 
   const config = {
-    method: "post",
-    url: "http://3.85.170.44/api/v1/auth/login",
-    data: {
-      email: "sebas@gmail.com",
-      password: "1234",
-    },
-    headers: headers,
+    crossDomain: true,
+    withCredentials: true,
+    // Otras configuraciones...
   };
 
-  return axios(config)
+  return axios
+    .post(`${url}/api/v1/auth/login`, user, config)
     .then((response) => response)
     .catch((error) => console.error("Error:", error));
 };
