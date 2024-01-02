@@ -23,8 +23,6 @@ export const apiLogin = async (datos) => {
       email: "sebas@gmail.com",
       password: "1234",
     },
-    withCredentials: true,
-    headers: headers,
   };
 
   return axios(config)
