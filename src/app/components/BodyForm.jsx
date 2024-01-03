@@ -209,7 +209,6 @@ const BodyForm = () => {
             />
           </div>
         </div>
-        <div className={styles.line}></div>
         <div>
           <div>
             <p className={styles.label}>
@@ -244,7 +243,6 @@ const BodyForm = () => {
             ))}
           </div>
         </div>
-        <div className={styles.line}></div>
         <div className={styles.inputContainer}>
           <label className={styles.label} htmlFor="">
             Do you have any specific cooperation agreement with other IT vendors
