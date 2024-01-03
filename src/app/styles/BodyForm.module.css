@@ -92,6 +92,7 @@
 .labelCheckbox {
   color: #8d9396;
   font-size: 16px;
+  max-width: 320px;
 }
 
 .categoriesContainer {
@@ -109,6 +110,7 @@
   display: flex;
   gap: 16px;
   margin-bottom: 16px;
+  align-items: center;
 }
 
 .inputCustom {
