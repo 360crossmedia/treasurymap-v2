@@ -1,2 +1,4 @@
-export const url = "http://3.85.170.44";
-// PRUEBA DE DESPLIEGUE
+
+export const url = 'https://treasurymapbackend-production.up.railway.app'
+//export const url = 'http://localhost:8000'
+
