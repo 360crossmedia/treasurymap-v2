@@ -4,26 +4,40 @@ import styles from "../styles/BodyForm.module.css";
 import PhotoImg from "../assets/photoImg.svg";
 import Form from "react-bootstrap/Form";
 import { Checkbox } from "primereact/checkbox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { apiCreateCompany } from "../service/apiCreateCompany";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
+import { apiGetCategories } from "../service/apiGetCategories";
+import { apiGetSubCategories } from "../service/apiGetSubCategories";
 
 const BodyForm = () => {
   const router = useRouter();
   const [image, setImage] = useState();
   const [fileName, setFileName] = useState("Upload logo");
   const [companyName, setCompanyName] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
   const userId = useSelector((state) => state.user);
 
   const submit = async () => {
     const result = await apiCreateCompany({ name: companyName, userId });
-    console.log(result);
     if (result?.status == 201) {
       alert("Company created successfully");
       router.push("/dashboard");
     } else console.log(result);
   };
+
+  const getCategoriesAndSubCategories = async () => {
+    const categories = await apiGetCategories();
+    const subCategories = await apiGetSubCategories();
+    setCategories(categories?.data);
+    setSubCategories(subCategories?.data);
+  };
+
+  useEffect(() => {
+    getCategoriesAndSubCategories();
+  }, []);
 
   return (
     <div className={styles.mainContainer}>
@@ -195,9 +209,7 @@ const BodyForm = () => {
             />
           </div>
         </div>
-
-        <div className="line"></div>
-
+        <div className={styles.line}></div>
         <div>
           <div>
             <p className={styles.label}>
@@ -205,97 +217,14 @@ const BodyForm = () => {
             </p>
           </div>
           <div className={styles.categoriesContainer}>
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="FIDP">
-                FIDP (Financial Instrument Dealing Platform)
-              </label>
-            </div>
-
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="FIDP2">
-                FIDP (Financial Instrument Dealing Platform)
-              </label>
-            </div>
-
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="CMA">
-                CMA (Currency Management Automation)
-              </label>
-            </div>
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="CMA2">
-                CMA (Currency Management Automation)
-              </label>
-            </div>
-
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="OTS">
-                OTS (Other Treasury Solutions)
-              </label>
-            </div>
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="OTS2">
-                OTS (Other Treasury Solutions)
-              </label>
-            </div>
-
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="ERP">
-                ERP (Enterprise Resource Planning)
-              </label>
-            </div>
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="ERP2">
-                ERP (Enterprise Resource Planning)
-              </label>
-            </div>
-
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="ETL">
-                ETL (Extract Transform Load)
-              </label>
-            </div>
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="ETL2">
-                ETL (Extract Transform Load)
-              </label>
-            </div>
-
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="CFF">
-                CFF (Cash-Flow Forecasting)
-              </label>
-            </div>
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="CFF2">
-                CFF (Cash-Flow Forecasting)
-              </label>
-            </div>
-
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="BSG">
-                BSG (Bank Single Gateway)
-              </label>
-            </div>
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="BSG2">
-                BSG (Bank Single Gateway)
-              </label>
-            </div>
+            {categories?.map((category, index) => (
+              <div className={styles.inputCheckboxContainer} key={index}>
+                <Checkbox></Checkbox>
+                <label className={styles.labelCheckbox} for={category.name}>
+                  {category.name}
+                </label>
+              </div>
+            ))}
           </div>
         </div>
         <div>
@@ -305,195 +234,17 @@ const BodyForm = () => {
             </p>
           </div>
           <div className={styles.categoriesContainer}>
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="FIDP">
-                FIDP (Financial Instrument Dealing Platform)
-              </label>
-            </div>
-
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="FIDP2">
-                FIDP (Financial Instrument Dealing Platform)
-              </label>
-            </div>
-
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="CMA">
-                CMA (Currency Management Automation)
-              </label>
-            </div>
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="CMA2">
-                CMA (Currency Management Automation)
-              </label>
-            </div>
-
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="OTS">
-                OTS (Other Treasury Solutions)
-              </label>
-            </div>
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="OTS2">
-                OTS (Other Treasury Solutions)
-              </label>
-            </div>
-
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="ERP">
-                ERP (Enterprise Resource Planning)
-              </label>
-            </div>
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="ERP2">
-                ERP (Enterprise Resource Planning)
-              </label>
-            </div>
-
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="ETL">
-                ETL (Extract Transform Load)
-              </label>
-            </div>
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="ETL2">
-                ETL (Extract Transform Load)
-              </label>
-            </div>
-
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="CFF">
-                CFF (Cash-Flow Forecasting)
-              </label>
-            </div>
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="CFF2">
-                CFF (Cash-Flow Forecasting)
-              </label>
-            </div>
-
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="BSG">
-                BSG (Bank Single Gateway)
-              </label>
-            </div>
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="BSG2">
-                BSG (Bank Single Gateway)
-              </label>
-            </div>
-          </div>
-          <div className={styles.categoriesContainer}>
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="FIDP">
-                FIDP (Financial Instrument Dealing Platform)
-              </label>
-            </div>
-
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="FIDP2">
-                FIDP (Financial Instrument Dealing Platform)
-              </label>
-            </div>
-
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="CMA">
-                CMA (Currency Management Automation)
-              </label>
-            </div>
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="CMA2">
-                CMA (Currency Management Automation)
-              </label>
-            </div>
-
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="OTS">
-                OTS (Other Treasury Solutions)
-              </label>
-            </div>
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="OTS2">
-                OTS (Other Treasury Solutions)
-              </label>
-            </div>
-
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="ERP">
-                ERP (Enterprise Resource Planning)
-              </label>
-            </div>
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="ERP2">
-                ERP (Enterprise Resource Planning)
-              </label>
-            </div>
-
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="ETL">
-                ETL (Extract Transform Load)
-              </label>
-            </div>
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="ETL2">
-                ETL (Extract Transform Load)
-              </label>
-            </div>
-
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="CFF">
-                CFF (Cash-Flow Forecasting)
-              </label>
-            </div>
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="CFF2">
-                CFF (Cash-Flow Forecasting)
-              </label>
-            </div>
-
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="BSG">
-                BSG (Bank Single Gateway)
-              </label>
-            </div>
-            <div className={styles.inputCheckboxContainer}>
-              <Checkbox></Checkbox>
-              <label className={styles.labelCheckbox} for="BSG2">
-                BSG (Bank Single Gateway)
-              </label>
-            </div>
+            {subCategories?.map((subCategory, index) => (
+              <div className={styles.inputCheckboxContainer} key={index}>
+                <Checkbox></Checkbox>
+                <label className={styles.labelCheckbox} for={subCategory.name}>
+                  {subCategory.name}
+                </label>
+              </div>
+            ))}
           </div>
         </div>
-
-        <div className="line"></div>
-
+        <div className={styles.line}></div>
         <div className={styles.inputContainer}>
           <label className={styles.label} htmlFor="">
             Do you have any specific cooperation agreement with other IT vendors
