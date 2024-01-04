@@ -6,6 +6,8 @@ import Image from "next/image";
 import inputEmailIcon from "../assets/inputEmailIcon.svg";
 import inputPasswordIcon from "../assets/inputPasswordIcon.svg";
 import { apiCreateUser } from "../service/apiCreateUser";
+import { useDispatch } from "react-redux";
+import { setIsLoading } from "../store/slices/isLoading.slice";
 
 const SignupCard = () => {
   const [companyName, setcompanyName] = useState("");
@@ -17,6 +19,7 @@ const SignupCard = () => {
   const [error, setError] = useState("");
 
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
@@ -45,28 +48,32 @@ const SignupCard = () => {
       return setError("Enter valid email");
     } else if (!passwordMatch) {
       return setError("Password doesn't match");
-    }
+    } else {
+      dispatch(setIsLoading(true));
+      let datos = {
+        companyName: companyName,
+        fullName: fullName,
+        email: email,
+        password: password,
+      };
 
-    let datos = {
-      companyName: companyName,
-      fullName: fullName,
-      email: email,
-      password: password,
-    };
+      try {
+        setError("");
+        let data = await apiCreateUser(datos);
 
-    try {
-      setError("");
-      let data = await apiCreateUser(datos);
-
-      if (data == 201) {
-        router.push("/login");
-      } else {
+        if (data == 201) {
+          dispatch(setIsLoading(false));
+          router.push("/login");
+        } else {
+          dispatch(setIsLoading(false));
+          setError("No se puede crear usuario, información incorrecta");
+          console.log(data);
+        }
+      } catch (e) {
+        dispatch(setIsLoading(false));
         setError("No se puede crear usuario, información incorrecta");
-        console.log(data);
+        console.log(e);
       }
-    } catch (e) {
-      setError("No se puede crear usuario, información incorrecta");
-      console.log(e);
     }
   };
 
@@ -129,7 +136,7 @@ const SignupCard = () => {
         </div>
         <div>
           <button className={styles.button} onClick={handleSubmit}>
-            Sign in
+            Sign up
           </button>
           {!!error.length && <p className={styles.error}>Error: {error}</p>}
         </div>

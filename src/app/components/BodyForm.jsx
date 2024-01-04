@@ -11,8 +11,11 @@ import { useRouter } from "next/navigation";
 import { apiGetCategories } from "../service/apiGetCategories";
 import { apiGetSubCategories } from "../service/apiGetSubCategories";
 import { apiUploadImage } from "../service/apiUploadImage";
+import { setIsLoading } from "../store/slices/isLoading.slice";
+import { useDispatch } from "react-redux";
 
 const BodyForm = () => {
+  const dispatch = useDispatch();
   const router = useRouter();
   const [image, setImage] = useState();
   const [fileName, setFileName] = useState("Upload logo");
@@ -20,19 +23,28 @@ const BodyForm = () => {
   const [companyName, setCompanyName] = useState("");
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
+  const [selectedSubCategoryIds, setSelectedSubCategoryIds] = useState([]);
   const userId = useSelector((state) => state.user);
 
   const submit = async () => {
+    dispatch(setIsLoading(true));
     const imgUrl = await uploadImage();
     const result = await apiCreateCompany({
       name: companyName,
       userId,
       logo: imgUrl,
+      companyCategories: selectedCategoryIds,
+      companySubcategories: selectedSubCategoryIds,
     });
     if (result?.status == 201 && imgUrl) {
       alert("Company created successfully");
       router.push("/dashboard");
-    } else console.log(result);
+      dispatch(setIsLoading(false));
+    } else {
+      console.log(result);
+      dispatch(setIsLoading(false));
+    }
   };
 
   const getCategoriesAndSubCategories = async () => {
@@ -233,7 +245,21 @@ const BodyForm = () => {
           <div className={styles.categoriesContainer}>
             {categories?.map((category, index) => (
               <div className={styles.inputCheckboxContainer} key={index}>
-                <Checkbox></Checkbox>
+                <Checkbox
+                  onChange={(e) => {
+                    if (e.checked) {
+                      setSelectedCategoryIds((prevIds) => [
+                        ...prevIds,
+                        category.id,
+                      ]);
+                    } else {
+                      setSelectedCategoryIds((prevIds) =>
+                        prevIds.filter((id) => id !== category.id)
+                      );
+                    }
+                  }}
+                  checked={selectedCategoryIds.includes(category.id)}
+                ></Checkbox>
                 <label className={styles.labelCheckbox} for={category.name}>
                   {category.name}
                 </label>
@@ -250,7 +276,21 @@ const BodyForm = () => {
           <div className={styles.categoriesContainer}>
             {subCategories?.map((subCategory, index) => (
               <div className={styles.inputCheckboxContainer} key={index}>
-                <Checkbox></Checkbox>
+                <Checkbox
+                  onChange={(e) => {
+                    if (e.checked) {
+                      setSelectedSubCategoryIds((prevIds) => [
+                        ...prevIds,
+                        subCategory.id,
+                      ]);
+                    } else {
+                      setSelectedSubCategoryIds((prevIds) =>
+                        prevIds.filter((id) => id !== subCategory.id)
+                      );
+                    }
+                  }}
+                  checked={selectedSubCategoryIds.includes(subCategory.id)}
+                ></Checkbox>
                 <label className={styles.labelCheckbox} for={subCategory.name}>
                   {subCategory.name}
                 </label>
