@@ -10,19 +10,26 @@ import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { apiGetCategories } from "../service/apiGetCategories";
 import { apiGetSubCategories } from "../service/apiGetSubCategories";
+import { apiUploadImage } from "../service/apiUploadImage";
 
 const BodyForm = () => {
   const router = useRouter();
   const [image, setImage] = useState();
   const [fileName, setFileName] = useState("Upload logo");
+  const [file, setFile] = useState();
   const [companyName, setCompanyName] = useState("");
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
   const userId = useSelector((state) => state.user);
 
   const submit = async () => {
-    const result = await apiCreateCompany({ name: companyName, userId });
-    if (result?.status == 201) {
+    const imgUrl = await uploadImage();
+    const result = await apiCreateCompany({
+      name: companyName,
+      userId,
+      logo: imgUrl,
+    });
+    if (result?.status == 201 && imgUrl) {
       alert("Company created successfully");
       router.push("/dashboard");
     } else console.log(result);
@@ -33,6 +40,13 @@ const BodyForm = () => {
     const subCategories = await apiGetSubCategories();
     setCategories(categories?.data);
     setSubCategories(subCategories?.data);
+  };
+
+  const uploadImage = async () => {
+    const formData = new FormData();
+    formData.append("file", file);
+    const result = await apiUploadImage(formData);
+    return result;
   };
 
   useEffect(() => {
@@ -59,6 +73,7 @@ const BodyForm = () => {
                   file.name.substring(0, 10) +
                     (file.name.length > 10 ? "..." : "")
                 );
+                setFile(file);
               }
             }}
           />

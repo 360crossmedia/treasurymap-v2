@@ -7,7 +7,7 @@ export const apiCreateCompany = async (company) => {
   };
 
   return axios
-    .post(`${url}/api/v1/companies/`, company, { headers })
+    .post(`${url}/api/v1/companies/create`, company, { headers })
     .then((res) => res)
     .catch((error) => console.log(error));
 };
