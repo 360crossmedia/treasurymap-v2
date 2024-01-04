@@ -8,6 +8,7 @@ import { apiLogin } from "../service/apiLogin";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { setUser } from "../store/slices/user.slice";
+import { setIsLoading } from "../store/slices/isLoading.slice";
 
 const LoginCard = () => {
   const router = useRouter();
@@ -16,12 +17,17 @@ const LoginCard = () => {
   const [password, setPassword] = useState();
 
   const submit = async () => {
+    dispatch(setIsLoading(true));
     const data = await apiLogin({ email, password });
 
     if (data && data.status == 200) {
       dispatch(setUser(data.data.id));
+      dispatch(setIsLoading(false));
       router.push("/dashboard");
-    } else alert("Check your credentials");
+    } else {
+      dispatch(setIsLoading(false));
+      alert("Check your credentials");
+    }
   };
 
   return (
