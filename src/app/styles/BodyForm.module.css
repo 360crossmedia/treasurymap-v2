@@ -113,10 +113,6 @@
   align-items: center;
 }
 
-.inputCustom {
-  background: #fff !important;
-}
-
 .doubleInputsContainer {
   display: flex;
   gap: 24px;
@@ -124,6 +120,14 @@
 
 .inputContainer50 {
   width: 48.75%;
+}
+
+.multiSelect > div {
+  border-radius: 6px;
+  background: #f6fafe;
+  padding: 6px;
+  border: none;
+  padding: 16px 32px 16px 16px;
 }
 
 @media screen and (max-width: 1100px) {
