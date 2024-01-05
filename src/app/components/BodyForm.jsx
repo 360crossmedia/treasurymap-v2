@@ -29,19 +29,35 @@ const BodyForm = () => {
   const [answers, setAnswers] = useState([]);
   const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
   const [selectedSubCategoryIds, setSelectedSubCategoryIds] = useState([]);
+  const [companyDescription, setCompanyDescription] = useState("");
+  const [creationDate, setCreationDate] = useState("");
+  const [companyWebsite, setCompanyWebsite] = useState("");
+  const [turnover, setTurnover] = useState("");
+  const [employees, setEmployees] = useState("");
+  const [location, setLocation] = useState("");
+  const [productName, setProductName] = useState("");
+  const [productVersion, setProductVersion] = useState("");
   const userId = useSelector((state) => state.user);
 
   const submit = async () => {
     dispatch(setIsLoading(true));
-    const imgUrl = await uploadImage();
+    const logo = await uploadImage();
     const result = await apiCreateCompany({
       name: companyName,
-      userId,
-      logo: imgUrl,
       companyCategories: selectedCategoryIds,
       companySubcategories: selectedSubCategoryIds,
+      description: companyDescription,
+      userId,
+      logo,
+      creationDate,
+      turnover,
+      employees,
+      location,
+      companyWebsite,
+      productName,
+      productVersion,
     });
-    if (result?.status == 201 && imgUrl) {
+    if (result?.status == 201 && logo) {
       const answersResult = await apiUploadAnswers(result?.data?.id, answers);
       if (answersResult?.status == 201) {
         alert("Company created successfully");
@@ -142,6 +158,8 @@ const BodyForm = () => {
             name="description"
             id="description"
             rows="6"
+            value={companyDescription}
+            onChange={(e) => setCompanyDescription(e.target.value)}
           ></textarea>
         </div>
         <div className={styles.doubleInputsContainer}>
@@ -153,8 +171,10 @@ const BodyForm = () => {
             </label>
             <input
               className={styles.inputText}
-              placeholder="Enter registration code"
+              placeholder="2024"
               type="text"
+              value={creationDate}
+              onChange={(e) => setCreationDate(e.target.value)}
             />
           </div>
           <div
@@ -165,8 +185,10 @@ const BodyForm = () => {
             </label>
             <input
               className={styles.inputText}
-              placeholder="Enter Price"
+              placeholder="Enter Amount"
               type="text"
+              value={turnover}
+              onChange={(e) => setTurnover(e.target.value)}
             />
           </div>
         </div>
@@ -179,8 +201,10 @@ const BodyForm = () => {
             </label>
             <input
               className={styles.inputText}
-              placeholder="Enter registration code"
+              placeholder="Enter a number of employees"
               type="text"
+              value={employees}
+              onChange={(e) => setEmployees(e.target.value)}
             />
           </div>
           <div
@@ -191,8 +215,10 @@ const BodyForm = () => {
             </label>
             <input
               className={styles.inputText}
-              placeholder="Enter Price"
+              placeholder="USA"
               type="text"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
             />
           </div>
         </div>
@@ -203,7 +229,7 @@ const BodyForm = () => {
           <Form.Select
             bsPrefix={`form-select ${styles.inputText} ${styles.inputSelect}`}
           >
-            <option>Select type of media</option>
+            <option>Select any region</option>
             <option value="1">Europe</option>
             <option value="2">North America</option>
             <option value="3">South America</option>
@@ -221,7 +247,13 @@ const BodyForm = () => {
           <label className={styles.label} htmlFor="">
             Company website: <span className={styles.span}>*</span>
           </label>
-          <input className={styles.inputText} placeholder="URL" type="text" />
+          <input
+            className={styles.inputText}
+            placeholder="URL"
+            type="text"
+            value={companyWebsite}
+            onChange={(e) => setCompanyWebsite(e.target.value)}
+          />
         </div>
         <div className={styles.doubleInputsContainer}>
           <div
@@ -232,8 +264,10 @@ const BodyForm = () => {
             </label>
             <input
               className={styles.inputText}
-              placeholder="Enter registration code"
+              placeholder="Software"
               type="text"
+              value={productName}
+              onChange={(e) => setProductName(e.target.value)}
             />
           </div>
           <div
@@ -244,8 +278,10 @@ const BodyForm = () => {
             </label>
             <input
               className={styles.inputText}
-              placeholder="Enter Price"
+              placeholder="2.0.5"
               type="text"
+              value={productVersion}
+              onChange={(e) => setProductVersion(e.target.value)}
             />
           </div>
         </div>
