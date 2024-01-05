@@ -2,7 +2,6 @@
 import Image from "next/image";
 import styles from "../styles/BodyForm.module.css";
 import PhotoImg from "../assets/photoImg.svg";
-import Form from "react-bootstrap/Form";
 import { Checkbox } from "primereact/checkbox";
 import { useEffect, useState } from "react";
 import { apiCreateCompany } from "../service/apiCreateCompany";
@@ -15,6 +14,8 @@ import { setIsLoading } from "../store/slices/isLoading.slice";
 import { useDispatch } from "react-redux";
 import { apiGetAllQuestions } from "../service/apiGetAllQuestions";
 import { apiUploadAnswers } from "../service/apiUploadAnswers";
+import { apiGetAllCountries } from "../service/apiGetAllCountries";
+import MultiSelect from "./MultiSelect";
 
 const BodyForm = () => {
   const dispatch = useDispatch();
@@ -26,9 +27,11 @@ const BodyForm = () => {
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
   const [questions, setQuestions] = useState([]);
+  const [countries, setCountries] = useState([]);
   const [answers, setAnswers] = useState([]);
   const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
   const [selectedSubCategoryIds, setSelectedSubCategoryIds] = useState([]);
+  const [selectedCountriesIds, setSelectedCountriesIds] = useState([]);
   const [companyDescription, setCompanyDescription] = useState("");
   const [creationDate, setCreationDate] = useState("");
   const [companyWebsite, setCompanyWebsite] = useState("");
@@ -47,6 +50,7 @@ const BodyForm = () => {
       companyCategories: selectedCategoryIds,
       companySubcategories: selectedSubCategoryIds,
       description: companyDescription,
+      companyOffices: selectedCountriesIds,
       userId,
       logo,
       creationDate,
@@ -73,16 +77,15 @@ const BodyForm = () => {
     }
   };
 
-  const getCategoriesAndSubCategories = async () => {
+  const getAllComponentData = async () => {
     const categories = await apiGetCategories();
     const subCategories = await apiGetSubCategories();
+    const questions = await apiGetAllQuestions();
+    const countries = await apiGetAllCountries();
     setCategories(categories?.data);
     setSubCategories(subCategories?.data);
-  };
-
-  const getAllQuestions = async () => {
-    const questions = await apiGetAllQuestions();
     setQuestions(questions?.data);
+    setCountries(countries?.data);
   };
 
   const handleAnswerChange = (index, value) => {
@@ -99,8 +102,7 @@ const BodyForm = () => {
   };
 
   useEffect(() => {
-    getCategoriesAndSubCategories();
-    getAllQuestions();
+    getAllComponentData();
   }, []);
 
   return (
@@ -226,22 +228,11 @@ const BodyForm = () => {
           <label className={styles.label} htmlFor="">
             Active in <span className={styles.span}>*</span>
           </label>
-          <Form.Select
-            bsPrefix={`form-select ${styles.inputText} ${styles.inputSelect}`}
-          >
-            <option>Select any region</option>
-            <option value="1">Europe</option>
-            <option value="2">North America</option>
-            <option value="3">South America</option>
-            <option value="4">Eurasia</option>
-            <option value="5">Asia</option>
-            <option value="6">Oceania</option>
-            <option value="7">Caribbean</option>
-            <option value="8">Australia</option>
-            <option value="9">Africa</option>
-            <option value="10">Middle East</option>
-            <option value="11">Central America</option>
-          </Form.Select>
+          <MultiSelect
+            options={countries}
+            value={selectedCountriesIds}
+            set={setSelectedCountriesIds}
+          />
         </div>
         <div className={styles.inputContainer}>
           <label className={styles.label} htmlFor="">
