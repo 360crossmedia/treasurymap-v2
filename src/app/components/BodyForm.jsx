@@ -16,6 +16,8 @@ import { apiGetAllQuestions } from "../service/apiGetAllQuestions";
 import { apiUploadAnswers } from "../service/apiUploadAnswers";
 import { apiGetAllCountries } from "../service/apiGetAllCountries";
 import MultiSelect from "./MultiSelect";
+import { apiGetCompanyData } from "../service/apiGetCompanyData";
+import { apiGetCompanyAnswers } from "../service/apiGetCompanyAnswers";
 
 const BodyForm = () => {
   const dispatch = useDispatch();
@@ -41,6 +43,7 @@ const BodyForm = () => {
   const [productName, setProductName] = useState("");
   const [productVersion, setProductVersion] = useState("");
   const userId = useSelector((state) => state.user);
+  const companyId = useSelector((state) => state.companyId);
 
   const submit = async () => {
     dispatch(setIsLoading(true));
@@ -77,17 +80,6 @@ const BodyForm = () => {
     }
   };
 
-  const getAllComponentData = async () => {
-    const categories = await apiGetCategories();
-    const subCategories = await apiGetSubCategories();
-    const questions = await apiGetAllQuestions();
-    const countries = await apiGetAllCountries();
-    setCategories(categories?.data);
-    setSubCategories(subCategories?.data);
-    setQuestions(questions?.data);
-    setCountries(countries?.data);
-  };
-
   const handleAnswerChange = (index, value) => {
     const updatedAnswers = [...answers];
     updatedAnswers[index] = value;
@@ -101,8 +93,40 @@ const BodyForm = () => {
     return result;
   };
 
+  const getAllComponentData = async () => {
+    const categories = await apiGetCategories();
+    const subCategories = await apiGetSubCategories();
+    const questions = await apiGetAllQuestions();
+    const countries = await apiGetAllCountries();
+    setCategories(categories?.data);
+    setSubCategories(subCategories?.data);
+    setQuestions(questions?.data);
+    setCountries(countries?.data);
+  };
+
+  const getAllInputsData = async () => {
+    const companyData = await apiGetCompanyData(companyId);
+    const companyAnswers = await apiGetCompanyAnswers(companyId);
+    setCompanyName(companyData?.name);
+    setCompanyDescription(companyData?.description);
+    setCreationDate(companyData?.creationDate);
+    setTurnover(companyData?.turnover);
+    setEmployees(companyData?.employees);
+    setLocation(companyData?.location);
+    setSelectedCountriesIds(companyData?.companyOffices);
+    setCompanyWebsite(companyData?.companyWebsite);
+    setProductName(companyData?.productName);
+    setProductVersion(companyData?.productVersion);
+    setSelectedCategoryIds(companyData?.companyCategories);
+    setSelectedSubCategoryIds(companyData?.companySubcategories);
+    setImage(companyData?.logo);
+    setAnswers(companyAnswers);
+    console.log(companyAnswers);
+  };
+
   useEffect(() => {
     getAllComponentData();
+    if (companyId) getAllInputsData();
   }, []);
 
   return (
@@ -148,6 +172,7 @@ const BodyForm = () => {
             placeholder="Company LLC"
             type="text"
             onChange={(e) => setCompanyName(e.target.value)}
+            value={companyName}
           />
         </div>
         <div className={styles.inputContainer}>
