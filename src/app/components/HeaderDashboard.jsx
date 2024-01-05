@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import styles from "../styles/HeaderDashboard.module.css";
 import Form from "react-bootstrap/Form";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { apiGetCompaniesByOwner } from "../service/apiGetCompaniesByOwner";
 import { useRouter } from "next/navigation";
 import { apiDeleteCompanyById } from "../service/apiDeleteCompanyById";
+import { setCompanyId } from "../store/slices/companyToUpdate.slice";
 
 const HeaderDashboard = () => {
+  const dispatch = useDispatch();
   const router = useRouter();
   const userId = useSelector((state) => state.user);
   const [companies, setCompanies] = useState([]);
@@ -23,6 +25,7 @@ const HeaderDashboard = () => {
 
   const updateButton = () => {
     if (isSelectedAnyCompany) {
+      dispatch(setCompanyId(Number(isSelectedAnyCompany)));
       router.push(`/form`);
     } else alert("Please select any company");
   };
@@ -41,7 +44,11 @@ const HeaderDashboard = () => {
       <p className={styles.title}>Company Admin</p>
       <div className={styles.selectContainer}>
         <Form.Select
-          onChange={(e) => setIsSelectedAnyCompany(e.target.value)}
+          onChange={(e) =>
+            setIsSelectedAnyCompany(
+              e.target.value == "Select Company" ? false : e.target.value
+            )
+          }
           bsPrefix={`form-select ${styles.input} ${
             isSelectedAnyCompany ? styles.active : ""
           }`}
