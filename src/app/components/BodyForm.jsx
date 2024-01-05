@@ -13,6 +13,8 @@ import { apiGetSubCategories } from "../service/apiGetSubCategories";
 import { apiUploadImage } from "../service/apiUploadImage";
 import { setIsLoading } from "../store/slices/isLoading.slice";
 import { useDispatch } from "react-redux";
+import { apiGetAllQuestions } from "../service/apiGetAllQuestions";
+import { apiUploadAnswers } from "../service/apiUploadAnswers";
 
 const BodyForm = () => {
   const dispatch = useDispatch();
@@ -23,6 +25,8 @@ const BodyForm = () => {
   const [companyName, setCompanyName] = useState("");
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
+  const [questions, setQuestions] = useState([]);
+  const [answers, setAnswers] = useState([]);
   const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
   const [selectedSubCategoryIds, setSelectedSubCategoryIds] = useState([]);
   const userId = useSelector((state) => state.user);
@@ -38,9 +42,15 @@ const BodyForm = () => {
       companySubcategories: selectedSubCategoryIds,
     });
     if (result?.status == 201 && imgUrl) {
-      alert("Company created successfully");
-      router.push("/dashboard");
-      dispatch(setIsLoading(false));
+      const answersResult = await apiUploadAnswers(result?.data?.id, answers);
+      if (answersResult?.status == 201) {
+        alert("Company created successfully");
+        router.push("/dashboard");
+        dispatch(setIsLoading(false));
+      } else {
+        console.log(answersResult);
+        dispatch(setIsLoading(false));
+      }
     } else {
       console.log(result);
       dispatch(setIsLoading(false));
@@ -54,6 +64,17 @@ const BodyForm = () => {
     setSubCategories(subCategories?.data);
   };
 
+  const getAllQuestions = async () => {
+    const questions = await apiGetAllQuestions();
+    setQuestions(questions?.data);
+  };
+
+  const handleAnswerChange = (index, value) => {
+    const updatedAnswers = [...answers];
+    updatedAnswers[index] = value;
+    setAnswers(updatedAnswers);
+  };
+
   const uploadImage = async () => {
     const formData = new FormData();
     formData.append("file", file);
@@ -63,6 +84,7 @@ const BodyForm = () => {
 
   useEffect(() => {
     getCategoriesAndSubCategories();
+    getAllQuestions();
   }, []);
 
   return (
@@ -110,7 +132,6 @@ const BodyForm = () => {
             onChange={(e) => setCompanyName(e.target.value)}
           />
         </div>
-
         <div className={styles.inputContainer}>
           <label className={styles.label} htmlFor="description">
             Description <span className={styles.span}>*</span>
@@ -123,7 +144,6 @@ const BodyForm = () => {
             rows="6"
           ></textarea>
         </div>
-
         <div className={styles.doubleInputsContainer}>
           <div
             className={`${styles.inputContainer} ${styles.inputContainer50}`}
@@ -137,7 +157,6 @@ const BodyForm = () => {
               type="text"
             />
           </div>
-
           <div
             className={`${styles.inputContainer} ${styles.inputContainer50}`}
           >
@@ -151,7 +170,6 @@ const BodyForm = () => {
             />
           </div>
         </div>
-
         <div className={styles.doubleInputsContainer}>
           <div
             className={`${styles.inputContainer} ${styles.inputContainer50}`}
@@ -165,7 +183,6 @@ const BodyForm = () => {
               type="text"
             />
           </div>
-
           <div
             className={`${styles.inputContainer} ${styles.inputContainer50}`}
           >
@@ -179,7 +196,6 @@ const BodyForm = () => {
             />
           </div>
         </div>
-
         <div className={styles.inputContainer}>
           <label className={styles.label} htmlFor="">
             Active in <span className={styles.span}>*</span>
@@ -201,14 +217,12 @@ const BodyForm = () => {
             <option value="11">Central America</option>
           </Form.Select>
         </div>
-
         <div className={styles.inputContainer}>
           <label className={styles.label} htmlFor="">
             Company website: <span className={styles.span}>*</span>
           </label>
           <input className={styles.inputText} placeholder="URL" type="text" />
         </div>
-
         <div className={styles.doubleInputsContainer}>
           <div
             className={`${styles.inputContainer} ${styles.inputContainer50}`}
@@ -222,7 +236,6 @@ const BodyForm = () => {
               type="text"
             />
           </div>
-
           <div
             className={`${styles.inputContainer} ${styles.inputContainer50}`}
           >
@@ -298,45 +311,19 @@ const BodyForm = () => {
             ))}
           </div>
         </div>
-        <div className={styles.inputContainer}>
-          <label className={styles.label} htmlFor="">
-            Do you have any specific cooperation agreement with other IT vendors
-            for pitching?
-          </label>
-          <input className={styles.inputText} type="text" />
-        </div>
-
-        <div className={styles.inputContainer}>
-          <label className={styles.label} htmlFor="">
-            Bank connectivity (through which types of channel - please specify)
-            :
-          </label>
-          <input className={styles.inputText} type="text" />
-        </div>
-
-        <div className={styles.inputContainer}>
-          <label className={styles.label} htmlFor="">
-            Do you have any other specific functionalities:
-          </label>
-          <input className={styles.inputText} type="text" />
-        </div>
-
-        <div className={styles.inputContainer}>
-          <label className={styles.label} htmlFor="">
-            Do you have specific integration with Fintechs? (If YES please
-            specify which ones):
-          </label>
-          <input className={styles.inputText} type="text" />
-        </div>
-
-        <div className={styles.inputContainer}>
-          <label className={styles.label} htmlFor="">
-            Do you propose solutions or functionalities based on AI? (if YES
-            please specify):
-          </label>
-          <input className={styles.inputText} type="text" />
-        </div>
-
+        {questions?.map((question, index) => (
+          <div className={styles.inputContainer} key={index}>
+            <label className={styles.label} htmlFor="">
+              {question.body}
+            </label>
+            <input
+              className={styles.inputText}
+              type="text"
+              value={answers[index] || ""}
+              onChange={(e) => handleAnswerChange(index, e.target.value)}
+            />
+          </div>
+        ))}
         <div className={styles.buttonContainer}>
           <button onClick={() => submit()} className={styles.button}>
             Save information
