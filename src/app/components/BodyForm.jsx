@@ -29,7 +29,9 @@ const BodyForm = () => {
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
   const [questions, setQuestions] = useState([]);
-  const [countries, setCountries] = useState([]);
+  const [countries, setCountries] = useState([
+    { id: "Cargando", name: "Cargando..." },
+  ]);
   const [answers, setAnswers] = useState([]);
   const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
   const [selectedSubCategoryIds, setSelectedSubCategoryIds] = useState([]);
@@ -121,7 +123,6 @@ const BodyForm = () => {
     setSelectedSubCategoryIds(companyData?.companySubcategories);
     setImage(companyData?.logo);
     setAnswers(companyAnswers);
-    console.log(companyAnswers);
   };
 
   useEffect(() => {
