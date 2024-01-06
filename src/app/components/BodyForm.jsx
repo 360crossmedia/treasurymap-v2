@@ -18,11 +18,13 @@ import { apiGetAllCountries } from "../service/apiGetAllCountries";
 import MultiSelect from "./MultiSelect";
 import { apiGetCompanyData } from "../service/apiGetCompanyData";
 import { apiGetCompanyAnswers } from "../service/apiGetCompanyAnswers";
+import { apiUpdateCompany } from "../service/apiUpdateCompany";
+import { setCompanyId } from "../store/slices/companyToUpdate.slice";
 
 const BodyForm = () => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const [image, setImage] = useState();
+  const [image, setImage] = useState("");
   const [fileName, setFileName] = useState("Upload logo");
   const [file, setFile] = useState();
   const [companyName, setCompanyName] = useState("");
@@ -47,38 +49,69 @@ const BodyForm = () => {
   const userId = useSelector((state) => state.user);
   const companyId = useSelector((state) => state.companyId);
 
-  const submit = async () => {
+  const submit = async (e) => {
     dispatch(setIsLoading(true));
-    const logo = await uploadImage();
-    const result = await apiCreateCompany({
-      name: companyName,
-      companyCategories: selectedCategoryIds,
-      companySubcategories: selectedSubCategoryIds,
-      description: companyDescription,
-      companyOffices: selectedCountriesIds,
-      userId,
-      logo,
-      creationDate,
-      turnover,
-      employees,
-      location,
-      companyWebsite,
-      productName,
-      productVersion,
-    });
-    if (result?.status == 201 && logo) {
-      const answersResult = await apiUploadAnswers(result?.data?.id, answers);
-      if (answersResult?.status == 201) {
-        alert("Company created successfully");
-        router.push("/dashboard");
-        dispatch(setIsLoading(false));
+    e.preventDefault();
+    if (
+      selectedCategoryIds.length > 0 &&
+      selectedCountriesIds.length > 0 &&
+      selectedSubCategoryIds.length > 0
+    ) {
+      const logoCloudinary = image.includes("https://")
+        ? ""
+        : await uploadImage();
+      const logo = image.includes("https://") ? image : logoCloudinary;
+
+      const data = {
+        name: companyName,
+        companyCategories: selectedCategoryIds,
+        companySubcategories: selectedSubCategoryIds,
+        description: companyDescription,
+        companyOffices: selectedCountriesIds,
+        userId,
+        logo,
+        creationDate,
+        turnover,
+        employees,
+        location,
+        companyWebsite,
+        productName,
+        productVersion,
+      };
+      if (companyId) {
+        const result = await apiUpdateCompany(companyId, data);
+        if (result?.status == 200) {
+          alert("Company updated successfully");
+          dispatch(setCompanyId(false));
+          router.push("/dashboard");
+          dispatch(setIsLoading(false));
+        } else {
+          console.log(result);
+          dispatch(setIsLoading(false));
+        }
       } else {
-        console.log(answersResult);
-        dispatch(setIsLoading(false));
+        const result = await apiCreateCompany(data);
+        if (result?.status == 201 && logo) {
+          const answersResult = await apiUploadAnswers(
+            result?.data?.id,
+            answers
+          );
+          if (answersResult?.status == 201) {
+            alert("Company created successfully");
+            router.push("/dashboard");
+            dispatch(setIsLoading(false));
+          } else {
+            console.log(answersResult);
+            dispatch(setIsLoading(false));
+          }
+        } else {
+          console.log(result);
+          dispatch(setIsLoading(false));
+        }
       }
     } else {
-      console.log(result);
       dispatch(setIsLoading(false));
+      alert("Check missing required fields");
     }
   };
 
@@ -123,6 +156,7 @@ const BodyForm = () => {
     setSelectedSubCategoryIds(companyData?.companySubcategories);
     setImage(companyData?.logo);
     setAnswers(companyAnswers);
+    console.log(companyData);
   };
 
   useEffect(() => {
@@ -131,12 +165,13 @@ const BodyForm = () => {
   }, []);
 
   return (
-    <div className={styles.mainContainer}>
+    <form onSubmit={submit} className={styles.mainContainer}>
       <div className={styles.uploadPhotoContainer}>
         <div className={styles.card}>
           <input
             className={styles.inputFile}
             type="file"
+            {...(image ? {} : { required: true })}
             onChange={(e) => {
               const file = e.target.files[0];
               if (file) {
@@ -160,7 +195,12 @@ const BodyForm = () => {
             src={!image ? PhotoImg : image}
             alt=""
           />
-          <p>{fileName}</p>
+          <p>
+            {fileName}{" "}
+            {fileName == "Upload logo" && (
+              <span className={styles.span}>*</span>
+            )}
+          </p>
         </div>
       </div>
       <div className={styles.rightContainer}>
@@ -174,6 +214,7 @@ const BodyForm = () => {
             type="text"
             onChange={(e) => setCompanyName(e.target.value)}
             value={companyName}
+            required
           />
         </div>
         <div className={styles.inputContainer}>
@@ -188,6 +229,7 @@ const BodyForm = () => {
             rows="6"
             value={companyDescription}
             onChange={(e) => setCompanyDescription(e.target.value)}
+            required
           ></textarea>
         </div>
         <div className={styles.doubleInputsContainer}>
@@ -203,6 +245,7 @@ const BodyForm = () => {
               type="text"
               value={creationDate}
               onChange={(e) => setCreationDate(e.target.value)}
+              required
             />
           </div>
           <div
@@ -217,6 +260,7 @@ const BodyForm = () => {
               type="text"
               value={turnover}
               onChange={(e) => setTurnover(e.target.value)}
+              required
             />
           </div>
         </div>
@@ -233,6 +277,7 @@ const BodyForm = () => {
               type="text"
               value={employees}
               onChange={(e) => setEmployees(e.target.value)}
+              required
             />
           </div>
           <div
@@ -247,6 +292,7 @@ const BodyForm = () => {
               type="text"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
+              required
             />
           </div>
         </div>
@@ -270,6 +316,7 @@ const BodyForm = () => {
             type="text"
             value={companyWebsite}
             onChange={(e) => setCompanyWebsite(e.target.value)}
+            required
           />
         </div>
         <div className={styles.doubleInputsContainer}>
@@ -378,12 +425,10 @@ const BodyForm = () => {
           </div>
         ))}
         <div className={styles.buttonContainer}>
-          <button onClick={() => submit()} className={styles.button}>
-            Save information
-          </button>
+          <button className={styles.button}>Save information</button>
         </div>
       </div>
-    </div>
+    </form>
   );
 };
 
