@@ -10,7 +10,7 @@ import { apiGetAllArticlesByCompanyId } from "../service/apiGetAllArticlesByComp
 import { setIsLoading } from "../store/slices/isLoading.slice";
 import { useDispatch } from "react-redux";
 
-const MediaZone = () => {
+const MediaZone = ({ companyId }) => {
   const dispatch = useDispatch();
   const [countries, setCountries] = useState();
   const [videos, setVideos] = useState();
@@ -18,9 +18,9 @@ const MediaZone = () => {
 
   const getCompanyData = async () => {
     dispatch(setIsLoading(true));
-    const companyData = await apiGetCompanyData(1);
-    const videosArray = await apiGetAllVideosByCompanyId(1);
-    const articlesArray = await apiGetAllArticlesByCompanyId(1);
+    const companyData = await apiGetCompanyData(companyId);
+    const videosArray = await apiGetAllVideosByCompanyId(companyId);
+    const articlesArray = await apiGetAllArticlesByCompanyId(companyId);
     const companyOffices = [];
 
     for (let i = 0; i < companyData?.companyOffices.length; i++) {

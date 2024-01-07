@@ -9,7 +9,7 @@ import { apiGetCountryById } from "../service/apiGetCountryById";
 import { useDispatch } from "react-redux";
 import { setIsLoading } from "../store/slices/isLoading.slice";
 
-const Overview = () => {
+const Overview = ({ companyId }) => {
   const dispatch = useDispatch();
   const [company, setCompany] = useState();
   const [questions, setQuestions] = useState();
@@ -18,9 +18,9 @@ const Overview = () => {
 
   const getCompanyData = async () => {
     dispatch(setIsLoading(true));
-    const result = await apiGetCompanyData(2);
+    const result = await apiGetCompanyData(companyId);
     const questions = await apiGetAllQuestions();
-    const answers = await apiGetCompanyAnswers(2);
+    const answers = await apiGetCompanyAnswers(companyId);
     const companyOffices = [];
 
     setCompany(result);
