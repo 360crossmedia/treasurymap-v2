@@ -1,58 +1,83 @@
 "use client";
 import Image from "next/image";
 import styles from "../styles/HeaderCompanyPage.module.css";
-import companyImg from "../assets/companyImg.svg";
 import ArrowDown from "../assets/ArrowDown.svg";
+import companyImg from "../assets/companyImg.svg";
 import { useDispatch } from "react-redux";
 import { setIsOverview } from "../store/slices/isOverview.slice";
 import { useSelector } from "react-redux";
+import { apiGetCompanyData } from "../service/apiGetCompanyData";
+import { apiGetCategoryById } from "../service/apiGetCategoryById";
+import { useEffect, useState } from "react";
+import { apiGetCountryById } from "../service/apiGetCountryById";
 
 const HeaderCompanyPage = () => {
   const isOverview = useSelector((state) => state.isOverview);
   const dispatch = useDispatch();
+  const [company, setCompany] = useState();
+  const [categories, setCategories] = useState();
+  const [companyOffices, setCompanyOffices] = useState();
+
+  const getCompanyData = async () => {
+    const companyData = await apiGetCompanyData(15);
+    const companyCategories = [];
+    const companyOffices = [];
+    for (let i = 0; i < companyData?.companyCategories.length; i++) {
+      const result = await apiGetCategoryById(
+        companyData?.companyCategories[i]
+      );
+      companyCategories.push(result);
+    }
+    for (let i = 0; i < companyData?.companyOffices.length; i++) {
+      const result = await apiGetCountryById(companyData?.companyOffices[i]);
+      companyOffices.push(result);
+    }
+    setCompany(companyData);
+    setCategories(companyCategories);
+    setCompanyOffices(companyOffices);
+  };
+
+  useEffect(() => {
+    getCompanyData();
+  }, []);
 
   return (
     <>
       <div className={styles.mainContainer}>
         <div className={styles.imgContainer}>
-          <Image className={styles.companyImg} alt="" src={companyImg} />
+          <Image
+            width={167}
+            height={90}
+            alt=""
+            src={!company ? companyImg : company?.logo}
+          />
         </div>
         <div className={styles.categoryCardsContainer}>
-          <p className={styles.title}>Deloitte</p>
-          <div className={styles.categoryCard}>
-            <p className={styles.categoryP}>
-              Category:
-              <span className={styles.span}>
-                {" "}
-                FIDP - Financial Instrument Dealing
-              </span>
-            </p>
-          </div>
-          <div className={styles.categoryCard}>
-            <p className={styles.categoryP}>
-              Category:{" "}
-              <span className={styles.span}>
-                List types of financial instruments covered: OTC and regulated
-                markets
-              </span>
-            </p>
-          </div>
+          <p className={styles.title}>{company?.name}</p>
+          {categories?.map((category, index) => (
+            <div key={index} className={styles.categoryCard}>
+              <p className={styles.categoryP}>
+                Category:
+                <span className={styles.span}> {category?.name}</span>
+              </p>
+            </div>
+          ))}
           <div className={styles.cardsContainer}>
             <div className={`${styles.card} ${styles.cardLeft}`}>
               <p className={styles.cardP}>Creation</p>
-              <p className={styles.cardBigP}>2001</p>
+              <p className={styles.cardBigP}>{company?.creationDate}</p>
             </div>
             <div className={`${styles.card} ${styles.cardRight}`}>
               <p className={styles.cardP}>Number Of employes</p>
-              <p className={styles.cardBigP}>5600</p>
+              <p className={styles.cardBigP}>{company?.employees}</p>
             </div>
             <div className={`${styles.card} ${styles.cardLeft}`}>
               <p className={styles.cardP}>Turnover</p>
-              <p className={styles.cardBigP}>5600</p>
+              <p className={styles.cardBigP}>{company?.turnover}</p>
             </div>
             <div className={`${styles.card} ${styles.cardRight}`}>
               <p className={styles.cardP}>Headquarters</p>
-              <p className={styles.cardBigP}>Paris</p>
+              <p className={styles.cardBigP}>{company?.location}</p>
             </div>
           </div>
         </div>
@@ -78,21 +103,11 @@ const HeaderCompanyPage = () => {
         </div>
         <div className={styles.countriesContainer}>
           <p className={styles.boldP}>Active In</p>
-          <div className={styles.blueCard}>
-            <p className={styles.blueCardP}>France</p>
-          </div>
-          <div className={styles.blueCard}>
-            <p className={styles.blueCardP}>Belgium</p>
-          </div>
-          <div className={styles.blueCard}>
-            <p className={styles.blueCardP}>Spain</p>
-          </div>
-          <div className={styles.blueCard}>
-            <p className={styles.blueCardP}>Morocco</p>
-          </div>
-          <div className={styles.blueCard}>
-            <p className={styles.blueCardP}>Germany</p>
-          </div>
+          {companyOffices?.map((office, index) => (
+            <div key={index} className={styles.blueCard}>
+              <p className={styles.blueCardP}>{office?.name}</p>
+            </div>
+          ))}
           <Image src={ArrowDown} alt="" />
         </div>
       </div>
