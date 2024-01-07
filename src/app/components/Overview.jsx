@@ -6,17 +6,21 @@ import { apiGetCompanyData } from "../service/apiGetCompanyData";
 import { apiGetAllQuestions } from "../service/apiGetAllQuestions";
 import { apiGetCompanyAnswers } from "../service/apiGetCompanyAnswers";
 import { apiGetCountryById } from "../service/apiGetCountryById";
+import { useDispatch } from "react-redux";
+import { setIsLoading } from "../store/slices/isLoading.slice";
 
 const Overview = () => {
+  const dispatch = useDispatch();
   const [company, setCompany] = useState();
   const [questions, setQuestions] = useState();
   const [answers, setAnswers] = useState();
   const [countries, setCountries] = useState();
 
   const getCompanyData = async () => {
-    const result = await apiGetCompanyData(15);
+    dispatch(setIsLoading(true));
+    const result = await apiGetCompanyData(2);
     const questions = await apiGetAllQuestions();
-    const answers = await apiGetCompanyAnswers(15);
+    const answers = await apiGetCompanyAnswers(2);
     const companyOffices = [];
 
     setCompany(result);
@@ -29,6 +33,7 @@ const Overview = () => {
     }
 
     setCountries(companyOffices);
+    dispatch(setIsLoading(false));
   };
 
   useEffect(() => {
