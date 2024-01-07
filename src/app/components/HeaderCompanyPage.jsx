@@ -2,7 +2,7 @@
 import Image from "next/image";
 import styles from "../styles/HeaderCompanyPage.module.css";
 import ArrowDown from "../assets/ArrowDown.svg";
-import companyImg from "../assets/companyImg.svg";
+import companyImg from "../assets/placeholderimg.jpg";
 import { useDispatch } from "react-redux";
 import { setIsOverview } from "../store/slices/isOverview.slice";
 import { useSelector } from "react-redux";
@@ -52,7 +52,7 @@ const HeaderCompanyPage = ({ companyId }) => {
             width={167}
             height={90}
             alt=""
-            src={!company ? companyImg : company?.logo}
+            src={!company?.logo ? companyImg : company?.logo}
           />
         </div>
         <div className={styles.categoryCardsContainer}>
