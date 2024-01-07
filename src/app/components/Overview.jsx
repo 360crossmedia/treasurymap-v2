@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import styles from "../styles/Overview.module.css";
 import Image from "next/image";
-import companyImg from "../assets/companyImg.svg";
+import companyImg from "../assets/placeholderimg.jpg";
 import { apiGetCompanyData } from "../service/apiGetCompanyData";
 import { apiGetAllQuestions } from "../service/apiGetAllQuestions";
 import { apiGetCompanyAnswers } from "../service/apiGetCompanyAnswers";
@@ -77,7 +77,7 @@ const Overview = ({ companyId }) => {
           width={337.611}
           height={181.946}
           className={styles.companyImg}
-          src={!company ? companyImg : company?.logo}
+          src={!company?.logo ? companyImg : company?.logo}
           alt=""
         />
       </div>
