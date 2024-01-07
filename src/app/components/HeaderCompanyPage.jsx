@@ -10,6 +10,7 @@ import { apiGetCompanyData } from "../service/apiGetCompanyData";
 import { apiGetCategoryById } from "../service/apiGetCategoryById";
 import { useEffect, useState } from "react";
 import { apiGetCountryById } from "../service/apiGetCountryById";
+import { setIsLoading } from "../store/slices/isLoading.slice";
 
 const HeaderCompanyPage = () => {
   const isOverview = useSelector((state) => state.isOverview);
@@ -19,7 +20,8 @@ const HeaderCompanyPage = () => {
   const [companyOffices, setCompanyOffices] = useState();
 
   const getCompanyData = async () => {
-    const companyData = await apiGetCompanyData(15);
+    dispatch(setIsLoading(true));
+    const companyData = await apiGetCompanyData(1);
     const companyCategories = [];
     const companyOffices = [];
     for (let i = 0; i < companyData?.companyCategories.length; i++) {
@@ -35,6 +37,7 @@ const HeaderCompanyPage = () => {
     setCompany(companyData);
     setCategories(companyCategories);
     setCompanyOffices(companyOffices);
+    dispatch(setIsLoading(false));
   };
 
   useEffect(() => {
