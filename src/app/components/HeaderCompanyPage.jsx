@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { apiGetCountryById } from "../service/apiGetCountryById";
 import { setIsLoading } from "../store/slices/isLoading.slice";
 
-const HeaderCompanyPage = () => {
+const HeaderCompanyPage = ({ companyId }) => {
   const isOverview = useSelector((state) => state.isOverview);
   const dispatch = useDispatch();
   const [company, setCompany] = useState();
@@ -21,7 +21,7 @@ const HeaderCompanyPage = () => {
 
   const getCompanyData = async () => {
     dispatch(setIsLoading(true));
-    const companyData = await apiGetCompanyData(1);
+    const companyData = await apiGetCompanyData(companyId);
     const companyCategories = [];
     const companyOffices = [];
     for (let i = 0; i < companyData?.companyCategories.length; i++) {
