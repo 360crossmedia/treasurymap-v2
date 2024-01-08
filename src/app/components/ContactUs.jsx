@@ -38,7 +38,7 @@ const ContactUs = () => {
                 alt=""
               />
             </div>
-            <p className={styles.linksP}>Email</p>
+            <p className={styles.linksP}>francois@simplytreasury.com</p>
           </div>
           <div className={styles.links}>
             <div className={styles.grayCircle}>
@@ -48,16 +48,13 @@ const ContactUs = () => {
                 alt=""
               />
             </div>
-            <p className={styles.linksP}>Address</p>
+            <p className={styles.linksP}>1 rue de Chiny, L-1334 Luxembourg</p>
           </div>
         </div>
       </div>
       <div className={styles.card}>
         <div>
           <p className={styles.cardTitle}>Contact Us</p>
-          <p className={styles.cardDescription}>
-            Figma ipsum component variant main layer.
-          </p>
         </div>
         <div className={styles.inputContainer}>
           <Image className={styles.icon} src={contactUserIcon} alt="" />
