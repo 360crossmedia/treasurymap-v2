@@ -156,7 +156,6 @@ const BodyForm = () => {
     setSelectedSubCategoryIds(companyData?.companySubcategories);
     setImage(companyData?.logo);
     setAnswers(companyAnswers);
-    console.log(companyData);
   };
 
   useEffect(() => {

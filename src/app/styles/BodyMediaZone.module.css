@@ -71,4 +71,7 @@
   .deleteButton {
     width: 160px;
   }
+  .videosList {
+    min-width: 300px;
+  }
 }

@@ -44,11 +44,18 @@ const HeaderDashboard = () => {
       <p className={styles.title}>Company Admin</p>
       <div className={styles.selectContainer}>
         <Form.Select
-          onChange={(e) =>
+          onChange={(e) => {
             setIsSelectedAnyCompany(
               e.target.value == "Select Company" ? false : e.target.value
-            )
-          }
+            );
+            dispatch(
+              setCompanyId(
+                e.target.value == "Select Company"
+                  ? false
+                  : Number(e.target.value)
+              )
+            );
+          }}
           bsPrefix={`form-select ${styles.input} ${
             isSelectedAnyCompany ? styles.active : ""
           }`}

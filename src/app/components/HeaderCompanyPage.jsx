@@ -11,18 +11,21 @@ import { apiGetCategoryById } from "../service/apiGetCategoryById";
 import { useEffect, useState } from "react";
 import { apiGetCountryById } from "../service/apiGetCountryById";
 import { setIsLoading } from "../store/slices/isLoading.slice";
+import { apiGetSubCategoryById } from "../service/apiGetSubCategoryById";
 
 const HeaderCompanyPage = ({ companyId }) => {
   const isOverview = useSelector((state) => state.isOverview);
   const dispatch = useDispatch();
   const [company, setCompany] = useState();
   const [categories, setCategories] = useState();
+  const [subCategories, setSubCategories] = useState();
   const [companyOffices, setCompanyOffices] = useState();
 
   const getCompanyData = async () => {
     dispatch(setIsLoading(true));
     const companyData = await apiGetCompanyData(companyId);
     const companyCategories = [];
+    const companySubCategories = [];
     const companyOffices = [];
     for (let i = 0; i < companyData?.companyCategories.length; i++) {
       const result = await apiGetCategoryById(
@@ -30,12 +33,20 @@ const HeaderCompanyPage = ({ companyId }) => {
       );
       companyCategories.push(result);
     }
+    for (let i = 0; i < companyData?.companySubcategories.length; i++) {
+      const result = await apiGetSubCategoryById(
+        companyData?.companySubcategories[i]
+      );
+      companyData?.companyCategories[i];
+      companySubCategories.push(result);
+    }
     for (let i = 0; i < companyData?.companyOffices.length; i++) {
       const result = await apiGetCountryById(companyData?.companyOffices[i]);
       companyOffices.push(result);
     }
     setCompany(companyData);
     setCategories(companyCategories);
+    setSubCategories(companySubCategories);
     setCompanyOffices(companyOffices);
     dispatch(setIsLoading(false));
   };
@@ -62,6 +73,14 @@ const HeaderCompanyPage = ({ companyId }) => {
               <p className={styles.categoryP}>
                 Category:
                 <span className={styles.span}> {category?.name}</span>
+              </p>
+            </div>
+          ))}
+          {subCategories?.map((subCategory, index) => (
+            <div key={index} className={styles.categoryCard}>
+              <p className={styles.categoryP}>
+                Sub-Category:
+                <span className={styles.span}> {subCategory?.name}</span>
               </p>
             </div>
           ))}
