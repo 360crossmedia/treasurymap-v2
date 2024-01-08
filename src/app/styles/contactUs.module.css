@@ -156,6 +156,23 @@
   width: 25px;
 }
 
+
+/* image postion */
+
+.featuredImage {
+  float: left;
+  margin: 10px;
+  width: 50%;
+}
+
+.description {
+  text-align: justify;
+}
+
+
+
+
+
 @media screen and (max-width: 1000px) {
   .cardContainer {
     flex-direction: column;
