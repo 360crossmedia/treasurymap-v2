@@ -3,6 +3,7 @@ import isOverviewSlice from "./slices/isOverview.slice";
 import userSlice from "./slices/user.slice";
 import isLoadingSlice from "./slices/isLoading.slice";
 import companyToUpdateSlice from "./slices/companyToUpdate.slice";
+import showSlice from "./slices/show.slice";
 
 export default configureStore({
   reducer: {
@@ -10,5 +11,6 @@ export default configureStore({
     user: userSlice,
     isLoading: isLoadingSlice,
     companyId: companyToUpdateSlice,
+    show: showSlice,
   },
 });
