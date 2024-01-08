@@ -370,7 +370,7 @@ const TreasuryMap = () => {
           if( (1 + index + sumaID[category]) == 68){
             return (
               <div key={index}>
-                  <div className="">
+                  <div className="integrated-logo">
                     <img
                       src={findLogoUrl(category, index + 1)}
                       alt="Logo"
