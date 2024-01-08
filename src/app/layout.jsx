@@ -7,6 +7,7 @@ import "primereact/resources/themes/lara-light-cyan/theme.css";
 import LoadingLogic from "./components/LoadingLogic";
 import LoadingScreen from "./components/LoadingScreen";
 
+ 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
