@@ -1,21 +1,40 @@
+import { useSelector, useDispatch } from "react-redux";
 import React from "react";
 import styles from "../styles/HeaderDashboard.module.css";
 import styles2 from "../styles/HeaderMediaZone.module.css";
 import Form from "react-bootstrap/Form";
+import { setShow } from "../store/slices/show.slice";
+import { useRouter } from "next/navigation";
 
 const HeaderMediaZone = () => {
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const show = useSelector((state) => state.show);
+
+  const addNew = () => {
+    if (show && show != "Select type of media") {
+      show == "videos"
+        ? router.push("/mediaZone/video")
+        : router.push("/mediaZone/article");
+    } else alert("Please select any type of media");
+  };
+
   return (
     <div className={styles.mainContainer}>
       <p className={styles.title}>Media Zone</p>
       <div className={`${styles.selectContainer} ${styles2.selectContainer}`}>
-        <Form.Select bsPrefix={`form-select ${styles.input}`}>
+        <Form.Select
+          onChange={(e) => dispatch(setShow(e.target.value))}
+          bsPrefix={`form-select ${styles.input}`}
+        >
           <option>Select type of media</option>
-          <option value="1">Media 1</option>
-          <option value="2">Media 2</option>
-          <option value="3">Media 3</option>
+          <option value="videos">Videos</option>
+          <option value="articles">Articles</option>
         </Form.Select>
         <div className={styles.buttonsContainer}>
-          <button className={styles.updateButton}>Add New</button>
+          <button onClick={addNew} className={styles.updateButton}>
+            Add New
+          </button>
         </div>
       </div>
     </div>
