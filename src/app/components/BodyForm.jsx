@@ -49,6 +49,12 @@ const BodyForm = () => {
   const [keywords, setKeywords] = useState([]);
   const userId = useSelector((state) => state.user);
   const companyId = useSelector((state) => state.companyId);
+  let backUpUserId;
+  let backUpCompanyId;
+  if (typeof window !== "undefined") {
+    backUpUserId = localStorage.getItem("userId");
+    backUpCompanyId = localStorage.getItem("companyId");
+  }
 
   const submit = async (e) => {
     dispatch(setIsLoading(true));
@@ -69,7 +75,7 @@ const BodyForm = () => {
         companySubcategories: selectedSubCategoryIds,
         description: companyDescription,
         companyOffices: selectedCountriesIds,
-        userId,
+        userId: !userId ? backUpUserId : userId,
         logo,
         creationDate,
         turnover,
@@ -78,13 +84,14 @@ const BodyForm = () => {
         companyWebsite,
         productName,
         productVersion,
-        "keywords": [companyName,...keywords]
+        keywords: [companyName, ...keywords],
       };
 
-      
-
       if (companyId) {
-        const result = await apiUpdateCompany(companyId, data);
+        const result = await apiUpdateCompany(
+          !companyId ? backUpCompanyId : companyId,
+          data
+        );
         if (result?.status == 200) {
           alert("Company updated successfully");
           dispatch(setCompanyId(false));
@@ -145,8 +152,12 @@ const BodyForm = () => {
   };
 
   const getAllInputsData = async () => {
-    const companyData = await apiGetCompanyData(companyId);
-    const companyAnswers = await apiGetCompanyAnswers(companyId);
+    const companyData = await apiGetCompanyData(
+      !companyId ? backUpCompanyId : companyId
+    );
+    const companyAnswers = await apiGetCompanyAnswers(
+      !companyId ? backUpCompanyId : companyId
+    );
     setCompanyName(companyData?.name);
     setCompanyDescription(companyData?.description);
     setCreationDate(companyData?.creationDate);
@@ -161,23 +172,22 @@ const BodyForm = () => {
     setSelectedSubCategoryIds(companyData?.companySubcategories);
     setImage(companyData?.logo);
     setAnswers(companyAnswers);
-
-    let inputKeywords = companyData?.keywords
-    let toSetKeyword = inputKeywords.filter(item => item !== companyData?.name);
-    setKeywords(toSetKeyword)
-
+    let inputKeywords = companyData?.keywords;
+    let toSetKeyword = inputKeywords.filter(
+      (item) => item !== companyData?.name
+    );
+    setKeywords(toSetKeyword);
   };
 
   useEffect(() => {
     getAllComponentData();
-    if (companyId) getAllInputsData();
+    if (!companyId ? backUpCompanyId : companyId) getAllInputsData();
   }, []);
 
   const convertKeywords = (keywords) => {
-    let keyArray = keywords.split(',');
-    setKeywords( keyArray )
-  }
-
+    let keyArray = keywords.split(",");
+    setKeywords(keyArray);
+  };
 
   return (
     <form onSubmit={submit} className={styles.mainContainer}>
@@ -442,7 +452,7 @@ const BodyForm = () => {
 
         <div className={styles.inputContainer}>
           <label className={styles.label} htmlFor="">
-            Insert keywords related to the company (separated by commas): 
+            Insert keywords related to the company (separated by commas):
           </label>
           <input
             className={styles.inputText}
@@ -450,7 +460,7 @@ const BodyForm = () => {
             type="text"
             value={keywords}
             onChange={(e) => convertKeywords(e.target.value)}
-          />  
+          />
         </div>
 
         <div className={styles.buttonContainer}>
