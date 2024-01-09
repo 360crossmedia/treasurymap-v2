@@ -23,6 +23,7 @@
   padding: 0 20px;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 15px;
 }
 
 .headerList {
@@ -43,6 +44,7 @@
 .videoP {
   color: #8d9396;
   font-size: 18px;
+  margin: 0;
 }
 
 .mainContainer {
@@ -51,6 +53,12 @@
 
 .middle {
   margin-bottom: 27px;
+}
+
+.checkboxContainer {
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
 @media screen and (max-width: 1100px) {

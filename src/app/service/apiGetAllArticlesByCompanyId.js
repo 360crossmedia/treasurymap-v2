@@ -4,10 +4,8 @@ import { url } from "./url";
 export const apiGetAllArticlesByCompanyId = async (id) => {
   try {
     const response = await axios.get(`${url}/api/v1/articles/all/${id}`);
-    console.log(response);
     return response.data;
   } catch (error) {
     console.error("Error:", error);
-    throw error;
   }
 };
