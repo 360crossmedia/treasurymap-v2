@@ -9,9 +9,13 @@ import { RadioButton } from "primereact/radiobutton";
 import { apiDeleteArticleById } from "../service/apiDeleteArticleById";
 import { apiDeleteVideoById } from "../service/apiDeleteVideoById";
 import { setIsLoading } from "../store/slices/isLoading.slice";
+import { useRouter } from "next/navigation";
+import { setArticleId } from "../store/slices/articleId.slice";
+import { setVideoId } from "../store/slices/videoId.slice";
 
 const BodyMediaZone = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const companyId = useSelector((state) => state.companyId);
   const show = useSelector((state) => state.show);
   const [articleSelected, setArticleSelected] = useState(null);
@@ -31,27 +35,62 @@ const BodyMediaZone = () => {
   const deleteItem = async () => {
     dispatch(setIsLoading(true));
     if (show == "articles") {
-      const result = await apiDeleteArticleById(articleSelected);
-      if (result?.status == 200) {
-        alert("Article deleted successfully");
-        getCompanyMediaData();
-        dispatch(setIsLoading(false));
+      if (articleSelected) {
+        const result = await apiDeleteArticleById(articleSelected);
+        if (result?.status == 200) {
+          alert("Article deleted successfully");
+          getCompanyMediaData();
+          dispatch(setIsLoading(false));
+        } else {
+          console.log(result);
+          dispatch(setIsLoading(false));
+        }
       } else {
-        console.log(result);
+        alert("Select an article to delete");
         dispatch(setIsLoading(false));
       }
     } else if (show == "videos") {
-      const result = await apiDeleteVideoById(videoSelected);
-      if (result?.status == 200) {
-        alert("Video deleted successfully");
-        getCompanyMediaData();
-        dispatch(setIsLoading(false));
+      if (videoSelected) {
+        const result = await apiDeleteVideoById(videoSelected);
+        if (result?.status == 200) {
+          alert("Video deleted successfully");
+          getCompanyMediaData();
+          dispatch(setIsLoading(false));
+        } else {
+          console.log(result);
+          dispatch(setIsLoading(false));
+        }
       } else {
-        console.log(result);
+        alert("Select a video to delete");
         dispatch(setIsLoading(false));
       }
     } else {
       dispatch(setIsLoading(false));
+      alert("Select any type of media");
+    }
+  };
+
+  const updateItem = async () => {
+    dispatch(setIsLoading(true));
+    if (show == "articles") {
+      if (articleSelected) {
+        dispatch(setArticleId(articleSelected));
+        router.push("/mediaZone/article");
+        dispatch(setIsLoading(false));
+      } else {
+        alert("Select an article to update");
+        dispatch(setIsLoading(false));
+      }
+    } else if (show == "videos") {
+      if (videoSelected) {
+        dispatch(setVideoId(videoSelected));
+        router.push("/mediaZone/video");
+        dispatch(setIsLoading(false));
+      } else {
+        alert("Select a video to update");
+        dispatch(setIsLoading(false));
+      }
+    } else {
       alert("Select any type of media");
     }
   };
@@ -63,7 +102,10 @@ const BodyMediaZone = () => {
   return (
     <div className={`${styles.mainContainer} ${styles2.mainContainer}`}>
       <div className={styles2.buttonsContainer}>
-        <button className={`${styles.mediaZoneButton} ${styles2.updateButton}`}>
+        <button
+          onClick={updateItem}
+          className={`${styles.mediaZoneButton} ${styles2.updateButton}`}
+        >
           Update
         </button>
         <button onClick={deleteItem} className={styles2.deleteButton}>
