@@ -1790,6 +1790,26 @@ div.category-title.selected {
   overflow: auto;
 }
 
+
+.div-search-input{
+  display: flex;
+  align-items: center;
+  width: 160px;
+  margin-bottom: 27px;
+  box-shadow: 0 0 0px 1px #bfbfbf;
+  border-radius: 4px;
+}
+
+.input-placeholder{
+  width: 160px;
+}
+
+.input-placeholder::placeholder {
+  color: #cdcdcd;
+  /* Your desired placeholder color */
+}
+
+
 .filters-selection-list div {
   padding: 4px 10px;
   text-wrap: nowrap;
