@@ -366,19 +366,36 @@ const TreasuryMap = () => {
         
         Array.from({ length: logoCount }).map((_, index) => {
         
-          
-         return (    
-            <div key={index}>
-              <a href={`https://treasurymap.vercel.app/companyPage/${1 + index + sumaID[category]}`} >
-                <div className="category-logo-wrapper">
-                  <img
-                    src={findLogoUrl(category, index + 1)}
-                    alt="Logo"
-                  />
+          //IF COMO SOLUCION MOMENTANEA PARA QUITAR EL CLICKABLE DEL INTERFACED
+          if( (1 + index + sumaID[category]) == 68){
+            return (
+              <div key={index}>
+                  <div className="integrated-logo">
+                    <img
+                      src={findLogoUrl(category, index + 1)}
+                      alt="Logo"
+                      style={{cursor: "default"}}
+                    />
+                  </div>
+              </div>
+            )
+          } else{
+
+            return (    
+                <div key={index}>
+                  <a href={`https://treasurymap.vercel.app/companyPage/${ 1 + index + sumaID[category]}`} >
+                    <div className="category-logo-wrapper">
+                      <img
+                        src={findLogoUrl(category, index + 1)}
+                        alt="Logo"
+                      />
+                    </div>
+                  </a>
                 </div>
-              </a>
-            </div>
-          )
+              )
+          }
+
+
 
          })
       

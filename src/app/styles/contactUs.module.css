@@ -110,6 +110,7 @@
   background: linear-gradient(90deg, #0d4e98 2.01%, #42a6be 98.92%);
   min-height: 91px;
   align-items: center;
+  font-size: small;
 }
 
 .links {
@@ -156,6 +157,23 @@
   width: 25px;
 }
 
+
+/* image postion */
+
+.featuredImage {
+  float: left;
+  margin: 10px;
+  width: 50%;
+}
+
+.description {
+  text-align: justify;
+}
+
+
+
+
+
 @media screen and (max-width: 1000px) {
   .cardContainer {
     flex-direction: column;
@@ -182,6 +200,7 @@
     min-height: 46.796px;
     padding: 14px 0;
     border-radius: initial;
+    flex-wrap: wrap;
   }
   .linksP {
     font-size: 12px;
