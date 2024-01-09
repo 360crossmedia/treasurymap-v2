@@ -173,7 +173,7 @@ const BodyForm = () => {
     setImage(companyData?.logo);
     setAnswers(companyAnswers);
     let inputKeywords = companyData?.keywords;
-    let toSetKeyword = inputKeywords.filter(
+    let toSetKeyword = inputKeywords?.filter(
       (item) => item !== companyData?.name
     );
     setKeywords(toSetKeyword);
