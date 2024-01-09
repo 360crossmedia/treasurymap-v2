@@ -11,6 +11,10 @@ const HeaderDashboard = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const userId = useSelector((state) => state.user);
+  let backUpUserId;
+  if (typeof window !== "undefined") {
+    backUpUserId = localStorage.getItem("userId");
+  }
   const [companies, setCompanies] = useState([]);
   const [isSelectedAnyCompany, setIsSelectedAnyCompany] = useState(false);
 
@@ -19,13 +23,16 @@ const HeaderDashboard = () => {
   }, []);
 
   const getCompanies = async () => {
-    const companies = await apiGetCompaniesByOwner(userId);
+    const companies = await apiGetCompaniesByOwner(
+      userId == 0 ? backUpUserId : userId
+    );
     setCompanies(companies?.data);
   };
 
   const updateButton = () => {
     if (isSelectedAnyCompany) {
       dispatch(setCompanyId(Number(isSelectedAnyCompany)));
+      localStorage.setItem("companyId", Number(isSelectedAnyCompany));
       router.push(`/form`);
     } else alert("Please select any company");
   };
