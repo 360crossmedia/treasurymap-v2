@@ -33,7 +33,7 @@ const Navbar = ({ buttonLabel }) => {
             isMenuOpen ? styles.navbarLinksMobile : ""
           }`}
         >
-          <a className={styles.navbarA} href="/">
+          <a className={styles.navbarA} href="/signup">
             Be on the map
           </a>
           <a className={styles.navbarA} href="/contactUs">
@@ -44,7 +44,7 @@ const Navbar = ({ buttonLabel }) => {
       <div className={styles.navbarRight}>
         <button
           onClick={() =>
-            buttonLabel == "Sign up"
+            buttonLabel == "Log In"
               ? router.push("/signup")
               : router.push("/login")
           }
