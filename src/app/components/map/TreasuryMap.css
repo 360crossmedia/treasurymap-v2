@@ -1838,10 +1838,11 @@ div.category-title.selected {
 .current-filters-list-item {
   padding: 2px 10px;
   border: 1px solid #afafaf;
-  color: #333;
+  color: #ffffff;
   border-radius: 20px;
   cursor: pointer;
   position: relative;
+  background-color: #2677AA;
 }
 
 .current-filters-list-item div {
