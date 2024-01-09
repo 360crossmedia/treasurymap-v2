@@ -22,6 +22,7 @@ const LoginCard = () => {
 
     if (data && data.status == 200) {
       dispatch(setUser(data.data.id));
+      localStorage.setItem("userId", data.data.id);
       dispatch(setIsLoading(false));
       router.push("/dashboard");
     } else {
