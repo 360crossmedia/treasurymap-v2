@@ -12,7 +12,7 @@ const Layout = () => {
       style={{ backgroundPosition: "bottom", paddingTop: 0 }}
     >
       <div className={styles.mainContainerMap}>
-        <Navbar buttonLabel={"Sign up"} />
+        <Navbar buttonLabel={"login"} />
       </div>
 
         <TreasuryMap/>
