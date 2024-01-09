@@ -44,7 +44,7 @@ const Navbar = ({ buttonLabel }) => {
       <div className={styles.navbarRight}>
         <button
           onClick={() =>
-            buttonLabel == "Log In"
+            buttonLabel == "Sign up"
               ? router.push("/signup")
               : router.push("/login")
           }
