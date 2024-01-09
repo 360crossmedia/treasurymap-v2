@@ -2,42 +2,51 @@
 import { useState } from "react";
 import { apiCreateVideo } from "../service/apiCreateVideo";
 import styles from "../styles/BodyArticle.module.css";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { apiCreateArticle } from "../service/apiCreateArticle";
 import { useRouter } from "next/navigation";
+import { setIsLoading } from "../store/slices/isLoading.slice";
 
 const BodyArticle = ({ isArticle }) => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [title, setTitle] = useState();
   const [body, setBody] = useState();
   const [url, setUrl] = useState();
   const companyId = useSelector((state) => state.companyId);
 
   const create = async () => {
+    dispatch(setIsLoading(true));
     event.preventDefault();
     if (isArticle) {
       if (!title || !body) {
+        dispatch(setIsLoading(false));
         alert("Complete required fields");
       } else {
-        try {
-          const result = await apiCreateArticle(companyId, { title, body });
-          if (result.status == 201) {
-            alert("Article created succesfully");
-            router.push("/mediaZone");
-          }
-        } catch (error) {
-          console.log(error);
+        const result = await apiCreateArticle(companyId, { title, body });
+        if (result.status == 201) {
+          dispatch(setIsLoading(false));
+          alert("Article created succesfully");
+          router.push("/mediaZone");
+        } else {
+          console.log(result);
+          dispatch(setIsLoading(false));
         }
       }
     } else {
       if (!title || !url) {
+        dispatch(setIsLoading(false));
         alert("Complete required fields");
       } else {
         const result = await apiCreateVideo(companyId, { title, url });
         if (result.status == 201) {
+          dispatch(setIsLoading(false));
           alert("Video created succesfully");
           router.push("/mediaZone");
-        } else console.log(result);
+        } else {
+          console.log(result);
+          dispatch(setIsLoading(false));
+        }
       }
     }
   };
