@@ -6,6 +6,7 @@ import { apiGetCompaniesByOwner } from "../service/apiGetCompaniesByOwner";
 import { useRouter } from "next/navigation";
 import { apiDeleteCompanyById } from "../service/apiDeleteCompanyById";
 import { setCompanyId } from "../store/slices/companyToUpdate.slice";
+import { apiGetAllCompanies } from "../service/apiGetAllCompanies";
 
 const HeaderDashboard = () => {
   const dispatch = useDispatch();
@@ -23,10 +24,15 @@ const HeaderDashboard = () => {
   }, []);
 
   const getCompanies = async () => {
-    const companies = await apiGetCompaniesByOwner(
-      userId == 0 ? backUpUserId : userId
-    );
-    setCompanies(companies?.data);
+    if (userId == 1 || backUpUserId == 1) {
+      const companies = await apiGetAllCompanies();
+      setCompanies(companies);
+    } else {
+      const companies = await apiGetCompaniesByOwner(
+        userId == 0 ? backUpUserId : userId
+      );
+      setCompanies(companies);
+    }
   };
 
   const updateButton = () => {
