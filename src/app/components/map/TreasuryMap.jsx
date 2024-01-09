@@ -69,6 +69,21 @@ const TreasuryMap = () => {
   const [activeinData, setActiveinData ] = useState([]) ; 
 
 
+  // ? LOGICA DE LA BARRA DE BUSQUEDA ----------------------
+  
+  const [searchTerm, setSearchTerm] = useState('');
+  const [result, setResult] = useState([]);  
+
+  const handleSearch = () => {
+    // const searchResult = data
+    //   .filter(item => item.keywords.includes(searchTerm.toLowerCase()))
+    //   .map(item => item.id);
+    // setResult(searchResult);
+  };
+
+  // ? LOGICA DE LA BARRA DE BUSQUEDA ----------------------
+
+
   // Your fetchDataFromAPI implementation
   const fetchDataFromAPI = async () => {
     
@@ -752,25 +767,66 @@ const TreasuryMap = () => {
         <div className={`interactive-map-filter ${mobileOpen ? 'mobile-open' : ''}`}>
           <div className="interactive-map-filter-inner">
 
+
+
+
+
             <div className="category-filters-wrapper">
               {/* <p>{filtersConfig['keywords'].title}</p> */}
+              
+
+              {/*  EMPIEZA EL SEARCH BAR DE KEYWORDS   ------------------------------*/}
+
               <p>{`Keywords`}</p>
-              <div className="category-filters">
-                <span className="category-filters-placeholder" onClick={() => toggleSelectFilters('keywords')}>
-                  {filtersConfig['keywords'].placeholder}
-                </span>
-                <div className={`filters-selection-list ${filtersConfig['keywords'].open ? 'open' : ''}`}>
-                  {Object.keys(filtersConfig['keywords'].allFilters).map((key) => (
-                    <div
-                      key={key}
-                      onClick={() => selectFilter('keywords', filtersConfig['keywords'].allFilters[key])}
-                      
-                      className={filtersConfig['keywords'].selectedFilters.includes(filtersConfig['keywords'].allFilters[key]) ? 'selected' : ''}>
-                      {filtersConfig['keywords'].allFilters[key]}
-                    </div>
-                  ))}
-                </div>
-              </div>
+              
+              {/* <div className="category-filters"> */}
+
+
+                  {/* <div className={`filters-selection-list ${filtersConfig['keywords'].open ? 'open' : ''}`}> */}
+                  
+                  <div className={"div-search-input"}>
+                    <input
+                      type="text"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      placeholder="Enter keyword..."
+                      className={'input-placeholder'}
+                      style={{ flexGrow: 1, outline: "none" }}
+                    />
+                    <button 
+                    onClick={handleSearch} 
+                    style={{background: "none", color: 'inherit'}}
+                    >O</button>
+                  </div>
+
+
+
+
+                  {/* <span className="category-filters-placeholder" onClick={() => toggleSelectFilters('keywords')}>
+                    {filtersConfig['keywords'].placeholder}
+                  </span>
+
+                  <div className={`filters-selection-list ${filtersConfig['keywords'].open ? 'open' : ''}`}>
+                    {Object.keys(filtersConfig['keywords'].allFilters).map((key) => (
+                      <div
+                        key={key}
+                        onClick={() => selectFilter('keywords', filtersConfig['keywords'].allFilters[key])}
+                        
+                        className={filtersConfig['keywords'].selectedFilters.includes(filtersConfig['keywords'].allFilters[key]) ? 'selected' : ''}>
+                        {filtersConfig['keywords'].allFilters[key]}
+                      </div>
+                    ))}
+                  </div> */}
+
+
+              {/* </div> */}
+
+
+
+              {/* 
+              
+              //ESTE CODIGO GENERA LA ETIQUETA DEL KEYWORD ELEGIDO    
+
               <div className="current-filters-list">
                 <div className="current-filters-list-wrapper">
                   {filtersConfig['keywords'].selectedFilters.map((filter) => (
@@ -783,8 +839,15 @@ const TreasuryMap = () => {
                 {filtersConfig['keywords'].selectedFilters.length >= 2 && (
                   <span onClick={() => clearFilters('keywords')}>Clear</span>
                 )}
-              </div>
+              </div> */}
+
+              
+             {/* TERMINA EL SEARCH BAR DE KEYWORDS ----------------------- */}
+
             </div>
+
+
+
 
             <div className="category-selection-wrapper">
               <p>Category</p>
@@ -805,6 +868,9 @@ const TreasuryMap = () => {
                 </div>
               </div>
             </div>
+
+
+
 
             <div className="category-filters-wrapper">
               <p>{filtersConfig['subcategories'].title}</p>
@@ -846,10 +912,17 @@ const TreasuryMap = () => {
               <div className="current-filters-list">
                 <div className="current-filters-list-wrapper">
                   {filtersConfig['subcategories'].selectedFilters.map((filter) => (
-                    <div key={filter} className="current-filters-list-item">
-                      {subcategoriesData.find(r => r.id === filter)?.name || filter}
-                      <div onClick={() => selectFilter('subcategories', filter)}>x</div>
+                    <div key={filter} className="current-filters-list-item" onClick={() => selectFilter('subcategories', filter)}>
+                      {subcategoriesData.find(r => r.id === filter)?.name || filter} <span style={{display: 'inline', color:"black", fontSize: "larger" , fontWeight: "bold"}} >x</span> 
+                      
                     </div>
+
+                    // <div key={filter} className="current-filters-list-item">
+                    //   {subcategoriesData.find(r => r.id === filter)?.name || filter}
+                    //   <div onClick={() => selectFilter('subcategories', filter)}>x</div>
+                    // </div>
+
+
                   ))}
                 </div>
                 {filtersConfig['subcategories'].selectedFilters.length >= 2 && (
@@ -857,6 +930,10 @@ const TreasuryMap = () => {
                 )}
               </div>
             </div>
+
+
+
+
 
             <div className="category-filters-wrapper">
               <p>{filtersConfig['headequarterLocation'].title}</p>
@@ -886,10 +963,11 @@ const TreasuryMap = () => {
               <div className="current-filters-list">
                 <div className="current-filters-list-wrapper">
                   {filtersConfig['headequarterLocation'].selectedFilters.map((filter) => (
-                    <div key={filter} className="current-filters-list-item">
-                      {filter}
-                      <div onClick={() => selectFilter('headequarterLocation', filter)}>x</div>
+
+                    <div key={filter} className="current-filters-list-item" onClick={() => selectFilter('headequarterLocation', filter)}>
+                      {filter} <span style={{display: 'inline', color:"black", fontSize: "larger" , fontWeight: "bold"}} >x</span>   
                     </div>
+
                   ))}
                 </div>
                 {filtersConfig['headequarterLocation'].selectedFilters.length >= 2 && (
@@ -957,10 +1035,11 @@ const TreasuryMap = () => {
               <div className="current-filters-list">
                 <div className="current-filters-list-wrapper">
                   {filtersConfig['activeIn'].selectedFilters.map((filter) => (
-                    <div key={filter} className="current-filters-list-item">
-                      {activeinData.find(r => r.id === filter)?.name || filter}
-                      <div onClick={() => selectFilter('activeIn', filter)}>x</div>
+                              
+                    <div key={filter} className="current-filters-list-item" onClick={() => selectFilter('activeIn', filter)}>
+                      {activeinData.find(r => r.id === filter)?.name || filter} <span style={{display: 'inline', color:"black", fontSize: "larger" , fontWeight: "bold"}} >x</span>
                     </div>
+
                   ))}
                 </div>
                 {filtersConfig['activeIn'].selectedFilters.length >= 2 && (
