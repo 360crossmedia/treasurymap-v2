@@ -46,6 +46,7 @@ const BodyForm = () => {
   const [location, setLocation] = useState("");
   const [productName, setProductName] = useState("");
   const [productVersion, setProductVersion] = useState("");
+  const [keywords, setKeywords] = useState([]);
   const userId = useSelector((state) => state.user);
   const companyId = useSelector((state) => state.companyId);
 
@@ -77,7 +78,11 @@ const BodyForm = () => {
         companyWebsite,
         productName,
         productVersion,
+        "keywords": [companyName,...keywords]
       };
+
+      
+
       if (companyId) {
         const result = await apiUpdateCompany(companyId, data);
         if (result?.status == 200) {
@@ -156,12 +161,23 @@ const BodyForm = () => {
     setSelectedSubCategoryIds(companyData?.companySubcategories);
     setImage(companyData?.logo);
     setAnswers(companyAnswers);
+
+    let inputKeywords = companyData?.keywords
+    let toSetKeyword = inputKeywords.filter(item => item !== companyData?.name);
+    setKeywords(toSetKeyword)
+
   };
 
   useEffect(() => {
     getAllComponentData();
     if (companyId) getAllInputsData();
   }, []);
+
+  const convertKeywords = (keywords) => {
+    let keyArray = keywords.split(',');
+    setKeywords( keyArray )
+  }
+
 
   return (
     <form onSubmit={submit} className={styles.mainContainer}>
@@ -423,6 +439,20 @@ const BodyForm = () => {
             />
           </div>
         ))}
+
+        <div className={styles.inputContainer}>
+          <label className={styles.label} htmlFor="">
+            Insert keywords related to the company (separated by commas): 
+          </label>
+          <input
+            className={styles.inputText}
+            placeholder="Keywords"
+            type="text"
+            value={keywords}
+            onChange={(e) => convertKeywords(e.target.value)}
+          />  
+        </div>
+
         <div className={styles.buttonContainer}>
           <button className={styles.button}>Save information</button>
         </div>
