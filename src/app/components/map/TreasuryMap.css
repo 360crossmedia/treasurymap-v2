@@ -1795,7 +1795,7 @@ div.category-title.selected {
   display: flex;
   align-items: center;
   width: 160px;
-  margin-bottom: 27px;
+  margin-bottom: 5px;
   box-shadow: 0 0 0px 1px #bfbfbf;
   border-radius: 4px;
 }

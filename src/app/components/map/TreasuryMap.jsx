@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 //import './TreasuryMap.module.css'
 import staticdata from './staticdata.json'
 
@@ -67,19 +67,42 @@ const TreasuryMap = () => {
   const [resettingFrontLogos, setResettingFrontLogos] = useState(false);
   const [subcategoriesData, setSubcategoriesData, ] = useState([]) ;
   const [activeinData, setActiveinData ] = useState([]) ; 
+  const [ allCompData, setAllCompData ] = useState([])
 
 
   // ? LOGICA DE LA BARRA DE BUSQUEDA ----------------------
   
   const [searchTerm, setSearchTerm] = useState('');
-  const [result, setResult] = useState([]);  
+  const [result, setResult] = useState([]); 
+  const [isInitialMount,setIsInitialMount] = useState(true); 
+  const [renderSearched, setRenderSearched] = useState('')
 
   const handleSearch = () => {
-    // const searchResult = data
-    //   .filter(item => item.keywords.includes(searchTerm.toLowerCase()))
-    //   .map(item => item.id);
-    // setResult(searchResult);
+    const searchResult = allCompData
+      .filter(item => item.keywords.includes(searchTerm.toLowerCase()))
+      .map(item => item.id);
+    setResult(searchResult);
+
   };
+
+  useEffect(() => {
+
+    if (isInitialMount) {
+      setIsInitialMount(false)
+    } else {
+      
+      if(result.length > 0){
+        selectFilter('keywords', result)
+        setRenderSearched(searchTerm)
+        setSearchTerm('')
+      } else{
+        alert('No matches found');
+      }
+
+    }
+    
+
+  }, [result]);
 
   // ? LOGICA DE LA BARRA DE BUSQUEDA ----------------------
 
@@ -151,6 +174,29 @@ const TreasuryMap = () => {
       });
 
   }
+
+  const fetchAllCompaniesData = async () => {
+
+    const companiesDataURL = 'https://treasurymapbackend-production.up.railway.app/api/v1/companies'
+    
+    return fetch(companiesDataURL)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        setAllCompData(data);
+        //console.log(data);
+        return data;
+      })
+      .catch(error => {
+        console.error('Error fetching data from API:', error);
+      });
+
+  }
+
 
 
   const calculateScaleMobileLogos = () => {
@@ -297,12 +343,33 @@ const TreasuryMap = () => {
 
   };
 
+
   const selectFilter = (key, filter) => {
     
 
     toggleSelectFilters(key)
     
+
+    if( key == 'keywords'){
+
+      setFiltersConfig((prevConfig) => {
+        const currentFilters = prevConfig[key];
+        
+        return {
+          ...prevConfig,
+          [key]: {
+            ...currentFilters,
+            selectedFilters: [...filter]
+          }
+        };        
+      })
+    
+    }
+
+
     setFiltersConfig((prevConfig) => {
+      
+      //COGE EL filtersConfig PREVIO Y GUARDA LA DATA DE LA PROPIEDAD ESPECIFICA ENVIADA POR PARAM, EN currentFilters
       const currentFilters = prevConfig[key];
       
       if (currentFilters.selectedFilters.includes(filter)) {
@@ -486,7 +553,7 @@ const TreasuryMap = () => {
         if(filterObj.selectedFilters.length > 0){
           
           if(filterObj.title == "Keywords"){
-
+            //console.log('selected filters mayor a 0');
             typeofFilter = "keywords"
 
           } else if( filterObj.title == "Sub-Category"){
@@ -511,10 +578,13 @@ const TreasuryMap = () => {
 
       })
       .flat();
-    
+
+    // console.log("selectedFilters");     
+    // console.log(selectedFilters);     
+
 
     const noCategorySelected = !selectedCategoryKey;
-  
+ 
     // SI NO HAY CATEGORIA SELECCIONADA, Y NO HAY FILTRO SELECCIONADO, NO RENDERIZA NADA
     if (noCategorySelected && selectedFilters.length === 0) {
       return [];
@@ -543,19 +613,34 @@ const TreasuryMap = () => {
     //RECORRE CADA UNA DE LAS COMPANIAS
     const logosFiltrados = allUniqueLogos.filter(logo => {
             
-            // console.log('Array.isArray(logo[typeofFilter])');
-            // console.log(Array.isArray(logo[typeofFilter]));
-            // console.log('typeofFilter:');
-            // console.log(typeofFilter );
-            // console.log('logo[typeofFilter]:');
-            // console.log(logo[typeofFilter] );
 
-            // Check if the typeofFilter is an array or a string
-            if ( Array.isArray(logo[typeofFilter]) ) {
+
+            
+            //Logica cuando es un keyword
+            if( typeofFilter == "keywords" ){
+
+              function extractNumberFromURL(url) {
+                  const parts = url.split('/');
+                  return parts[parts.length - 1];
+              }
+
+              let idComp = extractNumberFromURL(logo.url)
+
+
+
+              return selectedFilters.includes( Number(idComp) )
+
+            } else if ( Array.isArray(logo[typeofFilter]) ) {
                 
                 // If it's an array, check if there's any overlap with selectedFilters
 
-                return logo[typeofFilter].some(filter => selectedFilters.includes(filter));
+                
+              return logo[typeofFilter].some(filter => {
+                
+                return selectedFilters.includes(filter)
+              
+              });
+            
             } else {
 
                 console.log("False");
@@ -563,13 +648,12 @@ const TreasuryMap = () => {
                 // If it's a string, check if it matches any of the selectedFilters
                 return selectedFilters.includes(logo[typeofFilter]);
             }
+
         });  
         
     // console.log("logosFiltrados:");
     // console.log(logosFiltrados);
 
-    
-    
 
     // ? TERMINA REFACTOR DEL ALGORITMO:
     // ? TERMINA REFACTOR DEL ALGORITMO:
@@ -656,6 +740,9 @@ const TreasuryMap = () => {
     //CARGAR LA LISTA DE SUBCATEGORIES
     fetchSubcategories();
     fetchActiveInData();
+    fetchAllCompaniesData();
+
+
 
     window.addEventListener('resize', calculateScaleMobileLogos);
 
@@ -801,48 +888,25 @@ const TreasuryMap = () => {
 
 
 
+                  {/* PARA GENERAT LA ETIQUETA DEL KEYWOR ELEGIDO */}
+                  <div className="current-filters-list">
+                    <div className="current-filters-list-wrapper">
+                    {
+                    filtersConfig['keywords'].selectedFilters.length >= 2 && (
+                      // <span onClick={() => clearFilters('keywords')}>Clear</span>
 
-                  {/* <span className="category-filters-placeholder" onClick={() => toggleSelectFilters('keywords')}>
-                    {filtersConfig['keywords'].placeholder}
-                  </span>
-
-                  <div className={`filters-selection-list ${filtersConfig['keywords'].open ? 'open' : ''}`}>
-                    {Object.keys(filtersConfig['keywords'].allFilters).map((key) => (
-                      <div
-                        key={key}
-                        onClick={() => selectFilter('keywords', filtersConfig['keywords'].allFilters[key])}
-                        
-                        className={filtersConfig['keywords'].selectedFilters.includes(filtersConfig['keywords'].allFilters[key]) ? 'selected' : ''}>
-                        {filtersConfig['keywords'].allFilters[key]}
-                      </div>
-                    ))}
-                  </div> */}
+                      <div key={'keyword1'} className="current-filters-list-item" onClick={() => clearFilters('keywords')}>
+                        {renderSearched} <span style={{display: 'inline', color:"black", fontSize: "larger" , fontWeight: "bold"}} >x</span>   
+                      </div>                      
 
 
-              {/* </div> */}
+                    )
+                    }                     
 
-
-
-              {/* 
-              
-              //ESTE CODIGO GENERA LA ETIQUETA DEL KEYWORD ELEGIDO    
-
-              <div className="current-filters-list">
-                <div className="current-filters-list-wrapper">
-                  {filtersConfig['keywords'].selectedFilters.map((filter) => (
-                    <div key={filter} className="current-filters-list-item">
-                      {filter}
-                      <div onClick={() => selectFilter('keywords', filter)}>x</div>
                     </div>
-                  ))}
-                </div>
-                {filtersConfig['keywords'].selectedFilters.length >= 2 && (
-                  <span onClick={() => clearFilters('keywords')}>Clear</span>
-                )}
-              </div> */}
 
-              
-             {/* TERMINA EL SEARCH BAR DE KEYWORDS ----------------------- */}
+                  </div>
+
 
             </div>
 
@@ -877,9 +941,15 @@ const TreasuryMap = () => {
               {/* <p>{`Sub-Category`}</p> */}
 
               <div className="category-filters">
+                
+                {/* ESTE CODIGO ES PARA ABRIR EL DRIPDOWN */}
                 <span className="category-filters-placeholder" onClick={() => toggleSelectFilters('subcategories')}>
                   {filtersConfig['subcategories'].placeholder}
                 </span>
+                
+
+
+                {/* ESTE CODIGO ES LA RENDERIZACION DEL DROPDOWN */}
                 <div className={`filters-selection-list ${filtersConfig['subcategories'].open ? 'open' : ''}`}>
                     
                     {
@@ -908,20 +978,18 @@ const TreasuryMap = () => {
                     }                  
               
                 </div>
+
               </div>
+
+
+
+
               <div className="current-filters-list">
                 <div className="current-filters-list-wrapper">
                   {filtersConfig['subcategories'].selectedFilters.map((filter) => (
                     <div key={filter} className="current-filters-list-item" onClick={() => selectFilter('subcategories', filter)}>
-                      {subcategoriesData.find(r => r.id === filter)?.name || filter} <span style={{display: 'inline', color:"black", fontSize: "larger" , fontWeight: "bold"}} >x</span> 
-                      
+                      {subcategoriesData.find(r => r.id === filter)?.name || filter} <span style={{display: 'inline', color:"black", fontSize: "larger" , fontWeight: "bold"}} >x</span>                       
                     </div>
-
-                    // <div key={filter} className="current-filters-list-item">
-                    //   {subcategoriesData.find(r => r.id === filter)?.name || filter}
-                    //   <div onClick={() => selectFilter('subcategories', filter)}>x</div>
-                    // </div>
-
 
                   ))}
                 </div>
@@ -960,6 +1028,9 @@ const TreasuryMap = () => {
                   }
                 </div>
               </div>
+              
+
+              
               <div className="current-filters-list">
                 <div className="current-filters-list-wrapper">
                   {filtersConfig['headequarterLocation'].selectedFilters.map((filter) => (
@@ -974,6 +1045,9 @@ const TreasuryMap = () => {
                   <span onClick={() => clearFilters('headequarterLocation')}>Clear</span>
                 )}
               </div>
+
+
+
             </div>
 
             <div className="category-filters-wrapper">
@@ -1032,6 +1106,9 @@ const TreasuryMap = () => {
 
                 </div>
               </div>
+
+
+
               <div className="current-filters-list">
                 <div className="current-filters-list-wrapper">
                   {filtersConfig['activeIn'].selectedFilters.map((filter) => (
@@ -1046,6 +1123,9 @@ const TreasuryMap = () => {
                   <span onClick={() => clearFilters('activeIn')}>Clear</span>
                 )}
               </div>
+
+
+
             </div>
           </div>
           <div className="clear-filters-mobile">
