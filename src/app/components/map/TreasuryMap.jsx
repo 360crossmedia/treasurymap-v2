@@ -67,6 +67,7 @@ const TreasuryMap = () => {
   const [resettingFrontLogos, setResettingFrontLogos] = useState(false);
   const [subcategoriesData, setSubcategoriesData, ] = useState([]) ;
   const [activeinData, setActiveinData ] = useState([]) ; 
+  const [ allCompData, setAllCompData ] = useState([])
 
 
   // ? LOGICA DE LA BARRA DE BUSQUEDA ----------------------
@@ -75,10 +76,10 @@ const TreasuryMap = () => {
   const [result, setResult] = useState([]);  
 
   const handleSearch = () => {
-    // const searchResult = data
-    //   .filter(item => item.keywords.includes(searchTerm.toLowerCase()))
-    //   .map(item => item.id);
-    // setResult(searchResult);
+    const searchResult = allCompData
+      .filter(item => item.keywords.includes(searchTerm.toLowerCase()))
+      .map(item => item.id);
+    setResult(searchResult);
   };
 
   // ? LOGICA DE LA BARRA DE BUSQUEDA ----------------------
@@ -151,6 +152,29 @@ const TreasuryMap = () => {
       });
 
   }
+
+  const fetchAllCompaniesData = async () => {
+
+    const companiesDataURL = 'https://treasurymapbackend-production.up.railway.app/api/v1/companies'
+    
+    return fetch(companiesDataURL)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        setAllCompData(data);
+        //console.log(data);
+        return data;
+      })
+      .catch(error => {
+        console.error('Error fetching data from API:', error);
+      });
+
+  }
+
 
 
   const calculateScaleMobileLogos = () => {
@@ -656,6 +680,9 @@ const TreasuryMap = () => {
     //CARGAR LA LISTA DE SUBCATEGORIES
     fetchSubcategories();
     fetchActiveInData();
+    fetchAllCompaniesData();
+
+
 
     window.addEventListener('resize', calculateScaleMobileLogos);
 
