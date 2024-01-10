@@ -22,11 +22,19 @@ const BodyMediaZone = () => {
   const [videoSelected, setVideoSelected] = useState(null);
   const [articles, setArticles] = useState();
   const [videos, setVideos] = useState();
+  let backUpCompanyId;
+  if (typeof window !== "undefined") {
+    backUpCompanyId = localStorage.getItem("companyId");
+  }
 
   const getCompanyMediaData = async () => {
     dispatch(setIsLoading(true));
-    const result = await apiGetAllArticlesByCompanyId(companyId);
-    const res = await apiGetAllVideosByCompanyId(companyId);
+    const result = await apiGetAllArticlesByCompanyId(
+      companyId ? companyId : backUpCompanyId
+    );
+    const res = await apiGetAllVideosByCompanyId(
+      companyId ? companyId : backUpCompanyId
+    );
     setArticles(result);
     setVideos(res);
     dispatch(setIsLoading(false));
@@ -102,6 +110,9 @@ const BodyMediaZone = () => {
   return (
     <div className={`${styles.mainContainer} ${styles2.mainContainer}`}>
       <div className={styles2.buttonsContainer}>
+        <button onClick={() => router.back()} className={styles2.deleteButton}>
+          Go back
+        </button>
         <button
           onClick={updateItem}
           className={`${styles.mediaZoneButton} ${styles2.updateButton}`}

@@ -8,15 +8,17 @@ const BodyDashboard = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const companyId = useSelector((state) => state.companyId);
+
   return (
     <div className={styles.mainContainer}>
       <div>
         <button
-          onClick={() =>
+          onClick={() => {
             companyId
               ? router.push("/mediaZone")
-              : alert("Please select any company")
-          }
+              : alert("Please select any company");
+            localStorage.setItem("companyId", companyId);
+          }}
           className={styles.mediaZoneButton}
         >
           Media Zone
