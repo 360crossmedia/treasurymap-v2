@@ -6,22 +6,57 @@ import contactUserIcon from "../assets/contactUserIcon.svg";
 import footerLocationIcon from "../assets/footerLocationIcon.svg";
 import phoneIcon from "../assets/phoneIcon.svg";
 import emailContactIcon from "../assets/emailContactIcon.svg";
+import { useState } from "react";
+import { apiSendEmail } from "../service/apiSendEmail";
+import { setIsLoading } from "../store/slices/isLoading.slice";
+import { useDispatch } from "react-redux";
 
 const ContactUs = () => {
+  const dispatch = useDispatch();
+  const [name, setName] = useState();
+  const [email, setEmail] = useState();
+  const [company, setCompany] = useState();
+  const [message, setMessage] = useState();
+
+  const submit = async () => {
+    if (!name || !email || !company || !message) {
+      alert("Please fill in all the fields");
+    } else {
+      dispatch(setIsLoading(true));
+      const result = await apiSendEmail({ name, email, company, message });
+      if (result.status == 200) {
+        alert("Your message has been sent successfully");
+        setName("");
+        setEmail("");
+        setCompany("");
+        setMessage("");
+        dispatch(setIsLoading(false));
+      } else {
+        console.log(result);
+        dispatch(setIsLoading(false));
+      }
+    }
+  };
+
   return (
     <div className={styles.cardContainer}>
       <div className={styles.cardLeft}>
-        
         <div className={styles.cardTop}>
           <p className={styles.title}>Who we are</p>
           <div className={styles.contentWrapper}>
-            {/* <img src={"https://res.cloudinary.com/dq7aof6vb/image/upload/v1704743877/st_Fran%C3%A7ois_Masquelier-2_2_zcvzgr.jpg"} className={styles.featuredImage} alt="Descriptive Alt Text" /> */}
             <p className={styles.description}>
-              Simply Treasury is a company founded by François Masquelier, Senior Vice President & Head of Treasury and Enterprise Risk Management at RTL has been associated with Corporate treasury for the past 20 years. François Masquelier, had notable successes both in his corporate role and in the wider profession as Chairman of ATEL (Association des Trésoriers d Entreprise de Luxembourg), and Vice Chairman of EACT (European Association of Corporate Treasurers). He has gone on to become one of the most influential treasurers in the profession.
+              Simply Treasury is a company founded by François Masquelier,
+              Senior Vice President & Head of Treasury and Enterprise Risk
+              Management at RTL has been associated with Corporate treasury for
+              the past 20 years. François Masquelier, had notable successes both
+              in his corporate role and in the wider profession as Chairman of
+              ATEL (Association des Trésoriers d Entreprise de Luxembourg), and
+              Vice Chairman of EACT (European Association of Corporate
+              Treasurers). He has gone on to become one of the most influential
+              treasurers in the profession.
             </p>
           </div>
         </div>
-
 
         <div className={styles.cardBottom}>
           <div className={styles.links}>
@@ -58,7 +93,13 @@ const ContactUs = () => {
         </div>
         <div className={styles.inputContainer}>
           <Image className={styles.icon} src={contactUserIcon} alt="" />
-          <input className={styles.input} placeholder="Name" type="text" />
+          <input
+            className={styles.input}
+            placeholder="Name"
+            type="text"
+            onChange={(e) => setName(e.target.value)}
+            value={name}
+          />
         </div>
         <div className={styles.inputContainer}>
           <Image className={styles.icon} src={inputEmailIcon} alt="" />
@@ -66,6 +107,8 @@ const ContactUs = () => {
             className={styles.input}
             placeholder="Email Address"
             type="text"
+            onChange={(e) => setEmail(e.target.value)}
+            value={email}
           />
         </div>
         <div className={styles.inputContainer}>
@@ -74,6 +117,8 @@ const ContactUs = () => {
             className={styles.input}
             placeholder="Company Name"
             type="text"
+            onChange={(e) => setCompany(e.target.value)}
+            value={company}
           />
         </div>
         <div className={styles.inputContainer}>
@@ -84,10 +129,14 @@ const ContactUs = () => {
             id=""
             cols="30"
             rows="10"
+            onChange={(e) => setMessage(e.target.value)}
+            value={message}
           ></textarea>
         </div>
         <div>
-          <button className={styles.button}>Submit</button>
+          <button onClick={submit} className={styles.button}>
+            Submit
+          </button>
         </div>
       </div>
     </div>
