@@ -55,6 +55,7 @@
   padding: 16px 32px 16px 16px;
   border: none;
   resize: none;
+  color: #8d9396;
 }
 
 .inputText::placeholder {

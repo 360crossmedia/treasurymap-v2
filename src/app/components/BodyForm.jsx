@@ -20,6 +20,8 @@ import { apiGetCompanyData } from "../service/apiGetCompanyData";
 import { apiGetCompanyAnswers } from "../service/apiGetCompanyAnswers";
 import { apiUpdateCompany } from "../service/apiUpdateCompany";
 import { setCompanyId } from "../store/slices/companyToUpdate.slice";
+import Form from "react-bootstrap/Form";
+import { apiGetAllUsers } from "../service/apiGetAllUsers";
 
 const BodyForm = () => {
   const dispatch = useDispatch();
@@ -47,12 +49,15 @@ const BodyForm = () => {
   const [productName, setProductName] = useState("");
   const [productVersion, setProductVersion] = useState("");
   const [keywords, setKeywords] = useState([]);
+  const [users, setUsers] = useState();
+  const [userSelected, setUserSelected] = useState();
+  const [backUpUserId, setBackUpUserId] = useState();
   const userId = useSelector((state) => state.user);
   const companyId = useSelector((state) => state.companyId);
-  let backUpUserId;
+  let user;
   let backUpCompanyId;
   if (typeof window !== "undefined") {
-    backUpUserId = localStorage.getItem("userId");
+    user = localStorage.getItem("userId");
     backUpCompanyId = localStorage.getItem("companyId");
   }
 
@@ -102,23 +107,42 @@ const BodyForm = () => {
           dispatch(setIsLoading(false));
         }
       } else {
-        const result = await apiCreateCompany(data);
-        if (result?.status == 201 && logo) {
-          const answersResult = await apiUploadAnswers(
-            result?.data?.id,
-            answers
-          );
-          if (answersResult?.status == 201) {
-            alert("Company created successfully");
-            router.push("/dashboard");
-            dispatch(setIsLoading(false));
-          } else {
-            console.log(answersResult);
-            dispatch(setIsLoading(false));
+        if (userId == 1 || user == 1) {
+          data.userId = userSelected;
+          const result = await apiCreateCompany(data);
+          if (result?.status == 201 && logo) {
+            const answersResult = await apiUploadAnswers(
+              result?.data?.id,
+              answers
+            );
+            if (answersResult?.status == 201) {
+              alert("Company created successfully");
+              router.push("/dashboard");
+              dispatch(setIsLoading(false));
+            } else {
+              console.log(answersResult);
+              dispatch(setIsLoading(false));
+            }
           }
         } else {
-          console.log(result);
-          dispatch(setIsLoading(false));
+          const result = await apiCreateCompany(data);
+          if (result?.status == 201 && logo) {
+            const answersResult = await apiUploadAnswers(
+              result?.data?.id,
+              answers
+            );
+            if (answersResult?.status == 201) {
+              alert("Company created successfully");
+              router.push("/dashboard");
+              dispatch(setIsLoading(false));
+            } else {
+              console.log(answersResult);
+              dispatch(setIsLoading(false));
+            }
+          } else {
+            console.log(result);
+            dispatch(setIsLoading(false));
+          }
         }
       }
     } else {
@@ -141,6 +165,7 @@ const BodyForm = () => {
   };
 
   const getAllComponentData = async () => {
+    dispatch(setIsLoading(true));
     const categories = await apiGetCategories();
     const subCategories = await apiGetSubCategories();
     const questions = await apiGetAllQuestions();
@@ -149,9 +174,11 @@ const BodyForm = () => {
     setSubCategories(subCategories?.data);
     setQuestions(questions?.data);
     setCountries(countries?.data);
+    dispatch(setIsLoading(false));
   };
 
   const getAllInputsData = async () => {
+    dispatch(setIsLoading(true));
     const companyData = await apiGetCompanyData(
       !companyId ? backUpCompanyId : companyId
     );
@@ -177,17 +204,28 @@ const BodyForm = () => {
       (item) => item !== companyData?.name
     );
     setKeywords(toSetKeyword);
+    dispatch(setIsLoading(false));
   };
-
-  useEffect(() => {
-    getAllComponentData();
-    if (!companyId ? backUpCompanyId : companyId) getAllInputsData();
-  }, []);
 
   const convertKeywords = (keywords) => {
     let keyArray = keywords.split(",");
     setKeywords(keyArray);
   };
+
+  const getAllUsers = async () => {
+    dispatch(setIsLoading(true));
+    const result = await apiGetAllUsers();
+    setUsers(result);
+    dispatch(setIsLoading(false));
+  };
+
+  useEffect(() => {
+    getAllComponentData();
+    if (!companyId ? backUpCompanyId : companyId) getAllInputsData();
+    if (userId == 1 || user == 1) getAllUsers();
+  }, []);
+
+  useEffect(() => setBackUpUserId(user), [user]);
 
   return (
     <form onSubmit={submit} className={styles.mainContainer}>
@@ -449,7 +487,6 @@ const BodyForm = () => {
             />
           </div>
         ))}
-
         <div className={styles.inputContainer}>
           <label className={styles.label} htmlFor="">
             Insert keywords related to the company (separated by commas):
@@ -462,7 +499,31 @@ const BodyForm = () => {
             onChange={(e) => convertKeywords(e.target.value)}
           />
         </div>
-
+        {(userId == 1 || backUpUserId == 1) && (
+          <div className={styles.inputContainer}>
+            <label className={styles.label} htmlFor="">
+              Company owner
+            </label>
+            <Form.Select
+              className={styles.inputText}
+              onChange={(e) =>
+                setUserSelected(
+                  e.target.value == "Select User" ? false : e.target.value
+                )
+              }
+              bsPrefix={`form-select ${styles.input} ${
+                userSelected ? styles.active : ""
+              }`}
+            >
+              <option>Select User</option>
+              {users?.map((user, index) => (
+                <option key={index} value={user.id}>
+                  {user.fullName}
+                </option>
+              ))}
+            </Form.Select>
+          </div>
+        )}
         <div className={styles.buttonContainer}>
           <button className={styles.button}>Save information</button>
         </div>
