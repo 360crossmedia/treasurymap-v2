@@ -40,6 +40,8 @@ const Overview = ({ companyId }) => {
     getCompanyData();
   }, []);
 
+  console.log(company);
+
   return (
     <div className={styles.mainContainer}>
       <div className={styles.left}>
@@ -57,18 +59,22 @@ const Overview = ({ companyId }) => {
           <p className={styles.title}>Turnover</p>
           <p className={styles.description}>{company?.turnover}</p>
         </div>
-        <div>
-          <p className={styles.title}>Name of Product</p>
-          <p className={styles.description}>{company?.productName}</p>
-        </div>
-        <div>
-          <p className={styles.title}>Version number</p>
-          <p className={styles.description}>{company?.productVersion}</p>
-        </div>
-        {questions?.map((question, index) => (
+        {company?.productName && (
+          <div>
+            <p className={styles.title}>Name of Product</p>
+            <p className={styles.description}>{company?.productName}</p>
+          </div>
+        )}
+        {company?.productVersion && (
+          <div>
+            <p className={styles.title}>Version number</p>
+            <p className={styles.description}>{company?.productVersion}</p>
+          </div>
+        )}
+        {answers?.map((answer, index) => (
           <div key={index}>
-            <p className={styles.title}>{question?.body}</p>
-            <p className={styles.description}>{answers?.[index]}</p>
+            <p className={styles.title}>{questions?.[index]?.body}</p>
+            <p className={styles.description}>{answer}</p>
           </div>
         ))}
       </div>
