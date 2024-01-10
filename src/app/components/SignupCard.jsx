@@ -5,6 +5,8 @@ import styles from "../styles/signupCard.module.css";
 import Image from "next/image";
 import inputEmailIcon from "../assets/inputEmailIcon.svg";
 import inputPasswordIcon from "../assets/inputPasswordIcon.svg";
+import inputFullNameIcon from "../assets/person.svg";
+import inputCompanyNameIcon from "../assets/building.svg";
 import { apiCreateUser } from "../service/apiCreateUser";
 import { useDispatch } from "react-redux";
 import { setIsLoading } from "../store/slices/isLoading.slice";
@@ -85,7 +87,7 @@ const SignupCard = () => {
           <p className={styles.cardDescription}>Welcome to Treasury MAP</p>
         </div>
         <div className={styles.inputContainer}>
-          <Image className={styles.icon} src={inputEmailIcon} alt="" />
+          <Image className={styles.icon} src={inputCompanyNameIcon} alt="" />
           <input
             className={styles.input}
             placeholder="Company Name"
@@ -95,7 +97,7 @@ const SignupCard = () => {
           />
         </div>
         <div className={styles.inputContainer}>
-          <Image className={styles.icon} src={inputEmailIcon} alt="" />
+          <Image className={styles.icon} src={inputFullNameIcon} alt="" />
           <input
             className={styles.input}
             placeholder="Full Name"
