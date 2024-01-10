@@ -15,6 +15,7 @@ const MediaZone = ({ companyId }) => {
   const [countries, setCountries] = useState();
   const [videos, setVideos] = useState();
   const [articles, setArticles] = useState();
+  const [articleSelected, setArticleSelected] = useState(false);
 
   const getCompanyData = async () => {
     dispatch(setIsLoading(true));
@@ -26,7 +27,6 @@ const MediaZone = ({ companyId }) => {
     for (let i = 0; i < companyData?.companyOffices.length; i++) {
       const countries = await apiGetCountryById(companyData?.companyOffices[i]);
       companyOffices.push(countries);
-      console.log(countries);
     }
 
     setVideos(videosArray);
@@ -39,6 +39,8 @@ const MediaZone = ({ companyId }) => {
     getCompanyData();
   }, []);
 
+  useEffect(() => console.log(articleSelected), [articleSelected]);
+
   return (
     <div className={styles.mainContainer}>
       <div className={styles.countriesContainer}>
@@ -46,42 +48,68 @@ const MediaZone = ({ companyId }) => {
           <p className={styles.boldP}>Active In</p>
         </div>
         <div className={styles.blueCardsContainer}>
-          {countries?.map((country) => (
-            <div className={styles.blueCard}>
+          {countries?.map((country, index) => (
+            <div key={index} className={styles.blueCard}>
               <p className={styles.blueCardP}>{country?.name}</p>
             </div>
           ))}
         </div>
       </div>
-      {videos?.map((video, index) => (
-        <div key={index} className={styles.videoContainer}>
-          <div>
-            <p className={styles.title}>{video?.title}</p>
-            <iframe
-              className={styles.video}
-              src={video?.url}
-              title={video?.title}
-              frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowfullscreen
-            ></iframe>
+      {!articleSelected &&
+        videos?.map((video, index) => (
+          <div key={index} className={styles.videoContainer}>
+            <div>
+              <p className={styles.title}>{video?.title}</p>
+              <iframe
+                className={styles.video}
+                src={video?.url}
+                title={video?.title}
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+              ></iframe>
+            </div>
+            <div className={styles.line}></div>
           </div>
-          <div className={styles.line}></div>
-        </div>
-      ))}
-      {articles?.map((article, index) => (
-        <div key={index}>
-          <div className={styles.articleContainer}>
-            <p className={styles.articleTitle}>{article?.title}</p>
-            <p className={styles.articleDescription}>{article?.body}</p>
-            <a className={styles.articleA} href="#">
-              Read More
-              <Image src={ArrowRight} alt="" />
-            </a>
+        ))}
+      {!articleSelected &&
+        articles?.map((article, index) => (
+          <div key={index}>
+            <div className={styles.articleContainer}>
+              <p className={styles.articleTitle}>{article?.title}</p>
+              <p className={styles.articleDescription}>
+                {article?.body.length > 200
+                  ? `${article?.body.slice(0, 200)}...`
+                  : article?.body}
+              </p>
+              <a
+                className={styles.articleA}
+                onClick={() => setArticleSelected(index + 1)}
+              >
+                Read More
+                <Image src={ArrowRight} alt="" />
+              </a>
+            </div>
+            <div className={styles.line}></div>
           </div>
-          <div className={styles.line}></div>
+        ))}
+      {articleSelected && (
+        <div className={styles.articleContainer}>
+          <p className={styles.articleTitle}>
+            {articles[articleSelected - 1]?.title}
+          </p>
+          <p className={styles.articleDescription}>
+            {articles[articleSelected - 1]?.body}
+          </p>
+          <a
+            className={styles.articleA}
+            onClick={() => setArticleSelected(false)}
+          >
+            <Image className={styles.leftArrow} src={ArrowRight} alt="" />
+            Go back
+          </a>
         </div>
-      ))}
+      )}
     </div>
   );
 };
