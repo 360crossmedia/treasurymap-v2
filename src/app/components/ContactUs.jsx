@@ -15,7 +15,7 @@ const ContactUs = () => {
         <div className={styles.cardTop}>
           <p className={styles.title}>Who we are</p>
           <div className={styles.contentWrapper}>
-            <img src={"https://res.cloudinary.com/dq7aof6vb/image/upload/v1704743877/st_Fran%C3%A7ois_Masquelier-2_2_zcvzgr.jpg"} className={styles.featuredImage} alt="Descriptive Alt Text" />
+            {/* <img src={"https://res.cloudinary.com/dq7aof6vb/image/upload/v1704743877/st_Fran%C3%A7ois_Masquelier-2_2_zcvzgr.jpg"} className={styles.featuredImage} alt="Descriptive Alt Text" /> */}
             <p className={styles.description}>
               Simply Treasury is a company founded by François Masquelier, Senior Vice President & Head of Treasury and Enterprise Risk Management at RTL has been associated with Corporate treasury for the past 20 years. François Masquelier, had notable successes both in his corporate role and in the wider profession as Chairman of ATEL (Association des Trésoriers d Entreprise de Luxembourg), and Vice Chairman of EACT (European Association of Corporate Treasurers). He has gone on to become one of the most influential treasurers in the profession.
             </p>
