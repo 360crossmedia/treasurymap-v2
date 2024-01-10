@@ -23,6 +23,11 @@
   color: #626b80;
 }
 
+.footerLeftLink {
+  text-decoration: none;
+  color: inherit;
+}
+
 .footerP {
   margin: 0;
 }
