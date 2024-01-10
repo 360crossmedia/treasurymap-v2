@@ -77,13 +77,23 @@ const TreasuryMap = () => {
   const [isInitialMount,setIsInitialMount] = useState(true); 
   const [renderSearched, setRenderSearched] = useState('')
 
-  const handleSearch = () => {
-    const searchResult = allCompData
-      .filter(item => item.keywords.includes(searchTerm.toLowerCase()))
-      .map(item => item.id);
-    setResult(searchResult);
+  // const handleSearch = () => {
+  //   const searchResult = allCompData
+  //     .filter(item => item.keywords.includes(searchTerm.toLowerCase()))
+  //     .map(item => item.id);
+  //   setResult(searchResult);
 
+  // };
+
+  const handleSearch = () => {
+      const searchResult = allCompData
+        .filter(item => 
+          item.keywords.some(keyword => keyword.toLowerCase() === searchTerm.toLowerCase())
+        )
+        .map(item => item.id);
+      setResult(searchResult);
   };
+
 
   useEffect(() => {
 
