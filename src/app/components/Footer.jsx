@@ -9,7 +9,14 @@ const Footer = () => {
       <div className={styles.footerLeft}>
         <Image alt="" src={footerLocationIcon} />
         <p className={styles.footerP}>
-          <a href="https://www.simplytreasury.com/" target="_blank">Simply Treasury</a>  | 1 rue de Chiny, L-1334 Luxembourg
+          <a
+            className={styles.footerLeftLink}
+            href="https://www.simplytreasury.com/"
+            target="_blank"
+          >
+            Simply Treasury
+          </a>{" "}
+          | 1 rue de Chiny, L-1334 Luxembourg
         </p>
       </div>
       <div className={styles.footerRight}>
