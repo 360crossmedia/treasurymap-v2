@@ -77,7 +77,7 @@
 
 .cardBigP {
   color: #0d4f98;
-  font-size: 40px;
+  font-size: x-large;
   font-weight: 700;
   margin: 0;
 }
@@ -195,7 +195,7 @@
     margin: 0 17px;
   }
   .cardBigP {
-    font-size: 32px;
+    font-size: larger;
   }
 }
 
