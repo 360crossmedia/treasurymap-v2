@@ -6,8 +6,8 @@ import { PrimeReactProvider } from "primereact/api";
 import "primereact/resources/themes/lara-light-cyan/theme.css";
 import LoadingLogic from "./components/LoadingLogic";
 import LoadingScreen from "./components/LoadingScreen";
+import ProtectedRoutes from "./components/ProtectedRoutes";
 
- 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -19,12 +19,14 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <PrimeReactProvider value={{ unstyled: false }}>
         <Providers>
-          <body className={inter.className}>
-            <LoadingLogic>
-              <LoadingScreen />
-            </LoadingLogic>
-            {children}
-          </body>
+          <ProtectedRoutes>
+            <body className={inter.className}>
+              <LoadingLogic>
+                <LoadingScreen />
+              </LoadingLogic>
+              {children}
+            </body>
+          </ProtectedRoutes>
         </Providers>
       </PrimeReactProvider>
     </html>
