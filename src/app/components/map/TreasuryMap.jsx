@@ -75,6 +75,7 @@ const TreasuryMap = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [result, setResult] = useState([]); 
   const [isInitialMount,setIsInitialMount] = useState(true); 
+  const [renderSearched, setRenderSearched] = useState('')
 
   const handleSearch = () => {
     const searchResult = allCompData
@@ -89,11 +90,17 @@ const TreasuryMap = () => {
     if (isInitialMount) {
       setIsInitialMount(false)
     } else {
-      // This function will be called only after myState updates, not on initial render
-      selectFilter('keywords', result)
-    }
+      
+      if(result.length > 0){
+        selectFilter('keywords', result)
+        setRenderSearched(searchTerm)
+        setSearchTerm('')
+      } else{
+        alert('No matches found');
+      }
 
-    setSearchTerm('')
+    }
+    
 
   }, [result]);
 
@@ -881,48 +888,25 @@ const TreasuryMap = () => {
 
 
 
+                  {/* PARA GENERAT LA ETIQUETA DEL KEYWOR ELEGIDO */}
+                  <div className="current-filters-list">
+                    <div className="current-filters-list-wrapper">
+                    {
+                    filtersConfig['keywords'].selectedFilters.length >= 2 && (
+                      // <span onClick={() => clearFilters('keywords')}>Clear</span>
 
-                  {/* <span className="category-filters-placeholder" onClick={() => toggleSelectFilters('keywords')}>
-                    {filtersConfig['keywords'].placeholder}
-                  </span>
-
-                  <div className={`filters-selection-list ${filtersConfig['keywords'].open ? 'open' : ''}`}>
-                    {Object.keys(filtersConfig['keywords'].allFilters).map((key) => (
-                      <div
-                        key={key}
-                        onClick={() => selectFilter('keywords', filtersConfig['keywords'].allFilters[key])}
-                        
-                        className={filtersConfig['keywords'].selectedFilters.includes(filtersConfig['keywords'].allFilters[key]) ? 'selected' : ''}>
-                        {filtersConfig['keywords'].allFilters[key]}
-                      </div>
-                    ))}
-                  </div> */}
+                      <div key={'keyword1'} className="current-filters-list-item" onClick={() => clearFilters('keywords')}>
+                        {renderSearched} <span style={{display: 'inline', color:"black", fontSize: "larger" , fontWeight: "bold"}} >x</span>   
+                      </div>                      
 
 
-              {/* </div> */}
+                    )
+                    }                     
 
-
-
-              {/* 
-              
-              //ESTE CODIGO GENERA LA ETIQUETA DEL KEYWORD ELEGIDO    
-
-              <div className="current-filters-list">
-                <div className="current-filters-list-wrapper">
-                  {filtersConfig['keywords'].selectedFilters.map((filter) => (
-                    <div key={filter} className="current-filters-list-item">
-                      {filter}
-                      <div onClick={() => selectFilter('keywords', filter)}>x</div>
                     </div>
-                  ))}
-                </div>
-                {filtersConfig['keywords'].selectedFilters.length >= 2 && (
-                  <span onClick={() => clearFilters('keywords')}>Clear</span>
-                )}
-              </div> */}
 
-              
-             {/* TERMINA EL SEARCH BAR DE KEYWORDS ----------------------- */}
+                  </div>
+
 
             </div>
 
@@ -1004,15 +988,8 @@ const TreasuryMap = () => {
                 <div className="current-filters-list-wrapper">
                   {filtersConfig['subcategories'].selectedFilters.map((filter) => (
                     <div key={filter} className="current-filters-list-item" onClick={() => selectFilter('subcategories', filter)}>
-                      {subcategoriesData.find(r => r.id === filter)?.name || filter} <span style={{display: 'inline', color:"black", fontSize: "larger" , fontWeight: "bold"}} >x</span> 
-                      
+                      {subcategoriesData.find(r => r.id === filter)?.name || filter} <span style={{display: 'inline', color:"black", fontSize: "larger" , fontWeight: "bold"}} >x</span>                       
                     </div>
-
-                    // <div key={filter} className="current-filters-list-item">
-                    //   {subcategoriesData.find(r => r.id === filter)?.name || filter}
-                    //   <div onClick={() => selectFilter('subcategories', filter)}>x</div>
-                    // </div>
-
 
                   ))}
                 </div>
@@ -1051,6 +1028,9 @@ const TreasuryMap = () => {
                   }
                 </div>
               </div>
+              
+
+              
               <div className="current-filters-list">
                 <div className="current-filters-list-wrapper">
                   {filtersConfig['headequarterLocation'].selectedFilters.map((filter) => (
@@ -1065,6 +1045,9 @@ const TreasuryMap = () => {
                   <span onClick={() => clearFilters('headequarterLocation')}>Clear</span>
                 )}
               </div>
+
+
+
             </div>
 
             <div className="category-filters-wrapper">
@@ -1123,6 +1106,9 @@ const TreasuryMap = () => {
 
                 </div>
               </div>
+
+
+
               <div className="current-filters-list">
                 <div className="current-filters-list-wrapper">
                   {filtersConfig['activeIn'].selectedFilters.map((filter) => (
@@ -1137,6 +1123,9 @@ const TreasuryMap = () => {
                   <span onClick={() => clearFilters('activeIn')}>Clear</span>
                 )}
               </div>
+
+
+
             </div>
           </div>
           <div className="clear-filters-mobile">
