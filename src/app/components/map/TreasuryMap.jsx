@@ -175,8 +175,10 @@ const TreasuryMap = () => {
         return response.json();
       })
       .then(data => {
+
         setActiveinData(data);
         //console.log(data);
+
         return data;
       })
       .catch(error => {
@@ -184,6 +186,7 @@ const TreasuryMap = () => {
       });
 
   }
+
 
   const fetchAllCompaniesData = async () => {
 
@@ -985,7 +988,9 @@ const TreasuryMap = () => {
                                   </div>
                               );
                           })
-                    }                  
+                    }      
+
+   
               
                 </div>
 
@@ -1069,39 +1074,50 @@ const TreasuryMap = () => {
                 </span>
                 <div className={`filters-selection-list ${filtersConfig['activeIn'].open ? 'open' : ''}`}>
                   
-                    {
+                    {/* {
 
-                      // RENDERIZACION DEL DROPDOWN DE SUBCATEGORIES
-
+                      // RENDERIZACION DEL DROPDOWN DE ACTIVE IN
                       activeinData && Object.keys(filtersConfig['activeIn'].allFilters).map((key) => {
-                              
-                              //console.log(key);
                               const activeinId = filtersConfig['activeIn'].allFilters[key];
-                              // console.log("key:");
-                              // console.log(key);                                 
-                              // console.log("filtersConfig['activeIn'].allFilters[key]:");
-                              // console.log(filtersConfig['activeIn'].allFilters[key]);
-                              // console.log("activeinId");
-                              // console.log(activeinId);                              
                               const activein = activeinData.find(subcat => subcat.id === activeinId);
-                              
                               return (
                                   <div
                                       key={key}
                                       onClick={() => selectFilter('activeIn', activeinId)}
                                       className={filtersConfig['activeIn'].selectedFilters.includes(activeinId) ? 'selected' : ''}>
-                                      
-                                      {/* Render the name of the subcategory */}
-                                      
                                       {activein ? activein.name : 'Unknown Region'}
-
                                   </div>
                               );
                           })
-                    }  
+                    }   */}
 
 
-                  
+                          {
+                              // Check if activeinData exists and then sort and map it
+                              activeinData && 
+                              [...activeinData] // Create a shallow copy to avoid mutating the original array
+                              .sort((a, b) => a.name.localeCompare(b.name)) // Sort by name
+                              .map(activein => {
+                                  // Find the key corresponding to the activein's id in allFilters
+                                  const key = Object.keys(filtersConfig['activeIn'].allFilters)
+                                                  .find(key => filtersConfig['activeIn'].allFilters[key] === activein.id);
+
+                                  // Render the div for each activein
+                                  return (
+                                      <div
+                                          key={key}
+                                          onClick={() => selectFilter('activeIn', activein.id)}
+                                          className={filtersConfig['activeIn'].selectedFilters.includes(activein.id) ? 'selected' : ''}>
+
+                                          {activein.name}
+                                      </div>
+                                  );
+                              })
+                          }
+
+
+
+
                   
                   {
                     // Object.keys(filtersConfig['activeIn'].allFilters).map((key) => (
