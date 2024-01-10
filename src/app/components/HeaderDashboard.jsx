@@ -6,11 +6,16 @@ import { apiGetCompaniesByOwner } from "../service/apiGetCompaniesByOwner";
 import { useRouter } from "next/navigation";
 import { apiDeleteCompanyById } from "../service/apiDeleteCompanyById";
 import { setCompanyId } from "../store/slices/companyToUpdate.slice";
+import { apiGetAllCompanies } from "../service/apiGetAllCompanies";
 
 const HeaderDashboard = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const userId = useSelector((state) => state.user);
+  let backUpUserId;
+  if (typeof window !== "undefined") {
+    backUpUserId = localStorage.getItem("userId");
+  }
   const [companies, setCompanies] = useState([]);
   const [isSelectedAnyCompany, setIsSelectedAnyCompany] = useState(false);
 
@@ -19,13 +24,21 @@ const HeaderDashboard = () => {
   }, []);
 
   const getCompanies = async () => {
-    const companies = await apiGetCompaniesByOwner(userId);
-    setCompanies(companies?.data);
+    if (userId == 1 || backUpUserId == 1) {
+      const companies = await apiGetAllCompanies();
+      setCompanies(companies);
+    } else {
+      const companies = await apiGetCompaniesByOwner(
+        userId == 0 ? backUpUserId : userId
+      );
+      setCompanies(companies);
+    }
   };
 
   const updateButton = () => {
     if (isSelectedAnyCompany) {
       dispatch(setCompanyId(Number(isSelectedAnyCompany)));
+      localStorage.setItem("companyId", Number(isSelectedAnyCompany));
       router.push(`/form`);
     } else alert("Please select any company");
   };

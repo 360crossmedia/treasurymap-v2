@@ -1,9 +1,11 @@
 "use client";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import styles from "../styles/BodyDashboard.module.css";
 import { useRouter } from "next/navigation";
+import { setCompanyId } from "../store/slices/companyToUpdate.slice";
 
 const BodyDashboard = () => {
+  const dispatch = useDispatch();
   const router = useRouter();
   const companyId = useSelector((state) => state.companyId);
   return (
@@ -27,7 +29,11 @@ const BodyDashboard = () => {
       </div>
       <div>
         <button
-          onClick={() => router.push("/form")}
+          onClick={() => {
+            localStorage.removeItem("companyId");
+            dispatch(setCompanyId(false));
+            router.push("/form");
+          }}
           className={styles.createCompanyButton}
         >
           Create a new company
