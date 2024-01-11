@@ -858,7 +858,7 @@ const TreasuryMap = () => {
               </div>
             </div>
             <div className={`menu-mobile ${mobileOpen ? 'open' : ''}`}>
-              <h2>Filter by</h2>
+              <h2 className='mobile-header'>Filter by</h2>
               <div onClick={toggleMobileFilters}>{ mobileOpen ? 'X' : '+' }</div>
             </div>
           </div>
@@ -877,7 +877,7 @@ const TreasuryMap = () => {
 
               {/*  EMPIEZA EL SEARCH BAR DE KEYWORDS   ------------------------------*/}
 
-              <p>{`Keywords`}</p>
+              <p className={"text-style-titles"}>{`Keywords`}</p>
               
               {/* <div className="category-filters"> */}
 
@@ -895,8 +895,11 @@ const TreasuryMap = () => {
                     />
                     <button 
                     onClick={handleSearch} 
-                    style={{background: "none", color: 'inherit'}}
-                    >O</button>
+                    className={"search-button"}
+                    >
+                      {/* <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--> */}
+                      <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6 .1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+                    </button>
                   </div>
 
 
@@ -927,7 +930,7 @@ const TreasuryMap = () => {
 
 
             <div className="category-selection-wrapper">
-              <p>Category</p>
+              <p className={"text-style-titles"}>Category</p>
               <div className="category-selection">
                 <div className="category-selection-active" onClick={toggleSelectCategory}>
                   <span className="selected">{selectedCategory ? categories[selectedCategory] : null}</span>
@@ -950,8 +953,8 @@ const TreasuryMap = () => {
 
 
             <div className="category-filters-wrapper">
-              <p>{filtersConfig['subcategories'].title}</p>
-              {/* <p>{`Sub-Category`}</p> */}
+              <p className={"text-style-titles"}>{filtersConfig['subcategories'].title}</p>
+              {/* <p className={"text-style-titles"}>{`Sub-Category`}</p> */}
 
               <div className="category-filters">
                 
@@ -1019,8 +1022,8 @@ const TreasuryMap = () => {
 
 
             <div className="category-filters-wrapper">
-              <p>{filtersConfig['headequarterLocation'].title}</p>
-              {/* <p>{`Headquarter location`}</p>               */}
+              <p className={"text-style-titles"}>{filtersConfig['headequarterLocation'].title}</p>
+              {/* <p className={"text-style-titles"}>{`Headquarter location`}</p>               */}
               <div className="category-filters">
                 <span className="category-filters-placeholder" onClick={() => toggleSelectFilters('headequarterLocation')}>
                   {filtersConfig['headequarterLocation'].placeholder}
@@ -1066,8 +1069,8 @@ const TreasuryMap = () => {
             </div>
 
             <div className="category-filters-wrapper">
-              <p>{filtersConfig['activeIn'].title}</p>
-              {/* <p>{`Active in`}</p>                    */}
+              <p className={"text-style-titles"}>{filtersConfig['activeIn'].title}</p>
+              {/* <p className={"text-style-titles"}>{`Active in`}</p>                    */}
               <div className="category-filters">
                 <span className="category-filters-placeholder" onClick={() => toggleSelectFilters('activeIn')}>
                   {filtersConfig['activeIn'].placeholder}
