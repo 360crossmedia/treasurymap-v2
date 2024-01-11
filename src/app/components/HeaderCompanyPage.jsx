@@ -20,6 +20,7 @@ const HeaderCompanyPage = ({ companyId }) => {
   const [categories, setCategories] = useState();
   const [subCategories, setSubCategories] = useState();
   const [companyOffices, setCompanyOffices] = useState();
+  const [moreCountries, setMoreCountries] = useState(false);
 
   const getCompanyData = async () => {
     dispatch(setIsLoading(true));
@@ -130,12 +131,27 @@ const HeaderCompanyPage = ({ companyId }) => {
         </div>
         <div className={styles.countriesContainer}>
           <p className={styles.boldP}>Active In</p>
-          {companyOffices?.map((office, index) => (
-            <div key={index} className={styles.blueCard}>
-              <p className={styles.blueCardP}>{office?.name}</p>
+          <Image
+            onClick={() => setMoreCountries(!moreCountries)}
+            src={ArrowDown}
+            alt=""
+            className={moreCountries ? styles.arrowUp : ""}
+          />
+          {!moreCountries &&
+            companyOffices?.slice(0, 4).map((office, index) => (
+              <div key={index} className={styles.blueCard}>
+                <p className={styles.blueCardP}>{office?.name}</p>
+              </div>
+            ))}
+          {moreCountries && (
+            <div className={styles.moreCountriesContainer}>
+              {companyOffices?.map((office, index) => (
+                <div key={index} className={styles.blueCard}>
+                  <p className={styles.blueCardP}>{office?.name}</p>
+                </div>
+              ))}
             </div>
-          ))}
-          <Image src={ArrowDown} alt="" />
+          )}
         </div>
       </div>
     </>

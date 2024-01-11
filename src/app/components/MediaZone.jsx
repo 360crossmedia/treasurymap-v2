@@ -16,6 +16,7 @@ const MediaZone = ({ companyId }) => {
   const [videos, setVideos] = useState();
   const [articles, setArticles] = useState();
   const [articleSelected, setArticleSelected] = useState(false);
+  const [seeMoreActive, setSeeMoreActive] = useState(false);
 
   const getCompanyData = async () => {
     dispatch(setIsLoading(true));
@@ -48,12 +49,27 @@ const MediaZone = ({ companyId }) => {
           <p className={styles.boldP}>Active In</p>
         </div>
         <div className={styles.blueCardsContainer}>
-          {countries?.map((country, index) => (
-            <div key={index} className={styles.blueCard}>
-              <p className={styles.blueCardP}>{country?.name}</p>
-            </div>
-          ))}
+          {seeMoreActive &&
+            countries?.map((country, index) => (
+              <div key={index} className={styles.blueCard}>
+                <p className={styles.blueCardP}>{country?.name}</p>
+              </div>
+            ))}
+          {!seeMoreActive &&
+            countries?.slice(0, 4).map((country, index) => (
+              <div key={index} className={styles.blueCard}>
+                <p className={styles.blueCardP}>{country?.name}</p>
+              </div>
+            ))}
         </div>
+        {countries?.length > 4 && (
+          <p
+            onClick={() => setSeeMoreActive(!seeMoreActive)}
+            className={styles.seeMoreBlueCards}
+          >
+            {!seeMoreActive ? "See more" : "See less"}
+          </p>
+        )}
       </div>
       {!articleSelected &&
         videos?.map((video, index) => (
