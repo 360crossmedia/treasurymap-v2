@@ -2089,6 +2089,12 @@ div.category-title.selected {
   .current-filters-list-wrapper {
     margin-top: 6px;
   }
+
+  .div-search-input{
+    width: 100%;
+  }
+
+
 }
 
 @media screen and (min-width: 979px) and (max-width: 1200px) {
@@ -2319,6 +2325,6 @@ div.category-title.selected {
 
 @media screen and (max-width: 600px) {
   .interactive-map-wrapper {
-    height: 95vh;
+    height: 100vh;
   }
 }
