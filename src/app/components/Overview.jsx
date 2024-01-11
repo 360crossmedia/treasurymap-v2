@@ -15,6 +15,7 @@ const Overview = ({ companyId }) => {
   const [questions, setQuestions] = useState();
   const [answers, setAnswers] = useState();
   const [countries, setCountries] = useState();
+  const [seeMoreActive, setSeeMoreActive] = useState(false);
 
   const getCompanyData = async () => {
     dispatch(setIsLoading(true));
@@ -39,8 +40,6 @@ const Overview = ({ companyId }) => {
   useEffect(() => {
     getCompanyData();
   }, []);
-
-  console.log(company);
 
   return (
     <div className={styles.mainContainer}>
@@ -92,12 +91,27 @@ const Overview = ({ companyId }) => {
           <p className={styles.boldP}>Active In</p>
         </div>
         <div className={styles.blueCardsContainer}>
-          {countries?.map((country, index) => (
-            <div key={index} className={styles.blueCard}>
-              <p className={styles.blueCardP}>{country?.name}</p>
-            </div>
-          ))}
+          {seeMoreActive &&
+            countries?.map((country, index) => (
+              <div key={index} className={styles.blueCard}>
+                <p className={styles.blueCardP}>{country?.name}</p>
+              </div>
+            ))}
+          {!seeMoreActive &&
+            countries?.slice(0, 4).map((country, index) => (
+              <div key={index} className={styles.blueCard}>
+                <p className={styles.blueCardP}>{country?.name}</p>
+              </div>
+            ))}
         </div>
+        {countries?.length > 4 && (
+          <p
+            onClick={() => setSeeMoreActive(!seeMoreActive)}
+            className={styles.seeMoreBlueCards}
+          >
+            {!seeMoreActive ? "See more" : "See less"}
+          </p>
+        )}
       </div>
     </div>
   );

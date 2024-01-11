@@ -105,6 +105,8 @@
   .blueCardsContainer {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 8px;
   }
   .left {
@@ -132,5 +134,9 @@
     background: none;
     box-shadow: none;
     margin: 0px 16px;
+  }
+  .seeMoreBlueCards {
+    color: #626b80;
+    cursor: pointer;
   }
 }
