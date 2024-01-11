@@ -1835,7 +1835,7 @@ div.category-title.selected {
   border-radius: 4px;
   min-height: 30px;
   position: relative;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .category-selection-active {
@@ -1946,18 +1946,38 @@ div.category-title.selected {
   display: flex;
   align-items: center;
   width: 160px;
-  margin-bottom: 5px;
+  margin-bottom: 20px;
   box-shadow: 0 0 0px 1px #bfbfbf;
   border-radius: 4px;
 }
 
+.text-style-titles{
+  margin-bottom: 0px;
+  font-size: medium;
+}
+
 .input-placeholder {
   width: 160px;
+  background: none;
+  border: none;
+  outline: none;
+  padding: 0 10px;
 }
 
 .input-placeholder::placeholder {
   color: #cdcdcd;
   /* Your desired placeholder color */
+}
+
+.search-button{
+  background: none;
+  border: none;
+  
+}
+
+
+.mobile-header{
+  font-size: medium;
 }
 
 .filters-selection-list div {
@@ -2103,7 +2123,7 @@ div.category-title.selected {
     align-items: baseline;
     flex-direction: column;
     overflow: auto;
-    padding: 180px 20px 20px 20px;
+    padding: 120px 20px 20px 20px;
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
@@ -2179,7 +2199,7 @@ div.category-title.selected {
   .category-selection,
   .category-filters {
     width: 100%;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
   }
   .current-filters-list {
     width: 100%;
@@ -2245,7 +2265,7 @@ div.category-title.selected {
     position: absolute;
     z-index: 5;
     top: 0;
-    height: 80px;
+    height: 60px;
     left: 0;
     width: 100%;
     display: flex;
@@ -2255,12 +2275,12 @@ div.category-title.selected {
     border-bottom: 2px solid;
   }
   .menu-mobile div {
-    height: 32px;
-    width: 32px;
+    height: 20px;
+    width: 20px;
     border-radius: 50%;
     box-shadow: 0 0 4px -1px black;
     cursor: pointer;
-    font-size: 26px;
+    font-size: small;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2299,6 +2319,6 @@ div.category-title.selected {
 
 @media screen and (max-width: 600px) {
   .interactive-map-wrapper {
-    height: 100vh;
+    height: 80vh;
   }
 }
