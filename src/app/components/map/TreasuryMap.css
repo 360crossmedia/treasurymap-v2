@@ -3,10 +3,10 @@
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 } */
 
-.map-wrapper {
-  /* margin-bottom: 30px; */
+/* .map-wrapper {
+
   
-}
+} */
 
 #interactive-map {
   position: relative;
@@ -108,6 +108,11 @@
 .map-static-logos .category-1 > div:nth-child(1) {
   top: 30px;
   left: 645px;
+  
+  /* .imagen{
+    width: 30px;
+    height: auto;
+  } */
 }
 
 .map-static-logos .category-1 > div:nth-child(2) {
