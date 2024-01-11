@@ -80,11 +80,15 @@ const Overview = ({ companyId }) => {
       </div>
       <div className={styles.right}>
         <Image
-          width={337.611}
-          height={181.946}
-          className={styles.companyImg}
+          // width={337.611}
+          // height={181.946}
+          // className={styles.companyImg}
           src={!company?.logo ? companyImg : company?.logo}
           alt=""
+          width={0}
+          height={0}
+          sizes="100vw"
+          style={{ width: '80%', height: 'auto', maxHeight: "95%" }} // optional
         />
       </div>
       <div className={styles.countriesContainer}>

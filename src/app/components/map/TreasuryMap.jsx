@@ -487,6 +487,7 @@ const TreasuryMap = () => {
                       <img
                         src={findLogoUrl(category, index + 1)}
                         alt="Logo"
+                        className={`imagen`}
                       />
                     </div>
                   </a>

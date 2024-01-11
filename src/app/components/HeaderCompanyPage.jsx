@@ -60,10 +60,15 @@ const HeaderCompanyPage = ({ companyId }) => {
       <div className={styles.mainContainer}>
         <div className={styles.imgContainer}>
           <Image
-            width={167}
-            height={90}
+            // width={167}
+            // height={90}
+            // fill={true}
             alt=""
             src={!company?.logo ? companyImg : company?.logo}
+            width={0}
+            height={0}
+            sizes="100vw"
+            style={{ width: '80%', height: 'auto', maxHeight: "95%" }} // optional
           />
         </div>
         <div className={styles.categoryCardsContainer}>
