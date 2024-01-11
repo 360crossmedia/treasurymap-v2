@@ -938,7 +938,7 @@ const TreasuryMap = () => {
               <div className="category-selection">
                 <div className="category-selection-active" onClick={toggleSelectCategory}>
                   <span className="selected">{selectedCategory ? categories[selectedCategory] : null}</span>
-                  <span>{!selectedCategory && 'Select category'}</span>
+                  <span style={{fontSize:"small"}}>{!selectedCategory && 'Select category'}</span>
                 </div>
                 <div className={`category-selection-list ${selectCategoryOpen ? 'open' : ''}`}>
                   {Object.keys(categories).map((key) => (
