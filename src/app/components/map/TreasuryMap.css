@@ -5,6 +5,7 @@
 
 .map-wrapper {
   /* margin-bottom: 30px; */
+  
 }
 
 #interactive-map {
@@ -1911,6 +1912,7 @@ div.category-title.selected {
   display: flex;
   align-items: center;
   position: relative;
+  font-size: small;
 }
 
 .category-filters-placeholder:before {
@@ -1966,6 +1968,7 @@ div.category-title.selected {
 
 .input-placeholder::placeholder {
   color: #cdcdcd;
+  font-size: small;
   /* Your desired placeholder color */
 }
 
@@ -2046,7 +2049,9 @@ div.category-title.selected {
 
 @media screen and (max-width: 1200px) {
   #interactive-map {
-    overflow: initial;
+    /* overflow: initial; */
+    overflow: hidden;
+
   }
   .interactive-map-inner {
     overflow: hidden;
