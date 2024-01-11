@@ -3,7 +3,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import styles from "./styles/layout.module.css";
 import TreasuryMap from "./components/map/TreasuryMap";
-import './components/map/TreasuryMap.css'
+import "./components/map/TreasuryMap.css";
 
 const Layout = () => {
   return (
@@ -14,9 +14,7 @@ const Layout = () => {
       <div className={styles.mainContainerMap}>
         <Navbar buttonLabel={"Log In"} />
       </div>
-
-        <TreasuryMap/>
-
+      <TreasuryMap />
       <Footer />
     </div>
   );
