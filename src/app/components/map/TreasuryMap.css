@@ -2123,7 +2123,7 @@ div.category-title.selected {
     align-items: baseline;
     flex-direction: column;
     overflow: auto;
-    padding: 110px 20px 20px 20px;
+    padding: 120px 20px 20px 20px;
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
@@ -2319,6 +2319,6 @@ div.category-title.selected {
 
 @media screen and (max-width: 600px) {
   .interactive-map-wrapper {
-    height: 70vh;
+    height: 95vh;
   }
 }
