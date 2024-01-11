@@ -3,9 +3,10 @@
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 } */
 
-.map-wrapper {
-  /* margin-bottom: 30px; */
-}
+/* .map-wrapper {
+
+  
+} */
 
 #interactive-map {
   position: relative;
@@ -107,6 +108,11 @@
 .map-static-logos .category-1 > div:nth-child(1) {
   top: 30px;
   left: 645px;
+  
+  /* .imagen{
+    width: 30px;
+    height: auto;
+  } */
 }
 
 .map-static-logos .category-1 > div:nth-child(2) {
@@ -1835,7 +1841,7 @@ div.category-title.selected {
   border-radius: 4px;
   min-height: 30px;
   position: relative;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .category-selection-active {
@@ -1911,6 +1917,7 @@ div.category-title.selected {
   display: flex;
   align-items: center;
   position: relative;
+  font-size: small;
 }
 
 .category-filters-placeholder:before {
@@ -1946,18 +1953,39 @@ div.category-title.selected {
   display: flex;
   align-items: center;
   width: 160px;
-  margin-bottom: 5px;
+  margin-bottom: 20px;
   box-shadow: 0 0 0px 1px #bfbfbf;
   border-radius: 4px;
 }
 
+.text-style-titles{
+  margin-bottom: 0px;
+  font-size: medium;
+}
+
 .input-placeholder {
   width: 160px;
+  background: none;
+  border: none;
+  outline: none;
+  padding: 0 10px;
 }
 
 .input-placeholder::placeholder {
   color: #cdcdcd;
+  font-size: small;
   /* Your desired placeholder color */
+}
+
+.search-button{
+  background: none;
+  border: none;
+  
+}
+
+
+.mobile-header{
+  font-size: medium;
 }
 
 .filters-selection-list div {
@@ -2026,7 +2054,9 @@ div.category-title.selected {
 
 @media screen and (max-width: 1200px) {
   #interactive-map {
-    overflow: initial;
+    /* overflow: initial; */
+    overflow: hidden;
+
   }
   .interactive-map-inner {
     overflow: hidden;
@@ -2069,6 +2099,12 @@ div.category-title.selected {
   .current-filters-list-wrapper {
     margin-top: 6px;
   }
+
+  .div-search-input{
+    width: 100%;
+  }
+
+
 }
 
 @media screen and (min-width: 979px) and (max-width: 1200px) {
@@ -2103,7 +2139,7 @@ div.category-title.selected {
     align-items: baseline;
     flex-direction: column;
     overflow: auto;
-    padding: 180px 20px 20px 20px;
+    padding: 120px 20px 20px 20px;
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
@@ -2179,7 +2215,7 @@ div.category-title.selected {
   .category-selection,
   .category-filters {
     width: 100%;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
   }
   .current-filters-list {
     width: 100%;
@@ -2245,7 +2281,7 @@ div.category-title.selected {
     position: absolute;
     z-index: 5;
     top: 0;
-    height: 80px;
+    height: 60px;
     left: 0;
     width: 100%;
     display: flex;
@@ -2255,12 +2291,12 @@ div.category-title.selected {
     border-bottom: 2px solid;
   }
   .menu-mobile div {
-    height: 32px;
-    width: 32px;
+    height: 20px;
+    width: 20px;
     border-radius: 50%;
     box-shadow: 0 0 4px -1px black;
     cursor: pointer;
-    font-size: 26px;
+    font-size: small;
     display: flex;
     align-items: center;
     justify-content: center;
