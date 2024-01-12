@@ -6,9 +6,9 @@
 
 .cardsContainer {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   margin: 20px 0;
-  max-width: 766px;
+  gap: 15px;
 }
 
 .card {
@@ -90,7 +90,6 @@
   border-radius: 15px 15px 0px 0px;
   padding-right: 30px;
   box-shadow: 0px 4px 30.6px 0px rgba(0, 0, 0, 0.08);
-  gap: 320px;
 }
 
 .headerLinks {
@@ -103,7 +102,6 @@
   align-items: center;
   gap: 15px;
   flex-wrap: wrap;
-  max-width: 620px;
   padding: 10px 30px 10px 17px;
 }
 
@@ -157,12 +155,23 @@
 
 .moreCountriesContainer {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
+  flex-wrap: wrap;
   gap: 10px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 .arrowUp {
   transform: rotate(180deg);
+}
+
+.color {
+  background: #626b80;
+  cursor: pointer;
+  opacity: 0.7;
+  box-shadow: 0px 4px 30.6px 0px rgba(0, 0, 0, 0.08);
 }
 
 @media screen and (max-width: 1195px) {
