@@ -22,6 +22,16 @@
   cursor: pointer;
 }
 
+.navbarButtonLogOut {
+  border-radius: 48px;
+  background: #626b80;
+  padding: 10px 37px;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+
 .navbarLeft {
   width: 80%;
   display: flex;
@@ -71,6 +81,14 @@
   }
 
   .navbarButton {
+    padding: 6.583px 24.358px;
+    gap: 5.267px;
+    border-radius: 31.6px;
+    font-size: 10.533px;
+    font-weight: 500;
+  }
+
+  .navbarButtonLogOut {
     padding: 6.583px 24.358px;
     gap: 5.267px;
     border-radius: 31.6px;
