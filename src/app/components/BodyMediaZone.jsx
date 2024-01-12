@@ -110,7 +110,10 @@ const BodyMediaZone = () => {
   return (
     <div className={`${styles.mainContainer} ${styles2.mainContainer}`}>
       <div className={styles2.buttonsContainer}>
-        <button onClick={() => router.back()} className={styles2.deleteButton}>
+        <button
+          onClick={() => router.push("/dashboard")}
+          className={styles2.deleteButton}
+        >
           Go back
         </button>
         <button
