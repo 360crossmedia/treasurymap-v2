@@ -4,11 +4,27 @@ import navbarlogo from "../assets/navbarlogo.svg";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import MobileMenuNavbar from "../assets/MobileMenuNavbar.svg";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { setCompanyId } from "../store/slices/companyToUpdate.slice";
+import { setUser } from "../store/slices/user.slice";
 
 const Navbar = ({ buttonLabel }) => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [ loggedIn, setLoggedIn] = useState(undefined)
+
+useEffect(()=>{
+  let userFound = localStorage.getItem("userId");
+  if(userFound){
+    setLoggedIn(true)
+    //console.log('TRUE it is logged');
+  }else{
+    setLoggedIn(false)
+    //console.log('Not logged in');
+  }
+},[])
 
   return (
     <nav className={styles.navbar}>
@@ -33,25 +49,64 @@ const Navbar = ({ buttonLabel }) => {
             isMenuOpen ? styles.navbarLinksMobile : ""
           }`}
         >
-          <a className={styles.navbarA} href="/signup">
-            Be on the map
-          </a>
+          {
+            loggedIn 
+            ? 
+            <a className={styles.navbarA} href="/dashboard">
+              Admin Dashboard
+            </a>  
+            :
+            <a className={styles.navbarA} href="/signup">
+              Be on the map
+            </a>          
+
+          }
+
           <a className={styles.navbarA} href="/contactUs">
             Contact us
           </a>
         </div>
       </div>
       <div className={styles.navbarRight}>
-        <button
-          onClick={() =>
-            buttonLabel == "Sign up"
-              ? router.push("/signup")
-              : router.push("/login")
-          }
-          className={styles.navbarButton}
-        >
-          {buttonLabel}
-        </button>
+        
+        
+        { loggedIn !== undefined && (
+          loggedIn
+          ?
+          <button
+            onClick={() => {
+              dispatch(setCompanyId(false))
+              dispatch(setUser(0))
+              localStorage.removeItem('userId');
+              localStorage.removeItem('companyId');
+              router.push("/")
+
+            }
+
+            }
+            className={styles.navbarButtonLogOut}
+          >
+            Log Out
+          </button>        
+
+          :
+          
+          <button
+            onClick={() =>
+              buttonLabel == "Sign up"
+                ? router.push("/signup")
+                : router.push("/login")
+            }
+            className={styles.navbarButton}
+          >
+            {buttonLabel}
+          </button>
+         )
+        }
+
+
+
+
       </div>
     </nav>
   );
