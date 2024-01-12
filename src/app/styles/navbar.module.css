@@ -88,6 +88,14 @@
     font-weight: 500;
   }
 
+  .navbarButtonLogOut {
+    padding: 6.583px 24.358px;
+    gap: 5.267px;
+    border-radius: 31.6px;
+    font-size: 10.533px;
+    font-weight: 500;
+  }
+
   .navbarLogo {
     width: 114px;
     gap: 30.643px;
