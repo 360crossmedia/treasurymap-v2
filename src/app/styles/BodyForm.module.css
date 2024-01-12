@@ -86,6 +86,7 @@
 .buttonContainer {
   display: flex;
   justify-content: center;
+  gap: 10px;
   margin-bottom: 94px;
   margin-top: 47px;
 }
@@ -131,6 +132,15 @@
   padding: 16px 32px 16px 16px;
 }
 
+.cancelButton {
+  width: 160px;
+  padding: 18px 26px;
+  border-radius: 30px;
+  background: white;
+  border: 0.8px solid #d9d9d9;
+  box-shadow: 0px 10px 60px 0px rgba(0, 0, 0, 0.12);
+}
+
 @media screen and (max-width: 1100px) {
   .mainContainer {
     flex-direction: column;
@@ -158,5 +168,9 @@
   .mainContainer {
     margin: 0 17px;
     margin-top: 30px;
+  }
+  .buttonContainer {
+    flex-direction: column-reverse;
+    align-items: center;
   }
 }

@@ -544,6 +544,13 @@ const BodyForm = () => {
           </div>
         )}
         <div className={styles.buttonContainer}>
+          <button
+            onClick={() => router.push("/dashboard")}
+            type="button"
+            className={styles.cancelButton}
+          >
+            Cancel
+          </button>
           <button className={styles.button}>Save information</button>
         </div>
       </div>
