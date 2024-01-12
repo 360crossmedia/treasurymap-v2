@@ -8,8 +8,10 @@ import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { setCompanyId } from "../store/slices/companyToUpdate.slice";
 import { setUser } from "../store/slices/user.slice";
+import { usePathname } from "next/navigation";
 
 const Navbar = ({ buttonLabel }) => {
+  const pathname = usePathname();
   const router = useRouter();
   const dispatch = useDispatch();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -24,6 +26,8 @@ useEffect(()=>{
     setLoggedIn(false)
     //console.log('Not logged in');
   }
+
+
 },[])
 
   return (
@@ -80,7 +84,13 @@ useEffect(()=>{
               dispatch(setUser(0))
               localStorage.removeItem('userId');
               localStorage.removeItem('companyId');
-              router.push("/")
+              
+              if( pathname === '/'){
+                window.location.reload();
+              }else{
+                router.push("/")
+              }
+
 
             }
 
