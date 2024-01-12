@@ -1,7 +1,6 @@
 "use client";
 import Image from "next/image";
 import styles from "../styles/HeaderCompanyPage.module.css";
-import ArrowDown from "../assets/ArrowDown.svg";
 import companyImg from "../assets/placeholderimg.jpg";
 import { useDispatch } from "react-redux";
 import { setIsOverview } from "../store/slices/isOverview.slice";
@@ -12,6 +11,7 @@ import { useEffect, useState } from "react";
 import { apiGetCountryById } from "../service/apiGetCountryById";
 import { setIsLoading } from "../store/slices/isLoading.slice";
 import { apiGetSubCategoryById } from "../service/apiGetSubCategoryById";
+import Modal from "react-bootstrap/Modal";
 
 const HeaderCompanyPage = ({ companyId }) => {
   const isOverview = useSelector((state) => state.isOverview);
@@ -20,7 +20,7 @@ const HeaderCompanyPage = ({ companyId }) => {
   const [categories, setCategories] = useState();
   const [subCategories, setSubCategories] = useState();
   const [companyOffices, setCompanyOffices] = useState();
-  const [moreCountries, setMoreCountries] = useState(false);
+  const [show, setShow] = useState(false);
 
   const getCompanyData = async () => {
     dispatch(setIsLoading(true));
@@ -61,15 +61,12 @@ const HeaderCompanyPage = ({ companyId }) => {
       <div className={styles.mainContainer}>
         <div className={styles.imgContainer}>
           <Image
-            // width={167}
-            // height={90}
-            // fill={true}
             alt=""
             src={!company?.logo ? companyImg : company?.logo}
             width={0}
             height={0}
             sizes="100vw"
-            style={{ width: '80%', height: 'auto', maxHeight: "95%" }} // optional
+            style={{ width: "80%", height: "auto", maxHeight: "95%" }} // optional
           />
         </div>
         <div className={styles.categoryCardsContainer}>
@@ -131,26 +128,30 @@ const HeaderCompanyPage = ({ companyId }) => {
         </div>
         <div className={styles.countriesContainer}>
           <p className={styles.boldP}>Active In</p>
-          <Image
-            onClick={() => setMoreCountries(!moreCountries)}
-            src={ArrowDown}
-            alt=""
-            className={moreCountries ? styles.arrowUp : ""}
-          />
-          {!moreCountries &&
-            companyOffices?.slice(0, 4).map((office, index) => (
+          {!show &&
+            companyOffices?.slice(0, 3).map((office, index) => (
               <div key={index} className={styles.blueCard}>
                 <p className={styles.blueCardP}>{office?.name}</p>
               </div>
             ))}
-          {moreCountries && (
-            <div className={styles.moreCountriesContainer}>
-              {companyOffices?.map((office, index) => (
-                <div key={index} className={styles.blueCard}>
-                  <p className={styles.blueCardP}>{office?.name}</p>
-                </div>
-              ))}
+          {companyOffices?.length > 4 && (
+            <div onClick={() => setShow(true)} className={styles.blueCard}>
+              <p className={styles.blueCardP}>See more</p>
             </div>
+          )}
+          {show && (
+            <Modal show={show} onHide={() => setShow(false)}>
+              <Modal.Header closeButton>
+                <Modal.Title>Active In</Modal.Title>
+              </Modal.Header>
+              <Modal.Body className={styles.moreCountriesContainer}>
+                {companyOffices?.map((office, index) => (
+                  <div key={index} className={styles.blueCard}>
+                    <p className={styles.blueCardP}>{office?.name}</p>
+                  </div>
+                ))}
+              </Modal.Body>
+            </Modal>
           )}
         </div>
       </div>

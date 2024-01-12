@@ -14,7 +14,6 @@ const MultiSelect = ({ options, value, set }) => {
       multiple
       className={styles.multiSelect}
       onChange={(selected) => {
-        console.log(selected);
         const countriesSelected = [];
         selected.map((country) => {
           countriesSelected.push(country.id);
