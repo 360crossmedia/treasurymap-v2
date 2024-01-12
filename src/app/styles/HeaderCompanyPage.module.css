@@ -85,7 +85,7 @@
 .headerCardDown {
   margin: 0 56px;
   display: flex;
-  justify-content: start;
+  justify-content: space-between;
   background-color: #fbfbfb;
   border-radius: 15px 15px 0px 0px;
   padding-right: 30px;
@@ -101,7 +101,7 @@
 .countriesContainer {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 15px;
   flex-wrap: wrap;
   max-width: 620px;
   padding: 10px 30px 10px 17px;
@@ -142,6 +142,8 @@
   color: white;
   padding: 8px 15px;
   font-size: 14px;
+  display: flex;
+  justify-content: center;
 }
 
 .blueCardP {
@@ -154,21 +156,9 @@
 }
 
 .moreCountriesContainer {
-  position: absolute;
-  width: 500px;
-  min-height: 200px;
-  display: flex;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  gap: 18px;
-  background-color: #fbfbfb;
-  margin-top: 10%;
-  margin-left: 8%;
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
-  padding: 7px;
-  align-content: flex-start;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
 }
 
 .arrowUp {
