@@ -22,6 +22,7 @@ import { apiUpdateCompany } from "../service/apiUpdateCompany";
 import { setCompanyId } from "../store/slices/companyToUpdate.slice";
 import Form from "react-bootstrap/Form";
 import { apiGetAllUsers } from "../service/apiGetAllUsers";
+import { apiDeleteAllAnswersByCompanyId } from "../service/apiDeleteAllAnswersByCompanyId";
 
 const BodyForm = () => {
   const dispatch = useDispatch();
@@ -50,7 +51,7 @@ const BodyForm = () => {
   const [productVersion, setProductVersion] = useState("");
   const [keywords, setKeywords] = useState([]);
   const [users, setUsers] = useState();
-  const [userSelected, setUserSelected] = useState();
+  const [userSelected, setUserSelected] = useState(1);
   const [backUpUserId, setBackUpUserId] = useState();
   const userId = useSelector((state) => state.user);
   const companyId = useSelector((state) => state.companyId);
@@ -93,36 +94,53 @@ const BodyForm = () => {
       };
 
       if (companyId) {
+        if (userSelected) data.userId = userSelected;
         const result = await apiUpdateCompany(
           !companyId ? backUpCompanyId : companyId,
           data
         );
         if (result?.status == 200) {
-          alert("Company updated successfully");
-          dispatch(setCompanyId(false));
+          const answersResult = await apiDeleteAllAnswersByCompanyId(
+            companyId ? companyId : backUpCompanyId
+          );
+          if (answersResult?.status == 200) {
+            const answersCreate = await apiUploadAnswers(
+              companyId ? companyId : backUpCompanyId,
+              answers
+            );
+            if (answersCreate?.status == 201) {
+              alert("Company updated successfully");
+              dispatch(setCompanyId(false));
+              dispatch(setIsLoading(false));
+            }
+          }
           router.push("/dashboard");
-          dispatch(setIsLoading(false));
         } else {
           console.log(result);
           dispatch(setIsLoading(false));
         }
       } else {
         if (userId == 1 || user == 1) {
-          data.userId = userSelected;
-          const result = await apiCreateCompany(data);
-          if (result?.status == 201 && logo) {
-            const answersResult = await apiUploadAnswers(
-              result?.data?.id,
-              answers
-            );
-            if (answersResult?.status == 201) {
-              alert("Company created successfully");
-              router.push("/dashboard");
-              dispatch(setIsLoading(false));
-            } else {
-              console.log(answersResult);
-              dispatch(setIsLoading(false));
+          if (userSelected) {
+            data.userId = userSelected;
+            const result = await apiCreateCompany(data);
+            if (result?.status == 201 && logo) {
+              const answersResult = await apiUploadAnswers(
+                result?.data?.id,
+                answers
+              );
+              if (answersResult?.status == 201) {
+                alert("Company created successfully");
+                router.push("/dashboard");
+                dispatch(setIsLoading(false));
+              } else {
+                console.log(answersResult);
+                dispatch(setIsLoading(false));
+              }
             }
+          } else {
+            dispatch(setIsLoading(false));
+            alert("Check missing required fields");
           }
         } else {
           const result = await apiCreateCompany(data);
@@ -199,6 +217,7 @@ const BodyForm = () => {
     setSelectedSubCategoryIds(companyData?.companySubcategories);
     setImage(companyData?.logo);
     setAnswers(companyAnswers);
+    setUserSelected(companyData?.userId);
     let inputKeywords = companyData?.keywords;
     let toSetKeyword = inputKeywords?.filter(
       (item) => item !== companyData?.name
@@ -501,10 +520,11 @@ const BodyForm = () => {
         </div>
         {(userId == 1 || backUpUserId == 1) && (
           <div className={styles.inputContainer}>
-            <label className={styles.label} htmlFor="">
-              Company owner
+            <label className={styles.label} htmlFor="description">
+              Company owner <span className={styles.span}>*</span>
             </label>
             <Form.Select
+              value={userSelected}
               className={styles.inputText}
               onChange={(e) =>
                 setUserSelected(
@@ -515,7 +535,6 @@ const BodyForm = () => {
                 userSelected ? styles.active : ""
               }`}
             >
-              <option>Select User</option>
               {users?.map((user, index) => (
                 <option key={index} value={user.id}>
                   {user.fullName}
