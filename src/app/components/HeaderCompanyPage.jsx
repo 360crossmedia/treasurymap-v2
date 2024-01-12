@@ -135,12 +135,20 @@ const HeaderCompanyPage = ({ companyId }) => {
               </div>
             ))}
           {companyOffices?.length > 4 && (
-            <div onClick={() => setShow(true)} className={styles.blueCard}>
+            <div
+              onClick={() => setShow(true)}
+              className={`${styles.blueCard} ${styles.color}`}
+            >
               <p className={styles.blueCardP}>See more</p>
             </div>
           )}
           {show && (
-            <Modal show={show} onHide={() => setShow(false)}>
+            <Modal
+              aria-labelledby="contained-modal-title-vcenter"
+              centered
+              show={show}
+              onHide={() => setShow(false)}
+            >
               <Modal.Header closeButton>
                 <Modal.Title>Active In</Modal.Title>
               </Modal.Header>
