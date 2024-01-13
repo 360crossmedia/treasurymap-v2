@@ -20,7 +20,7 @@ const LoginCard = () => {
     dispatch(setIsLoading(true));
     const data = await apiLogin({
       email: email.toLowerCase(),
-      password: password.toLowerCase(),
+      password: password,
     });
 
     if (data && data.status == 200) {
