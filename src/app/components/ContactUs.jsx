@@ -6,6 +6,7 @@ import contactUserIcon from "../assets/contactUserIcon.svg";
 import footerLocationIcon from "../assets/footerLocationIcon.svg";
 import phoneIcon from "../assets/phoneIcon.svg";
 import emailContactIcon from "../assets/emailContactIcon.svg";
+import inputCompanyNameIcon from "../assets/building.svg";
 import { useState } from "react";
 import { apiSendEmail } from "../service/apiSendEmail";
 import { setIsLoading } from "../store/slices/isLoading.slice";
@@ -112,7 +113,7 @@ const ContactUs = () => {
           />
         </div>
         <div className={styles.inputContainer}>
-          <Image className={styles.icon} src={inputEmailIcon} alt="" />
+          <Image className={styles.icon} src={inputCompanyNameIcon} alt="" />
           <input
             className={styles.input}
             placeholder="Company Name"
