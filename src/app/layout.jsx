@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/react';
 import { Inter } from "next/font/google";
 import "./styles/globals.css";
 import Providers from "./store/Providers";
@@ -25,6 +26,7 @@ export default function RootLayout({ children }) {
                 <LoadingScreen />
               </LoadingLogic>
               {children}
+              <Analytics />
             </body>
           </ProtectedRoutes>
         </Providers>
