@@ -18,7 +18,10 @@ const LoginCard = () => {
 
   const submit = async () => {
     dispatch(setIsLoading(true));
-    const data = await apiLogin({ email, password });
+    const data = await apiLogin({
+      email: email.toLowerCase(),
+      password: password.toLowerCase(),
+    });
 
     if (data && data.status == 200) {
       dispatch(setUser(data.data.id));
