@@ -5,7 +5,7 @@ import "react-bootstrap-typeahead/css/Typeahead.css";
 
 const MultiSelect = ({ options, value, set }) => {
   const selectedCountries = options.filter((country) =>
-    value.includes(country.id)
+    value?.includes(country.id)
   );
   return (
     <Typeahead
