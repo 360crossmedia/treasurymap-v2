@@ -53,10 +53,10 @@ const SignupCard = () => {
     } else {
       dispatch(setIsLoading(true));
       let datos = {
-        companyName: companyName.toLowerCase(),
-        fullName: fullName.toLowerCase(),
+        companyName: companyName,
+        fullName: fullName,
         email: email.toLowerCase(),
-        password: password.toLowerCase(),
+        password: password,
       };
 
       try {
