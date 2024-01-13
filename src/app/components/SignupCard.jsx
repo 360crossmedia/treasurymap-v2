@@ -53,10 +53,10 @@ const SignupCard = () => {
     } else {
       dispatch(setIsLoading(true));
       let datos = {
-        companyName: companyName,
-        fullName: fullName,
-        email: email,
-        password: password,
+        companyName: companyName.toLowerCase(),
+        fullName: fullName.toLowerCase(),
+        email: email.toLowerCase(),
+        password: password.toLowerCase(),
       };
 
       try {
@@ -84,12 +84,29 @@ const SignupCard = () => {
       <div className={styles.card}>
         <div>
           <p className={styles.cardDescription}>Welcome to Treasury MAP</p>
-          <p style={{color:"#626b80", textAlign: "center", fontWeight: "bold"}}>Contact us if you feel that your company should be on the map: contact@360Crossmedia.com</p>
+          <p
+            style={{
+              color: "#626b80",
+              textAlign: "center",
+              fontWeight: "bold",
+            }}
+          >
+            Contact us if you feel that your company should be on the map:
+            contact@360Crossmedia.com
+          </p>
 
-          <hr style={{borderTop:"1px dashed"}} />
+          <hr style={{ borderTop: "1px dashed" }} />
           <p className={styles.cardDescription}>Sign Up</p>
-          <p style={{color:"#626b80", textAlign: "center", fontSize: "smaller"}}>Once we have validated the presence of your company on the map by email, you can set-up your account below.</p>
-
+          <p
+            style={{
+              color: "#626b80",
+              textAlign: "center",
+              fontSize: "smaller",
+            }}
+          >
+            Once we have validated the presence of your company on the map by
+            email, you can set-up your account below.
+          </p>
         </div>
         <div className={styles.inputContainer}>
           <Image className={styles.icon} src={inputCompanyNameIcon} alt="" />
