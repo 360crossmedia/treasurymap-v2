@@ -72,10 +72,10 @@ const BodyForm = () => {
       selectedCountriesIds.length > 0 &&
       selectedSubCategoryIds.length > 0
     ) {
-      const logoCloudinary = image.includes("https://")
+      const logoCloudinary = image?.includes("https://")
         ? ""
         : await uploadImage();
-      const logo = image.includes("https://") ? image : logoCloudinary;
+      const logo = image?.includes("https://") ? image : logoCloudinary;
       const users = await apiGetAllUsers();
 
       const data = {
@@ -484,7 +484,7 @@ const BodyForm = () => {
                       );
                     }
                   }}
-                  checked={selectedCategoryIds.includes(category.id)}
+                  checked={selectedCategoryIds?.includes(category.id)}
                 ></Checkbox>
                 <label className={styles.labelCheckbox} for={category.name}>
                   {category.name}
@@ -515,7 +515,7 @@ const BodyForm = () => {
                       );
                     }
                   }}
-                  checked={selectedSubCategoryIds.includes(subCategory.id)}
+                  checked={selectedSubCategoryIds?.includes(subCategory.id)}
                 ></Checkbox>
                 <label className={styles.labelCheckbox} for={subCategory.name}>
                   {subCategory.name}
