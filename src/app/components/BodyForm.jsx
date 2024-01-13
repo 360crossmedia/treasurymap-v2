@@ -23,6 +23,8 @@ import { setCompanyId } from "../store/slices/companyToUpdate.slice";
 import Form from "react-bootstrap/Form";
 import { apiGetAllUsers } from "../service/apiGetAllUsers";
 import { apiDeleteAllAnswersByCompanyId } from "../service/apiDeleteAllAnswersByCompanyId";
+import { apiSendUpdateEmail } from "../service/apiSendUpdateEmail";
+import { apiSendCreateEmail } from "../service/apiSendCreateEmail";
 
 const BodyForm = () => {
   const dispatch = useDispatch();
@@ -74,6 +76,7 @@ const BodyForm = () => {
         ? ""
         : await uploadImage();
       const logo = image.includes("https://") ? image : logoCloudinary;
+      const users = await apiGetAllUsers();
 
       const data = {
         name: companyName,
@@ -109,12 +112,21 @@ const BodyForm = () => {
               answers
             );
             if (answersCreate?.status == 201) {
-              alert("Company updated successfully");
-              dispatch(setCompanyId(false));
-              dispatch(setIsLoading(false));
+              const sendEmail = await apiSendUpdateEmail({
+                companyName,
+                name: users[!userId ? backUpUserId - 1 : userId - 1]?.fullName,
+              });
+              if (sendEmail.status == 200) {
+                alert("Company updated successfully");
+                dispatch(setCompanyId(false));
+                dispatch(setIsLoading(false));
+                router.push("/dashboard");
+              } else {
+                console.log(sendEmail);
+                dispatch(setIsLoading(false));
+              }
             }
           }
-          router.push("/dashboard");
         } else {
           console.log(result);
           dispatch(setIsLoading(false));
@@ -130,9 +142,19 @@ const BodyForm = () => {
                 answers
               );
               if (answersResult?.status == 201) {
-                alert("Company created successfully");
-                router.push("/dashboard");
-                dispatch(setIsLoading(false));
+                const sendCreateEmail = await apiSendCreateEmail({
+                  companyName,
+                  name: users[!userId ? backUpUserId - 1 : userId - 1]
+                    ?.fullName,
+                });
+                if (sendCreateEmail.status == 200) {
+                  alert("Company created successfully");
+                  router.push("/dashboard");
+                  dispatch(setIsLoading(false));
+                } else {
+                  console.log(sendCreateEmail);
+                  dispatch(setIsLoading(false));
+                }
               } else {
                 console.log(answersResult);
                 dispatch(setIsLoading(false));
@@ -150,9 +172,18 @@ const BodyForm = () => {
               answers
             );
             if (answersResult?.status == 201) {
-              alert("Company created successfully");
-              router.push("/dashboard");
-              dispatch(setIsLoading(false));
+              const sendCreateEmail = await apiSendCreateEmail({
+                companyName,
+                name: users[!userId ? backUpUserId - 1 : userId - 1]?.fullName,
+              });
+              if (sendCreateEmail.status == 200) {
+                alert("Company created successfully");
+                router.push("/dashboard");
+                dispatch(setIsLoading(false));
+              } else {
+                console.log(sendCreateEmail);
+                dispatch(setIsLoading(false));
+              }
             } else {
               console.log(answersResult);
               dispatch(setIsLoading(false));
