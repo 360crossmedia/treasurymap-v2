@@ -3,14 +3,13 @@ import styles from "../styles/loginCard.module.css";
 import Image from "next/image";
 import inputEmailIcon from "../assets/inputEmailIcon.svg";
 import inputPasswordIcon from "../assets/inputPasswordIcon.svg";
+import jwt from "jsonwebtoken";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { setIsLoading } from "../store/slices/isLoading.slice";
 import { apiRestorePassword } from "../service/apiRestorePassword";
-import jwt from "jsonwebtoken";
 import { apiUpdatePassword } from "../service/apiUpdatePassword";
-require("dotenv").config();
 
 const RestorePasswordCard = ({ token }) => {
   const router = useRouter();
@@ -73,8 +72,6 @@ const RestorePasswordCard = ({ token }) => {
   };
 
   useEffect(() => isValidToken(), []);
-
-  console.log(password, password2);
 
   return (
     <div className={styles.cardContainer}>
