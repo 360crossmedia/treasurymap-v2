@@ -104,6 +104,13 @@ const RestorePasswordCard = ({ token }) => {
                 placeholder="Password"
                 type="password"
                 onChange={(e) => setPassword(e.target.value)}
+                style={
+                  passwordMatch && password.length > 0
+                    ? { borderColor: "green" }
+                    : !passwordMatch && password.length > 0
+                    ? { borderColor: "red" }
+                    : {}
+                }
               />
             </div>
             <div className={styles.inputContainer}>
@@ -113,6 +120,13 @@ const RestorePasswordCard = ({ token }) => {
                 placeholder="Confirm Password"
                 type="password"
                 onChange={(e) => setPassword2(e.target.value)}
+                style={
+                  passwordMatch && password.length > 0
+                    ? { borderColor: "green" }
+                    : !passwordMatch && password.length > 0
+                    ? { borderColor: "red" }
+                    : {}
+                }
               />
             </div>
           </>
