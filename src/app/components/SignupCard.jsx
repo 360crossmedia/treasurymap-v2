@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "../styles/signupCard.module.css";
 import Image from "next/image";
@@ -79,6 +79,10 @@ const SignupCard = () => {
     }
   };
 
+  useEffect(() => {
+    setPasswordsMatch(password == confPassword);
+  }, [confPassword, password]);
+
   return (
     <div className={styles.cardContainer}>
       <div className={styles.card}>
@@ -145,6 +149,13 @@ const SignupCard = () => {
             placeholder="Password"
             type="password"
             value={password}
+            style={
+              passwordMatch && password.length > 0
+                ? { borderColor: "green" }
+                : !passwordMatch && password.length > 0
+                ? { borderColor: "red" }
+                : {}
+            }
             onChange={(e) => handlePasswordChange(e)}
           />
         </div>
@@ -155,6 +166,13 @@ const SignupCard = () => {
             placeholder="Confirm Password"
             type="password"
             value={confPassword}
+            style={
+              passwordMatch && password.length > 0
+                ? { borderColor: "green" }
+                : !passwordMatch && password.length > 0
+                ? { borderColor: "red" }
+                : {}
+            }
             onChange={(e) => handleConfirmPasswordChange(e)}
           />
         </div>
