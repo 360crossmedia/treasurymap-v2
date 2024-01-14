@@ -59,7 +59,7 @@ const RestorePasswordCard = ({ token }) => {
   const isValidToken = () => {
     dispatch(setIsLoading(true));
     try {
-      const decoded = jwt.verify(token, "maptreasurysecret");
+      const decoded = jwt.verify(token, "chatapi_academlo");
       setUserId(decoded?.userId?.id);
       setValidToken(decoded ? true : false);
       dispatch(setIsLoading(false));
