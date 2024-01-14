@@ -61,7 +61,7 @@ const LoginCard = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <a href="#" className={styles.forgetPasswordA}>
+          <a href="/restorePassword" className={styles.forgetPasswordA}>
             Forget password?
           </a>
         </div>

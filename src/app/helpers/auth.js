@@ -1,10 +1,11 @@
 export const redirectIfNotAuthenticated = (userId, pathname, router) => {
   const allowedRoutes = [
-    "/login",
-    "/signup",
-    "/contactUs",
     "/",
+    "/signup",
+    "/login",
+    "/contactUs",
     (path) => path.startsWith("/companyPage"),
+    (path) => path.startsWith("/restorePassword"),
   ];
 
   if (
