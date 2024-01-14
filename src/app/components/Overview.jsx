@@ -25,7 +25,7 @@ const Overview = ({ companyId }) => {
     const companyOffices = [];
 
     setCompany(result);
-    setQuestions(questions.data);
+    setQuestions(questions?.data);
     setAnswers(answers);
 
     for (let i = 0; i < result?.companyOffices.length; i++) {

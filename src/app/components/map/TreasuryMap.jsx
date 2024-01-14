@@ -482,7 +482,7 @@ const TreasuryMap = () => {
 
             return (    
                 <div key={index}>
-                  <a href={`https://treasurymap.vercel.app/companyPage/${ 1 + index + sumaID[category]}`} >
+                  <a href={`/companyPage/${ 1 + index + sumaID[category]}`} >
                     <div className="category-logo-wrapper">
                       <img
                         src={findLogoUrl(category, index + 1)}
