@@ -432,7 +432,37 @@ const BodyForm = () => {
             required
           />
         </div>
-        <div className={styles.doubleInputsContainer}>
+
+
+
+        <div className={styles.inputContainer}>
+            <label className={styles.label} htmlFor="">
+              Name of Product
+            </label>
+            <input
+              className={styles.inputText}
+              placeholder="Software"
+              type="text"
+              value={productName}
+              onChange={(e) => setProductName(e.target.value)}
+            />
+        </div>
+        <div className={styles.inputContainer}>
+            <label className={styles.label} htmlFor="">
+              Product Description
+            </label>
+            <input
+              className={styles.inputText}
+              placeholder="Product Description"
+              type="text"
+              value={productVersion}
+              onChange={(e) => setProductVersion(e.target.value)}
+            />          
+        </div> 
+
+
+
+        {/* <div className={styles.doubleInputsContainer}>
           <div
             className={`${styles.inputContainer} ${styles.inputContainer50}`}
           >
@@ -451,17 +481,20 @@ const BodyForm = () => {
             className={`${styles.inputContainer} ${styles.inputContainer50}`}
           >
             <label className={styles.label} htmlFor="">
-              Version Number
+              Product Description
             </label>
             <input
               className={styles.inputText}
-              placeholder="2.0.5"
+              placeholder="Product Description"
               type="text"
               value={productVersion}
               onChange={(e) => setProductVersion(e.target.value)}
             />
           </div>
-        </div>
+        </div> */}
+
+
+
         <div>
           <div>
             <p className={styles.label}>

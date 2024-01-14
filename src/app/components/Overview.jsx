@@ -66,7 +66,7 @@ const Overview = ({ companyId }) => {
         )}
         {company?.productVersion && (
           <div>
-            <p className={styles.title}>Version number</p>
+            <p className={styles.title}>Product description</p>
             <p className={styles.description}>{company?.productVersion}</p>
           </div>
         )}
