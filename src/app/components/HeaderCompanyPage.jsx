@@ -111,10 +111,16 @@ const HeaderCompanyPage = ({ companyId }) => {
               <p className={styles.cardP}>Number Of employes</p>
               <p className={styles.cardBigP}>{company?.employees}</p>
             </div>
-            <div className={`${styles.card} ${styles.cardLeft}`}>
-              <p className={styles.cardP}>Turnover</p>
-              <p className={styles.cardBigP}>{company?.turnover}</p>
-            </div>
+            
+            
+            { !(company?.turnover == 0) &&
+              <div className={`${styles.card} ${styles.cardLeft}`}>
+                <p className={styles.cardP}>Turnover</p>
+                <p className={styles.cardBigP}>{company?.turnover}</p>
+              </div>
+            }
+
+
             <div className={`${styles.card} ${styles.cardRight}`}>
               <p className={styles.cardP}>Headquarters</p>
               <p className={styles.cardBigP}>{company?.location}</p>
