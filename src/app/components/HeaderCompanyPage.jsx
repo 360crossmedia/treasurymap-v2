@@ -47,7 +47,8 @@ const HeaderCompanyPage = ({ companyId }) => {
     }
     setCompany(companyData);
     setCategories(companyCategories);
-    setSubCategories(companySubCategories);
+    const stringSubCat = companySubCategories.map(item => item.name).join(', ');
+    setSubCategories(stringSubCat);
     setCompanyOffices(companyOffices);
     dispatch(setIsLoading(false));
   };
@@ -79,14 +80,28 @@ const HeaderCompanyPage = ({ companyId }) => {
               </p>
             </div>
           ))}
-          {subCategories?.map((subCategory, index) => (
+
+          
+          
+          {/* {subCategories?.map((subCategory, index) => (
             <div key={index} className={styles.categoryCard}>
               <p className={styles.categoryP}>
                 Sub-Category:
                 <span className={styles.span}> {subCategory?.name}</span>
               </p>
             </div>
-          ))}
+          ))} */}
+
+            <div key={'subcategory'} className={styles.categoryCard}>
+              <p className={styles.categoryP}>
+                Sub-Categories:
+                <span className={styles.span}> {subCategories}</span>
+              </p>
+            </div>
+
+
+
+
           <div className={styles.cardsContainer}>
             <div className={`${styles.card} ${styles.cardLeft}`}>
               <p className={styles.cardP}>Creation</p>
