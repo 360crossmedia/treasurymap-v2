@@ -868,7 +868,9 @@ const TreasuryMap = () => {
               <div onClick={toggleMobileFilters}>{ mobileOpen ? 'X' : '+' }</div>
             </div>
           </div>
-          <div className={`map-outline ${!!selectedCategory ? 'visible' : ''}`} onClick={selectCategory}></div>
+          <div className={`map-outline ${!!selectedCategory ? 'visible' : ''}`}></div>
+          {/* <div className={`map-outline ${!!selectedCategory ? 'visible' : ''}`} onClick={selectCategory}></div> */}
+
         </div>
         <div className={`interactive-map-filter ${mobileOpen ? 'mobile-open' : ''}`}>
           <div className="interactive-map-filter-inner">
