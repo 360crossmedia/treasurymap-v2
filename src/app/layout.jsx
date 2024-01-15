@@ -1,4 +1,5 @@
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Inter } from "next/font/google";
 import "./styles/globals.css";
 import Providers from "./store/Providers";
@@ -27,6 +28,7 @@ export default function RootLayout({ children }) {
               </LoadingLogic>
               {children}
               <Analytics />
+              <SpeedInsights />
             </body>
           </ProtectedRoutes>
         </Providers>
