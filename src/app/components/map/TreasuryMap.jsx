@@ -1069,10 +1069,8 @@ const TreasuryMap = () => {
                   <span onClick={() => clearFilters('headequarterLocation')}>Clear</span>
                 )}
               </div>
-
-
-
             </div>
+
 
             <div className="category-filters-wrapper">
               <p className={"text-style-titles"}>{filtersConfig['activeIn'].title}</p>
@@ -1082,23 +1080,6 @@ const TreasuryMap = () => {
                   {filtersConfig['activeIn'].placeholder}
                 </span>
                 <div className={`filters-selection-list ${filtersConfig['activeIn'].open ? 'open' : ''}`}>
-                  
-                    {/* {
-
-                      // RENDERIZACION DEL DROPDOWN DE ACTIVE IN
-                      activeinData && Object.keys(filtersConfig['activeIn'].allFilters).map((key) => {
-                              const activeinId = filtersConfig['activeIn'].allFilters[key];
-                              const activein = activeinData.find(subcat => subcat.id === activeinId);
-                              return (
-                                  <div
-                                      key={key}
-                                      onClick={() => selectFilter('activeIn', activeinId)}
-                                      className={filtersConfig['activeIn'].selectedFilters.includes(activeinId) ? 'selected' : ''}>
-                                      {activein ? activein.name : 'Unknown Region'}
-                                  </div>
-                              );
-                          })
-                    }   */}
 
 
                           {
@@ -1111,18 +1092,27 @@ const TreasuryMap = () => {
                                   const key = Object.keys(filtersConfig['activeIn'].allFilters)
                                                   .find(key => filtersConfig['activeIn'].allFilters[key] === activein.id);
 
+                                  // console.log('key del active');
+                                  // console.log(key);
                                   // Render the div for each activein
-                                  return (
-                                      <div
-                                          key={key}
-                                          onClick={() => selectFilter('activeIn', activein.id)}
-                                          className={filtersConfig['activeIn'].selectedFilters.includes(activein.id) ? 'selected' : ''}>
+                                  if( key){
+                                    return (
+                                        <div
+                                            key={key}
+                                            onClick={() => selectFilter('activeIn', activein.id)}
+                                            className={filtersConfig['activeIn'].selectedFilters.includes(activein.id) ? 'selected' : ''}>
 
-                                          {activein.name}
-                                      </div>
-                                  );
+                                            {activein.name}
+                                        </div>
+                                    );
+                                  }else{
+                                    return null
+                                  }
+
+
                               })
                           }
+
 
 
 
