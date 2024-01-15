@@ -91,7 +91,7 @@ const TreasuryMap = () => {
       if(searchTerm.length > 0){
       const searchResult = allCompData
         .filter(item => 
-          item.keywords.some(keyword => keyword.toLowerCase().includes(searchTerm.toLowerCase()))
+          item.keywords?.some(keyword => keyword.toLowerCase().includes(searchTerm.toLowerCase()))
         )
         .map(item => item.id);
       setResult(searchResult);
