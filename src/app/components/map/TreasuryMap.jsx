@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 //import './TreasuryMap.module.css'
 import staticdata from './staticdata.json'
+import { url } from "../../service/url.js";
 
 
 const TreasuryMap = () => {
@@ -124,7 +125,7 @@ const TreasuryMap = () => {
   // Your fetchDataFromAPI implementation
   const fetchDataFromAPI = async () => {
     
-    const apiUrl = 'https://treasurymapbackend-production.up.railway.app/api/v1/mapdata';
+    const apiUrl = `${url}/api/v1/mapdata`;
     //const apiUrl = 'data.json';
 
     return fetch(apiUrl)
@@ -147,7 +148,7 @@ const TreasuryMap = () => {
   // Fetch the data for the subcategories list
   const fetchSubcategories = async () => {
 
-    const subFetchDataURL = 'https://treasurymapbackend-production.up.railway.app/api/v1/subCategories'
+    const subFetchDataURL = `${url}/api/v1/subCategories`
     
     return fetch(subFetchDataURL)
       .then(response => {
@@ -169,7 +170,7 @@ const TreasuryMap = () => {
   // Fetch the data for the asctiveIn list
   const fetchActiveInData = async () => {
 
-    const activeInFetchDataURL = 'https://treasurymapbackend-production.up.railway.app/api/v1/countries'
+    const activeInFetchDataURL = `${url}/api/v1/countries`
     
     return fetch(activeInFetchDataURL)
       .then(response => {
@@ -194,7 +195,7 @@ const TreasuryMap = () => {
 
   const fetchAllCompaniesData = async () => {
 
-    const companiesDataURL = 'https://treasurymapbackend-production.up.railway.app/api/v1/companies'
+    const companiesDataURL = `${url}/api/v1/companies`
     
     return fetch(companiesDataURL)
       .then(response => {
