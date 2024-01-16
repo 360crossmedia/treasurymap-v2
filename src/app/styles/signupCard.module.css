@@ -48,6 +48,11 @@
   opacity: 0.3;
 }
 
+.removeOutline:focus,
+.removeOutline:active {
+  outline: none;
+}
+
 .icon {
   position: absolute;
   opacity: 0.3;
@@ -119,5 +124,4 @@
     padding: 18px 26px;
     padding-left: 50px;
   }
-
 }

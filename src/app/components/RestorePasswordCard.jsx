@@ -19,6 +19,7 @@ const RestorePasswordCard = ({ token }) => {
   const [password2, setPassword2] = useState("");
   const [validToken, setValidToken] = useState(false);
   const [userId, setUserId] = useState();
+  const [passwordsMatch, setPasswordsMatch] = useState(true);
 
   const submit = async () => {
     dispatch(setIsLoading(true));
@@ -73,6 +74,10 @@ const RestorePasswordCard = ({ token }) => {
 
   useEffect(() => isValidToken(), []);
 
+  useEffect(() => {
+    setPasswordsMatch(password == password2);
+  }, [password2, password]);
+
   return (
     <div className={styles.cardContainer}>
       <div className={styles.card} style={{ gap: "50px" }}>
@@ -105,9 +110,9 @@ const RestorePasswordCard = ({ token }) => {
                 type="password"
                 onChange={(e) => setPassword(e.target.value)}
                 style={
-                  passwordMatch && password.length > 0
+                  passwordsMatch && password.length > 0
                     ? { borderColor: "green" }
-                    : !passwordMatch && password.length > 0
+                    : !passwordsMatch && password.length > 0
                     ? { borderColor: "red" }
                     : {}
                 }
@@ -121,9 +126,9 @@ const RestorePasswordCard = ({ token }) => {
                 type="password"
                 onChange={(e) => setPassword2(e.target.value)}
                 style={
-                  passwordMatch && password.length > 0
+                  passwordsMatch && password.length > 0
                     ? { borderColor: "green" }
-                    : !passwordMatch && password.length > 0
+                    : !passwordsMatch && password.length > 0
                     ? { borderColor: "red" }
                     : {}
                 }

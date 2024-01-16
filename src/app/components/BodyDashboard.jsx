@@ -11,7 +11,13 @@ const BodyDashboard = () => {
 
   return (
     <div className={styles.mainContainer}>
-      <div>
+      <div className={styles.buttonsContainer}>
+        <button
+          onClick={() => router.push("/myaccount")}
+          className={`${styles.mediaZoneButton} ${styles.colorWhite}`}
+        >
+          My account
+        </button>
         <button
           onClick={() => {
             companyId
