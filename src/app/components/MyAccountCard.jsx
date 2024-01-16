@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import styles from "../styles/signupCard.module.css";
 import Image from "next/image";
 import inputEmailIcon from "../assets/inputEmailIcon.svg";
@@ -15,7 +14,7 @@ import { apiUpdatePassword } from "../service/apiUpdatePassword";
 
 const MyAccountCard = () => {
   const userId = useSelector((state) => state.user);
-  const router = useRouter();
+  const userIdToUpdate = useSelector((state) => state.userIdToUpdate);
   const dispatch = useDispatch();
   const [fullName, setfullName] = useState("");
   const [email, setEmail] = useState("");
@@ -26,8 +25,10 @@ const MyAccountCard = () => {
   const [oldEmail, setOldEmail] = useState();
   const [error, setError] = useState("");
   let backUpUserId;
+  let backUpUserIdToUpdate;
   if (typeof window !== "undefined") {
     backUpUserId = localStorage.getItem("userId");
+    backUpUserIdToUpdate = localStorage.getItem("userIdToUpdate");
   }
 
   const handlePasswordChange = (e) => {
@@ -56,50 +57,93 @@ const MyAccountCard = () => {
         email: email.toLowerCase(),
       };
       setError("");
-      let result = await apiUpdateUser(userId ? userId : backUpUserId, data);
-      if (result.status == 200) {
-        setOldEmail(email);
-        dispatch(setIsLoading(false));
-        alert("User updated successfully");
-        window.location.reload();
+      if (!userIdToUpdate && !backUpUserIdToUpdate) {
+        let result = await apiUpdateUser(userId ? userId : backUpUserId, data);
+        if (result.status == 200) {
+          setOldEmail(email);
+          dispatch(setIsLoading(false));
+          alert("User updated successfully");
+          window.location.reload();
+        } else {
+          dispatch(setIsLoading(false));
+          setError("No se puede actualizar usuario, información incorrecta");
+          console.log(result);
+        }
       } else {
-        dispatch(setIsLoading(false));
-        setError("No se puede actualizar usuario, información incorrecta");
-        console.log(result);
+        let result = await apiUpdateUser(
+          userIdToUpdate ? userIdToUpdate : backUpUserIdToUpdate,
+          data
+        );
+        if (result.status == 200) {
+          setOldEmail(email);
+          dispatch(setIsLoading(false));
+          alert("User updated successfully");
+          window.location.reload();
+        } else {
+          dispatch(setIsLoading(false));
+          setError("No se puede actualizar usuario, información incorrecta");
+          console.log(result);
+        }
       }
     }
   };
 
   const updatePassword = async () => {
-    dispatch(setIsLoading(true));
-    const result = await apiLogin({
-      email: email == oldEmail ? email.toLowerCase() : oldEmail.toLowerCase(),
-      password: oldPassword,
-    });
-    if (result?.status == 200) {
-      const updatePassword = await apiUpdatePassword(
-        userId ? userId : backUpUserId,
-        password
-      );
-      if (updatePassword.status == 200) {
-        dispatch(setIsLoading(false));
-        alert("Password updated successfully");
-        window.location.reload();
+    if (passwordMatch) {
+      dispatch(setIsLoading(true));
+      const result = await apiLogin({
+        email: email == oldEmail ? email.toLowerCase() : oldEmail.toLowerCase(),
+        password: oldPassword,
+      });
+      if (result?.status == 200) {
+        if (!userIdToUpdate && !backUpUserIdToUpdate) {
+          const updatePassword = await apiUpdatePassword(
+            userId ? userId : backUpUserId,
+            password
+          );
+          if (updatePassword.status == 200) {
+            dispatch(setIsLoading(false));
+            alert("Password updated successfully");
+            window.location.reload();
+          } else {
+            console.log(updatePassword);
+            dispatch(setIsLoading(false));
+          }
+        } else {
+          const updatePassword = await apiUpdatePassword(
+            userIdToUpdate ? userIdToUpdate : backUpUserIdToUpdate,
+            password
+          );
+          if (updatePassword.status == 200) {
+            dispatch(setIsLoading(false));
+            alert("Password updated successfully");
+            window.location.reload();
+          } else {
+            console.log(updatePassword);
+            dispatch(setIsLoading(false));
+          }
+        }
       } else {
-        console.log(updatePassword);
+        alert("Wrong old password");
         dispatch(setIsLoading(false));
       }
-    } else {
-      alert("Wrong old password");
-      dispatch(setIsLoading(false));
-    }
+    } else alert("Passwords don't match");
   };
 
   const getUserData = async () => {
-    const userData = await apiGetUserById(userId ? userId : backUpUserId);
-    setOldEmail(userData?.email);
-    setEmail(userData?.email);
-    setfullName(userData?.fullName);
+    if (!userIdToUpdate && !backUpUserIdToUpdate) {
+      const userData = await apiGetUserById(userId ? userId : backUpUserId);
+      setOldEmail(userData?.email);
+      setEmail(userData?.email);
+      setfullName(userData?.fullName);
+    } else {
+      const userData = await apiGetUserById(
+        userIdToUpdate ? userIdToUpdate : backUpUserIdToUpdate
+      );
+      setOldEmail(userData?.email);
+      setEmail(userData?.email);
+      setfullName(userData?.fullName);
+    }
   };
 
   useEffect(() => {
