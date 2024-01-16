@@ -437,11 +437,25 @@ const TreasuryMap = () => {
 // !! ------- START REFACTOR DE RENDERCATEGORYLOGOS 
  
   const renderCategoryLogos = (category, logoCount) => {
+    
     const findLogoUrl = (category, index) => {
       const publicId = `${category}-logo-${index}`;
       const logo = staticdata.find(logo => logo.public_id === publicId);
-      return logo ? logo.url : 'default-image-url.png'; // Provide a default image URL if not found
+      return logo ? logo.url : ""; // Provide a default image URL if not found
     };
+
+    const findLogoIndex = (category, index) =>{
+      const publicId2 = `${category}-logo-${index}`;
+      const compId = staticdata.find(logo => logo.public_id === publicId2);
+      return compId ? compId.company_id : ''
+    }
+
+    const findIfLive = (category, index) =>{
+      const publicId3 = `${category}-logo-${index}`;
+      const compLive = staticdata.find(logo => logo.public_id === publicId3);
+      return compLive ? compLive.live : ''
+    }
+
 
   let sumaID = {
       'category-1': 0,
@@ -467,7 +481,7 @@ const TreasuryMap = () => {
         Array.from({ length: logoCount }).map((_, index) => {
         
           //IF COMO SOLUCION MOMENTANEA PARA QUITAR EL CLICKABLE DEL INTERFACED
-          if( (1 + index + sumaID[category]) == 68){
+          if( (findLogoIndex(category, (1 + index))) == 68){
             return (
               <div key={index}>
                   <div className="integrated-logo">
@@ -483,13 +497,17 @@ const TreasuryMap = () => {
 
             return (    
                 <div key={index}>
-                  <a href={`/companyPage/${ 1 + index + sumaID[category]}`} >
+                  <a href={`/companyPage/${ findLogoIndex(category, (1 + index))}`} >
                     <div className="category-logo-wrapper">
-                      <img
-                        src={findLogoUrl(category, index + 1)}
-                        alt="Logo"
-                        className={`imagen`}
-                      />
+                      { 
+                        findIfLive(category, index + 1) &&
+                          findLogoUrl(category, index + 1) &&                  
+                            <img
+                              src={findLogoUrl(category, index + 1)}
+                              alt="Logo"
+                              className={`imagen`}
+                            />
+                      }
                     </div>
                   </a>
                 </div>
@@ -802,7 +820,7 @@ const TreasuryMap = () => {
 
               }
 
-              {renderCategoryLogos('category-1', 11)}
+              {renderCategoryLogos('category-1', 15)} 
               {renderCategoryLogos('category-2', 5)}
               {renderCategoryLogos('category-3', 5)}
               {renderCategoryLogos('category-4', 9)}
