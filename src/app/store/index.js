@@ -6,6 +6,7 @@ import companyToUpdateSlice from "./slices/companyToUpdate.slice";
 import showSlice from "./slices/show.slice";
 import articleIdSlice from "./slices/articleId.slice";
 import videoIdSlice from "./slices/videoId.slice";
+import userIdToUpdateSlice from "./slices/userIdToUpdate.slice";
 
 export default configureStore({
   reducer: {
@@ -16,5 +17,6 @@ export default configureStore({
     show: showSlice,
     articleId: articleIdSlice,
     videoId: videoIdSlice,
+    userIdToUpdate: userIdToUpdateSlice,
   },
 });
