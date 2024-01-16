@@ -145,7 +145,7 @@ const SignupCard = () => {
         <div className={styles.inputContainer}>
           <Image className={styles.icon} src={inputPasswordIcon} alt="" />
           <input
-            className={styles.input}
+            className={`${styles.input} ${styles.removeOutline}`}
             placeholder="Password"
             type="password"
             value={password}
@@ -162,7 +162,7 @@ const SignupCard = () => {
         <div className={styles.inputContainer}>
           <Image className={styles.icon} src={inputPasswordIcon} alt="" />
           <input
-            className={styles.input}
+            className={`${styles.input} ${styles.removeOutline}`}
             placeholder="Confirm Password"
             type="password"
             value={confPassword}
