@@ -169,16 +169,16 @@
   top: 240px;
   left: 627px;
   .imagen{
-      width: 60px;
+      width: 55px;
       height: auto;
     }
 }
 
 .map-static-logos .category-1>div:nth-child(13) {
-  top: 200px;
-  left: 627px;
+  top: 230px;
+  left: 540px;
   .imagen {
-      width: 60px;
+      width: 70px;
       height: auto;
     }
 }
@@ -204,10 +204,10 @@
 .map-static-logos .category-1>div:nth-child(16) {
   top: 200px;
   left: 627px;
-  /* .imagen{
-      width: 30px;
+  .imagen {
+      width: 60px;
       height: auto;
-    } */
+    }
 }
 
 /* Static map logos - Category 2 */

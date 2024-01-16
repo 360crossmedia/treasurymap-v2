@@ -722,7 +722,7 @@
  {
   "public_id": "category-1-logo-12",
   "company_id": 121,
-  "url": "https://res.cloudinary.com/dq7aof6vb/image/upload/v1704958775/category-3-logo-1_psjxse.png",
+  "url": "https://res.cloudinary.com/dq7aof6vb/image/upload/v1705210562/category-1-logo-12_nozoev.png",
   "live": true
  },
  {
@@ -742,5 +742,19 @@
   "company_id": 124,
   "url": "https://res.cloudinary.com/dq7aof6vb/image/upload/v1705290505/category-6-logo-18_itdpfr.png",
   "live": true
+ },
+
+
+ 
+
+ {
+  "public_id": "category-6-logo-18",
+  "company_id": 125,
+  "url": "https://res.cloudinary.com/dq7aof6vb/image/upload/v1705290505/category-6-logo-18_itdpfr.png",
+  "live": true
  }
+
+
+
+
 ]

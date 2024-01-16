@@ -456,24 +456,6 @@ const TreasuryMap = () => {
       return compLive ? compLive.live : ''
     }
 
-
-  let sumaID = {
-      'category-1': 0,
-      'category-2': 11,
-      'category-3': 16,
-      'category-4': 21,
-      'category-5': 30,
-      'category-6': 43,
-      'category-7': 60,
-      'category-8': 68,
-      'category-9': 75,
-      'category-10': 80,
-      'category-11': 88,
-      'category-12': 94,
-      'category-13': 98,
-      'category-14': 113,
-    }  
-
     return (
       <div className={`category-static ${category}`}>
       {
