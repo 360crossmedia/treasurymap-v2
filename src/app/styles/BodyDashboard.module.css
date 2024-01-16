@@ -13,12 +13,17 @@
   color: #fff;
   padding: 16.2px 22px;
   width: 462px;
+  margin-bottom: 10px;
+}
+
+.mediaZoneButton:first-child {
+  margin-right: 10px;
 }
 
 .linesContainer {
   display: flex;
   align-items: center;
-  margin-top: 75px;
+  margin-top: 65px;
   margin-bottom: 58px;
 }
 
@@ -44,6 +49,12 @@
   height: 58px;
   padding: 16px 22px;
   margin-bottom: 76px;
+}
+
+.colorWhite {
+  border: 0.8px solid #d9d9d9;
+  background: #fff;
+  color: #000;
 }
 
 @media screen and (max-width: 1270px) {

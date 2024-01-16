@@ -8,10 +8,32 @@ const BodyDashboard = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const companyId = useSelector((state) => state.companyId);
+  const user = useSelector((state) => state.user);
+  let backUpUserId;
+  if (typeof window !== "undefined") {
+    backUpUserId = localStorage.getItem("userId");
+  }
+  const userId = user ? user : backUpUserId;
 
   return (
     <div className={styles.mainContainer}>
-      <div>
+      <div className={styles.buttonsContainer}>
+        {userId != 1 && (
+          <button
+            onClick={() => router.push("/myaccount")}
+            className={`${styles.mediaZoneButton} ${styles.colorWhite}`}
+          >
+            My account
+          </button>
+        )}
+        {userId == 1 && (
+          <button
+            onClick={() => router.push("/accountsettings")}
+            className={`${styles.mediaZoneButton} ${styles.colorWhite}`}
+          >
+            Accounts settings
+          </button>
+        )}
         <button
           onClick={() => {
             companyId
