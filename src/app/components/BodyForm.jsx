@@ -68,9 +68,9 @@ const BodyForm = () => {
     dispatch(setIsLoading(true));
     e.preventDefault();
     if (
-      selectedCategoryIds.length > 0 &&
-      selectedCountriesIds.length > 0 &&
-      selectedSubCategoryIds.length > 0
+      selectedCategoryIds?.length > 0 &&
+      selectedCountriesIds?.length > 0 &&
+      selectedSubCategoryIds?.length > 0
     ) {
       const logoCloudinary = image?.includes("https://")
         ? ""
@@ -93,7 +93,7 @@ const BodyForm = () => {
         companyWebsite,
         productName,
         productVersion,
-        keywords: [companyName, ...keywords],
+        keywords: [companyName, ...(keywords || [])],
       };
 
       if (companyId) {
@@ -508,7 +508,7 @@ const BodyForm = () => {
                   onChange={(e) => {
                     if (e.checked) {
                       setSelectedCategoryIds((prevIds) => [
-                        ...prevIds,
+                        ...(prevIds || []),
                         category.id,
                       ]);
                     } else {
@@ -539,7 +539,7 @@ const BodyForm = () => {
                   onChange={(e) => {
                     if (e.checked) {
                       setSelectedSubCategoryIds((prevIds) => [
-                        ...prevIds,
+                        ...(prevIds || []),
                         subCategory.id,
                       ]);
                     } else {

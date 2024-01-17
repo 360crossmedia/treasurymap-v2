@@ -16,7 +16,7 @@ export const apiCreateUser = async (datos) => {
   return axios
     .post(`${url}/api/v1/auth/register`, userJson, { headers })
     .then(async (response) => {
-      let company = { name: datos.companyName, userId: response.data.id };
+      let company = { name: datos.companyName, companyOffices:[],companyCategories:[],companySubcategories:[],keywords:[datos.companyName], userId: response.data.id , live:false};
       let companyJson = JSON.stringify(company);
 
       return axios
