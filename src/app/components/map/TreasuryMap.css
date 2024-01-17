@@ -109,60 +109,100 @@
   top: 30px;
   left: 645px;
   
-  /* .imagen{
-    width: 30px;
-    height: auto;
-  } */
+  .imagen {
+      width: 55px;
+      height: auto;
+    }
 }
 
 .map-static-logos .category-1 > div:nth-child(2) {
   top: 66px;
   left: 641px;
+  .imagen {
+      width: 55px;
+      height: auto;
+    }
 }
 
 .map-static-logos .category-1 > div:nth-child(3) {
   top: 98px;
   left: 504px;
+  .imagen {
+      width: 55px;
+      height: auto;
+    }
 }
 
 .map-static-logos .category-1 > div:nth-child(4) {
   top: 103px;
   left: 607px;
+  .imagen {
+      width: 55px;
+      height: auto;
+    }
 }
 
 .map-static-logos .category-1 > div:nth-child(5) {
   top: 88px;
   left: 655px;
+  .imagen {
+      width: 55px;
+      height: auto;
+    }
 }
 
 .map-static-logos .category-1 > div:nth-child(6) {
   top: 140px;
   left: 519px;
+  .imagen {
+      width: 55px;
+      height: auto;
+    }
 }
 
 .map-static-logos .category-1 > div:nth-child(7) {
   top: 139px;
   left: 584px;
+  .imagen {
+      width: 55px;
+      height: auto;
+    }
 }
 
 .map-static-logos .category-1 > div:nth-child(8) {
   top: 144px;
   left: 659px;
+  .imagen {
+      width: 55px;
+      height: auto;
+    }
 }
 
 .map-static-logos .category-1 > div:nth-child(9) {
   top: 204px;
   left: 498px;
+  .imagen {
+      width: 55px;
+      height: auto;
+    }
 }
 
 .map-static-logos .category-1 > div:nth-child(10) {
   top: 175px;
   left: 576px;
+  .imagen {
+      width: 55px;
+      height: auto;
+    }
 }
 
 .map-static-logos .category-1 > div:nth-child(11) {
   top: 200px;
   left: 627px;
+  .imagen {
+      width: 55px;
+      height: auto;
+    }
 }
 
 .map-static-logos .category-1>div:nth-child(12) {
@@ -178,7 +218,7 @@
   top: 230px;
   left: 540px;
   .imagen {
-      width: 70px;
+      width: 55px;
       height: auto;
     }
 }
@@ -187,7 +227,7 @@
   top: 200px;
   left: 627px;
   .imagen {
-      width: 60px;
+      width: 55px;
       height: auto;
     }
 }
@@ -196,7 +236,7 @@
   top: 200px;
   left: 627px;
   .imagen {
-      width: 60px;
+      width: 55px;
       height: auto;
     }
 }
@@ -205,7 +245,7 @@
   top: 200px;
   left: 627px;
   .imagen {
-      width: 60px;
+      width: 55px;
       height: auto;
     }
 }
@@ -831,7 +871,7 @@
 .category-static > div:hover .category-logo-wrapper {
   opacity: 1;
   transition: opacity 0.42s, transform 0.72s;
-  transform: scale(1.45);
+  transform: scale(1.75);
 }
 
 .category-static:hover .category-logo-wrapper {
@@ -1363,7 +1403,7 @@ div.category-title.selected {
 }
 
 .category-logo .category-logo-inner:hover a {
-  transform: scale(1.45);
+  transform: scale(1.65);
 }
 
 .front-category-logos .category-logos-inner {
