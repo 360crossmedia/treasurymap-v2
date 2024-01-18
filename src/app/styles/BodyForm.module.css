@@ -54,7 +54,7 @@
   background: #f6fafe;
   padding: 16px 32px 16px 16px;
   border: none;
-  resize: none;
+  resize: vertical;
   color: #8d9396;
 }
 
