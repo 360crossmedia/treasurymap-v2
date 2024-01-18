@@ -306,10 +306,14 @@ const BodyForm = () => {
             }}
           />
           <Image
-            width={50}
-            height={50}
+            // width={50}
+            // height={50}
             src={!image ? PhotoImg : image}
             alt=""
+            width={0}
+            height={0}
+            sizes="100vw"
+            style={{ width: '80%', height: 'auto', maxHeight: "95%" }} // optional            
           />
           <p>
             {fileName}{" "}
@@ -317,13 +321,20 @@ const BodyForm = () => {
               <span className={styles.span}>*</span>
             )}
           </p>
+          <ul style={{fontSize: "10px"}}>
+            <li>Format: PNG</li>
+            <li>Background: Transparent</li>
+            <li>Minimum Dimensions: 200px width</li>
+            <li>Maximum File Size: 500KB</li>
+            <li>Quality: Logos should be clear, without pixelation or distortion</li>
+          </ul>
         </div>
       </div>
       <div className={styles.rightContainer}>
         {(userId == 1 || backUpUserId == 1) && (
           <div className={styles.inputContainer}>
             <label className={styles.label} htmlFor="">
-              Live on the Map
+              Live on the Map:
             </label>
             <Form.Check
               type="switch"

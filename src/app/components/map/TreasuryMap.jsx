@@ -520,11 +520,12 @@ const TreasuryMap = () => {
             
             if(companyElement.live){
               return(
-                <div key={index}>
+                <div key={index} id={`div-static-${companyElement.id}`}>
                   <a href={`/companyPage/${companyElement.id}`} >
                     <div className="category-logo-wrapper">              
                       <img
                         src={companyElement.logo}
+                        id={`image-${companyElement.id}`}
                         alt="Logo"
                         className={`imagen`}
                       />
