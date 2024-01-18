@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import styles from "../styles/BodyDashboard.module.css";
 import { useRouter } from "next/navigation";
 import { setCompanyId } from "../store/slices/companyToUpdate.slice";
+import { useEffect } from "react";
 
 const BodyDashboard = () => {
   const dispatch = useDispatch();
@@ -10,30 +11,25 @@ const BodyDashboard = () => {
   const companyId = useSelector((state) => state.companyId);
   const user = useSelector((state) => state.user);
   let backUpUserId;
-  if (typeof window !== "undefined") {
-    backUpUserId = localStorage.getItem("userId");
-  }
   const userId = user ? user : backUpUserId;
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      backUpUserId = localStorage.getItem("userId");
+    }
+  }, []);
 
   return (
     <div className={styles.mainContainer}>
       <div className={styles.buttonsContainer}>
-        {userId != 1 && (
-          <button
-            onClick={() => router.push("/myaccount")}
-            className={`${styles.mediaZoneButton} ${styles.colorWhite}`}
-          >
-            My account
-          </button>
-        )}
-        {userId == 1 && (
-          <button
-            onClick={() => router.push("/accountsettings")}
-            className={`${styles.mediaZoneButton} ${styles.colorWhite}`}
-          >
-            Accounts settings
-          </button>
-        )}
+        <button
+          onClick={() =>
+            router.push(userId != 1 ? "/myaccount" : "/accountsettings")
+          }
+          className={`${styles.mediaZoneButton} ${styles.colorWhite}`}
+        >
+          {userId != 1 ? "My Account" : "Accounts settings"}
+        </button>
         <button
           onClick={() => {
             companyId
