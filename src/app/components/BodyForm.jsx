@@ -322,6 +322,9 @@ const BodyForm = () => {
       <div className={styles.rightContainer}>
         {(userId == 1 || backUpUserId == 1) && (
           <div className={styles.inputContainer}>
+            <label className={styles.label} htmlFor="">
+              Live on the Map
+            </label>
             <Form.Check
               type="switch"
               id="custom-switch"
@@ -357,6 +360,7 @@ const BodyForm = () => {
             value={companyDescription}
             onChange={(e) => setCompanyDescription(e.target.value)}
             required
+            maxLength={6000}
           ></textarea>
         </div>
         <div className={styles.doubleInputsContainer}>
@@ -462,13 +466,15 @@ const BodyForm = () => {
           <label className={styles.label} htmlFor="">
             Product Description
           </label>
-          <input
+          <textarea
             className={styles.inputText}
             placeholder="Product Description"
             type="text"
             value={productVersion}
             onChange={(e) => setProductVersion(e.target.value)}
-          />
+            rows={4}
+            maxLength={6000}
+          ></textarea>
         </div>
         <div>
           <div>
@@ -537,12 +543,14 @@ const BodyForm = () => {
             <label className={styles.label} htmlFor="">
               {question.body}
             </label>
-            <input
+            <textarea
               className={styles.inputText}
               type="text"
               value={answers[index] || ""}
               onChange={(e) => handleAnswerChange(index, e.target.value)}
-            />
+              maxLength={1000}
+              rows="2"
+            ></textarea>
           </div>
         ))}
         <div className={styles.inputContainer}>
@@ -551,7 +559,7 @@ const BodyForm = () => {
           </label>
           <input
             className={styles.inputText}
-            placeholder="Keywords"
+            placeholder="Keyword 1, keyword 2, keyword 3"
             type="text"
             value={keywords}
             onChange={(e) => convertKeywords(e.target.value)}
