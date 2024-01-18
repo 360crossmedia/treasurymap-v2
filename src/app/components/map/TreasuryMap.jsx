@@ -3,6 +3,8 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 //import './TreasuryMap.module.css'
 import staticdata from './staticdata.json'
 import { url } from "../../service/url.js";
+import realdata from './realdata.json'
+
 
 
 const TreasuryMap = () => {
@@ -78,13 +80,7 @@ const TreasuryMap = () => {
   const [isInitialMount,setIsInitialMount] = useState(true); 
   const [renderSearched, setRenderSearched] = useState('')
 
-  // const handleSearch = () => {
-  //   const searchResult = allCompData
-  //     .filter(item => item.keywords.includes(searchTerm.toLowerCase()))
-  //     .map(item => item.id);
-  //   setResult(searchResult);
 
-  // };
 
   const handleSearch = () => {
 
@@ -434,123 +430,122 @@ const TreasuryMap = () => {
   };
 
 
-// !! ------- START REFACTOR DE RENDERCATEGORYLOGOS 
+// !! ------- START REFACTOR 1 DE RENDERCATEGORYLOGOS 
  
-  const renderCategoryLogos = (category, logoCount) => {
-    const findLogoUrl = (category, index) => {
-      const publicId = `${category}-logo-${index}`;
-      const logo = staticdata.find(logo => logo.public_id === publicId);
-      return logo ? logo.url : 'default-image-url.png'; // Provide a default image URL if not found
-    };
+  // const renderCategoryLogos = (category, logoCount) => {
+    
+  //   const findLogoUrl = (category, index) => {
+  //     const publicId = `${category}-logo-${index}`;
+  //     const logo = staticdata.find(logo => logo.public_id === publicId);
+  //     return logo ? logo.url : ""; // Provide a default image URL if not found
+  //   };
 
-  let sumaID = {
-      'category-1': 0,
-      'category-2': 11,
-      'category-3': 16,
-      'category-4': 21,
-      'category-5': 30,
-      'category-6': 43,
-      'category-7': 60,
-      'category-8': 68,
-      'category-9': 75,
-      'category-10': 80,
-      'category-11': 88,
-      'category-12': 94,
-      'category-13': 98,
-      'category-14': 113,
-    }  
+  //   const findLogoIndex = (category, index) =>{
+  //     const publicId2 = `${category}-logo-${index}`;
+  //     const compId = staticdata.find(logo => logo.public_id === publicId2);
+  //     return compId ? compId.company_id : ''
+  //   }
 
-    return (
-      <div className={`category-static ${category}`}>
-      {
+  //   const findIfLive = (category, index) =>{
+  //     const publicId3 = `${category}-logo-${index}`;
+  //     const compLive = staticdata.find(logo => logo.public_id === publicId3);
+  //     return compLive ? compLive.live : ''
+  //   }
+
+  //   return (
+  //     <div className={`category-static ${category}`}>
+  //     {
         
-        Array.from({ length: logoCount }).map((_, index) => {
+  //       Array.from({ length: logoCount }).map((_, index) => {
         
-          //IF COMO SOLUCION MOMENTANEA PARA QUITAR EL CLICKABLE DEL INTERFACED
-          if( (1 + index + sumaID[category]) == 68){
-            return (
-              <div key={index}>
-                  <div className="integrated-logo">
-                    <img
-                      src={findLogoUrl(category, index + 1)}
-                      alt="Logo"
-                      style={{cursor: "default"}}
-                    />
-                  </div>
-              </div>
-            )
-          } else{
+  //         //IF COMO SOLUCION MOMENTANEA PARA QUITAR EL CLICKABLE DEL INTERFACED
+  //         if( (findLogoIndex(category, (1 + index))) == 68){
+  //           return (
+  //             <div key={index}>
+  //                 <div className="integrated-logo">
+  //                   <img
+  //                     src={findLogoUrl(category, index + 1)}
+  //                     alt="Logo"
+  //                     style={{cursor: "default"}}
+  //                   />
+  //                 </div>
+  //             </div>
+  //           )
+  //         } else{
 
-            return (    
-                <div key={index}>
-                  <a href={`/companyPage/${ 1 + index + sumaID[category]}`} >
-                    <div className="category-logo-wrapper">
+  //           return (    
+  //               <div key={index}>
+  //                 <a href={`/companyPage/${ findLogoIndex(category, (1 + index))}`} >
+  //                   <div className="category-logo-wrapper">
+  //                     { 
+  //                       findIfLive(category, index + 1) &&
+  //                         findLogoUrl(category, index + 1) &&                  
+  //                           <img
+  //                             src={findLogoUrl(category, index + 1)}
+  //                             alt="Logo"
+  //                             className={`imagen`}
+  //                           />
+  //                     }
+  //                   </div>
+  //                 </a>
+  //               </div>
+  //             )
+  //         }
+
+
+
+  //        })
+      
+  //     }
+  //     </div>
+  //   );
+  // };
+
+// !! -------END REFACTOR 1DE RENDERCATEGORYLOGOS
+
+
+// ** ------- START REFACTOR 2 DE RENDERCATEGORYLOGOS -> WITH LIVE DATA
+
+
+  const renderCategoryLogos = (category) => {
+    
+
+
+    return(
+      <div className={`category-static ${category}`}>   
+
+      {     
+
+          dataByCategories[category]?.map(( companyElement , index) => {
+            
+            if(companyElement.live){
+              return(
+                <div key={index} id={`div-static-${companyElement.id}`}>
+                  <a href={`/companyPage/${companyElement.id}`} >
+                    <div className="category-logo-wrapper">              
                       <img
-                        src={findLogoUrl(category, index + 1)}
+                        src={companyElement.logo}
+                        id={`image-${companyElement.id}`}
                         alt="Logo"
                         className={`imagen`}
                       />
                     </div>
                   </a>
-                </div>
-              )
-          }
+                </div> 
+                )
+            }
 
-
-
-         })
-      
+          }                  
+       )
       }
+
       </div>
-    );
-  };
+    )
+  }
+
+// ** ------- END REFACTOR 2 DE RENDERCATEGORYLOGOS -> WITH LIVE DATA
 
 
-// !! -------END REFACTOR DE RENDERCATEGORYLOGOS
-
-
-// ? -----------OLD RENDERCATEGORYLOGOS --------------------
-// ? -----------OLD RENDERCATEGORYLOGOS
-    // ESTA FUNCION ES LLAMADA VARIAS VECES DE FORMA ESTATICA 
-    // ESTA FUNCION renderCategoryLogos TOMA COMO PARAMETROS "CATEGORY" Y "LOGOCOUNT"
-    // PARAMETRO "CATEGORY" ES ENVIADO DE FORMA ESTATICA DESDE EL HTML ESCRITO Y SE ENCARGA DE ESPECIFICAR EL CLASS DE EL DIV PARA 
-    // SEGUN ESO DISTRIBUIR LOS LOGOS EN EL ESPACIO PORQUE 
-    // EL PARAMETRO "logoCount" ES DEFINIDO MANUALMENTE, LITERALMENTE ES UN NUMERO ESCRITO. ESTE NUMERO UNICAMENTE SIRVE PARA 
-    // QUE SEPA CUANTAS ITERACIONES TIENE QUE HACER EL MAP 
-    // EL MAP GENERA UN INDEX EN CADA ITERACION Y ES ESE INDEX EL QUE COLOCA EN LA PLANTILLA DE TEXTO DENTRO DE LAS BACKTICKS
-
-    //ESTO QUIERE DECIR QUE PARA QUE ESTE CODIGO FUNCIONE, TIENES QUE TENER CONTROLADO EL NOMBRE CON EL QUE ES ALMACENADO EL LOGO, 
-    //DONDE SE MARCA EL NUMERO DE LA CATEGORIA Y EL NUMERO DE LOGO DENTRO DE ESA CATEGORIA
-
-    // const renderCategoryLogos = (category, logoCount) => (
-    
-  //   //AQUI UTILIZA EL PRIMER PARAMETRO "category" para definir la claas del DIV padre, que habilitara los estilos de cada categoria del mapa estatico
-  //   // ACTUALMENTE ES ENVIADO MANUALMENTE
-    //   <div className={`category-static ${category}`}>
-
-      
-    //     {
-    //     // REALIZARA UN LOOP, LA CANTIDAD DE VECES QUE VENGA INDICADO EN EL SEGUNDO PARAMETRO, "logoCount", QUE ACTUALMENTE ES ENVIADO MANUALMENTE
-    //     Array.from({ length: logoCount }).map((_, index) => (
-          
-    //       <div key={index}>
-    //         <a href="http://www.example.com" target="_blank">
-    //           <div className="category-logo-wrapper">
-    //             <img
-    //               src={`assets/interactive-map/static-map-logos/${category}-logo-${index + 1}.png`}
-    //               alt="Logo"
-    //             />
-    //           </div>
-    //         </a>
-    //       </div>
-    //     ))}
-    //   </div>
-    // );
-  
-
-
-
-  //ENTENDER "filteredLogos"
 
   const filteredLogos = useMemo(() => {
 
@@ -743,6 +738,42 @@ const TreasuryMap = () => {
     return selectedCategory || filteredLogos.length;
   }, [selectedCategory, filteredLogos]);
   
+  const dataByCategories = useMemo(()=>{
+
+    function categorizeCompanies(companies) {
+      const categorizedCompanies = {};
+
+      companies?.forEach(company => {
+        // Creating a new object with only specific properties
+        const companyData = {
+          id: company.id,
+          name: company.name,
+          logo: company.logo,
+          live: company.live // Assuming 'live' is a property of the company object
+        };
+
+        company.companyCategories?.forEach(category => {
+          // Building the property name as 'category-' followed by the category number
+          const categoryName = `category-${category}`;
+
+          // Initialize the category array if not already done
+          if (!categorizedCompanies[categoryName]) {
+            categorizedCompanies[categoryName] = [];
+          }
+
+          // Add the company data to the category
+          categorizedCompanies[categoryName].push(companyData);
+        });
+      });
+
+      return categorizedCompanies;
+    }
+
+    const orderedCompData = allCompData.sort((a, b) =>  a.id - b.id);
+
+    return categorizeCompanies(orderedCompData);
+
+  },[allCompData])
 
   // USEEFFECT INICIALIZADOR DE FETCH DE INFORMACION 
   useEffect(() => {
@@ -793,6 +824,9 @@ const TreasuryMap = () => {
                   <div key={index}><span></span></div>
                 ))}
               </div>
+              <div className='interfacedLogo'>
+                <div><img src={'https://res.cloudinary.com/dq7aof6vb/image/upload/v1704650633/category-7-logo-8_kpxhtq.png'} alt="" /></div>
+              </div>
 
               {
               /*  "MANUALMENTE" COLOCA CADA UNA DE LAS CATEGORIAS PATA QUE EJECUTE LA FUNCION RENDERCATEGORYLOGOS*/
@@ -802,8 +836,23 @@ const TreasuryMap = () => {
 
               }
 
-              {renderCategoryLogos('category-1', 11)}
-              {renderCategoryLogos('category-2', 5)}
+
+              {renderCategoryLogos('category-1')} 
+              {renderCategoryLogos('category-2')}
+              {renderCategoryLogos('category-3')}              
+              {renderCategoryLogos('category-4')}   
+              {renderCategoryLogos('category-5')}   
+              {renderCategoryLogos('category-6')}   
+              {renderCategoryLogos('category-7')}  
+              {renderCategoryLogos('category-8')}  
+              {renderCategoryLogos('category-9')}  
+              {renderCategoryLogos('category-10')}  
+              {renderCategoryLogos('category-11')}       
+              {renderCategoryLogos('category-12')}  
+              {renderCategoryLogos('category-13')}
+              {renderCategoryLogos('category-14')}   
+
+              {/* 
               {renderCategoryLogos('category-3', 5)}
               {renderCategoryLogos('category-4', 9)}
               {renderCategoryLogos('category-5', 13)}
@@ -815,7 +864,9 @@ const TreasuryMap = () => {
               {renderCategoryLogos('category-11', 6)}
               {renderCategoryLogos('category-12', 4)}
               {renderCategoryLogos('category-13', 15)}
-              {renderCategoryLogos('category-14', 6)}
+              {renderCategoryLogos('category-14', 6)} */}
+
+
             </div>
             <div className={`front-category-logos ${resettingFrontLogos ? 'resetting' : ''}`}>
               {mapData.map((category, i) => (
@@ -849,6 +900,7 @@ const TreasuryMap = () => {
                   //EN ESTE BLOQUE SE RENDERIZAN LOS LOGOS SELECCIONADOS. 
                   
                   filteredLogos.map((logo, index) => (
+                    logo.live &&
                     <div key={index} className="category-logo">
                       <div className="category-logo-inner">
                         <a href={logo.url}>
@@ -856,6 +908,7 @@ const TreasuryMap = () => {
                         </a>
                       </div>
                     </div>
+
                   ))
                   
                   }
