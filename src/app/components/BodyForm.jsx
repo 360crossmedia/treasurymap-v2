@@ -55,6 +55,7 @@ const BodyForm = () => {
   const [users, setUsers] = useState();
   const [userSelected, setUserSelected] = useState(1);
   const [backUpUserId, setBackUpUserId] = useState();
+  const [isLive, setIsLive] = useState();
   const userId = useSelector((state) => state.user);
   const companyId = useSelector((state) => state.companyId);
   let user;
@@ -85,6 +86,7 @@ const BodyForm = () => {
         description: companyDescription,
         companyOffices: selectedCountriesIds,
         userId: !userId ? backUpUserId : userId,
+        live: isLive,
         logo,
         creationDate,
         turnover,
@@ -248,6 +250,7 @@ const BodyForm = () => {
     setSelectedSubCategoryIds(companyData?.companySubcategories);
     setImage(companyData?.logo);
     setAnswers(companyAnswers);
+    setIsLive(companyData?.live);
     setUserSelected(companyData?.userId);
     let inputKeywords = companyData?.keywords;
     let toSetKeyword = inputKeywords?.filter(
@@ -317,6 +320,20 @@ const BodyForm = () => {
         </div>
       </div>
       <div className={styles.rightContainer}>
+        {(userId == 1 || backUpUserId == 1) && (
+          <div className={styles.inputContainer}>
+            <label className={styles.label} htmlFor="">
+              Live on the Map
+            </label>
+            <Form.Check
+              type="switch"
+              id="custom-switch"
+              label={isLive ? "On" : "Off"}
+              onChange={(e) => setIsLive(e.target.checked)}
+              checked={isLive}
+            />
+          </div>
+        )}
         <div className={styles.inputContainer}>
           <label className={styles.label} htmlFor="">
             Name of the company <span className={styles.span}>*</span>
@@ -343,6 +360,7 @@ const BodyForm = () => {
             value={companyDescription}
             onChange={(e) => setCompanyDescription(e.target.value)}
             required
+            maxLength={6000}
           ></textarea>
         </div>
         <div className={styles.doubleInputsContainer}>
@@ -432,69 +450,32 @@ const BodyForm = () => {
             required
           />
         </div>
-
-
-
         <div className={styles.inputContainer}>
-            <label className={styles.label} htmlFor="">
-              Name of Product
-            </label>
-            <input
-              className={styles.inputText}
-              placeholder="Software"
-              type="text"
-              value={productName}
-              onChange={(e) => setProductName(e.target.value)}
-            />
+          <label className={styles.label} htmlFor="">
+            Name of Product
+          </label>
+          <input
+            className={styles.inputText}
+            placeholder="Software"
+            type="text"
+            value={productName}
+            onChange={(e) => setProductName(e.target.value)}
+          />
         </div>
         <div className={styles.inputContainer}>
-            <label className={styles.label} htmlFor="">
-              Product Description
-            </label>
-            <input
-              className={styles.inputText}
-              placeholder="Product Description"
-              type="text"
-              value={productVersion}
-              onChange={(e) => setProductVersion(e.target.value)}
-            />          
-        </div> 
-
-
-
-        {/* <div className={styles.doubleInputsContainer}>
-          <div
-            className={`${styles.inputContainer} ${styles.inputContainer50}`}
-          >
-            <label className={styles.label} htmlFor="">
-              Name of Product
-            </label>
-            <input
-              className={styles.inputText}
-              placeholder="Software"
-              type="text"
-              value={productName}
-              onChange={(e) => setProductName(e.target.value)}
-            />
-          </div>
-          <div
-            className={`${styles.inputContainer} ${styles.inputContainer50}`}
-          >
-            <label className={styles.label} htmlFor="">
-              Product Description
-            </label>
-            <input
-              className={styles.inputText}
-              placeholder="Product Description"
-              type="text"
-              value={productVersion}
-              onChange={(e) => setProductVersion(e.target.value)}
-            />
-          </div>
-        </div> */}
-
-
-
+          <label className={styles.label} htmlFor="">
+            Product Description
+          </label>
+          <textarea
+            className={styles.inputText}
+            placeholder="Product Description"
+            type="text"
+            value={productVersion}
+            onChange={(e) => setProductVersion(e.target.value)}
+            rows={4}
+            maxLength={6000}
+          ></textarea>
+        </div>
         <div>
           <div>
             <p className={styles.label}>
@@ -562,12 +543,14 @@ const BodyForm = () => {
             <label className={styles.label} htmlFor="">
               {question.body}
             </label>
-            <input
+            <textarea
               className={styles.inputText}
               type="text"
               value={answers[index] || ""}
               onChange={(e) => handleAnswerChange(index, e.target.value)}
-            />
+              maxLength={1000}
+              rows="2"
+            ></textarea>
           </div>
         ))}
         <div className={styles.inputContainer}>
@@ -576,7 +559,7 @@ const BodyForm = () => {
           </label>
           <input
             className={styles.inputText}
-            placeholder="Keywords"
+            placeholder="Keyword 1, keyword 2, keyword 3"
             type="text"
             value={keywords}
             onChange={(e) => convertKeywords(e.target.value)}
