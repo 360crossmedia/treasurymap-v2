@@ -2,13 +2,12 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "../styles/signupCard.module.css";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import Form from "react-bootstrap/Form";
 import { apiGetAllCompanies } from "../service/apiGetAllCompanies";
 import { setUserIdToUpdate } from "../store/slices/userIdToUpdate.slice";
 
 const MyAccountCard = () => {
-  const userId = useSelector((state) => state.user);
   const router = useRouter();
   const dispatch = useDispatch();
   const [companies, setCompanies] = useState([]);
