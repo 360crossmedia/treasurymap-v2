@@ -748,8 +748,7 @@ const TreasuryMap = () => {
           id: company.id,
           name: company.name,
           logo: company.logo,
-          // !! ------------------------------CAMBIARRRRRRRRRRR A LA PROPERTY CORRECTAAAAAAAAAAA
-          live: true // Assuming 'live' is a property of the company object
+          live: company.live // Assuming 'live' is a property of the company object
         };
 
         company.companyCategories?.forEach(category => {
@@ -824,6 +823,9 @@ const TreasuryMap = () => {
                   <div key={index}><span></span></div>
                 ))}
               </div>
+              <div className='interfacedLogo'>
+                <div><img src={'https://res.cloudinary.com/dq7aof6vb/image/upload/v1704650633/category-7-logo-8_kpxhtq.png'} alt="" /></div>
+              </div>
 
               {
               /*  "MANUALMENTE" COLOCA CADA UNA DE LAS CATEGORIAS PATA QUE EJECUTE LA FUNCION RENDERCATEGORYLOGOS*/
@@ -835,7 +837,21 @@ const TreasuryMap = () => {
 
 
               {renderCategoryLogos('category-1')} 
-              {/* {renderCategoryLogos('category-2', 5)}
+              {renderCategoryLogos('category-2')}
+              {renderCategoryLogos('category-3')}              
+              {renderCategoryLogos('category-4')}   
+              {renderCategoryLogos('category-5')}   
+              {renderCategoryLogos('category-6')}   
+              {renderCategoryLogos('category-7')}  
+              {renderCategoryLogos('category-8')}  
+              {renderCategoryLogos('category-9')}  
+              {renderCategoryLogos('category-10')}  
+              {renderCategoryLogos('category-11')}       
+              {renderCategoryLogos('category-12')}  
+              {renderCategoryLogos('category-13')}
+              {renderCategoryLogos('category-14')}   
+
+              {/* 
               {renderCategoryLogos('category-3', 5)}
               {renderCategoryLogos('category-4', 9)}
               {renderCategoryLogos('category-5', 13)}
@@ -883,6 +899,7 @@ const TreasuryMap = () => {
                   //EN ESTE BLOQUE SE RENDERIZAN LOS LOGOS SELECCIONADOS. 
                   
                   filteredLogos.map((logo, index) => (
+                    logo.live &&
                     <div key={index} className="category-logo">
                       <div className="category-logo-inner">
                         <a href={logo.url}>
@@ -890,6 +907,7 @@ const TreasuryMap = () => {
                         </a>
                       </div>
                     </div>
+
                   ))
                   
                   }
