@@ -35,13 +35,18 @@ const MyAccountCard = () => {
         </div>
         <div>
           <button
-            onClick={() => router.push("/myaccount")}
+            onClick={() => {
+              dispatch(setUserIdToUpdate(false));
+              localStorage.removeItem("userIdToUpdate");
+              router.push("/myaccount");
+            }}
             style={{ marginBottom: "10px" }}
             className={styles.button}
           >
             My account
           </button>
         </div>
+        <hr style={{ borderTop: "1px dashed", width: "100%" }} />
         <Form.Select
           onChange={(e) => {
             setIsSelectedAnyCompany(
