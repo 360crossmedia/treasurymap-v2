@@ -153,15 +153,15 @@
   };
 
   .category-4 {
-    --sizeLogo: 1;
+    --sizeLogo: 1.1;
   };
 
   .category-5 {
-    --sizeLogo: 0.75;
+    --sizeLogo: 0.65;
   };
 
   .category-6 {
-    --sizeLogo: 1;
+    --sizeLogo: 0.85;
   };
 
   .category-7 {
@@ -551,8 +551,8 @@
 
 /* Static map logos - Category 4 */
 .map-static-logos .category-4 > div:nth-child(1) {
-  top: 393px;
-  left: 762px;
+  top: 515px;
+  left: 834px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -560,8 +560,8 @@
 }
 
 .map-static-logos .category-4 > div:nth-child(2) {
-  top: 385px;
-  left: 890px;
+  top: 515px;
+  left: 905px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -569,8 +569,8 @@
 }
 
 .map-static-logos .category-4 > div:nth-child(3) {
-  top: 440px;
-  left: 783px;
+top: 566px;
+  left: 852px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -578,8 +578,8 @@
 }
 
 .map-static-logos .category-4 > div:nth-child(4) {
-  top: 420px;
-  left: 892px;
+  top: 566px;
+  left: 918px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -587,8 +587,8 @@
 }
 
 .map-static-logos .category-4 > div:nth-child(5) {
-  top: 477px;
-  left: 807px;
+    top: 467px;
+    left: 787px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -596,8 +596,8 @@
 }
 
 .map-static-logos .category-4 > div:nth-child(6) {
-  top: 479px;
-  left: 894px;
+  top: 467px;
+  left: 860px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -605,8 +605,8 @@
 }
 
 .map-static-logos .category-4 > div:nth-child(7) {
-  top: 511px;
-  left: 831px;
+    top: 467px;
+    left: 919px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -614,8 +614,8 @@
 }
 
 .map-static-logos .category-4 > div:nth-child(8) {
-  top: 537px;
-  left: 862px;
+    top: 419px;
+    left: 765px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -623,8 +623,8 @@
 }
 
 .map-static-logos .category-4 > div:nth-child(9) {
-  top: 566px;
-  left: 872px;
+    top: 419px;
+    left: 836px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -632,8 +632,8 @@
 }
 
 .map-static-logos .category-4>div:nth-child(10) {
-  top: 566px;
-  left: 872px;
+  top: 419px;
+  left: 905px;
 
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
@@ -642,8 +642,8 @@
 }
 
 .map-static-logos .category-4>div:nth-child(11) {
-  top: 566px;
-  left: 872px;
+  top: 376px;
+  left: 737px;
 
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
@@ -652,8 +652,8 @@
 }
 
 .map-static-logos .category-4>div:nth-child(12) {
-  top: 566px;
-  left: 872px;
+  top: 376px;
+  left: 808px;
 
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
@@ -662,8 +662,8 @@
 }
 
 .map-static-logos .category-4>div:nth-child(13) {
-  top: 566px;
-  left: 872px;
+  top: 376px;
+  left: 876px;
 
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
@@ -672,8 +672,8 @@
 }
 
 .map-static-logos .category-4>div:nth-child(14) {
-  top: 566px;
-  left: 872px;
+  top: 376px;
+  left: 906px;
 
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
@@ -682,8 +682,8 @@
 }
 
 .map-static-logos .category-4>div:nth-child(15) {
-  top: 566px;
-  left: 872px;
+  top: 346px;
+  left: 906px;
 
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
@@ -692,8 +692,8 @@
 }
 
 .map-static-logos .category-4>div:nth-child(16) {
-  top: 566px;
-  left: 872px;
+  top: 346px;
+  left: 906px;
 
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
@@ -703,8 +703,8 @@
 
 /* Static map logos - Category 5 */
 .map-static-logos .category-5 > div:nth-child(1) {
-  top: 404px;
-  left: 646px;
+    top: 466px;
+    left: 683px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -712,8 +712,8 @@
 }
 
 .map-static-logos .category-5 > div:nth-child(2) {
-  top: 405px;
-  left: 682px;
+    top: 493px;
+    left: 698px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -721,8 +721,8 @@
 }
 
 .map-static-logos .category-5 > div:nth-child(3) {
-  top: 421px;
-  left: 657px;
+    top: 522px;
+    left: 716px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -730,8 +730,8 @@
 }
 
 .map-static-logos .category-5 > div:nth-child(4) {
-  top: 433px;
-  left: 704px;
+    top: 458px;
+    left: 729px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -739,8 +739,8 @@
 }
 
 .map-static-logos .category-5 > div:nth-child(5) {
-  top: 452px;
-  left: 680px;
+    top: 487px;
+    left: 742px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -748,8 +748,8 @@
 }
 
 .map-static-logos .category-5 > div:nth-child(6) {
-  top: 465px;
-  left: 727px;
+    top: 517px;
+    left: 758px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -757,8 +757,8 @@
 }
 
 .map-static-logos .category-5 > div:nth-child(7) {
-  top: 477px;
-  left: 697px;
+    top: 551px;
+    left: 741px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -766,8 +766,8 @@
 }
 
 .map-static-logos .category-5 > div:nth-child(8) {
-  top: 490px;
-  left: 742px;
+  top: 550px;
+  left: 790px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -775,8 +775,8 @@
 }
 
 .map-static-logos .category-5 > div:nth-child(9) {
-  top: 505px;
-  left: 715px;
+  top: 431px;
+  left: 710px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -784,8 +784,8 @@
 }
 
 .map-static-logos .category-5 > div:nth-child(10) {
-  top: 508px;
-  left: 758px;
+  top: 437px;
+  left: 667px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -793,8 +793,8 @@
 }
 
 .map-static-logos .category-5 > div:nth-child(11) {
-  top: 536px;
-  left: 735px;
+    top: 587px;
+    left: 762px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -802,8 +802,8 @@
 }
 
 .map-static-logos .category-5 > div:nth-child(12) {
-  top: 537px;
-  left: 778px;
+  top: 407px;
+  left: 644px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -811,8 +811,8 @@
 }
 
 .map-static-logos .category-5 > div:nth-child(13) {
-  top: 564px;
-  left: 758px;
+  top: 402px;
+  left: 688px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -820,42 +820,42 @@
 }
 
 .map-static-logos .category-5>div:nth-child(14) {
-  top: 564px;
-  left: 758px;
+  top: 380px;
+  left: 688px;
 
   .imagen {
-      max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
-      max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
+      max-height: calc( var(--maxHeight) * var(--sizeLogo) * 0.8 ) ;
+      max-width: calc( var(--maxWidth) * var(--sizeLogo) * 0.8 );
   }
 }
 
 .map-static-logos .category-5>div:nth-child(15) {
-  top: 564px;
-  left: 758px;
+  top: 380px;
+  left: 647px;
 
   .imagen {
-      max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
-      max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
+      max-height: calc( var(--maxHeight) * var(--sizeLogo) * 0.8 ) ;
+      max-width: calc( var(--maxWidth) * var(--sizeLogo) * 0.8 );
   }
 }
 
 .map-static-logos .category-5>div:nth-child(16) {
-  top: 564px;
-  left: 758px;
+    top: 624px;
+    left: 792px;
 
   .imagen {
-      max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
-      max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
+      max-height: calc( var(--maxHeight) * var(--sizeLogo) * 0.8 ) ;
+      max-width: calc( var(--maxWidth) * var(--sizeLogo) * 0.8 );
   }
 }
 
 .map-static-logos .category-5>div:nth-child(17) {
-  top: 564px;
-  left: 758px;
+  top: 610px;
+  left: 769px;
 
   .imagen {
-      max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
-      max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
+      max-height: calc( var(--maxHeight) * var(--sizeLogo) * 0.8 ) ;
+      max-width: calc( var(--maxWidth) * var(--sizeLogo) * 0.8 );
   }
 }
 
@@ -2550,7 +2550,7 @@
 }
 
 .category-title.category-title-4 {
-  transform: translate(440px, 570px);
+  transform: translate(452px, 592px);
 }
 
 .category-title.category-title-5 {
