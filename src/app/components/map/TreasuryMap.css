@@ -551,7 +551,7 @@
 
 /* Static map logos - Category 4 */
 .map-static-logos .category-4 > div:nth-child(1) {
-  top: 393px;
+  top: 0px;
   left: 762px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
@@ -560,7 +560,7 @@
 }
 
 .map-static-logos .category-4 > div:nth-child(2) {
-  top: 385px;
+  top: 0px;
   left: 890px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
@@ -569,7 +569,7 @@
 }
 
 .map-static-logos .category-4 > div:nth-child(3) {
-  top: 440px;
+  top: 0px;
   left: 783px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
@@ -578,7 +578,7 @@
 }
 
 .map-static-logos .category-4 > div:nth-child(4) {
-  top: 420px;
+  top: 0px;
   left: 892px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
@@ -587,7 +587,7 @@
 }
 
 .map-static-logos .category-4 > div:nth-child(5) {
-  top: 477px;
+  top: 0px;
   left: 807px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
@@ -596,7 +596,7 @@
 }
 
 .map-static-logos .category-4 > div:nth-child(6) {
-  top: 479px;
+  top: 0px;
   left: 894px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
@@ -605,7 +605,7 @@
 }
 
 .map-static-logos .category-4 > div:nth-child(7) {
-  top: 511px;
+  top: 0px;
   left: 831px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
@@ -614,7 +614,7 @@
 }
 
 .map-static-logos .category-4 > div:nth-child(8) {
-  top: 537px;
+  top: 0px;
   left: 862px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
@@ -623,7 +623,7 @@
 }
 
 .map-static-logos .category-4 > div:nth-child(9) {
-  top: 566px;
+  top: 0px;
   left: 872px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
@@ -632,7 +632,7 @@
 }
 
 .map-static-logos .category-4>div:nth-child(10) {
-  top: 566px;
+  top: 0px;
   left: 872px;
 
   .imagen {
@@ -642,7 +642,7 @@
 }
 
 .map-static-logos .category-4>div:nth-child(11) {
-  top: 566px;
+  top: 0px;
   left: 872px;
 
   .imagen {
@@ -652,7 +652,7 @@
 }
 
 .map-static-logos .category-4>div:nth-child(12) {
-  top: 566px;
+  top: 0px;
   left: 872px;
 
   .imagen {
@@ -662,7 +662,7 @@
 }
 
 .map-static-logos .category-4>div:nth-child(13) {
-  top: 566px;
+  top: 0px;
   left: 872px;
 
   .imagen {
@@ -672,7 +672,7 @@
 }
 
 .map-static-logos .category-4>div:nth-child(14) {
-  top: 566px;
+  top: 0px;
   left: 872px;
 
   .imagen {
@@ -682,7 +682,7 @@
 }
 
 .map-static-logos .category-4>div:nth-child(15) {
-  top: 566px;
+  top: 0px;
   left: 872px;
 
   .imagen {
@@ -692,7 +692,7 @@
 }
 
 .map-static-logos .category-4>div:nth-child(16) {
-  top: 566px;
+  top: 0px;
   left: 872px;
 
   .imagen {
