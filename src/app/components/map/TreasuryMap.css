@@ -157,7 +157,7 @@
   };
 
   .category-5 {
-    --sizeLogo: 0.65;
+    --sizeLogo: 0.80;
   };
 
   .category-6 {
@@ -713,7 +713,7 @@ top: 566px;
 
 .map-static-logos .category-5 > div:nth-child(2) {
     top: 493px;
-    left: 698px;
+    left: 702px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -722,7 +722,7 @@ top: 566px;
 
 .map-static-logos .category-5 > div:nth-child(3) {
     top: 522px;
-    left: 716px;
+    left: 721px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -739,8 +739,8 @@ top: 566px;
 }
 
 .map-static-logos .category-5 > div:nth-child(5) {
-    top: 487px;
-    left: 742px;
+    top: 504px;
+    left: 755px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -748,8 +748,8 @@ top: 566px;
 }
 
 .map-static-logos .category-5 > div:nth-child(6) {
-    top: 517px;
-    left: 758px;
+    top: 526px;
+    left: 774px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -824,8 +824,8 @@ top: 566px;
   left: 688px;
 
   .imagen {
-      max-height: calc( var(--maxHeight) * var(--sizeLogo) * 0.8 ) ;
-      max-width: calc( var(--maxWidth) * var(--sizeLogo) * 0.8 );
+      max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
+      max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
   }
 }
 
@@ -834,8 +834,8 @@ top: 566px;
   left: 647px;
 
   .imagen {
-      max-height: calc( var(--maxHeight) * var(--sizeLogo) * 0.8 ) ;
-      max-width: calc( var(--maxWidth) * var(--sizeLogo) * 0.8 );
+      max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
+      max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
   }
 }
 
@@ -844,8 +844,8 @@ top: 566px;
     left: 792px;
 
   .imagen {
-      max-height: calc( var(--maxHeight) * var(--sizeLogo) * 0.8 ) ;
-      max-width: calc( var(--maxWidth) * var(--sizeLogo) * 0.8 );
+      max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
+      max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
   }
 }
 
@@ -854,8 +854,8 @@ top: 566px;
   left: 769px;
 
   .imagen {
-      max-height: calc( var(--maxHeight) * var(--sizeLogo) * 0.8 ) ;
-      max-width: calc( var(--maxWidth) * var(--sizeLogo) * 0.8 );
+      max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
+      max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
   }
 }
 
@@ -2554,7 +2554,7 @@ top: 566px;
 }
 
 .category-title.category-title-5 {
-  transform: translate(349px, 558px);
+  transform: translate(364px, 563px);
 }
 
 .category-title.category-title-6 {
