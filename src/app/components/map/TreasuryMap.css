@@ -153,7 +153,7 @@
   };
 
   .category-4 {
-    --sizeLogo: 1;
+    --sizeLogo: 1.1;
   };
 
   .category-5 {
@@ -551,8 +551,8 @@
 
 /* Static map logos - Category 4 */
 .map-static-logos .category-4 > div:nth-child(1) {
-  top: 0px;
-  left: 762px;
+  top: 515px;
+  left: 834px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -560,8 +560,8 @@
 }
 
 .map-static-logos .category-4 > div:nth-child(2) {
-  top: 0px;
-  left: 890px;
+  top: 515px;
+  left: 905px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -569,8 +569,8 @@
 }
 
 .map-static-logos .category-4 > div:nth-child(3) {
-  top: 0px;
-  left: 783px;
+top: 566px;
+  left: 852px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -578,8 +578,8 @@
 }
 
 .map-static-logos .category-4 > div:nth-child(4) {
-  top: 0px;
-  left: 892px;
+  top: 566px;
+  left: 918px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -587,8 +587,8 @@
 }
 
 .map-static-logos .category-4 > div:nth-child(5) {
-  top: 0px;
-  left: 807px;
+    top: 467px;
+    left: 787px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -596,8 +596,8 @@
 }
 
 .map-static-logos .category-4 > div:nth-child(6) {
-  top: 0px;
-  left: 894px;
+  top: 467px;
+  left: 860px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -605,8 +605,8 @@
 }
 
 .map-static-logos .category-4 > div:nth-child(7) {
-  top: 0px;
-  left: 831px;
+    top: 467px;
+    left: 919px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -614,8 +614,8 @@
 }
 
 .map-static-logos .category-4 > div:nth-child(8) {
-  top: 0px;
-  left: 862px;
+    top: 419px;
+    left: 765px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -623,8 +623,8 @@
 }
 
 .map-static-logos .category-4 > div:nth-child(9) {
-  top: 0px;
-  left: 872px;
+    top: 419px;
+    left: 836px;
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
       max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
@@ -632,8 +632,8 @@
 }
 
 .map-static-logos .category-4>div:nth-child(10) {
-  top: 0px;
-  left: 872px;
+  top: 419px;
+  left: 905px;
 
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
@@ -642,8 +642,8 @@
 }
 
 .map-static-logos .category-4>div:nth-child(11) {
-  top: 0px;
-  left: 872px;
+  top: 376px;
+  left: 737px;
 
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
@@ -652,8 +652,8 @@
 }
 
 .map-static-logos .category-4>div:nth-child(12) {
-  top: 0px;
-  left: 872px;
+  top: 376px;
+  left: 808px;
 
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
@@ -662,8 +662,8 @@
 }
 
 .map-static-logos .category-4>div:nth-child(13) {
-  top: 0px;
-  left: 872px;
+  top: 376px;
+  left: 876px;
 
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
@@ -672,8 +672,8 @@
 }
 
 .map-static-logos .category-4>div:nth-child(14) {
-  top: 0px;
-  left: 872px;
+  top: 376px;
+  left: 906px;
 
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
@@ -682,8 +682,8 @@
 }
 
 .map-static-logos .category-4>div:nth-child(15) {
-  top: 0px;
-  left: 872px;
+  top: 346px;
+  left: 906px;
 
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
@@ -692,8 +692,8 @@
 }
 
 .map-static-logos .category-4>div:nth-child(16) {
-  top: 0px;
-  left: 872px;
+  top: 346px;
+  left: 906px;
 
   .imagen {
       max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
@@ -2550,7 +2550,7 @@
 }
 
 .category-title.category-title-4 {
-  transform: translate(440px, 570px);
+  transform: translate(452px, 592px);
 }
 
 .category-title.category-title-5 {
