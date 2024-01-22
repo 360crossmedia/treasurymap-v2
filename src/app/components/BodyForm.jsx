@@ -56,6 +56,7 @@ const BodyForm = () => {
   const [userSelected, setUserSelected] = useState(1);
   const [backUpUserId, setBackUpUserId] = useState();
   const [isLive, setIsLive] = useState();
+  const [ selectMainCategory, setSelectMainCategory]= useState([]);
   const userId = useSelector((state) => state.user);
   const companyId = useSelector((state) => state.companyId);
   let user;
@@ -96,6 +97,7 @@ const BodyForm = () => {
         productName,
         productVersion,
         keywords: [companyName, ...(keywords || [])],
+        maincategory: selectMainCategory
       };
 
       if (companyId) {
@@ -257,6 +259,7 @@ const BodyForm = () => {
       (item) => item !== companyData?.name
     );
     setKeywords(toSetKeyword);
+    setSelectMainCategory(companyData?.maincategory)
     dispatch(setIsLoading(false));
   };
 
@@ -440,7 +443,7 @@ const BodyForm = () => {
         </div>
         <div className={styles.inputContainer}>
           <label className={styles.label} htmlFor="">
-            Active in <span className={styles.span}>*</span>
+            Active in (Choose as many as apply) <span className={styles.span}>*</span>
           </label>
           <MultiSelect
             options={countries}
@@ -487,10 +490,37 @@ const BodyForm = () => {
             maxLength={6000}
           ></textarea>
         </div>
+
+
+        <div className={styles.inputContainer}>
+          <label className={styles.label} htmlFor="">
+            Category to display on the map (Main category) <span className={styles.span}>*</span>
+          </label>
+
+          <Form.Select
+            value={selectMainCategory}
+            className={styles.inputText}
+            onChange={(e) =>
+              setSelectMainCategory( [parseInt(e.target.value)] )
+            }
+          >
+            {
+              categories?.map((cat, index ) => (
+                <option key={index} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))
+            }
+          </Form.Select>
+
+
+        </div>
+
+
         <div>
           <div>
             <p className={styles.label}>
-              Categories <span className={styles.span}>*</span>
+              Categories (Choose as many as apply) <span className={styles.span}>*</span>
             </p>
           </div>
           <div className={styles.categoriesContainer}>
