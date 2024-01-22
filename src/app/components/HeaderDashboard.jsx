@@ -44,9 +44,12 @@ const HeaderDashboard = () => {
   const deleteButton = async () => {
     if (isSelectedAnyCompany) {
       const result = await apiDeleteCompanyById(isSelectedAnyCompany);
-      result && result.status == 200
-        ? alert("Company deleted")
-        : alert("Error deleting company");
+      if (result.status == 200) {
+        alert("Company deleted");
+        window.location.reload();
+      } else {
+        console.log(result);
+      }
     } else alert("Please select any company");
   };
 
