@@ -560,8 +560,8 @@
   }
 
 .map-static-logos .category-4 > div:nth-child(2) {
-  top: 515px;
-  left: 905px;
+  top: 526px;
+  left: 914px;
 }
 .map-static-logos .category-4>div:nth-child(2) .imagen {
     max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
@@ -569,8 +569,8 @@
   }
 
 .map-static-logos .category-4 > div:nth-child(3) {
-top: 566px;
-  left: 852px;
+top: 562px;
+  left: 849px;
 }
 .map-static-logos .category-4>div:nth-child(3) .imagen {
     max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
@@ -578,7 +578,7 @@ top: 566px;
   }
 
 .map-static-logos .category-4 > div:nth-child(4) {
-  top: 566px;
+  top: 575px;
   left: 918px;
 }
 .map-static-logos .category-4>div:nth-child(4) .imagen {
@@ -587,7 +587,7 @@ top: 566px;
   }
 
 .map-static-logos .category-4 > div:nth-child(5) {
-    top: 467px;
+    top: 476px;
     left: 787px;
 }
 .map-static-logos .category-4>div:nth-child(5) .imagen {
@@ -597,7 +597,7 @@ top: 566px;
 
 .map-static-logos .category-4 > div:nth-child(6) {
   top: 467px;
-  left: 860px;
+  left: 859px;
 }
 .map-static-logos .category-4>div:nth-child(6) .imagen {
     max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
@@ -605,7 +605,7 @@ top: 566px;
   }
 
 .map-static-logos .category-4 > div:nth-child(7) {
-    top: 467px;
+    top: 478px;
     left: 919px;
 }
 .map-static-logos .category-4>div:nth-child(7) .imagen {
@@ -614,7 +614,7 @@ top: 566px;
   }
 
 .map-static-logos .category-4 > div:nth-child(8) {
-    top: 419px;
+    top: 427px;
     left: 765px;
 }
 .map-static-logos .category-4>div:nth-child(8) .imagen {
