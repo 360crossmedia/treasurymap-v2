@@ -21,7 +21,9 @@ const BodyDashboard = () => {
 
   return (
     <div className={styles.mainContainer}>
-      <div className={styles.buttonsContainer}>
+      <div
+        className={`${styles.buttonsContainer} ${styles.buttonsContainerOwner}`}
+      >
         <button
           onClick={() =>
             router.push(userId != 1 ? "/myaccount" : "/accountsettings")
@@ -42,23 +44,27 @@ const BodyDashboard = () => {
           Media Zone
         </button>
       </div>
-      <div className={styles.linesContainer}>
-        <div className={styles.line}></div>
-        <p className={styles.or}>Or</p>
-        <div className={styles.line}></div>
-      </div>
-      <div>
-        <button
-          onClick={() => {
-            localStorage.removeItem("companyId");
-            dispatch(setCompanyId(false));
-            router.push("/form");
-          }}
-          className={styles.createCompanyButton}
-        >
-          Create a new company
-        </button>
-      </div>
+      {userId == 1 && (
+        <>
+          <div className={styles.linesContainer}>
+            <div className={styles.line}></div>
+            <p className={styles.or}>Or</p>
+            <div className={styles.line}></div>
+          </div>
+          <div>
+            <button
+              onClick={() => {
+                localStorage.removeItem("companyId");
+                dispatch(setCompanyId(false));
+                router.push("/form");
+              }}
+              className={styles.createCompanyButton}
+            >
+              Create a new company
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 };
