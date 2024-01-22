@@ -12,25 +12,23 @@ const HeaderDashboard = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const userId = useSelector((state) => state.user);
-  let backUpUserId;
-  if (typeof window !== "undefined") {
-    backUpUserId = localStorage.getItem("userId");
-  }
+  const [backUpUserId, setBackUpUserId] = useState();
   const [companies, setCompanies] = useState([]);
   const [isSelectedAnyCompany, setIsSelectedAnyCompany] = useState(false);
 
   useEffect(() => {
-    getCompanies();
+    if (typeof window !== "undefined") {
+      setBackUpUserId(Number(localStorage.getItem("userId")));
+      getCompanies(Number(localStorage.getItem("userId")));
+    }
   }, []);
 
-  const getCompanies = async () => {
-    if (userId == 1 || backUpUserId == 1) {
+  const getCompanies = async (id) => {
+    if (id == 1) {
       const companies = await apiGetAllCompanies();
       setCompanies(companies);
     } else {
-      const companies = await apiGetCompaniesByOwner(
-        userId == 0 ? backUpUserId : userId
-      );
+      const companies = await apiGetCompaniesByOwner(id);
       setCompanies(companies);
     }
   };
