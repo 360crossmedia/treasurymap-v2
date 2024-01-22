@@ -57,7 +57,6 @@ const BodyForm = () => {
   const [backUpUserId, setBackUpUserId] = useState();
   const [isLive, setIsLive] = useState();
   const [selectMainCategory, setSelectMainCategory] = useState();
-  const [previusMainCategory, setPreviusMainCategory] = useState();
   const userId = useSelector((state) => state.user);
   const companyId = useSelector((state) => state.companyId);
   let user;
@@ -262,7 +261,6 @@ const BodyForm = () => {
     );
     setKeywords(toSetKeyword);
     setSelectMainCategory(...companyData?.maincategory);
-    setPreviusMainCategory(...companyData?.maincategory);
     dispatch(setIsLoading(false));
   };
 
