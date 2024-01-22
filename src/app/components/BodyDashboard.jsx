@@ -3,34 +3,43 @@ import { useDispatch, useSelector } from "react-redux";
 import styles from "../styles/BodyDashboard.module.css";
 import { useRouter } from "next/navigation";
 import { setCompanyId } from "../store/slices/companyToUpdate.slice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const BodyDashboard = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const companyId = useSelector((state) => state.companyId);
-  const user = useSelector((state) => state.user);
-  let backUpUserId;
-  const userId = user ? user : backUpUserId;
+  const userId = useSelector((state) => state.user);
+  const [backUpUserId, setBackUpUserId] = useState();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      backUpUserId = localStorage.getItem("userId");
+      setBackUpUserId(Number(localStorage.getItem("userId")));
     }
   }, []);
 
   return (
     <div className={styles.mainContainer}>
       <div
-        className={`${styles.buttonsContainer} ${styles.buttonsContainerOwner}`}
+        className={
+          userId == 1 || backUpUserId == 1
+            ? `${styles.buttonsContainer}`
+            : `${styles.buttonsContainer} ${styles.buttonsContainerOwner}`
+        }
       >
         <button
           onClick={() =>
-            router.push(userId != 1 ? "/myaccount" : "/accountsettings")
+            router.push(
+              userId == 1 || backUpUserId == 1
+                ? "/accountsettings"
+                : "/myaccount"
+            )
           }
           className={`${styles.mediaZoneButton} ${styles.colorWhite}`}
         >
-          {userId != 1 ? "My Account" : "Accounts settings"}
+          {userId == 1 || backUpUserId == 1
+            ? "Accounts settings"
+            : "My Account"}
         </button>
         <button
           onClick={() => {
@@ -44,7 +53,7 @@ const BodyDashboard = () => {
           Media Zone
         </button>
       </div>
-      {userId == 1 && (
+      {(userId == 1 || backUpUserId == 1) && (
         <>
           <div className={styles.linesContainer}>
             <div className={styles.line}></div>
