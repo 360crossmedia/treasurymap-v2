@@ -57,6 +57,10 @@
   color: #000;
 }
 
+.buttonsContainerOwner {
+  margin-bottom: 15%;
+}
+
 @media screen and (max-width: 1270px) {
   .mainContainer {
     margin-top: 140px;

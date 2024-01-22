@@ -84,9 +84,11 @@ const HeaderDashboard = () => {
           <button onClick={updateButton} className={styles.updateButton}>
             Update
           </button>
-          <button onClick={deleteButton} className={styles.deleteButton}>
-            Delete
-          </button>
+          {(userId == 1 || backUpUserId == 1) && (
+            <button onClick={deleteButton} className={styles.deleteButton}>
+              Delete
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -56,7 +56,7 @@ const BodyForm = () => {
   const [userSelected, setUserSelected] = useState(1);
   const [backUpUserId, setBackUpUserId] = useState();
   const [isLive, setIsLive] = useState();
-  const [ selectMainCategory, setSelectMainCategory]= useState([]);
+  const [selectMainCategory, setSelectMainCategory] = useState([]);
   const userId = useSelector((state) => state.user);
   const companyId = useSelector((state) => state.companyId);
   let user;
@@ -72,7 +72,8 @@ const BodyForm = () => {
     if (
       selectedCategoryIds?.length > 0 &&
       selectedCountriesIds?.length > 0 &&
-      selectedSubCategoryIds?.length > 0
+      selectedSubCategoryIds?.length > 0 &&
+      selectMainCategory?.length > 0
     ) {
       const logoCloudinary = image?.includes("https://")
         ? ""
@@ -97,10 +98,10 @@ const BodyForm = () => {
         productName,
         productVersion,
         keywords: [companyName, ...(keywords || [])],
-        maincategory: selectMainCategory
+        maincategory: selectMainCategory,
       };
 
-      if (companyId) {
+      if (companyId || backUpCompanyId) {
         if (userSelected) data.userId = userSelected;
         const result = await apiUpdateCompany(
           !companyId ? backUpCompanyId : companyId,
@@ -259,7 +260,7 @@ const BodyForm = () => {
       (item) => item !== companyData?.name
     );
     setKeywords(toSetKeyword);
-    setSelectMainCategory(companyData?.maincategory)
+    setSelectMainCategory(companyData?.maincategory);
     dispatch(setIsLoading(false));
   };
 
@@ -282,6 +283,8 @@ const BodyForm = () => {
   }, []);
 
   useEffect(() => setBackUpUserId(user), [user]);
+
+  useEffect(() => console.log(...selectMainCategory), [selectMainCategory]);
 
   return (
     <form onSubmit={submit} className={styles.mainContainer}>
@@ -309,14 +312,12 @@ const BodyForm = () => {
             }}
           />
           <Image
-            // width={50}
-            // height={50}
             src={!image ? PhotoImg : image}
             alt=""
             width={0}
             height={0}
             sizes="100vw"
-            style={{ width: '80%', height: 'auto', maxHeight: "95%" }} // optional            
+            style={{ width: "80%", height: "auto", maxHeight: "95%" }}
           />
           <p>
             {fileName}{" "}
@@ -324,12 +325,14 @@ const BodyForm = () => {
               <span className={styles.span}>*</span>
             )}
           </p>
-          <ul style={{fontSize: "10px"}}>
+          <ul style={{ fontSize: "10px" }}>
             <li>Format: PNG</li>
             <li>Background: Transparent</li>
             <li>Minimum Dimensions: 200px width</li>
             <li>Maximum File Size: 500KB</li>
-            <li>Quality: Logos should be clear, without pixelation or distortion</li>
+            <li>
+              Quality: Logos should be clear, without pixelation or distortion
+            </li>
           </ul>
         </div>
       </div>
@@ -443,7 +446,8 @@ const BodyForm = () => {
         </div>
         <div className={styles.inputContainer}>
           <label className={styles.label} htmlFor="">
-            Active in (Choose as many as apply) <span className={styles.span}>*</span>
+            Active in (Choose as many as apply){" "}
+            <span className={styles.span}>*</span>
           </label>
           <MultiSelect
             options={countries}
@@ -491,42 +495,40 @@ const BodyForm = () => {
           ></textarea>
         </div>
 
-
         <div className={styles.inputContainer}>
           <label className={styles.label} htmlFor="">
-            Category to display on the map (Main category) <span className={styles.span}>*</span>
+            Category to display on the map (Main category){" "}
+            <span className={styles.span}>*</span>
           </label>
 
           <Form.Select
             value={selectMainCategory}
             className={styles.inputText}
-            onChange={(e) =>
-              setSelectMainCategory( [parseInt(e.target.value)] )
-            }
+            onChange={(e) => setSelectMainCategory([parseInt(e.target.value)])}
           >
-            {
-              categories?.map((cat, index ) => (
-                <option key={index} value={cat.id}>
-                  {cat.name}
-                </option>
-              ))
-            }
+            {selectMainCategory.length == 0 && (
+              <option>Select main category</option>
+            )}
+            {categories?.map((cat, index) => (
+              <option key={index} value={cat.id}>
+                {cat.name}
+              </option>
+            ))}
           </Form.Select>
-
-
         </div>
-
 
         <div>
           <div>
             <p className={styles.label}>
-              Categories (Choose as many as apply) <span className={styles.span}>*</span>
+              Categories (Choose as many as apply){" "}
+              <span className={styles.span}>*</span>
             </p>
           </div>
           <div className={styles.categoriesContainer}>
             {categories?.map((category, index) => (
               <div className={styles.inputCheckboxContainer} key={index}>
                 <Checkbox
+                  disabled={category.id == selectMainCategory[0]}
                   onChange={(e) => {
                     if (e.checked) {
                       setSelectedCategoryIds((prevIds) => [
@@ -539,7 +541,10 @@ const BodyForm = () => {
                       );
                     }
                   }}
-                  checked={selectedCategoryIds?.includes(category.id)}
+                  checked={
+                    selectedCategoryIds?.includes(category.id) ||
+                    category.id === selectMainCategory[0]
+                  }
                 ></Checkbox>
                 <label className={styles.labelCheckbox} for={category.name}>
                   {category.name}
