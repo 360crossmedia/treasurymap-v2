@@ -738,6 +738,7 @@ const TreasuryMap = () => {
     return selectedCategory || filteredLogos.length;
   }, [selectedCategory, filteredLogos]);
   
+
   const dataByCategories = useMemo(()=>{
 
     function categorizeCompanies(companies) {
@@ -752,7 +753,7 @@ const TreasuryMap = () => {
           live: company.live // Assuming 'live' is a property of the company object
         };
 
-        company.companyCategories?.forEach(category => {
+        company.maincategory?.forEach(category => {
           // Building the property name as 'category-' followed by the category number
           const categoryName = `category-${category}`;
 
