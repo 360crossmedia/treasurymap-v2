@@ -56,7 +56,8 @@ const BodyForm = () => {
   const [userSelected, setUserSelected] = useState(1);
   const [backUpUserId, setBackUpUserId] = useState();
   const [isLive, setIsLive] = useState();
-  const [selectMainCategory, setSelectMainCategory] = useState([]);
+  const [selectMainCategory, setSelectMainCategory] = useState();
+  const [previusMainCategory, setPreviusMainCategory] = useState();
   const userId = useSelector((state) => state.user);
   const companyId = useSelector((state) => state.companyId);
   let user;
@@ -73,7 +74,7 @@ const BodyForm = () => {
       selectedCategoryIds?.length > 0 &&
       selectedCountriesIds?.length > 0 &&
       selectedSubCategoryIds?.length > 0 &&
-      selectMainCategory?.length > 0
+      selectMainCategory
     ) {
       const logoCloudinary = image?.includes("https://")
         ? ""
@@ -98,7 +99,7 @@ const BodyForm = () => {
         productName,
         productVersion,
         keywords: [companyName, ...(keywords || [])],
-        maincategory: selectMainCategory,
+        maincategory: [selectMainCategory],
       };
 
       if (companyId || backUpCompanyId) {
@@ -260,7 +261,8 @@ const BodyForm = () => {
       (item) => item !== companyData?.name
     );
     setKeywords(toSetKeyword);
-    setSelectMainCategory(companyData?.maincategory);
+    setSelectMainCategory(...companyData?.maincategory);
+    setPreviusMainCategory(...companyData?.maincategory);
     dispatch(setIsLoading(false));
   };
 
@@ -276,6 +278,20 @@ const BodyForm = () => {
     dispatch(setIsLoading(false));
   };
 
+  const handleUpdateMainCategory = (categoryId) => {
+    let previus;
+    setSelectMainCategory((prev) => {
+      previus = prev;
+      return categoryId;
+    });
+    setTimeout(() => {
+      setSelectedCategoryIds((prevIds) => {
+        const updatedIds = prevIds.filter((id) => id !== previus);
+        return [...updatedIds, categoryId];
+      });
+    }, 50);
+  };
+
   useEffect(() => {
     getAllComponentData();
     if (!companyId ? backUpCompanyId : companyId) getAllInputsData();
@@ -283,8 +299,6 @@ const BodyForm = () => {
   }, []);
 
   useEffect(() => setBackUpUserId(user), [user]);
-
-  useEffect(() => console.log(...selectMainCategory), [selectMainCategory]);
 
   return (
     <form onSubmit={submit} className={styles.mainContainer}>
@@ -504,11 +518,9 @@ const BodyForm = () => {
           <Form.Select
             value={selectMainCategory}
             className={styles.inputText}
-            onChange={(e) => setSelectMainCategory([parseInt(e.target.value)])}
+            onChange={(e) => handleUpdateMainCategory(Number(e.target.value))}
           >
-            {selectMainCategory.length == 0 && (
-              <option>Select main category</option>
-            )}
+            {!selectMainCategory && <option>Select main category</option>}
             {categories?.map((cat, index) => (
               <option key={index} value={cat.id}>
                 {cat.name}
@@ -528,7 +540,7 @@ const BodyForm = () => {
             {categories?.map((category, index) => (
               <div className={styles.inputCheckboxContainer} key={index}>
                 <Checkbox
-                  disabled={category.id == selectMainCategory[0]}
+                  disabled={category.id == selectMainCategory}
                   onChange={(e) => {
                     if (e.checked) {
                       setSelectedCategoryIds((prevIds) => [
@@ -543,7 +555,7 @@ const BodyForm = () => {
                   }}
                   checked={
                     selectedCategoryIds?.includes(category.id) ||
-                    category.id === selectMainCategory[0]
+                    category.id === selectMainCategory
                   }
                 ></Checkbox>
                 <label className={styles.labelCheckbox} for={category.name}>
