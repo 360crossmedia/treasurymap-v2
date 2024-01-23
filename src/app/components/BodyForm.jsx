@@ -120,8 +120,10 @@ const BodyForm = () => {
               const sendEmail = await apiSendUpdateEmail({
                 companyName,
                 name: users[!userId ? backUpUserId - 1 : userId - 1]?.fullName,
+                previousValue: result.data,
+                newValue: JSON.parse(result.config.data),
               });
-              if (sendEmail.status == 200) {
+              if (sendEmail?.status == 200) {
                 alert("Company updated successfully");
                 dispatch(setCompanyId(false));
                 dispatch(setIsLoading(false));
