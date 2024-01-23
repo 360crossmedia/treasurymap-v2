@@ -1028,35 +1028,58 @@ const TreasuryMap = () => {
 
 
                 {/* ESTE CODIGO ES LA RENDERIZACION DEL DROPDOWN */}
+                {
+                // <div className={`filters-selection-list ${filtersConfig['subcategories'].open ? 'open' : ''}`}>
+                //     {
+                //       // RENDERIZACION DEL DROPDOWN DE SUBCATEGORIES
+                //       subcategoriesData && Object.keys(filtersConfig['subcategories'].allFilters).map((key) => {
+                              
+                //               //console.log(key);
+                //               const subcategoryId = filtersConfig['subcategories'].allFilters[key];
+                //               const subcategory = subcategoriesData.find(subcat => subcat.id === subcategoryId);
+                              
+                //               return (
+                //                   <div
+                //                       key={key}
+                //                       onClick={() => selectFilter('subcategories', subcategoryId)}
+                //                       className={filtersConfig['subcategories'].selectedFilters.includes(subcategoryId) ? 'selected' : ''}>
+                                      
+                //                       {/* Render the name of the subcategory */}
+                                      
+                //                       {subcategory ? subcategory.name : 'Unknown Subcategory'}
+
+                //                   </div>
+                //               );
+                //           })
+                //     }      
+                // </div>
+                }
+
+
                 <div className={`filters-selection-list ${filtersConfig['subcategories'].open ? 'open' : ''}`}>
-                    
                     {
+                        // RENDERIZACION DEL DROPDOWN DE SUBCATEGORIES
+                        subcategoriesData && 
+                        Object.keys(filtersConfig['subcategories'].allFilters)
+                        .map(key => {
+                            // Get the subcategory ID from the filtersConfig
+                            const subcategoryId = filtersConfig['subcategories'].allFilters[key];
+                            // Find the corresponding subcategory in the subcategoriesData
+                            return subcategoriesData.find(subcat => subcat.id === subcategoryId);
+                        })
+                        .filter(subcategory => subcategory) // Filter out any undefined subcategories
+                        .sort((a, b) => a.name.localeCompare(b.name)) // Sort the subcategories alphabetically
+                        .map(subcategory => (
+                            <div
+                                key={subcategory.id}
+                                onClick={() => selectFilter('subcategories', subcategory.id)}
+                                className={filtersConfig['subcategories'].selectedFilters.includes(subcategory.id) ? 'selected' : ''}>
 
-                      // RENDERIZACION DEL DROPDOWN DE SUBCATEGORIES
-
-                      subcategoriesData && Object.keys(filtersConfig['subcategories'].allFilters).map((key) => {
-                              
-                              //console.log(key);
-                              const subcategoryId = filtersConfig['subcategories'].allFilters[key];
-                              const subcategory = subcategoriesData.find(subcat => subcat.id === subcategoryId);
-                              
-                              return (
-                                  <div
-                                      key={key}
-                                      onClick={() => selectFilter('subcategories', subcategoryId)}
-                                      className={filtersConfig['subcategories'].selectedFilters.includes(subcategoryId) ? 'selected' : ''}>
-                                      
-                                      {/* Render the name of the subcategory */}
-                                      
-                                      {subcategory ? subcategory.name : 'Unknown Subcategory'}
-
-                                  </div>
-                              );
-                          })
+                                {/* Render the name of the subcategory */}
+                                {subcategory.name}
+                            </div>
+                        ))
                     }      
-
-   
-              
                 </div>
 
               </div>
