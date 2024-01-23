@@ -10,6 +10,7 @@ import inputCompanyNameIcon from "../assets/building.svg";
 import { apiCreateUser } from "../service/apiCreateUser";
 import { useDispatch } from "react-redux";
 import { setIsLoading } from "../store/slices/isLoading.slice";
+import { apiSendSignUpAlert } from "../service/apiSendSignUpAlert";
 
 const SignupCard = () => {
   const [companyName, setcompanyName] = useState("");
@@ -19,7 +20,6 @@ const SignupCard = () => {
   const [confPassword, setconfPassword] = useState("");
   const [passwordMatch, setPasswordsMatch] = useState(true);
   const [error, setError] = useState("");
-
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -62,10 +62,16 @@ const SignupCard = () => {
       try {
         setError("");
         let data = await apiCreateUser(datos);
-
         if (data == 201) {
-          dispatch(setIsLoading(false));
-          router.push("/login");
+          const result = await apiSendSignUpAlert(datos);
+          if (result.status == 200) {
+            dispatch(setIsLoading(false));
+            alert("User created succesfully");
+            router.push("/login");
+          } else {
+            dispatch(setIsLoading(false));
+            console.log(result);
+          }
         } else {
           dispatch(setIsLoading(false));
           setError("No se puede crear usuario, información incorrecta");
@@ -98,7 +104,6 @@ const SignupCard = () => {
             Contact us if you feel that your company should be on the map:
             contact@360Crossmedia.com
           </p>
-
           <hr style={{ borderTop: "1px dashed" }} />
           <p className={styles.cardDescription}>Sign Up</p>
           <p
