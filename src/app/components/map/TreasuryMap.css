@@ -108,13 +108,13 @@
 
 
 /* AJUSTES DE LOGOS POR ID */
-#image-42{
+/* #image-42{
   max-width: 37px;
-}
+} */
 
-#image-45 {
+/* #image-45 {
   max-width: 40px;
-}
+} */
 
 /* #image-111 {
   max-width: 40px;
@@ -124,15 +124,13 @@
   max-width: 40px;
 }
 
-#image-68 {
-  max-width: 45px;
-}
+
 #image-90 {
   max-width: 35px;
 }
-#image-54 {
+/* #image-54 {
   max-width: 45px;
-}
+} */
 
 /* AJUSTE DE TAMANO DE LOGOS POR CATEGORIA*/
 .map-static-logos{ 
