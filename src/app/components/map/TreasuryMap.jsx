@@ -998,16 +998,36 @@ const TreasuryMap = () => {
                   <span className="selected">{selectedCategory ? categories[selectedCategory] : null}</span>
                   <span style={{fontSize:"small"}}>{!selectedCategory && 'Select category'}</span>
                 </div>
+
+                {
+                // <div className={`category-selection-list ${selectCategoryOpen ? 'open' : ''}`}>
+                //   {Object.keys(categories).map((key) => (
+                //     <div
+                //       key={key}
+                //       className={selectedCategory === key ? 'selected' : ''}
+                //       onClick={() => selectCategory(key)}>
+                //       {categories[key]}
+                //     </div>
+                //   ))}
+                // </div>
+                }
+
                 <div className={`category-selection-list ${selectCategoryOpen ? 'open' : ''}`}>
-                  {Object.keys(categories).map((key) => (
-                    <div
-                      key={key}
-                      className={selectedCategory === key ? 'selected' : ''}
-                      onClick={() => selectCategory(key)}>
-                      {categories[key]}
-                    </div>
-                  ))}
+                  {
+                    Object.entries(categories) // Convert object to array of key-value pairs
+                      .sort((a, b) => a[1].localeCompare(b[1])) // Sort the array alphabetically by value
+                      .map(([key, value]) => (
+                        <div
+                          key={key}
+                          className={selectedCategory === key ? 'selected' : ''}
+                          onClick={() => selectCategory(key)}>
+                          {value}
+                        </div>
+                      ))
+                  }
                 </div>
+                
+
               </div>
             </div>
 
