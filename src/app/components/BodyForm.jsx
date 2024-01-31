@@ -402,11 +402,11 @@ const BodyForm = () => {
               Creation date (year) <span className={styles.span}>*</span>
             </label>
             <input
-              className={styles.inputText}
-              placeholder="2024"
+              className={`${styles.inputText} ` }
+              placeholder="Enter creation year"
               type="text"
               value={creationDate}
-              onChange={(e) => setCreationDate(e.target.value)}
+              onChange={(e) => setCreationDate( e.target.value.replace(/[^0-9]/g, '') )}
               required
             />
           </div>
@@ -421,7 +421,7 @@ const BodyForm = () => {
               placeholder="Enter Amount"
               type="text"
               value={turnover}
-              onChange={(e) => setTurnover(e.target.value)}
+              onChange={(e) => setTurnover( e.target.value.replace(/[^0-9]/g, '') )}
               required
             />
           </div>
@@ -438,7 +438,7 @@ const BodyForm = () => {
               placeholder="Enter a number of employees"
               type="text"
               value={employees}
-              onChange={(e) => setEmployees(e.target.value)}
+              onChange={(e) => setEmployees( e.target.value.replace(/[^0-9]/g, '') )}
               required
             />
           </div>
