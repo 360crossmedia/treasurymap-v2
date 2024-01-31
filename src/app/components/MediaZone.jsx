@@ -13,8 +13,8 @@ import { useDispatch } from "react-redux";
 const MediaZone = ({ companyId }) => {
   const dispatch = useDispatch();
   const [countries, setCountries] = useState();
-  const [videos, setVideos] = useState();
-  const [articles, setArticles] = useState();
+  const [videos, setVideos] = useState([]);
+  const [articles, setArticles] = useState([]);
   const [articleSelected, setArticleSelected] = useState(false);
   const [seeMoreActive, setSeeMoreActive] = useState(false);
 
@@ -71,6 +71,7 @@ const MediaZone = ({ companyId }) => {
           </p>
         )}
       </div>
+      { (videos.length === 0 && articles.length === 0) && <h2 className={styles.title}>No media content uploaded yet.</h2> }
       {!articleSelected &&
         videos?.map((video, index) => (
           <div key={index} className={styles.videoContainer}>
