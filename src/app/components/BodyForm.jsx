@@ -135,6 +135,7 @@ const BodyForm = () => {
             }
           }
         } else {
+          alert("Something went wrong. Please check information.");
           console.log(result);
           dispatch(setIsLoading(false));
         }
@@ -196,6 +197,7 @@ const BodyForm = () => {
               dispatch(setIsLoading(false));
             }
           } else {
+            alert('Something went wrong. Please check information.')
             console.log(result);
             dispatch(setIsLoading(false));
           }
