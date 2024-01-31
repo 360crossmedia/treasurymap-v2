@@ -74,12 +74,12 @@ const SignupCard = () => {
           }
         } else {
           dispatch(setIsLoading(false));
-          setError("No se puede crear usuario, información incorrecta");
+          setError("Can not create user, information is incorrect.");
           console.log(data);
         }
       } catch (e) {
         dispatch(setIsLoading(false));
-        setError("No se puede crear usuario, información incorrecta");
+        setError("Can not create user, information is incorrect.");
         console.log(e);
       }
     }
