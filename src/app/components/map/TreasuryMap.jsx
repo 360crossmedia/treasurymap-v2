@@ -8,7 +8,9 @@ import realdata from './realdata.json'
 
 
 const TreasuryMap = () => {
-  const mapCenterTitle = 'https://res.cloudinary.com/dq7aof6vb/image/upload/v1704675764/the-treasury-tech-landscape-title_g8yzli.png';
+  //const mapCenterTitle = 'https://res.cloudinary.com/dq7aof6vb/image/upload/v1704675764/the-treasury-tech-landscape-title_g8yzli.png';
+  const mapCenterTitle = 'https://res.cloudinary.com/dq7aof6vb/image/upload/v1707284047/the-treasury-tech-landscape-title_jqryte.png';
+
   const mapBackgroundImage = 'https://res.cloudinary.com/dq7aof6vb/image/upload/v1704675763/background_gs0j76.webp'
 
   const categories = {
