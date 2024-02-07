@@ -22,6 +22,14 @@ const BodyArticle = ({ isArticle }) => {
   const videoId = useSelector((state) => state.videoId);
   const articleId = useSelector((state) => state.articleId);
 
+
+  //OPEN INSTRUCTIONS FOR VIDEO URL
+  const openLinkInNewTab = () => {
+    const url = "https://res.cloudinary.com/dq7aof6vb/image/upload/v1707343450/URL_instructions_ofmbm9.png";
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+
   const save = async () => {
     dispatch(setIsLoading(true));
     event.preventDefault();
@@ -138,9 +146,18 @@ const BodyArticle = ({ isArticle }) => {
             ></textarea>
           </div>
         )}
+        
         {!isArticle && (
           <div className={styles.inputContainer}>
-            <label htmlFor="">URL</label>
+            <label htmlFor="">URL 
+              <span 
+                style={{fontSize: '10px', color:'black', opacity:'100%', paddingLeft:'25px', cursor:'pointer'}}
+                onClick={openLinkInNewTab}
+              > 
+                See how to set the proper URL <span style={{fontSize:'18px'}}>&#x1F6C8;</span>
+              </span>
+            </label>
+
             <input
               className={styles.input}
               placeholder="Enter URL"
@@ -150,6 +167,8 @@ const BodyArticle = ({ isArticle }) => {
             />
           </div>
         )}
+
+
         <div className={styles.buttonsContainer}>
           <button type="submit" className={styles.updateButton}>
             Save
