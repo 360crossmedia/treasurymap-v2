@@ -1,0 +1,91 @@
+{
+    "category-1":
+        [
+            {
+            "public_id": "category-1-logo-1",
+            "company_id": 1,
+            "url": "https://res.cloudinary.com/dq7aof6vb/image/upload/v1704650668/category-1-logo-1_iyigt8.png",
+            "live": true
+            },
+            {
+            "public_id": "category-1-logo-2",
+            "company_id": 2,
+            "url": "https://res.cloudinary.com/dq7aof6vb/image/upload/v1704650669/category-1-logo-2_cy6uby.png",
+            "live": true
+            },
+            {
+            "public_id": "category-1-logo-3",
+            "company_id": 3,
+            "url": "https://res.cloudinary.com/dq7aof6vb/image/upload/v1704650669/category-1-logo-3_te6col.png",
+            "live": true
+            },
+            {
+            "public_id": "category-1-logo-4",
+            "company_id": 4,
+            "url": "https://res.cloudinary.com/dq7aof6vb/image/upload/v1704650670/category-1-logo-4_zqhttp.png",
+            "live": true
+            }
+        ],
+
+    "category-2":
+        [
+            {
+            "public_id": "category-2-logo-1",
+            "company_id": 12,
+            "url": "https://res.cloudinary.com/dq7aof6vb/image/upload/v1704650676/category-2-logo-1_vubye4.png",
+            "live": true
+            },
+            {
+            "public_id": "category-2-logo-2",
+            "company_id": 13,
+            "url": "https://res.cloudinary.com/dq7aof6vb/image/upload/v1704650676/category-2-logo-2_abonzm.png",
+            "live": true
+            },
+            {
+            "public_id": "category-2-logo-3",
+            "company_id": 14,
+            "url": "https://res.cloudinary.com/dq7aof6vb/image/upload/v1704650677/category-2-logo-3_iksr8g.png",
+            "live": true
+            },
+            {
+            "public_id": "category-2-logo-4",
+            "company_id": 15,
+            "url": "https://res.cloudinary.com/dq7aof6vb/image/upload/v1704650678/category-2-logo-4_gh4vbz.png",
+            "live": true
+            }        
+        ],
+
+    "category-3":
+        [
+            {
+            "public_id": "category-3-logo-1",
+            "company_id": 17,
+            "url": "https://res.cloudinary.com/dq7aof6vb/image/upload/v1704650679/category-3-logo-1_iavrnz.png",
+            "live": true
+            },
+            {
+            "public_id": "category-3-logo-2",
+            "company_id": 18,
+            "url": "https://res.cloudinary.com/dq7aof6vb/image/upload/v1704650680/category-3-logo-2_sahbc9.png",
+            "live": true
+            },
+            {
+            "public_id": "category-3-logo-3",
+            "company_id": 19,
+            "url": "https://res.cloudinary.com/dq7aof6vb/image/upload/v1704650680/category-3-logo-3_r3po12.png",
+            "live": true
+            },
+            {
+            "public_id": "category-3-logo-4",
+            "company_id": 20,
+            "url": "https://res.cloudinary.com/dq7aof6vb/image/upload/v1704650681/category-3-logo-4_u3whgw.png",
+            "live": true
+            },
+            {
+            "public_id": "category-3-logo-5",
+            "company_id": 21,
+            "url": "https://res.cloudinary.com/dq7aof6vb/image/upload/v1704650682/category-3-logo-5_nexqfo.png",
+            "live": true
+            }   
+        ]        
+}
