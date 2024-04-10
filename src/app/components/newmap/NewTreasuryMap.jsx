@@ -1163,7 +1163,7 @@ const TreasuryMap = () => {
             </div> 
             <div className="map-static-logos">
               <div className="dividers">
-                {Array.from({ length: 15 }).map((_, index) => (
+                {Array.from({ length: 16 }).map((_, index) => (
                   <div key={index}><span></span></div>
                 ))}
               </div>
