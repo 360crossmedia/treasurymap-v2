@@ -9,7 +9,8 @@ import realdata from './realdata.json'
 
 const TreasuryMap = () => {
   //const mapCenterTitle = 'https://res.cloudinary.com/dq7aof6vb/image/upload/v1704675764/the-treasury-tech-landscape-title_g8yzli.png';
-  const mapCenterTitle = 'https://res.cloudinary.com/dq7aof6vb/image/upload/v1707284047/the-treasury-tech-landscape-title_jqryte.png';
+  // const mapCenterTitle = 'https://res.cloudinary.com/dq7aof6vb/image/upload/v1707284047/the-treasury-tech-landscape-title_jqryte.png';
+  const mapCenterTitle = 'https://res.cloudinary.com/dq7aof6vb/image/upload/v1712693505/CENTRAL_TEXT_my9777.png'
 
   const mapBackgroundImage = 'https://res.cloudinary.com/dq7aof6vb/image/upload/v1704675763/background_gs0j76.webp'
 
@@ -1147,8 +1148,15 @@ const TreasuryMap = () => {
         </div>
       </div>
 
+      <div id="interactive-map" style={{ backgroundImage: `url(${mapBackgroundImage})` }}>
+        <div className={`interactive-map-wrapper ${loaded ? 'loaded' : ''}`} >
+
+      {/*
+      ASI ESTABA ANTES DEL NEW MAP 
       <div id="interactive-map">
-        <div className={`interactive-map-wrapper ${loaded ? 'loaded' : ''}`} style={{ backgroundImage: `url(${mapBackgroundImage})` }}>
+        <div className={`interactive-map-wrapper ${loaded ? 'loaded' : ''}`} style={{ backgroundImage: `url(${mapBackgroundImage})` }}> 
+        */}
+          
           <div className={`interactive-map-inner ${frontMapOpen ? 'front-open' : ''}`}>
             <div className="map-title-wrapper">
               <img className="map-title" src={mapCenterTitle} alt="" />
