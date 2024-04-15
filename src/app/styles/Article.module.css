@@ -1,0 +1,28 @@
+.author {
+  margin: 0;
+}
+
+.authorContainer {
+  margin: 30px 0;
+  font-size: 15px;
+}
+
+.authorLink {
+  text-decoration: none;
+  color: black;
+  font-weight: bold;
+}
+
+.articleDate {
+  color: #3d3d3d;
+  font-size: 0.8rem;
+}
+
+.htmlContainer img {
+  max-width: 700px;
+}
+
+.htmlContainer p img {
+  margin: 0 auto !important;
+  display: flex !important;
+}

@@ -1,7 +1,8 @@
 "use client";
+import styles from "../styles/BodyArticle.module.css";
+import stylesForm from "../styles/BodyForm.module.css";
 import { useEffect, useState } from "react";
 import { apiCreateVideo } from "../service/apiCreateVideo";
-import styles from "../styles/BodyArticle.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { apiCreateArticle } from "../service/apiCreateArticle";
 import { useRouter } from "next/navigation";
@@ -10,6 +11,17 @@ import { apiGetArticleById } from "../service/apiGetArticleById";
 import { apiGetVideoById } from "../service/apiGetVideoById";
 import { apiUpdateArticle } from "../service/apiUpdateArticle";
 import { apiUpdateVideo } from "../service/apiUpdateVideo";
+import {
+  formats,
+  modules,
+  openLinkInNewTab,
+  uploadImage,
+  stringToArr,
+} from "../utils";
+import Image from "next/image";
+import PhotoImg from "../assets/photoImg.svg";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 const BodyArticle = ({ isArticle }) => {
   const router = useRouter();
@@ -17,18 +29,18 @@ const BodyArticle = ({ isArticle }) => {
   const [title, setTitle] = useState();
   const [body, setBody] = useState();
   const [url, setUrl] = useState();
+  const [image, setImage] = useState();
+  const [file, setFile] = useState();
+  const [fileName, setFileName] = useState();
   const [isUpdate, setIsUpdate] = useState(false);
+  const [tags, setTags] = useState([]);
   const companyId = useSelector((state) => state.companyId);
   const videoId = useSelector((state) => state.videoId);
   const articleId = useSelector((state) => state.articleId);
-
-
-  //OPEN INSTRUCTIONS FOR VIDEO URL
-  const openLinkInNewTab = () => {
-    const url = "https://res.cloudinary.com/dq7aof6vb/image/upload/v1707343450/URL_instructions_ofmbm9.png";
-    window.open(url, '_blank', 'noopener,noreferrer');
-  };
-
+  let backUpCompanyId;
+  if (typeof window !== "undefined") {
+    backUpCompanyId = localStorage.getItem("companyId");
+  }
 
   const save = async () => {
     dispatch(setIsLoading(true));
@@ -39,8 +51,14 @@ const BodyArticle = ({ isArticle }) => {
           dispatch(setIsLoading(false));
           alert("Complete required fields");
         } else {
-          const result = await apiCreateArticle(companyId, { title, body });
-          if (result.status == 201) {
+          const coverImage = image.includes("https://")
+            ? image
+            : await uploadImage(file);
+          const result = await apiCreateArticle(
+            companyId ? companyId : backUpCompanyId,
+            { title, body, coverImage, tags }
+          );
+          if (result?.status == 201) {
             dispatch(setIsLoading(false));
             alert("Article created succesfully");
             router.push("/mediaZone");
@@ -54,7 +72,10 @@ const BodyArticle = ({ isArticle }) => {
           dispatch(setIsLoading(false));
           alert("Complete required fields");
         } else {
-          const result = await apiCreateVideo(companyId, { title, url });
+          const result = await apiCreateVideo(
+            companyId ? companyId : backUpCompanyId,
+            { title, url }
+          );
           if (result.status == 201) {
             dispatch(setIsLoading(false));
             alert("Video created succesfully");
@@ -71,8 +92,16 @@ const BodyArticle = ({ isArticle }) => {
           dispatch(setIsLoading(false));
           alert("Complete required fields");
         } else {
-          const result = await apiUpdateArticle(articleId, { title, body });
-          if (result.status == 200) {
+          const coverImage = image.includes("https://")
+            ? image
+            : await uploadImage(file);
+          const result = await apiUpdateArticle(articleId, {
+            title,
+            body,
+            coverImage,
+            tags,
+          });
+          if (result?.status == 200) {
             dispatch(setIsLoading(false));
             alert("Article updated succesfully");
             router.push("/mediaZone");
@@ -103,9 +132,11 @@ const BodyArticle = ({ isArticle }) => {
   const getAllInputsData = async () => {
     if (isArticle && articleId) {
       const articleData = await apiGetArticleById(articleId);
-      setTitle(articleData.title);
-      setBody(articleData.body);
+      setTitle(articleData?.title);
+      setBody(articleData?.body);
+      setImage(articleData?.coverImage);
       setIsUpdate(true);
+      setTags(articleData?.tags);
     } else if (!isArticle && videoId) {
       const videoData = await apiGetVideoById(videoId);
       setTitle(videoData.title);
@@ -122,7 +153,7 @@ const BodyArticle = ({ isArticle }) => {
     <div className={styles.mainContainer}>
       <form className={styles.card} onSubmit={save}>
         <div className={styles.inputContainer}>
-          <label htmlFor="">Title</label>
+          <label>Title</label>
           <input
             className={styles.input}
             placeholder="Enter title"
@@ -132,29 +163,118 @@ const BodyArticle = ({ isArticle }) => {
           />
         </div>
         {isArticle && (
-          <div className={styles.inputContainer}>
-            <label htmlFor="">Body</label>
-            <textarea
-              className={styles.inputTextArea}
-              placeholder="Message"
-              name=""
-              id=""
-              cols="30"
-              rows="5"
-              value={body}
-              onChange={(e) => setBody(e.target.value)}
-            ></textarea>
-          </div>
+          <>
+            <div className={styles.inputContainer}>
+              <label>Cover image</label>
+              <div className={styles.uploadPhotoContainer}>
+                <div className={styles.imageContainer}>
+                  <input
+                    className={styles.inputFile}
+                    type="file"
+                    {...(image ? {} : { required: true })}
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (readerEvent) => {
+                          const imageDataUrl = readerEvent.target.result;
+                          setImage(imageDataUrl);
+                        };
+                        reader.readAsDataURL(file);
+                        setFileName(
+                          file.name.substring(0, 10) +
+                            (file.name.length > 10 ? "..." : "")
+                        );
+                        setFile(file);
+                      }
+                    }}
+                  />
+                  {!file ||
+                    (image?.includes("http://") && (
+                      <em className={styles.imageLabel}>Click here!</em>
+                    ))}
+                  {!image && (
+                    <Image
+                      src={!image ? PhotoImg : image}
+                      alt=""
+                      width={0}
+                      height={0}
+                      style={{
+                        width: "150px",
+                        maxWidth: "200px",
+                        height: "auto",
+                        height: "150px",
+                        maxHeight: "200px",
+                      }}
+                    />
+                  )}
+                  {image && (
+                    <img
+                      src={!image ? PhotoImg : image}
+                      alt=""
+                      width={0}
+                      height={0}
+                      style={{
+                        width: "100px",
+                        height: "auto",
+                        maxHeight: "100px",
+                      }}
+                    />
+                  )}
+                  <p>
+                    {fileName}{" "}
+                    {fileName == "Upload logo" && (
+                      <span className={stylesForm.span}>*</span>
+                    )}
+                  </p>
+                </div>
+                <ul style={{ fontSize: "10px" }}>
+                  <li>Format: PNG</li>
+                  <li>Background: Transparent</li>
+                  <li>Minimum Dimensions: 200px width</li>
+                  <li>Maximum File Size: 500KB</li>
+                  <li>
+                    Quality: Logos should be clear, without pixelation or
+                    distortion
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div className={styles.inputContainer}>
+              <label>Body</label>
+              <ReactQuill
+                className={styles.customButton}
+                formats={formats}
+                modules={modules}
+                value={body}
+                onChange={setBody}
+              />
+            </div>
+            <div className={styles.inputContainer}>
+              <label className={styles.label} htmlFor="">
+                Insert tags related to the article (separated by commas):
+              </label>
+              <input
+                className={styles.input}
+                placeholder="Tag 1, tag 2, tag 3"
+                type="text"
+                value={tags}
+                onChange={(e) => stringToArr(e.target.value, setTags)}
+              />
+            </div>
+          </>
         )}
-        
+
         {!isArticle && (
           <div className={styles.inputContainer}>
-            <label htmlFor="">URL 
-              <span 
-                style={{fontSize: '10px', color:'black', opacity:'100%', paddingLeft:'25px', cursor:'pointer'}}
+            <label htmlFor="">
+              URL
+              <span
+                className={styles.urlInstructionsSpan}
                 onClick={openLinkInNewTab}
-              > 
-                See how to set the proper URL <span style={{fontSize:'18px'}}>&#x1F6C8;</span>
+              >
+                See how to set the proper URL{" "}
+                <span className={styles.urlInstructionsIcon}>&#x1F6C8;</span>
               </span>
             </label>
 
@@ -167,7 +287,6 @@ const BodyArticle = ({ isArticle }) => {
             />
           </div>
         )}
-
 
         <div className={styles.buttonsContainer}>
           <button type="submit" className={styles.updateButton}>

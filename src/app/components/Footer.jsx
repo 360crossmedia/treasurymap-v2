@@ -20,11 +20,12 @@ const Footer = () => {
         </p>
       </div>
       <div className={styles.footerRight}>
-        <a className={styles.footerLink} href="#">
-          Privacy
-        </a>
-        <a className={styles.footerLink} href="#">
-          Terms
+        <p className={styles.footerLink}>Powered by 360Crossmedia</p>
+        <a
+          className={styles.footerLink}
+          href="https://www.360crossmedia.com/gdpr"
+        >
+          GPDR
         </a>
       </div>
     </footer>

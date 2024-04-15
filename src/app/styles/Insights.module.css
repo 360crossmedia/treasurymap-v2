@@ -1,0 +1,58 @@
+.mainContainer {
+  margin: 0 56px;
+  display: flex;
+  gap: 15px;
+}
+
+.leftContainer {
+  width: 80%;
+}
+
+.rightContainer {
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.card {
+  display: flex;
+  gap: 15px;
+  cursor: pointer;
+}
+
+.articleDate {
+  font-size: 10px;
+  color: #151515;
+  margin: 0;
+}
+
+.articleTitle {
+  font-size: 12px;
+  margin: 0;
+}
+
+.bigArticle {
+  background-color: aquamarine;
+  width: 50%;
+  height: 100%;
+  border: 5px solid yellow;
+}
+
+.articlesContainer {
+  width: 100%;
+  height: 500px;
+  display: flex;
+}
+
+.smallArticle {
+  background-color: violet;
+  width: 100%;
+  height: 100%;
+  border: 5px solid red;
+}
+
+.smallArticlesContainer {
+  display: flex;
+  width: 50%;
+}

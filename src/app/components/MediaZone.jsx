@@ -9,9 +9,11 @@ import { apiGetAllVideosByCompanyId } from "../service/apiGetAllVideosByCompanyI
 import { apiGetAllArticlesByCompanyId } from "../service/apiGetAllArticlesByCompanyId";
 import { setIsLoading } from "../store/slices/isLoading.slice";
 import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
 
 const MediaZone = ({ companyId }) => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const [countries, setCountries] = useState();
   const [videos, setVideos] = useState([]);
   const [articles, setArticles] = useState([]);
@@ -71,7 +73,9 @@ const MediaZone = ({ companyId }) => {
           </p>
         )}
       </div>
-      { (videos.length === 0 && articles.length === 0) && <h2 className={styles.title}>No media content uploaded yet.</h2> }
+      {videos.length === 0 && articles.length === 0 && (
+        <h2 className={styles.title}>No media content uploaded yet.</h2>
+      )}
       {!articleSelected &&
         videos?.map((video, index) => (
           <div key={index} className={styles.videoContainer}>
@@ -93,19 +97,22 @@ const MediaZone = ({ companyId }) => {
         articles?.map((article, index) => (
           <div key={index}>
             <div className={styles.articleContainer}>
-              <p className={styles.articleTitle}>{article?.title}</p>
-              <p className={styles.articleDescription}>
-                {article?.body.length > 200
-                  ? `${article?.body.slice(0, 200)}...`
-                  : article?.body}
+              <img
+                src={article.coverImage}
+                alt=""
+                className={styles.articleCoverImage}
+              />
+              <p className={styles.articleTitle}>
+                {article?.title}
+                <br />
+                <a
+                  className={styles.articleA}
+                  onClick={() => router.push("/article")}
+                >
+                  Read More
+                  <Image src={ArrowRight} alt="" />
+                </a>
               </p>
-              <a
-                className={styles.articleA}
-                onClick={() => setArticleSelected(index + 1)}
-              >
-                Read More
-                <Image src={ArrowRight} alt="" />
-              </a>
             </div>
             <div className={styles.line}></div>
           </div>
