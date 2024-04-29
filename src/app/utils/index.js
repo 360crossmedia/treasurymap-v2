@@ -88,3 +88,18 @@ export const formatCategoryName = (categoryName) => {
   }
   return categoryName.trim();
 };
+
+export const haveMediaContentToShow = (videosArr, articlesArr) => {
+  if (videosArr?.length > 0 || articlesArr?.length > 0) {
+    for (let i = 0; i < videosArr?.length; i++) {
+      if (videosArr[i]?.live == true) {
+        return true;
+      }
+      for (let i = 0; i < articlesArr?.length; i++) {
+        if (articlesArr[i]?.live == true) {
+          return true;
+        }
+      }
+    }
+  } else return false;
+};

@@ -19,7 +19,8 @@
   gap: 24px;
 }
 
-.input {
+.input,
+.inputTextArea {
   border-radius: 30px;
   border: 1px solid #ccc;
   background: #fff;
@@ -28,12 +29,7 @@
 }
 
 .inputTextArea {
-  border-radius: 30px;
-  border: 1px solid #eee;
-  background: #fff;
-  width: 851px;
-  padding: 18px 26px;
-  resize: vertical;
+  height: inherit;
 }
 
 .buttonsContainer {
@@ -61,7 +57,7 @@
   width: 179px;
 }
 
-.customButton{
+.customButton {
   height: 40vh;
   margin-bottom: 7vh;
 }
@@ -80,7 +76,7 @@
   border-bottom-right-radius: inherit;
 }
 
-.urlInstructionsSpan{
+.urlInstructionsSpan {
   font-size: 10px;
   color: black;
   opacity: 100%;
@@ -88,11 +84,11 @@
   cursor: pointer;
 }
 
-.urlInstructionsIcon{
+.urlInstructionsIcon {
   font-size: 18px;
 }
 
-.radius{
+.radius {
   border-radius: 30px;
   border: 1px solid #ccc;
 }
@@ -103,7 +99,7 @@
   align-items: center;
 }
 
-.imageCard{
+.imageCard {
   border-radius: 6px;
   background: #f6fafe;
   display: flex;
@@ -119,18 +115,22 @@
   cursor: pointer;
 }
 
-.imageContainer{
+.imageContainer {
   display: flex;
   justify-content: center;
   flex-direction: column;
 }
 
-.imageLabel{
+.imageLabel {
   position: absolute;
   margin-bottom: 12%;
   margin-left: 3.25%;
   z-index: -2;
   cursor: pointer;
+}
+
+.required {
+  color: red;
 }
 
 @media screen and (max-width: 1360px) {

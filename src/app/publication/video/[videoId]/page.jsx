@@ -1,9 +1,9 @@
 "use client";
-import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
-import styles from "../../styles/layout.module.css";
-import Article from "../../components/Article";
+import Navbar from "../../../components/Navbar";
+import Footer from "../../../components/Footer";
+import styles from "../../../styles/layout.module.css";
 import InsightsNavbar from "@/app/components/InsightsNavbar";
+import Video from "@/app/components/Video";
 
 const Layout = ({ params }) => {
   return (
@@ -14,7 +14,7 @@ const Layout = ({ params }) => {
       >
         <Navbar buttonLabel={"Login"} />
         <InsightsNavbar />
-        <Article articleId={params.articleId} />
+        <Video videoId={params.videoId} />
       </div>
       <Footer />
     </>

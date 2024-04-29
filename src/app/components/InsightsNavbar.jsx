@@ -30,7 +30,7 @@ const InsightsNavbar = () => {
               <a
                 key={index}
                 className={styles.link}
-                href={`/insights/${category.id}`}
+                // href={`/insights/${category.id}`}
               >
                 {formatCategoryName(category?.name)}
               </a>

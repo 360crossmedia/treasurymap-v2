@@ -5,11 +5,14 @@
 }
 
 .leftContainer {
-  width: 80%;
+  width: 70%;
+  .line2 {
+    margin-bottom: 30px;
+  }
 }
 
 .rightContainer {
-  width: 20%;
+  width: 30%;
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -17,8 +20,8 @@
 
 .card {
   display: flex;
+  flex-direction: column;
   gap: 15px;
-  cursor: pointer;
 }
 
 .articleDate {
@@ -30,29 +33,120 @@
 .articleTitle {
   font-size: 12px;
   margin: 0;
+  max-width: 145px;
 }
 
-.bigArticle {
-  background-color: aquamarine;
+.bigArticle,
+.smallArticle {
   width: 50%;
   height: 100%;
-  border: 5px solid yellow;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bigArticleImage {
+  width: 100%;
+  max-height: 300px;
+}
+
+.bigArticleImage:hover,
+.smallArticleImage:hover,
+.smallTitle:hover,
+.mainTitle:hover,
+.mainArticleImage:hover,
+.cardImage:hover,
+.miniCardImage:hover {
+  -webkit-filter: opacity(0.8);
+  filter: opacity(0.8);
+  cursor: pointer;
+}
+
+.mainArticleImage {
+  margin-bottom: 15px;
+  width: 100%;
 }
 
 .articlesContainer {
   width: 100%;
-  height: 500px;
   display: flex;
-}
-
-.smallArticle {
-  background-color: violet;
-  width: 100%;
-  height: 100%;
-  border: 5px solid red;
+  gap: 15px;
+  margin-bottom: 30px;
 }
 
 .smallArticlesContainer {
   display: flex;
   width: 50%;
+  gap: 15px;
+}
+
+.mainTitle {
+  font-family: "lora";
+}
+
+.smallTitle {
+  font-family: "lora";
+  font-size: 1.5rem;
+}
+
+.line {
+  width: 0.1px;
+  background-color: #d0d0d0;
+}
+
+.cardImage {
+  width: 100%;
+  height: 100%;
+}
+
+.twoCards {
+  display: flex;
+  gap: 15px;
+}
+
+.miniCard {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  gap: 15px;
+}
+
+.miniCardImage {
+  width: 100%;
+  height: 100%;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.line2 {
+  height: 0.1px;
+  background-color: #000;
+  margin-top: 30px;
+}
+
+.topReadText {
+  margin: 0;
+  font-weight: bold;
+}
+
+.secondaryArticleBody {
+  font-size: 15px;
+  color: #676767;
+}
+
+.miniCardImage,
+.cardImage,
+.bigArticleImage,
+.mainArticleImage,
+.smallArticleImage {
+  border-radius: 10px;
+}
+
+.smallArticle {
+  .secondaryArticleBody,
+  .mainTitle {
+    margin-bottom: 0;
+  }
 }

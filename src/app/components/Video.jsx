@@ -1,28 +1,28 @@
 "use client";
 import styles from "../styles/Article.module.css";
 import { useEffect, useState } from "react";
-import { apiGetArticleById } from "../service/apiGetArticleById";
 import { apiGetCategoryById } from "../service/apiGetCategoryById";
 import { apiGetCompanyData } from "../service/apiGetCompanyData";
 import { setIsLoading } from "../store/slices/isLoading.slice";
 import { useDispatch } from "react-redux";
 import { formatDate } from "../utils";
+import { apiGetVideoById } from "../service/apiGetVideoById";
 
-const Article = ({ articleId }) => {
+const Video = ({ videoId }) => {
   const dispatch = useDispatch();
-  const [article, setArticle] = useState();
+  const [video, setVideo] = useState();
   const [company, setCompany] = useState();
   const [category, setCategory] = useState();
 
   useEffect(() => {
-    getArticleData();
+    getVideoData();
   }, []);
 
-  const getArticleData = async () => {
+  const getVideoData = async () => {
     dispatch(setIsLoading(true));
-    const articleData = await apiGetArticleById(articleId);
-    setArticle(articleData);
-    getCompanyData(articleData?.companyId);
+    const videoData = await apiGetVideoById(videoId);
+    setVideo(videoData);
+    getCompanyData(videoData?.companyId);
     dispatch(setIsLoading(false));
   };
 
@@ -41,15 +41,22 @@ const Article = ({ articleId }) => {
         <div className={styles.headerArticleContainer}>
           <div className={styles.headerArticle}>
             <em className={styles.articleCategory}>{category?.name}</em>
-            <h1 className={styles.articleTitle}>{article?.title}</h1>
-            <p className={styles.articleIntroduction}>
-              {article?.introduction}
-            </p>
+            <h1 className={styles.articleTitle}>{video?.title}</h1>
+            <p className={styles.articleIntroduction}>{video?.introduction}</p>
             <div className={styles.line}></div>
           </div>
         </div>
-        <img src={article?.coverImage} className={styles.coverImage} />
-        <div className={styles.bodyArticleContainer}>
+        <iframe
+          width="740"
+          height="416"
+          src="https://www.youtube.com/embed/Pyzip7Fpil4?si=e_X9XEUKJCqAyJdq"
+          title="YouTube video player"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+        ></iframe>
+        <div>
           <div className={styles.bodyArticle}>
             <div className={styles.authorContainer}>
               <p className={styles.author}>
@@ -59,13 +66,9 @@ const Article = ({ articleId }) => {
                 </a>
               </p>
               <p className={styles.articleDate}>
-                {article ? formatDate(article?.updatedAt) : ""}
+                {video ? formatDate(video?.updatedAt) : ""}
               </p>
             </div>
-            <div
-              className={styles.htmlContainer}
-              dangerouslySetInnerHTML={{ __html: article?.body }}
-            />
           </div>
         </div>
       </div>
@@ -73,4 +76,4 @@ const Article = ({ articleId }) => {
   );
 };
 
-export default Article;
+export default Video;

@@ -34,7 +34,8 @@
 .articleContainer {
   margin: 32px 0;
   display: flex;
-  justify-content: flex-startx;
+  justify-content: flex-start;
+  width: fit-content;
   gap: 15px;
 }
 
