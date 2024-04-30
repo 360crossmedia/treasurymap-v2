@@ -450,7 +450,7 @@
   }
 
 .map-static-logos .category-3 > div:nth-child(4) {
-  top: 299px;
+  top: 315px;
   left: 786px;
 }
 .map-static-logos .category-3>div:nth-child(4) .imagen {
@@ -661,7 +661,7 @@ top: 562px;
 
 .map-static-logos .category-4>div:nth-child(13) {
   top: 376px;
-  left: 876px;
+  left: 860px;
 
 }
 .map-static-logos .category-4>div:nth-child(13) .imagen {
@@ -680,13 +680,13 @@ top: 562px;
 }
 
 .map-static-logos .category-4>div:nth-child(15) {
-  top: 346px;
-  left: 906px;
+  top: 376px;
+  left: 951px;
 
 }
 .map-static-logos .category-4>div:nth-child(15) .imagen {
-    max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
-    max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
+    max-height: calc( var(--maxHeight) * var(--sizeLogo) * 0.7 ) ;
+    max-width: calc( var(--maxWidth) * var(--sizeLogo) * 0.7 );
 }
 
 .map-static-logos .category-4>div:nth-child(16) {
@@ -1967,7 +1967,7 @@ top: 562px;
 }
 
 .map-static-logos .category-14 > div:nth-child(6) {
-  top: 100px;
+  top: 90px;
   left: 298px;
 }
 
