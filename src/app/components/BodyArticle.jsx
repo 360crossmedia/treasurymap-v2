@@ -193,6 +193,7 @@ const BodyArticle = ({ isArticle }) => {
       setIsUpdate(true);
       setTags(articleData?.tags);
       setLive(articleData?.live);
+      setIntroduction(articleData?.introduction);
       setIsMainPublication(thisPublicationIsMainPublication);
     } else if (!isArticle && videoId) {
       const thisPublicationIsMainPublication =
@@ -204,6 +205,7 @@ const BodyArticle = ({ isArticle }) => {
       setTags(videoData?.tags);
       setLive(videoData?.live);
       setIsUpdate(true);
+      setIntroduction(videoData?.introduction);
       setIsMainPublication(thisPublicationIsMainPublication);
     }
   };
