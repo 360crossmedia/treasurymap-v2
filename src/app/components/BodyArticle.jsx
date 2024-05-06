@@ -17,6 +17,7 @@ import {
   openLinkInNewTab,
   uploadImage,
   stringToArr,
+  isThisPublicationMainPublication,
 } from "../utils";
 import Image from "next/image";
 import PhotoImg from "../assets/photoImg.svg";
@@ -39,12 +40,16 @@ const BodyArticle = ({ isArticle }) => {
   const [isUpdate, setIsUpdate] = useState(false);
   const [tags, setTags] = useState([]);
   const [live, setLive] = useState();
+  const [isMainPublication, setIsMainPublication] = useState();
   const companyId = useSelector((state) => state.companyId);
+  const userId = useSelector((state) => state.user);
   const videoId = useSelector((state) => state.videoId);
   const articleId = useSelector((state) => state.articleId);
   let backUpCompanyId;
+  let backUpUserId;
   if (typeof window !== "undefined") {
     backUpCompanyId = localStorage.getItem("companyId");
+    backUpUserId = localStorage.getItem("userId");
   }
 
   const save = async () => {
@@ -116,6 +121,11 @@ const BodyArticle = ({ isArticle }) => {
         if (!title || !body || !image) {
           dispatch(setIsLoading(false));
           alert("Complete required fields");
+        } else if (isMainPublication && !live) {
+          dispatch(setIsLoading(false));
+          alert(
+            "This article is selected as the main publication and cannot be set off."
+          );
         } else {
           const result = await apiUpdateArticle(articleId, {
             title,
@@ -138,6 +148,11 @@ const BodyArticle = ({ isArticle }) => {
         if (!title || !url || !image) {
           dispatch(setIsLoading(false));
           alert("Complete required fields");
+        } else if (isMainPublication && !live) {
+          dispatch(setIsLoading(false));
+          alert(
+            "This article is selected as the main publication and cannot be set off."
+          );
         } else {
           const result = await apiUpdateVideo(videoId, {
             title,
@@ -169,6 +184,8 @@ const BodyArticle = ({ isArticle }) => {
 
   const getAllInputsData = async () => {
     if (isArticle && articleId) {
+      const thisPublicationIsMainPublication =
+        await isThisPublicationMainPublication(isArticle, articleId);
       const articleData = await apiGetArticleById(articleId);
       setTitle(articleData?.title);
       setBody(articleData?.body);
@@ -176,7 +193,10 @@ const BodyArticle = ({ isArticle }) => {
       setIsUpdate(true);
       setTags(articleData?.tags);
       setLive(articleData?.live);
+      setIsMainPublication(thisPublicationIsMainPublication);
     } else if (!isArticle && videoId) {
+      const thisPublicationIsMainPublication =
+        await isThisPublicationMainPublication(isArticle, videoId);
       const videoData = await apiGetVideoById(videoId);
       setTitle(videoData.title);
       setUrl(videoData.url);
@@ -184,6 +204,7 @@ const BodyArticle = ({ isArticle }) => {
       setTags(videoData?.tags);
       setLive(videoData?.live);
       setIsUpdate(true);
+      setIsMainPublication(thisPublicationIsMainPublication);
     }
   };
 
@@ -194,13 +215,18 @@ const BodyArticle = ({ isArticle }) => {
   return (
     <div className={styles.mainContainer}>
       <form className={styles.card} onSubmit={save}>
-        <Form.Check
-          type="switch"
-          id="custom-switch"
-          label={live ? "On" : "Off"}
-          onChange={(e) => setLive(e.target.checked)}
-          checked={live}
-        />
+        {(userId == 1 || backUpUserId == 1) && (
+          <div className={styles.inputContainer}>
+            <label>Live</label>
+            <Form.Check
+              type="switch"
+              id="custom-switch"
+              label={live ? "On" : "Off"}
+              onChange={(e) => setLive(e.target.checked)}
+              checked={live}
+            />
+          </div>
+        )}
         <div className={styles.inputContainer}>
           <label>
             Title <span className={styles.required}>*</span>
@@ -283,10 +309,10 @@ const BodyArticle = ({ isArticle }) => {
             <ul style={{ fontSize: "10px" }}>
               <li>Format: PNG</li>
               <li>Background: Transparent</li>
-              <li>Minimum Dimensions: 200px width</li>
-              <li>Maximum File Size: 500KB</li>
+              <li>Minimum Dimensions: 600px width</li>
+              <li>Maximum File Size: 2.5MB</li>
               <li>
-                Quality: Logos should be clear, without pixelation or distortion
+                Quality: Image should be clear, without pixelation or distortion
               </li>
             </ul>
           </div>

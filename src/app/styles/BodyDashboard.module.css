@@ -129,10 +129,14 @@
 @media screen and (max-width: 950px) {
   .mediaZoneButton,
   .createCompanyButton {
-    width: 340px;
+    width: 160px;
+    height: 82px;
   }
   .line {
     width: 47vw;
+  }
+  .buttonsContainer2 {
+    gap: 1rem;
   }
 }
 

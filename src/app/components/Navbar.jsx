@@ -21,10 +21,8 @@ const Navbar = ({ buttonLabel }) => {
     let userFound = localStorage.getItem("userId");
     if (userFound) {
       setLoggedIn(true);
-      //console.log('TRUE it is logged');
     } else {
       setLoggedIn(false);
-      //console.log('Not logged in');
     }
   }, []);
 

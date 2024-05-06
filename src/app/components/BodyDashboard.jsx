@@ -12,6 +12,7 @@ import { apiGetAllVideosByCompanyId } from "../service/apiGetAllVideosByCompanyI
 import { apiGetAllArticlesByCompanyId } from "../service/apiGetAllArticlesByCompanyId";
 import { setIsLoading } from "../store/slices/isLoading.slice";
 import { apiUpdateMainPublication } from "../service/apiUpdateMainPublication";
+import { haveMediaContentToShow } from "../utils";
 
 const BodyDashboard = () => {
   const dispatch = useDispatch();
@@ -27,6 +28,7 @@ const BodyDashboard = () => {
   const [publicationSelected, setPublicationSelected] = useState(false);
   const [publicationSelectedIsAnArticle, setPublicationSelectedIsAnArticle] =
     useState();
+  const [mediaContentToShow, setMediaContentToShow] = useState();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -50,6 +52,7 @@ const BodyDashboard = () => {
     dispatch(setIsLoading(true));
     const videos = await apiGetAllVideosByCompanyId(isSelectedAnyCompany);
     const articles = await apiGetAllArticlesByCompanyId(isSelectedAnyCompany);
+    setMediaContentToShow(haveMediaContentToShow(videos, articles));
     setVideos(videos);
     setArticles(articles);
     dispatch(setIsLoading(false));
@@ -219,6 +222,9 @@ const BodyDashboard = () => {
                       )
                   )}
                 </div>
+                {isSelectedAnyCompany && !mediaContentToShow && (
+                  <h6>This company has no live publications.</h6>
+                )}
                 {isSelectedAnyCompany && (
                   <div className={styles.buttonsContainer}>
                     <button

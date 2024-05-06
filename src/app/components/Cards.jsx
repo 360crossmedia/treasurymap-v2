@@ -1,91 +1,135 @@
 "use client";
 import Image from "next/image";
 import styles from "../styles/Insights.module.css";
+import { useEffect, useState } from "react";
+import { apiGetRandomPublications } from "../service/apiGetRandomPublications";
+import { useDispatch } from "react-redux";
+import { setIsLoading } from "../store/slices/isLoading.slice";
+import { useRouter } from "next/navigation";
+import { formatDate, truncateHtmlString } from "../utils";
 
 const Cards = () => {
-  return (
-    <>
-      <div className={styles.card}>
-        <div>
-          <Image
-            src="https://luxembourgofficial.com/wp-content/uploads/2023/08/Screenshot-2023-08-04-190435.png"
-            alt=""
-            width="300"
-            height="300"
-            className={styles.cardImage}
-          />
-        </div>
-        <div>
-          <h4 className={styles.mainTitle}>
-            PEAK ! – Interview with Muriel Morbé (House of Training)
-          </h4>
-          <p className={styles.articleDate}>by muzammil August 4, 2023·…</p>
-        </div>
-      </div>
-      <div className={styles.twoCardsContainer}>
-        <div className={styles.twoCards}>
-          <div className={styles.miniCard}>
-            <div>
-              <Image
-                src="https://luxembourgofficial.com/wp-content/uploads/2024/02/shutterstock_2398156381-480x384.jpeg"
-                alt=""
-                width="145"
-                height="116"
-                className={styles.miniCardImage}
-              />
-            </div>
-            <div>
-              <h6 className={`${styles.mainTitle} ${styles.bold}`}>
-                Mistral AI: The Tech Firm That Reached $2 Billion In One Year
-              </h6>
-              <p className={styles.articleDate}>February 26, 2024</p>
-            </div>
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const [randomPublications, setRandomPublications] = useState();
+
+  useEffect(() => {
+    getRandomPublications();
+  }, []);
+
+  const getRandomPublications = async () => {
+    dispatch(setIsLoading(true));
+    const randomPublications = await apiGetRandomPublications();
+    setRandomPublications(randomPublications);
+    dispatch(setIsLoading(false));
+  };
+
+  if (randomPublications?.[0]?.coverImage)
+    return (
+      <div className={styles.randomPublicationsContainer}>
+        <div
+          onClick={() =>
+            router.push(`/publication/video/${randomPublications?.[0]?.id}`)
+          }
+          className={styles.card}
+        >
+          <div>
+            <Image
+              src={randomPublications?.[0]?.coverImage}
+              alt=""
+              width="300"
+              height="300"
+              className={styles.cardImage}
+            />
           </div>
-          <div className={styles.miniCard}>
-            <div>
-              <Image
-                src="https://luxembourgofficial.com/wp-content/uploads/2023/08/42e0ed_f2735a6744d84f23a80dd82d5ced2124mv2-480x373.jpeg"
-                alt=""
-                width="145"
-                height="116"
-                className={styles.miniCardImage}
-              />
-            </div>
-            <div>
-              <h6 className={`${styles.mainTitle} ${styles.bold}`}>
-                Chris Hayward (City of London): The High Tech Future of
-                Post-Brexit Finance
-              </h6>
-              <p className={styles.articleDate}>February 26, 2024</p>
-            </div>
+          <div>
+            <h4 className={styles.mainTitle}>
+              {randomPublications?.[0]?.title}
+            </h4>
+            <p className={styles.articleDate}>
+              {`${formatDate(randomPublications?.[0]?.createdAt)} | ${
+                randomPublications?.[0]?.url ? "Video" : "Article"
+              }`}
+            </p>
           </div>
         </div>
-        <div className={styles.line2}></div>
-      </div>
-      <div className={styles.card}>
-        <p className={styles.topReadText}>Top Read</p>
-        <div>
-          <Image
-            src="https://luxembourgofficial.com/wp-content/uploads/2024/02/Capture-decran-2024-02-07-a-14.13.16-1024x580.png"
-            alt=""
-            width="300"
-            height="300"
-            className={styles.cardImage}
-          />
+        <div className={styles.twoCardsContainer}>
+          <div className={styles.twoCards}>
+            <div
+              onClick={() =>
+                router.push(`/publication/video/${randomPublications?.[1]?.id}`)
+              }
+              className={styles.miniCard}
+            >
+              <div
+                className={styles.miniCardImageContainer}
+                style={{
+                  backgroundImage: `url(${randomPublications?.[1]?.coverImage})`,
+                }}
+              ></div>
+              <div>
+                <h6 className={`${styles.mainTitle} ${styles.bold}`}>
+                  {randomPublications?.[1]?.title}
+                </h6>
+                <p className={styles.articleDate}>
+                  {`${formatDate(randomPublications?.[1]?.createdAt)} | ${
+                    randomPublications?.[1]?.url ? "Video" : "Article"
+                  }`}
+                </p>
+              </div>
+            </div>
+            <div
+              onClick={() =>
+                router.push(
+                  `/publication/article/${randomPublications?.[2]?.id}`
+                )
+              }
+              className={styles.miniCard}
+            >
+              <div
+                className={styles.miniCardImageContainer}
+                style={{
+                  backgroundImage: `url(${randomPublications?.[2]?.coverImage})`,
+                }}
+              ></div>
+              <div>
+                <h6 className={`${styles.mainTitle} ${styles.bold}`}>
+                  {randomPublications?.[2]?.title}
+                </h6>
+                <p className={styles.articleDate}>
+                  {`${formatDate(randomPublications?.[2]?.createdAt)} | ${
+                    randomPublications?.[2]?.url ? "Video" : "Article"
+                  }`}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className={styles.line2}></div>
         </div>
-        <div>
-          <h4 className={styles.mainTitle}>
-            Luxembourg Official – Interview with Luc Falempin (Tokeny)
-          </h4>
-          <p className={styles.secondaryArticleBody}>
-            https://www.youtube.com/watch?v=r24bC2rncnQ&t=7s Luc Falempin, CEO
-            and Founder of Tokeny Solutions, says the pace of tokenization is
-            accelerating. He says the digital representation of…
-          </p>
+        <div
+          onClick={() =>
+            router.push(`/publication/article/${randomPublications?.[3]?.id}`)
+          }
+          className={styles.card}
+        >
+          <p className={styles.topReadText}>Top Read</p>
+          <div
+            className={styles.cardImageContainer}
+            style={{
+              backgroundImage: `url(${randomPublications?.[3]?.coverImage})`,
+            }}
+          ></div>
+          <div>
+            <h4 className={styles.mainTitle}>
+              {randomPublications?.[3]?.title}
+            </h4>
+            <p className={styles.secondaryArticleBody}>
+              {truncateHtmlString(randomPublications?.[3]?.body, 300)}
+            </p>
+          </div>
         </div>
       </div>
-    </>
-  );
+    );
 };
 
 export default Cards;

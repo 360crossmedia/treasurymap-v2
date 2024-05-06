@@ -54,7 +54,10 @@ const Article = ({ articleId }) => {
             <div className={styles.authorContainer}>
               <p className={styles.author}>
                 {company ? "by " : ""}
-                <a href="" className={styles.authorLink}>
+                <a
+                  href={`/companyPage/${company?.id}`}
+                  className={styles.authorLink}
+                >
                   {company?.name}
                 </a>
               </p>

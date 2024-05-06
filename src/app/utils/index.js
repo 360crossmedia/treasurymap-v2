@@ -1,3 +1,4 @@
+import { apiGetMainPublication } from "../service/apiGetMainPublication";
 import { apiUploadImage } from "../service/apiUploadImage";
 
 // modules for custom input
@@ -89,17 +90,48 @@ export const formatCategoryName = (categoryName) => {
   return categoryName.trim();
 };
 
+// FUNCTION TO CHECK IF THERE IS ANY MEDIA CONTENT TO SHOW || ON SETMAINPUBLICATION
 export const haveMediaContentToShow = (videosArr, articlesArr) => {
-  if (videosArr?.length > 0 || articlesArr?.length > 0) {
-    for (let i = 0; i < videosArr?.length; i++) {
-      if (videosArr[i]?.live == true) {
-        return true;
-      }
-      for (let i = 0; i < articlesArr?.length; i++) {
-        if (articlesArr[i]?.live == true) {
-          return true;
-        }
-      }
-    }
-  } else return false;
+  if (
+    (videosArr?.length > 0 && videosArr.some((video) => video?.live)) ||
+    (articlesArr?.length > 0 && articlesArr.some((article) => article?.live))
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+// FUNCTION TO CHECK IF MAIN PUBLICATION IS THE SAME AS THE ONE THAT IS BEING EDITED
+export const isThisPublicationMainPublication = async (
+  isArticle,
+  publicationId
+) => {
+  const mainPublication = await apiGetMainPublication();
+  if (
+    mainPublication?.isArticle == isArticle &&
+    mainPublication?.publicationId == publicationId
+  )
+    return true;
+  else return false;
+};
+
+// FUNCTION TO TRUNCATE HTML STRING
+export const truncateHtmlString = (htmlString, maxLength) => {
+  // Eliminar todas las etiquetas HTML del string
+  const plainText = htmlString?.replace(/<[^>]*>/g, "");
+
+  // Si el string sin etiquetas HTML ya es más corto que maxLength, simplemente lo retornamos
+  if (plainText.length <= maxLength) {
+    return plainText;
+  }
+
+  // Encontrar el índice del primer punto de corte, comenzando desde maxLength
+  let truncatedIndex = maxLength;
+  while (plainText[truncatedIndex] !== " " && truncatedIndex > 0) {
+    truncatedIndex--;
+  }
+
+  // Retornar el substring truncado con los puntos suspensivos
+  return plainText.substring(0, truncatedIndex) + "...";
 };
