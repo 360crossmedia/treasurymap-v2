@@ -122,16 +122,16 @@ export const truncateHtmlString = (htmlString, maxLength) => {
   const plainText = htmlString?.replace(/<[^>]*>/g, "");
 
   // Si el string sin etiquetas HTML ya es más corto que maxLength, simplemente lo retornamos
-  if (plainText.length <= maxLength) {
+  if (plainText?.length <= maxLength) {
     return plainText;
   }
 
   // Encontrar el índice del primer punto de corte, comenzando desde maxLength
   let truncatedIndex = maxLength;
-  while (plainText[truncatedIndex] !== " " && truncatedIndex > 0) {
+  while (plainText?.[truncatedIndex] !== " " && truncatedIndex > 0) {
     truncatedIndex--;
   }
 
   // Retornar el substring truncado con los puntos suspensivos
-  return plainText.substring(0, truncatedIndex) + "...";
+  return plainText?.substring(0, truncatedIndex) + "...";
 };
