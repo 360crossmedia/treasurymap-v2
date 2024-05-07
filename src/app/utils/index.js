@@ -118,6 +118,7 @@ export const isThisPublicationMainPublication = async (
 
 // FUNCTION TO TRUNCATE HTML STRING
 export const truncateHtmlString = (htmlString, maxLength) => {
+  if (htmlString == undefined) return "";
   // Eliminar todas las etiquetas HTML del string
   const plainText = htmlString?.replace(/<[^>]*>/g, "");
 

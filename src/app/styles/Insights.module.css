@@ -59,7 +59,9 @@
 .cardImage:hover,
 .miniCardImage:hover,
 .miniCardImageContainer:hover,
-.cardImageContainer:hover {
+.cardImageContainer:hover,
+.smallCardImageContainer:hover,
+.mainPublicationImageContainer:hover {
   -webkit-filter: opacity(0.8);
   filter: opacity(0.8);
   cursor: pointer;
@@ -147,7 +149,9 @@
 .mainArticleImage,
 .smallArticleImage,
 .miniCardImageContainer,
-.cardImageContainer {
+.cardImageContainer,
+.smallCardImageContainer,
+.mainPublicationImageContainer {
   border-radius: 10px;
 }
 
@@ -159,7 +163,9 @@
 }
 
 .miniCardImageContainer,
-.cardImageContainer {
+.cardImageContainer,
+.smallCardImageContainer,
+.mainPublicationImageContainer {
   width: 100%;
   height: 120px;
   background-size: cover;
@@ -169,6 +175,15 @@
 
 .cardImageContainer {
   height: 300px;
+}
+
+.smallCardImageContainer {
+  height: 140px;
+}
+
+.mainPublicationImageContainer {
+  height: 500px;
+  margin-bottom: 10px;
 }
 
 .articlesMainContainerMobile {

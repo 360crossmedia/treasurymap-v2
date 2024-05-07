@@ -27,14 +27,12 @@ const Cards = () => {
   if (randomPublications?.[0]?.coverImage)
     return (
       <div className={styles.randomPublicationsContainer}>
-        <div
-          onClick={() =>
-            router.push(`/publication/video/${randomPublications?.[0]?.id}`)
-          }
-          className={styles.card}
-        >
+        <div className={styles.card}>
           <div>
             <Image
+              onClick={() =>
+                router.push(`/publication/video/${randomPublications?.[0]?.id}`)
+              }
               src={randomPublications?.[0]?.coverImage}
               alt=""
               width="300"
@@ -43,7 +41,12 @@ const Cards = () => {
             />
           </div>
           <div>
-            <h4 className={styles.mainTitle}>
+            <h4
+              onClick={() =>
+                router.push(`/publication/video/${randomPublications?.[0]?.id}`)
+              }
+              className={styles.mainTitle}
+            >
               {randomPublications?.[0]?.title}
             </h4>
             <p className={styles.articleDate}>
@@ -55,20 +58,27 @@ const Cards = () => {
         </div>
         <div className={styles.twoCardsContainer}>
           <div className={styles.twoCards}>
-            <div
-              onClick={() =>
-                router.push(`/publication/video/${randomPublications?.[1]?.id}`)
-              }
-              className={styles.miniCard}
-            >
+            <div className={styles.miniCard}>
               <div
                 className={styles.miniCardImageContainer}
                 style={{
                   backgroundImage: `url(${randomPublications?.[1]?.coverImage})`,
                 }}
+                onClick={() =>
+                  router.push(
+                    `/publication/video/${randomPublications?.[1]?.id}`
+                  )
+                }
               ></div>
               <div>
-                <h6 className={`${styles.mainTitle} ${styles.bold}`}>
+                <h6
+                  onClick={() =>
+                    router.push(
+                      `/publication/video/${randomPublications?.[1]?.id}`
+                    )
+                  }
+                  className={`${styles.mainTitle} ${styles.bold}`}
+                >
                   {randomPublications?.[1]?.title}
                 </h6>
                 <p className={styles.articleDate}>
@@ -78,22 +88,27 @@ const Cards = () => {
                 </p>
               </div>
             </div>
-            <div
-              onClick={() =>
-                router.push(
-                  `/publication/article/${randomPublications?.[2]?.id}`
-                )
-              }
-              className={styles.miniCard}
-            >
+            <div className={styles.miniCard}>
               <div
                 className={styles.miniCardImageContainer}
                 style={{
                   backgroundImage: `url(${randomPublications?.[2]?.coverImage})`,
                 }}
+                onClick={() =>
+                  router.push(
+                    `/publication/article/${randomPublications?.[2]?.id}`
+                  )
+                }
               ></div>
               <div>
-                <h6 className={`${styles.mainTitle} ${styles.bold}`}>
+                <h6
+                  onClick={() =>
+                    router.push(
+                      `/publication/article/${randomPublications?.[2]?.id}`
+                    )
+                  }
+                  className={`${styles.mainTitle} ${styles.bold}`}
+                >
                   {randomPublications?.[2]?.title}
                 </h6>
                 <p className={styles.articleDate}>
@@ -106,21 +121,26 @@ const Cards = () => {
           </div>
           <div className={styles.line2}></div>
         </div>
-        <div
-          onClick={() =>
-            router.push(`/publication/article/${randomPublications?.[3]?.id}`)
-          }
-          className={styles.card}
-        >
-          <p className={styles.topReadText}>Top Read</p>
+        <div className={styles.card}>
+          <p className={styles.topReadText}>Other publications</p>
           <div
             className={styles.cardImageContainer}
             style={{
               backgroundImage: `url(${randomPublications?.[3]?.coverImage})`,
             }}
+            onClick={() =>
+              router.push(`/publication/article/${randomPublications?.[3]?.id}`)
+            }
           ></div>
           <div>
-            <h4 className={styles.mainTitle}>
+            <h4
+              onClick={() =>
+                router.push(
+                  `/publication/article/${randomPublications?.[3]?.id}`
+                )
+              }
+              className={styles.mainTitle}
+            >
               {randomPublications?.[3]?.title}
             </h4>
             <p className={styles.secondaryArticleBody}>

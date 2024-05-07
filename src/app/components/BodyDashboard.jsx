@@ -197,7 +197,18 @@ const BodyDashboard = () => {
                               publicationSelectedIsAnArticle == false
                             }
                           />
-                          <label htmlFor={index}>{video?.title}</label>
+                          <label
+                            className={styles.modalLabel}
+                            onClick={() =>
+                              window.open(
+                                `/publication/video/${video?.id}`,
+                                "_blank"
+                              )
+                            }
+                            htmlFor={index}
+                          >
+                            {video?.title}
+                          </label>
                         </div>
                       )
                   )}
@@ -217,7 +228,18 @@ const BodyDashboard = () => {
                               publicationSelectedIsAnArticle == true
                             }
                           />
-                          <label htmlFor={index}>{article?.title}</label>
+                          <label
+                            className={styles.modalLabel}
+                            onClick={() =>
+                              window.open(
+                                `/publication/article/${article?.id}`,
+                                "_blank"
+                              )
+                            }
+                            htmlFor={index}
+                          >
+                            {article?.title}
+                          </label>
                         </div>
                       )
                   )}

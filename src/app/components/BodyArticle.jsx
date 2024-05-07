@@ -321,11 +321,15 @@ const BodyArticle = ({ isArticle }) => {
         </div>
         <div className={styles.inputContainer}>
           <label className={styles.label} htmlFor="description">
-            Introduction
+            {isArticle ? "Introduction" : "Description"}
           </label>
           <textarea
             className={styles.inputTextArea}
-            placeholder="Enter article introduction"
+            placeholder={
+              isArticle
+                ? "Enter article introduction"
+                : "Enter video description"
+            }
             name="description"
             id="description"
             rows="6"
@@ -352,7 +356,8 @@ const BodyArticle = ({ isArticle }) => {
         )}
         <div className={styles.inputContainer}>
           <label className={styles.label} htmlFor="">
-            Insert tags related to the article (separated by commas):
+            Insert tags related to the {isArticle ? "article" : "video"}{" "}
+            (separated by commas):
           </label>
           <input
             className={styles.input}
@@ -365,7 +370,7 @@ const BodyArticle = ({ isArticle }) => {
         {!isArticle && (
           <div className={styles.inputContainer}>
             <label htmlFor="">
-              URL
+              Embed URL
               <span className={styles.required}>*</span>
               <span
                 className={styles.urlInstructionsSpan}

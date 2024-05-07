@@ -145,7 +145,14 @@ const BodyMediaZone = () => {
                   onChange={(e) => setVideoSelected(e.value)}
                   checked={videoSelected == video.id ? true : false}
                 />
-                <p className={styles2.videoP}>{video.title}</p>
+                <label
+                  onClick={() =>
+                    window.open(`/publication/video/${video?.id}`, "_blank")
+                  }
+                  className={`ml-2 ${styles2.videoP}`}
+                >
+                  {video.title}
+                </label>
               </div>
               <p className={styles2.videoP}>{video.createdAt.slice(0, 10)}</p>
             </div>
@@ -159,7 +166,13 @@ const BodyMediaZone = () => {
                   onChange={(e) => setArticleSelected(e.value)}
                   checked={articleSelected == article.id ? true : false}
                 />
-                <label htmlFor={`article-${article.id}`} className="ml-2">
+                <label
+                  onClick={() =>
+                    window.open(`/publication/article/${article?.id}`, "_blank")
+                  }
+                  htmlFor={`article-${article.id}`}
+                  className={`ml-2 ${styles2.videoP}`}
+                >
                   {article.title}
                 </label>
               </div>

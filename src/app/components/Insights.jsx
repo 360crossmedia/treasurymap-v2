@@ -37,26 +37,40 @@ const Insights = () => {
     if (mainPublication?.coverImage) dispatch(setIsLoading(false));
   };
 
+  const handleOnClick = (isMainPublication, index) => {
+    if (!isMainPublication) {
+      router.push(
+        publications?.[index]?.url
+          ? `/publication/video/${publications?.[index]?.id}`
+          : `/publication/article/${publications?.[index]?.id}`
+      );
+    } else {
+      router.push(
+        mainPublication?.url
+          ? `/publication/video/${mainPublication?.id}`
+          : `/publication/article/${mainPublication?.id}`
+      );
+    }
+  };
+
   if (mainPublication?.coverImage)
     return (
       <div className={styles.mainContainer}>
         <div className={styles.leftContainer}>
-          <div
-            onClick={() =>
-              router.push(
-                mainPublication?.url
-                  ? `/publication/video/${mainPublication?.id}`
-                  : `/publication/article/${mainPublication?.id}`
-              )
-            }
-          >
-            <Image
-              width={908}
-              height={508}
-              className={styles.mainArticleImage}
-              src={mainPublication?.coverImage}
-            />
-            <h2 className={styles.mainTitle}>{mainPublication?.title}</h2>
+          <div>
+            <div
+              onClick={() => handleOnClick(true)}
+              className={styles.mainPublicationImageContainer}
+              style={{
+                backgroundImage: `url(${mainPublication?.coverImage})`,
+              }}
+            ></div>
+            <h2
+              onClick={() => handleOnClick(true)}
+              className={styles.mainTitle}
+            >
+              {mainPublication?.title}
+            </h2>
             <p>
               By 360Crossmedia | Bussines / Tech |
               {mainPublication?.url ? " Video" : " Article"}
@@ -65,23 +79,18 @@ const Insights = () => {
           <div className={styles.articlesMainContainer}>
             <div className={styles.line2}></div>
             <div className={styles.articlesContainer}>
-              <div
-                onClick={() =>
-                  router.push(
-                    publications[0]?.url
-                      ? `/publication/video/${publications[0]?.id}`
-                      : `/publication/article/${publications[0]?.id}`
-                  )
-                }
-                className={styles.bigArticle}
-              >
-                <Image
-                  width={500}
-                  height={280}
-                  className={styles.bigArticleImage}
-                  src={publications?.[0]?.coverImage}
-                />
-                <h4 className={`${styles.mainTitle} ${styles.bold}`}>
+              <div className={styles.bigArticle}>
+                <div
+                  onClick={() => handleOnClick(false, 0)}
+                  className={styles.cardImageContainer}
+                  style={{
+                    backgroundImage: `url(${publications?.[0]?.coverImage})`,
+                  }}
+                ></div>
+                <h4
+                  onClick={() => handleOnClick(false, 0)}
+                  className={`${styles.mainTitle} ${styles.bold}`}
+                >
                   {publications?.[0]?.title}
                 </h4>
                 <p>{`${formatDate(publications?.[0]?.createdAt)} | ${
@@ -89,48 +98,36 @@ const Insights = () => {
                 }`}</p>
               </div>
               <div className={styles.smallArticlesContainer}>
-                <div
-                  onClick={() =>
-                    router.push(
-                      publications[1]?.url
-                        ? `/publication/video/${publications[1]?.id}`
-                        : `/publication/article/${publications[1]?.id}`
-                    )
-                  }
-                  className={styles.smallArticle}
-                >
-                  <Image
-                    width={250}
-                    height={167}
-                    className={styles.smallArticleImage}
-                    style={{ width: "100%", height: "35%" }}
-                    src={publications?.[1]?.coverImage}
-                  />
-                  <h6 className={`${styles.mainTitle} ${styles.bold}`}>
+                <div className={styles.smallArticle}>
+                  <div
+                    onClick={() => handleOnClick(false, 1)}
+                    className={styles.smallCardImageContainer}
+                    style={{
+                      backgroundImage: `url(${publications?.[1]?.coverImage})`,
+                    }}
+                  ></div>
+                  <h6
+                    onClick={() => handleOnClick(false, 1)}
+                    className={`${styles.mainTitle} ${styles.bold}`}
+                  >
                     {publications?.[1]?.title}
                   </h6>
                   <p className={styles.secondaryArticleBody}>
                     {truncateHtmlString(publications?.[1]?.body, 220)}
                   </p>
                 </div>
-                <div
-                  onClick={() =>
-                    router.push(
-                      publications[2]?.url
-                        ? `/publication/video/${publications[2]?.id}`
-                        : `/publication/article/${publications[2]?.id}`
-                    )
-                  }
-                  className={styles.smallArticle}
-                >
-                  <Image
-                    width={250}
-                    height={167}
-                    className={styles.smallArticleImage}
-                    style={{ width: "100%", height: "35%" }}
-                    src={publications?.[2]?.coverImage}
-                  />
-                  <h6 className={`${styles.mainTitle} ${styles.bold}`}>
+                <div className={styles.smallArticle}>
+                  <div
+                    onClick={() => handleOnClick(false, 2)}
+                    className={styles.smallCardImageContainer}
+                    style={{
+                      backgroundImage: `url(${publications?.[2]?.coverImage})`,
+                    }}
+                  ></div>
+                  <h6
+                    onClick={() => handleOnClick(false, 2)}
+                    className={`${styles.mainTitle} ${styles.bold}`}
+                  >
                     {publications?.[2]?.title}
                   </h6>
                   <p className={styles.secondaryArticleBody}>
@@ -141,24 +138,18 @@ const Insights = () => {
             </div>
             <div className={styles.line2}></div>
             <div className={styles.articlesContainer}>
-              <div
-                onClick={() =>
-                  router.push(
-                    publications[3]?.url
-                      ? `/publication/video/${publications[3]?.id}`
-                      : `/publication/article/${publications[3]?.id}`
-                  )
-                }
-                className={styles.bigArticle}
-              >
-                <Image
-                  width={500}
-                  height={280}
-                  className={styles.bigArticleImage}
-                  style={{ width: "100%", height: "60%" }}
-                  src={publications?.[3]?.coverImage}
-                />
-                <h4 className={`${styles.mainTitle} ${styles.bold}`}>
+              <div className={styles.bigArticle}>
+                <div
+                  onClick={() => handleOnClick(false, 2)}
+                  className={styles.cardImageContainer}
+                  style={{
+                    backgroundImage: `url(${publications?.[3]?.coverImage})`,
+                  }}
+                ></div>
+                <h4
+                  onClick={() => handleOnClick(false, 3)}
+                  className={`${styles.mainTitle} ${styles.bold}`}
+                >
                   {publications?.[3]?.title}
                 </h4>
                 <p>{`${formatDate(publications?.[3]?.createdAt)} | ${
@@ -166,48 +157,36 @@ const Insights = () => {
                 }`}</p>
               </div>
               <div className={styles.smallArticlesContainer}>
-                <div
-                  onClick={() =>
-                    router.push(
-                      publications[4]?.url
-                        ? `/publication/video/${publications[4]?.id}`
-                        : `/publication/article/${publications[4]?.id}`
-                    )
-                  }
-                  className={styles.smallArticle}
-                >
-                  <Image
-                    width={250}
-                    height={167}
-                    className={styles.smallArticleImage}
-                    style={{ width: "100%", height: "35%" }}
-                    src={publications?.[4]?.coverImage}
-                  />
-                  <h6 className={`${styles.mainTitle} ${styles.bold}`}>
+                <div className={styles.smallArticle}>
+                  <div
+                    onClick={() => handleOnClick(false, 4)}
+                    className={styles.smallCardImageContainer}
+                    style={{
+                      backgroundImage: `url(${publications?.[4]?.coverImage})`,
+                    }}
+                  ></div>
+                  <h6
+                    onClick={() => handleOnClick(false, 4)}
+                    className={`${styles.mainTitle} ${styles.bold}`}
+                  >
                     {publications?.[4]?.title}
                   </h6>
                   <p className={styles.secondaryArticleBody}>
                     {truncateHtmlString(publications?.[4]?.body, 220)}
                   </p>
                 </div>
-                <div
-                  onClick={() =>
-                    router.push(
-                      publications[5]?.url
-                        ? `/publication/video/${publications[5]?.id}`
-                        : `/publication/article/${publications[5]?.id}`
-                    )
-                  }
-                  className={styles.smallArticle}
-                >
-                  <Image
-                    width={250}
-                    height={167}
-                    className={styles.smallArticleImage}
-                    style={{ width: "100%", height: "35%" }}
-                    src={publications?.[5]?.coverImage}
-                  />
-                  <h6 className={`${styles.mainTitle} ${styles.bold}`}>
+                <div className={styles.smallArticle}>
+                  <div
+                    onClick={() => handleOnClick(false, 5)}
+                    className={styles.smallCardImageContainer}
+                    style={{
+                      backgroundImage: `url(${publications?.[5]?.coverImage})`,
+                    }}
+                  ></div>
+                  <h6
+                    onClick={() => handleOnClick(false, 5)}
+                    className={`${styles.mainTitle} ${styles.bold}`}
+                  >
                     {publications?.[5]?.title}
                   </h6>
                   <p className={styles.secondaryArticleBody}>
