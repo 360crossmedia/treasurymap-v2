@@ -2690,15 +2690,15 @@ body{
 }
 
 .category-title.category-title-12 {
-  transform: translate(-191px, -26px) scale(0.8);
+  transform: translate(-17%, -26px) scale(0.8);
 }
 
 .category-title.category-title-13 {
-  transform: translate(-359px, -19px) scale(0.8);
+  transform: translate(-32%, -19px) scale(0.8);
 }
 
 .category-title.category-title-14 {
-  transform: translate(-545px, -19px) scale(0.9);
+  transform: translate(-43%, -19px) scale(0.9);
 }
 
 div.category-title.selected {
@@ -2709,7 +2709,8 @@ div.category-title.selected {
 .front-category-logos {
   position: absolute;
   height: 500px;
-  width: 600px;
+  width: 100%;
+  /* width: 600px; */
   left: 0;
   top: 0;
   margin: auto;
