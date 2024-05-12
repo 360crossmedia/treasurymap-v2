@@ -39,7 +39,7 @@
 }
 
 .cardImageContainer {
-  width: 22.5%;
+  width: 23vw;
   height: 200px;
   background-size: cover;
   background-repeat: no-repeat;
@@ -47,9 +47,14 @@
   border-radius: 10px;
 }
 
-@media screen and (max-width: 1300px) {
+.link {
+  text-decoration: none;
+  color: #000;
+}
+
+@media screen and (max-width: 1150px) {
   .cardImageContainer {
-    width: 30%;
+    width: 30vw;
   }
 
   .cardData {
@@ -57,9 +62,9 @@
   }
 }
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 900px) {
   .cardImageContainer {
-    width: 35%;
+    width: 35vw;
   }
 
   .cardData {
@@ -82,7 +87,7 @@
 
 @media screen and (max-width: 750px) {
   .cardImageContainer {
-    width: 40%;
+    width: 40vw;
   }
 
   .cardData {
@@ -92,7 +97,7 @@
 
 @media screen and (max-width: 650px) {
   .cardImageContainer {
-    width: 50%;
+    width: 45vw;
   }
 
   .cardData {
