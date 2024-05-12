@@ -49,7 +49,7 @@ const Video = ({ videoId }) => {
         <iframe
           width="740"
           height="416"
-          src="https://www.youtube.com/embed/Pyzip7Fpil4?si=e_X9XEUKJCqAyJdq"
+          src={video?.url}
           title="YouTube video player"
           frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

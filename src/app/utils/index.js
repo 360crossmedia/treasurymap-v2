@@ -75,7 +75,7 @@ export const formatDate = (dateString) => {
     "en-US",
     options
   );
-  return formattedDate;
+  return formattedDate == "Invalid Date" ? "" : formattedDate;
 };
 
 // FUNCTION TO FORMAT CATEGORY NAME TO SHOW ONLY THE NAME ON INSIGHTS NAVBAR

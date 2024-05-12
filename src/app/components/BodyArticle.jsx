@@ -91,6 +91,9 @@ const BodyArticle = ({ isArticle }) => {
         if (!title || !url || !image) {
           dispatch(setIsLoading(false));
           alert("Complete required fields");
+        } else if (!url.includes("/embed")) {
+          dispatch(setIsLoading(false));
+          alert("The url must be a embed URL");
         } else {
           const result = await apiCreateVideo(
             companyId ? companyId : backUpCompanyId,
@@ -153,6 +156,9 @@ const BodyArticle = ({ isArticle }) => {
           alert(
             "This article is selected as the main publication and cannot be set off."
           );
+        } else if (!url.includes("/embed")) {
+          dispatch(setIsLoading(false));
+          alert("The url must be a embed URL");
         } else {
           const result = await apiUpdateVideo(videoId, {
             title,

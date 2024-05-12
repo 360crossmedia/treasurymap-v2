@@ -1,16 +1,14 @@
 "use client";
-import Image from "next/image";
 import styles from "../styles/Insights.module.css";
 import { useEffect, useState } from "react";
 import { apiGetRandomPublications } from "../service/apiGetRandomPublications";
 import { useDispatch } from "react-redux";
 import { setIsLoading } from "../store/slices/isLoading.slice";
-import { useRouter } from "next/navigation";
-import { formatDate, truncateHtmlString } from "../utils";
+import SinglePublicationAside from "./SinglePublicationAside";
+import DoublePublicationAside from "./DoublePublicationAside";
 
 const Cards = () => {
   const dispatch = useDispatch();
-  const router = useRouter();
   const [randomPublications, setRandomPublications] = useState();
 
   useEffect(() => {
@@ -27,127 +25,55 @@ const Cards = () => {
   if (randomPublications?.[0]?.coverImage)
     return (
       <div className={styles.randomPublicationsContainer}>
-        <div className={styles.card}>
-          <div>
-            <Image
-              onClick={() =>
-                router.push(`/publication/video/${randomPublications?.[0]?.id}`)
-              }
-              src={randomPublications?.[0]?.coverImage}
-              alt=""
-              width="300"
-              height="300"
-              className={styles.cardImage}
+        <SinglePublicationAside publication={randomPublications?.[0]} />
+        {randomPublications.length > 1 && (
+          <div className={styles.twoCardsContainer}>
+            <DoublePublicationAside
+              publications={[randomPublications?.[1], randomPublications?.[2]]}
             />
+            {randomPublications?.[3] && <div className={styles.line2}></div>}
           </div>
-          <div>
-            <h4
-              onClick={() =>
-                router.push(`/publication/video/${randomPublications?.[0]?.id}`)
-              }
-              className={styles.mainTitle}
-            >
-              {randomPublications?.[0]?.title}
-            </h4>
-            <p className={styles.articleDate}>
-              {`${formatDate(randomPublications?.[0]?.createdAt)} | ${
-                randomPublications?.[0]?.url ? "Video" : "Article"
-              }`}
-            </p>
+        )}
+        {randomPublications?.[3] && (
+          <SinglePublicationAside publication={randomPublications?.[3]} />
+        )}
+        {randomPublications.length > 4 && (
+          <div className={styles.twoCardsContainer}>
+            <DoublePublicationAside
+              publications={[randomPublications?.[4], randomPublications?.[5]]}
+            />
+            {randomPublications?.[6] && <div className={styles.line2}></div>}
           </div>
-        </div>
-        <div className={styles.twoCardsContainer}>
-          <div className={styles.twoCards}>
-            <div className={styles.miniCard}>
-              <div
-                className={styles.miniCardImageContainer}
-                style={{
-                  backgroundImage: `url(${randomPublications?.[1]?.coverImage})`,
-                }}
-                onClick={() =>
-                  router.push(
-                    `/publication/video/${randomPublications?.[1]?.id}`
-                  )
-                }
-              ></div>
-              <div>
-                <h6
-                  onClick={() =>
-                    router.push(
-                      `/publication/video/${randomPublications?.[1]?.id}`
-                    )
-                  }
-                  className={`${styles.mainTitle} ${styles.bold}`}
-                >
-                  {randomPublications?.[1]?.title}
-                </h6>
-                <p className={styles.articleDate}>
-                  {`${formatDate(randomPublications?.[1]?.createdAt)} | ${
-                    randomPublications?.[1]?.url ? "Video" : "Article"
-                  }`}
-                </p>
-              </div>
-            </div>
-            <div className={styles.miniCard}>
-              <div
-                className={styles.miniCardImageContainer}
-                style={{
-                  backgroundImage: `url(${randomPublications?.[2]?.coverImage})`,
-                }}
-                onClick={() =>
-                  router.push(
-                    `/publication/article/${randomPublications?.[2]?.id}`
-                  )
-                }
-              ></div>
-              <div>
-                <h6
-                  onClick={() =>
-                    router.push(
-                      `/publication/article/${randomPublications?.[2]?.id}`
-                    )
-                  }
-                  className={`${styles.mainTitle} ${styles.bold}`}
-                >
-                  {randomPublications?.[2]?.title}
-                </h6>
-                <p className={styles.articleDate}>
-                  {`${formatDate(randomPublications?.[2]?.createdAt)} | ${
-                    randomPublications?.[2]?.url ? "Video" : "Article"
-                  }`}
-                </p>
-              </div>
-            </div>
+        )}
+        {randomPublications?.[6] && (
+          <SinglePublicationAside publication={randomPublications?.[6]} />
+        )}
+        {randomPublications.length > 7 && (
+          <div className={styles.twoCardsContainer}>
+            <DoublePublicationAside
+              publications={[randomPublications?.[7], randomPublications?.[8]]}
+            />
+            {randomPublications?.[9] && <div className={styles.line2}></div>}
           </div>
-          <div className={styles.line2}></div>
-        </div>
-        <div className={styles.card}>
-          <p className={styles.topReadText}>Other publications</p>
-          <div
-            className={styles.cardImageContainer}
-            style={{
-              backgroundImage: `url(${randomPublications?.[3]?.coverImage})`,
-            }}
-            onClick={() =>
-              router.push(`/publication/article/${randomPublications?.[3]?.id}`)
-            }
-          ></div>
-          <div>
-            <h4
-              onClick={() =>
-                router.push(
-                  `/publication/article/${randomPublications?.[3]?.id}`
-                )
-              }
-              className={styles.mainTitle}
-            >
-              {randomPublications?.[3]?.title}
-            </h4>
-            <p className={styles.secondaryArticleBody}>
-              {truncateHtmlString(randomPublications?.[3]?.body, 300)}
-            </p>
+        )}
+        {randomPublications?.[9] && (
+          <SinglePublicationAside publication={randomPublications?.[9]} />
+        )}
+        {randomPublications.length > 10 && (
+          <div className={styles.twoCardsContainer}>
+            <DoublePublicationAside
+              publications={[
+                randomPublications?.[10],
+                randomPublications?.[11],
+              ]}
+            />
+            {randomPublications?.[12] && <div className={styles.line2}></div>}
           </div>
-        </div>
+        )}
+
+        {randomPublications?.[12] && (
+          <SinglePublicationAside publication={randomPublications?.[12]} />
+        )}
       </div>
     );
 };

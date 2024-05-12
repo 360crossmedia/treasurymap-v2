@@ -1,7 +1,5 @@
 "use client";
 import styles from "../styles/MediaZone.module.css";
-import Image from "next/image";
-import ArrowRight from "../assets/arrow-right.svg";
 import { useEffect, useState } from "react";
 import { apiGetCompanyData } from "../service/apiGetCompanyData";
 import { apiGetCountryById } from "../service/apiGetCountryById";
@@ -9,12 +7,11 @@ import { apiGetAllVideosByCompanyId } from "../service/apiGetAllVideosByCompanyI
 import { apiGetAllArticlesByCompanyId } from "../service/apiGetAllArticlesByCompanyId";
 import { setIsLoading } from "../store/slices/isLoading.slice";
 import { useDispatch } from "react-redux";
-import { useRouter } from "next/navigation";
 import { haveMediaContentToShow } from "../utils";
+import InsightsCard from "./InsightsCard";
 
 const MediaZone = ({ companyId }) => {
   const dispatch = useDispatch();
-  const router = useRouter();
   const [countries, setCountries] = useState();
   const [videos, setVideos] = useState([]);
   const [articles, setArticles] = useState([]);
@@ -74,56 +71,13 @@ const MediaZone = ({ companyId }) => {
       {!haveMediaContentToShow(videos, articles) && (
         <h2 className={styles.title}>No media content uploaded yet.</h2>
       )}
-      {videos?.map((video, index) => (
-        <div key={index}>
-          <div
-            onClick={() => router.push(`/publication/video/${video?.id}`)}
-            className={styles.articleContainer}
-          >
-            <img
-              src={video.coverImage}
-              alt=""
-              className={styles.articleCoverImage}
-            />
-            <p className={styles.articleTitle}>
-              {video?.title}
-              <br />
-              <a className={styles.articleA}>
-                Read More
-                <Image src={ArrowRight} alt="" />
-              </a>
-            </p>
-          </div>
-          <div className={styles.line}></div>
-        </div>
-      ))}
       {articles?.map(
         (article, index) =>
-          article.live && (
-            <div key={index}>
-              <div
-                onClick={() =>
-                  router.push(`/publication/article/${article?.id}`)
-                }
-                className={styles.articleContainer}
-              >
-                <img
-                  src={article.coverImage}
-                  alt=""
-                  className={styles.articleCoverImage}
-                />
-                <p className={styles.articleTitle}>
-                  {article?.title}
-                  <br />
-                  <a className={styles.articleA}>
-                    Read More
-                    <Image src={ArrowRight} alt="" />
-                  </a>
-                </p>
-              </div>
-              <div className={styles.line}></div>
-            </div>
-          )
+          article.live && <InsightsCard key={index} publication={article} />
+      )}
+      {videos?.map(
+        (video, index) =>
+          videos.live && <InsightsCard key={index} publication={video} />
       )}
     </div>
   );

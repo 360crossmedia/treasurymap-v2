@@ -186,7 +186,7 @@ const BodyDashboard = () => {
                       video.live && (
                         <div className={styles.inputsContianer} key={index}>
                           <RadioButton
-                            name="category"
+                            inputId={`input-video-${index}`}
                             value={publicationSelected}
                             onChange={(e) => {
                               setPublicationSelectedIsAnArticle(false);
@@ -199,15 +199,17 @@ const BodyDashboard = () => {
                           />
                           <label
                             className={styles.modalLabel}
-                            onClick={() =>
-                              window.open(
-                                `/publication/video/${video?.id}`,
-                                "_blank"
-                              )
-                            }
-                            htmlFor={index}
+                            htmlFor={`input-video-${index}`}
                           >
-                            {video?.title}
+                            <span className={styles.modalLink}>(Video)</span>
+                            {video?.title}{" "}
+                            <a
+                              className={styles.modalLink}
+                              href={`/publication/video/${video?.id}`}
+                              target="_blank"
+                            >
+                              View Publication
+                            </a>
                           </label>
                         </div>
                       )
@@ -217,9 +219,9 @@ const BodyDashboard = () => {
                       article.live && (
                         <div className={styles.inputsContianer} key={index}>
                           <RadioButton
-                            name="category"
+                            inputId={`input-article-${index}`}
                             value={publicationSelected}
-                            onChange={(e) => {
+                            onChange={() => {
                               setPublicationSelectedIsAnArticle(true);
                               setPublicationSelected(article?.id);
                             }}
@@ -230,15 +232,17 @@ const BodyDashboard = () => {
                           />
                           <label
                             className={styles.modalLabel}
-                            onClick={() =>
-                              window.open(
-                                `/publication/article/${article?.id}`,
-                                "_blank"
-                              )
-                            }
-                            htmlFor={index}
+                            htmlFor={`input-article-${index}`}
                           >
-                            {article?.title}
+                            <span className={styles.modalLink}>(Article)</span>
+                            {article?.title}{" "}
+                            <a
+                              className={styles.modalLink}
+                              href={`/publication/article/${article?.id}`}
+                              target="_blank"
+                            >
+                              View Publication
+                            </a>
                           </label>
                         </div>
                       )

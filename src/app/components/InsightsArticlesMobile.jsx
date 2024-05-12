@@ -1,8 +1,6 @@
 import { useRouter } from "next/navigation";
 import styles from "../styles/Insights.module.css";
-import stylesWithCat from "../styles/InsightsWithCategory.module.css";
 import { formatDate, truncateHtmlString } from "../utils";
-import Image from "next/image";
 import InsightsCard from "./InsightsCard";
 
 const InsightsArticlesMobile = ({ publications }) => {
@@ -21,12 +19,23 @@ const InsightsArticlesMobile = ({ publications }) => {
           }
           className={styles.bigArticle}
         >
-          <Image
+          {/* <Image
             width={500}
             height={280}
             className={styles.bigArticleImage}
             src={publications?.[0]?.coverImage}
-          />
+          /> */}
+
+          <div
+            onClick={() =>
+              handleOnClick(publications?.[0]?.url, publications?.[0]?.id)
+            }
+            className={styles.smallCardImageContainer}
+            style={{
+              backgroundImage: `url(${publications?.[0]?.coverImage})`,
+            }}
+          ></div>
+
           <h4 className={`${styles.mainTitle} ${styles.bold}`}>
             {truncateHtmlString(publications?.[0]?.title, 50)}
           </h4>
@@ -44,12 +53,23 @@ const InsightsArticlesMobile = ({ publications }) => {
           }
           className={styles.bigArticle}
         >
-          <Image
+          {/* <Image
             width={500}
             height={280}
             className={styles.bigArticleImage}
             src={publications?.[1]?.coverImage}
-          />
+          /> */}
+
+          <div
+            onClick={() =>
+              handleOnClick(publications?.[1]?.url, publications?.[1]?.id)
+            }
+            className={styles.smallCardImageContainer}
+            style={{
+              backgroundImage: `url(${publications?.[1]?.coverImage})`,
+            }}
+          ></div>
+
           <h4 className={`${styles.mainTitle} ${styles.bold}`}>
             {publications?.[1]?.title}
           </h4>

@@ -129,7 +129,8 @@
 .line2 {
   height: 0.1px;
   background-color: #000;
-  margin-top: 30px;
+  margin-top: 8px;
+  margin-bottom: 20px;
 }
 
 .topReadText {
@@ -188,6 +189,10 @@
 
 .articlesMainContainerMobile {
   display: none;
+}
+
+.marginBottom0 {
+  margin-bottom: 0;
 }
 
 @media screen and (max-width: 1040px) {

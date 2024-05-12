@@ -20,6 +20,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  width: 77.5%;
 }
 
 .cardCoverImage {
@@ -30,8 +31,44 @@
 }
 
 .title:hover,
-.cardCoverImage:hover {
+.cardCoverImage:hover,
+.cardImageContainer:hover {
+  -webkit-filter: opacity(0.8);
+  filter: opacity(0.8);
   cursor: pointer;
+}
+
+.cardImageContainer {
+  width: 22.5%;
+  height: 200px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 10px;
+}
+
+@media screen and (max-width: 1300px) {
+  .cardImageContainer {
+    width: 30%;
+  }
+
+  .cardData {
+    width: 70%;
+  }
+}
+
+@media screen and (max-width: 1000px) {
+  .cardImageContainer {
+    width: 35%;
+  }
+
+  .cardData {
+    width: 65%;
+  }
+
+  .card {
+    gap: 15px;
+  }
 }
 
 @media screen and (max-width: 880px) {
@@ -40,6 +77,26 @@
   }
   .card {
     gap: 15px;
+  }
+}
+
+@media screen and (max-width: 750px) {
+  .cardImageContainer {
+    width: 40%;
+  }
+
+  .cardData {
+    width: 60%;
+  }
+}
+
+@media screen and (max-width: 650px) {
+  .cardImageContainer {
+    width: 50%;
+  }
+
+  .cardData {
+    width: 50%;
   }
 }
 
@@ -81,5 +138,20 @@
   }
   .description {
     max-height: 80px;
+  }
+  .cardImageContainer {
+    height: 175px;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  .cardImageContainer {
+    height: 150px;
+  }
+}
+
+@media screen and (max-width: 420px) {
+  .cardImageContainer {
+    height: 120px;
   }
 }
