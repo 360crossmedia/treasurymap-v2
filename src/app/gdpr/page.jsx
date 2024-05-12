@@ -2,7 +2,7 @@
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import styles from "../styles/layout.module.css";
-import Gdpr from "../components/gdpr";
+import Gdpr from "../components/Gdpr";
 
 const Layout = () => {
   return (
