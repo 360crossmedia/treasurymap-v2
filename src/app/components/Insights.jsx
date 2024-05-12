@@ -7,12 +7,10 @@ import { useDispatch } from "react-redux";
 import { setIsLoading } from "../store/slices/isLoading.slice";
 import { apiGetArticleById } from "../service/apiGetArticleById";
 import { apiGetVideoById } from "../service/apiGetVideoById";
-import { useRouter } from "next/navigation";
 import InsightsArticlesMobile from "./InsightsArticlesMobile";
 import InsightsRowOfArticles from "./InsightsRowOfArticles";
 
 const Insights = () => {
-  const router = useRouter();
   const dispatch = useDispatch();
   const [publications, setPublications] = useState([]);
   const [mainPublication, setMainPublication] = useState();
@@ -36,22 +34,6 @@ const Insights = () => {
     if (mainPublication?.coverImage) dispatch(setIsLoading(false));
   };
 
-  const handleOnClick = (isMainPublication, index) => {
-    if (!isMainPublication) {
-      router.push(
-        publications?.[index]?.url
-          ? `/publication/video/${publications?.[index]?.id}`
-          : `/publication/article/${publications?.[index]?.id}`
-      );
-    } else {
-      router.push(
-        mainPublication?.url
-          ? `/publication/video/${mainPublication?.id}`
-          : `/publication/article/${mainPublication?.id}`
-      );
-    }
-  };
-
   if (mainPublication?.coverImage)
     return (
       <div className={styles.mainContainer}>
@@ -72,6 +54,7 @@ const Insights = () => {
               ></div>
             </a>
             <a
+              className={styles.link}
               href={
                 mainPublication?.url
                   ? `/publication/video/${mainPublication?.id}`

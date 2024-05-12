@@ -195,6 +195,11 @@
   margin-bottom: 0;
 }
 
+.link {
+  text-decoration: none;
+  color: #000;
+}
+
 @media screen and (max-width: 1040px) {
   .mainContainer {
     flex-direction: column;
