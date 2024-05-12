@@ -9,7 +9,6 @@ import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { apiGetCategories } from "../service/apiGetCategories";
 import { apiGetSubCategories } from "../service/apiGetSubCategories";
-import { apiUploadImage } from "../service/apiUploadImage";
 import { setIsLoading } from "../store/slices/isLoading.slice";
 import { useDispatch } from "react-redux";
 import { apiGetAllQuestions } from "../service/apiGetAllQuestions";
@@ -25,6 +24,7 @@ import { apiGetAllUsers } from "../service/apiGetAllUsers";
 import { apiDeleteAllAnswersByCompanyId } from "../service/apiDeleteAllAnswersByCompanyId";
 import { apiSendUpdateEmail } from "../service/apiSendUpdateEmail";
 import { apiSendCreateEmail } from "../service/apiSendCreateEmail";
+import { uploadImage } from "../utils";
 
 const BodyForm = () => {
   const dispatch = useDispatch();
@@ -57,6 +57,7 @@ const BodyForm = () => {
   const [backUpUserId, setBackUpUserId] = useState();
   const [isLive, setIsLive] = useState();
   const [selectMainCategory, setSelectMainCategory] = useState();
+  const [showTurnover, setShowTurnover] = useState(true);
   const userId = useSelector((state) => state.user);
   const companyId = useSelector((state) => state.companyId);
   let user;
@@ -77,7 +78,7 @@ const BodyForm = () => {
     ) {
       const logoCloudinary = image?.includes("https://")
         ? ""
-        : await uploadImage();
+        : await uploadImage(file);
       const logo = image?.includes("https://") ? image : logoCloudinary;
       const users = await apiGetAllUsers();
 
@@ -89,6 +90,7 @@ const BodyForm = () => {
         companyOffices: selectedCountriesIds,
         userId: !userId ? backUpUserId : userId,
         live: isLive,
+        showTurnover,
         logo,
         creationDate,
         turnover,
@@ -197,7 +199,7 @@ const BodyForm = () => {
               dispatch(setIsLoading(false));
             }
           } else {
-            alert('Something went wrong. Please check information.')
+            alert("Something went wrong. Please check information.");
             console.log(result);
             dispatch(setIsLoading(false));
           }
@@ -213,13 +215,6 @@ const BodyForm = () => {
     const updatedAnswers = [...answers];
     updatedAnswers[index] = value;
     setAnswers(updatedAnswers);
-  };
-
-  const uploadImage = async () => {
-    const formData = new FormData();
-    formData.append("file", file);
-    const result = await apiUploadImage(formData);
-    return result;
   };
 
   const getAllComponentData = async () => {
@@ -259,6 +254,7 @@ const BodyForm = () => {
     setAnswers(companyAnswers);
     setIsLive(companyData?.live);
     setUserSelected(companyData?.userId);
+    setShowTurnover(companyData?.showTurnover);
     let inputKeywords = companyData?.keywords;
     let toSetKeyword = inputKeywords?.filter(
       (item) => item !== companyData?.name
@@ -404,11 +400,13 @@ const BodyForm = () => {
               Creation date (year) <span className={styles.span}>*</span>
             </label>
             <input
-              className={`${styles.inputText} ` }
+              className={`${styles.inputText} `}
               placeholder="Enter creation year"
               type="text"
               value={creationDate}
-              onChange={(e) => setCreationDate( e.target.value.replace(/[^0-9]/g, '') )}
+              onChange={(e) =>
+                setCreationDate(e.target.value.replace(/[^0-9]/g, ""))
+              }
               required
             />
           </div>
@@ -417,13 +415,23 @@ const BodyForm = () => {
           >
             <label className={styles.label} htmlFor="">
               Turnover (last year) <span className={styles.span}>*</span>
+              <Form.Check
+                type="switch"
+                id="custom-switch2"
+                label={showTurnover ? "Show" : "Not Show"}
+                onChange={(e) => setShowTurnover(e.target.checked)}
+                checked={showTurnover}
+                className={styles.showTurnoverSwitch}
+              />
             </label>
             <input
               className={styles.inputText}
               placeholder="Enter Amount"
               type="text"
               value={turnover}
-              onChange={(e) => setTurnover( e.target.value.replace(/[^0-9]/g, '') )}
+              onChange={(e) =>
+                setTurnover(e.target.value.replace(/[^0-9]/g, ""))
+              }
               required
             />
           </div>
@@ -440,7 +448,9 @@ const BodyForm = () => {
               placeholder="Enter a number of employees"
               type="text"
               value={employees}
-              onChange={(e) => setEmployees( e.target.value.replace(/[^0-9]/g, '') )}
+              onChange={(e) =>
+                setEmployees(e.target.value.replace(/[^0-9]/g, ""))
+              }
               required
             />
           </div>

@@ -61,6 +61,15 @@
   align-items: center;
 }
 
+.videoP:hover {
+  cursor: pointer;
+}
+
+.modalLink {
+  font-size: 10px;
+  margin-left: 5px;
+}
+
 @media screen and (max-width: 1100px) {
   .headerList {
     width: inherit;
@@ -77,7 +86,7 @@
   }
   .updateButton,
   .deleteButton {
-    width: 160px;
+    width: 109px;
   }
   .videosList {
     min-width: 300px;

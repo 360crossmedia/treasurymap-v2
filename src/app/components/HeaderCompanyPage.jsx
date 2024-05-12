@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { apiGetCountryById } from "../service/apiGetCountryById";
 import { setIsLoading } from "../store/slices/isLoading.slice";
 import { apiGetSubCategoryById } from "../service/apiGetSubCategoryById";
+import { formatTurnover } from "../utils";
 import Modal from "react-bootstrap/Modal";
 
 const HeaderCompanyPage = ({ companyId }) => {
@@ -47,10 +48,14 @@ const HeaderCompanyPage = ({ companyId }) => {
     }
     setCompany(companyData);
 
-    const stringCategories = companyCategories.map(item => item.name).join(', ')
+    const stringCategories = companyCategories
+      .map((item) => item.name)
+      .join(", ");
     setCategories(stringCategories);
 
-    const stringSubCat = companySubCategories.map(item => item.name).join(', ');
+    const stringSubCat = companySubCategories
+      .map((item) => item.name)
+      .join(", ");
     setSubCategories(stringSubCat);
 
     setCompanyOffices(companyOffices);
@@ -77,7 +82,7 @@ const HeaderCompanyPage = ({ companyId }) => {
 
         <div className={styles.categoryCardsContainer}>
           <p className={styles.title}>{company?.name}</p>
-          
+
           {/* {categories?.map((category, index) => (
             <div key={index} className={styles.categoryCard}>
               <p className={styles.categoryP}>
@@ -87,14 +92,13 @@ const HeaderCompanyPage = ({ companyId }) => {
             </div>
           ))} */}
 
-          <div key={'category'} className={styles.categoryCard}>
+          <div key={"category"} className={styles.categoryCard}>
             <p className={styles.categoryP}>
               Categories:
               <span className={styles.span}> {categories}</span>
             </p>
           </div>
 
-          
           {/* {subCategories?.map((subCategory, index) => (
             <div key={index} className={styles.categoryCard}>
               <p className={styles.categoryP}>
@@ -104,15 +108,12 @@ const HeaderCompanyPage = ({ companyId }) => {
             </div>
           ))} */}
 
-            <div key={'subcategory'} className={styles.categoryCard}>
-              <p className={styles.categoryP}>
-                Sub-Categories:
-                <span className={styles.span}> {subCategories}</span>
-              </p>
-            </div>
-
-
-
+          <div key={"subcategory"} className={styles.categoryCard}>
+            <p className={styles.categoryP}>
+              Sub-Categories:
+              <span className={styles.span}> {subCategories}</span>
+            </p>
+          </div>
 
           <div className={styles.cardsContainer}>
             <div className={`${styles.card} ${styles.cardLeft}`}>
@@ -123,15 +124,15 @@ const HeaderCompanyPage = ({ companyId }) => {
               <p className={styles.cardP}>Number Of employes</p>
               <p className={styles.cardBigP}>{company?.employees}</p>
             </div>
-            
-            
-            { !(company?.turnover == 0) &&
+
+            {!(company?.turnover == 0) && company?.showTurnover && (
               <div className={`${styles.card} ${styles.cardLeft}`}>
                 <p className={styles.cardP}>Turnover</p>
-                <p className={styles.cardBigP}>{company?.turnover}</p>
+                <p className={styles.cardBigP}>
+                  {formatTurnover(company?.turnover)}
+                </p>
               </div>
-            }
-
+            )}
 
             <div className={`${styles.card} ${styles.cardRight}`}>
               <p className={styles.cardP}>Headquarters</p>
