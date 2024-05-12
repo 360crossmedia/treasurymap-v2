@@ -2,13 +2,10 @@
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import styles from "../../styles/layout.module.css";
-import HeaderArticle from "../../components/HeaderArticle";
-import dynamic from "next/dynamic";
+import InsightsNavbar from "@/app/components/InsightsNavbar";
+import InsightsWithCategory from "@/app/components/InsightsWithCategory";
 
-const Layout = () => {
-  const BodyArticle = dynamic(() => import("../../components/BodyArticle"), {
-    ssr: false,
-  });
+const Layout = ({ params }) => {
   return (
     <>
       <div
@@ -16,9 +13,9 @@ const Layout = () => {
         style={{ backgroundPosition: "bottom", paddingBottom: "1.65%" }}
       >
         <Navbar buttonLabel={"Login"} />
-        <HeaderArticle title={"Video"} />
+        <InsightsNavbar categoryId={params.categoryId} />
+        <InsightsWithCategory categoryId={params.categoryId} />
       </div>
-      <BodyArticle />
       <Footer />
     </>
   );

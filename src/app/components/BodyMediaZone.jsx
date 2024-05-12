@@ -12,6 +12,7 @@ import { setIsLoading } from "../store/slices/isLoading.slice";
 import { useRouter } from "next/navigation";
 import { setArticleId } from "../store/slices/articleId.slice";
 import { setVideoId } from "../store/slices/videoId.slice";
+import { truncateHtmlString } from "../utils";
 
 const BodyMediaZone = () => {
   const dispatch = useDispatch();
@@ -141,26 +142,52 @@ const BodyMediaZone = () => {
             <div key={index} className={styles2.videosList}>
               <div className={styles2.checkboxContainer}>
                 <RadioButton
+                  inputId={`input-video-${index}`}
                   value={video.id}
                   onChange={(e) => setVideoSelected(e.value)}
                   checked={videoSelected == video.id ? true : false}
                 />
-                <p className={styles2.videoP}>{video.title}</p>
+                <label
+                  htmlFor={`input-video-${index}`}
+                  className={`ml-2 ${styles2.videoP}`}
+                >
+                  <span className={styles.modalLink}>(Video)</span>
+                  {truncateHtmlString(video.title, 80)}
+                  <a
+                    className={styles2.modalLink}
+                    href={`/publication/video/${video?.id}`}
+                    target="_blank"
+                  >
+                    View Publication
+                  </a>
+                </label>
               </div>
               <p className={styles2.videoP}>{video.createdAt.slice(0, 10)}</p>
             </div>
           ))}
         {show === "articles" &&
-          articles?.map((article) => (
+          articles?.map((article, index) => (
             <div key={article.id} className={styles2.videosList}>
               <div className={styles2.checkboxContainer}>
                 <RadioButton
+                  inputId={`input-article-${index}`}
                   value={article.id}
                   onChange={(e) => setArticleSelected(e.value)}
                   checked={articleSelected == article.id ? true : false}
                 />
-                <label htmlFor={`article-${article.id}`} className="ml-2">
-                  {article.title}
+                <label
+                  htmlFor={`input-article-${index}`}
+                  className={`ml-2 ${styles2.videoP}`}
+                >
+                  <span className={styles.modalLink}>(Article)</span>
+                  {truncateHtmlString(article.title, 80)}
+                  <a
+                    className={styles2.modalLink}
+                    href={`/publication/article/${article?.id}`}
+                    target="_blank"
+                  >
+                    View Publication
+                  </a>
                 </label>
               </div>
               <p className={styles2.videoP}>{article.createdAt.slice(0, 10)}</p>
