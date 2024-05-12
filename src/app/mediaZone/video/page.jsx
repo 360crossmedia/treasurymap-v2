@@ -3,9 +3,12 @@ import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import styles from "../../styles/layout.module.css";
 import HeaderArticle from "../../components/HeaderArticle";
-import BodyArticle from "../../components/BodyArticle";
+import dynamic from "next/dynamic";
 
 const Layout = () => {
+  const BodyArticle = dynamic(() => import("../../components/BodyArticle"), {
+    ssr: false,
+  });
   return (
     <>
       <div
