@@ -1,4 +1,4 @@
-import React from "react";
+"use client";
 import styles from "../styles/InsightsWithCategory.module.css";
 import { usePathname } from "next/navigation";
 import { truncateHtmlString } from "../utils";

@@ -1,3 +1,4 @@
+"use client";
 import styles from "../styles/Insights.module.css";
 import Cards from "./Cards";
 import { useEffect, useState } from "react";

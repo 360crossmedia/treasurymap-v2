@@ -1,3 +1,4 @@
+"use client";
 import { useRouter } from "next/navigation";
 import styles from "../styles/Insights.module.css";
 import { formatDate, truncateHtmlString } from "../utils";
@@ -19,13 +20,6 @@ const InsightsArticlesMobile = ({ publications }) => {
           }
           className={styles.bigArticle}
         >
-          {/* <Image
-            width={500}
-            height={280}
-            className={styles.bigArticleImage}
-            src={publications?.[0]?.coverImage}
-          /> */}
-
           <div
             onClick={() =>
               handleOnClick(publications?.[0]?.url, publications?.[0]?.id)
@@ -53,13 +47,6 @@ const InsightsArticlesMobile = ({ publications }) => {
           }
           className={styles.bigArticle}
         >
-          {/* <Image
-            width={500}
-            height={280}
-            className={styles.bigArticleImage}
-            src={publications?.[1]?.coverImage}
-          /> */}
-
           <div
             onClick={() =>
               handleOnClick(publications?.[1]?.url, publications?.[1]?.id)

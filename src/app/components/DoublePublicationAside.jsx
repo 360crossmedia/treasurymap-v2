@@ -1,3 +1,4 @@
+"use client";
 import { formatDate } from "../utils";
 import styles from "../styles/Insights.module.css";
 

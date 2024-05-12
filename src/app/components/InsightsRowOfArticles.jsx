@@ -1,4 +1,4 @@
-import React from "react";
+"use client";
 import styles from "../styles/Insights.module.css";
 import { formatDate, truncateHtmlString } from "../utils";
 
