@@ -1,3 +1,4 @@
+"use client";
 import { useSelector, useDispatch } from "react-redux";
 import React from "react";
 import styles from "../styles/HeaderDashboard.module.css";
