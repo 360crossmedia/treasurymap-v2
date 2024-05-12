@@ -354,13 +354,13 @@ const BodyArticle = ({ isArticle }) => {
               <label>
                 Body <span className={styles.required}>*</span>
               </label>
-              {/* <ReactQuill
+              <ReactQuill
                 className={styles.customButton}
                 formats={formats}
                 modules={modules}
                 value={body}
                 onChange={setBody}
-              /> */}
+              />
             </div>
           </>
         )}
