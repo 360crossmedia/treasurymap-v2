@@ -54,7 +54,7 @@ const Overview = ({ companyId }) => {
           <a
             className={styles.link}
             target="_blank"
-            href={`http://${company?.companyWebsite}`}
+            href={company?.companyWebsite}
           >
             {company?.companyWebsite}
           </a>
