@@ -93,7 +93,9 @@ const BodyArticle = ({ isArticle }) => {
           alert("Complete required fields");
         } else if (!url.includes("/embed")) {
           dispatch(setIsLoading(false));
-          alert("The url must be a embed URL");
+          alert(
+            "Video URL is incorrect. It must be a embed URL, follow the instructions."
+          );
         } else {
           const result = await apiCreateVideo(
             companyId ? companyId : backUpCompanyId,
@@ -158,7 +160,9 @@ const BodyArticle = ({ isArticle }) => {
           );
         } else if (!url.includes("/embed")) {
           dispatch(setIsLoading(false));
-          alert("The url must be a embed URL");
+          alert(
+            "Video URL is incorrect. It must be a embed URL, follow the instructions."
+          );
         } else {
           const result = await apiUpdateVideo(videoId, {
             title,

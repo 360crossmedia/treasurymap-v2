@@ -57,19 +57,29 @@ const Insights = () => {
       <div className={styles.mainContainer}>
         <div className={styles.leftContainer}>
           <div>
-            <div
-              onClick={() => handleOnClick(true)}
-              className={styles.mainPublicationImageContainer}
-              style={{
-                backgroundImage: `url(${mainPublication?.coverImage})`,
-              }}
-            ></div>
-            <h2
-              onClick={() => handleOnClick(true)}
-              className={styles.mainTitle}
+            <a
+              href={
+                mainPublication?.url
+                  ? `/publication/video/${mainPublication?.id}`
+                  : `/publication/article/${mainPublication?.id}`
+              }
             >
-              {mainPublication?.title}
-            </h2>
+              <div
+                className={styles.mainPublicationImageContainer}
+                style={{
+                  backgroundImage: `url(${mainPublication?.coverImage})`,
+                }}
+              ></div>
+            </a>
+            <a
+              href={
+                mainPublication?.url
+                  ? `/publication/video/${mainPublication?.id}`
+                  : `/publication/article/${mainPublication?.id}`
+              }
+            >
+              <h2 className={styles.mainTitle}>{mainPublication?.title}</h2>
+            </a>
             <p>
               By 360Crossmedia | Bussines / Tech |
               {mainPublication?.url ? " Video" : " Article"}
