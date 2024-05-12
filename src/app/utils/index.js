@@ -136,3 +136,20 @@ export const truncateHtmlString = (htmlString, maxLength) => {
   // Retornar el substring truncado con los puntos suspensivos
   return plainText?.substring(0, truncatedIndex) + "...";
 };
+
+export const fixUrl = (url) => {
+  // Expresión regular para extraer el código del video
+  var videoCode =
+    /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/;
+
+  // Intenta encontrar el código del video en la URL
+  var match = url.match(videoCode);
+  if (match) {
+    // Crea la URL de incrustación usando el código del video
+    url = "https://www.youtube.com/embed/" + match[1];
+    return url;
+  } else {
+    // Si no se encuentra ningún código de video, devuelve la URL original
+    return url;
+  }
+};

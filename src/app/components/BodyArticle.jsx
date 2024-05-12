@@ -14,10 +14,10 @@ import { apiUpdateVideo } from "../service/apiUpdateVideo";
 import {
   formats,
   modules,
-  openLinkInNewTab,
   uploadImage,
   stringToArr,
   isThisPublicationMainPublication,
+  fixUrl,
 } from "../utils";
 import Image from "next/image";
 import PhotoImg from "../assets/photoImg.svg";
@@ -91,15 +91,18 @@ const BodyArticle = ({ isArticle }) => {
         if (!title || !url || !image) {
           dispatch(setIsLoading(false));
           alert("Complete required fields");
-        } else if (!url.includes("/embed")) {
-          dispatch(setIsLoading(false));
-          alert(
-            "Video URL is incorrect. It must be a embed URL, follow the instructions."
-          );
         } else {
+          const urlReadyToSubmit = fixUrl(url);
           const result = await apiCreateVideo(
             companyId ? companyId : backUpCompanyId,
-            { title, url, coverImage, introduction, tags, live }
+            {
+              title,
+              url: urlReadyToSubmit,
+              coverImage,
+              introduction,
+              tags,
+              live,
+            }
           );
           if (result?.status == 201) {
             const sendEmail = await apiNewPublicationAlert({
@@ -158,15 +161,11 @@ const BodyArticle = ({ isArticle }) => {
           alert(
             "This article is selected as the main publication and cannot be set off."
           );
-        } else if (!url.includes("/embed")) {
-          dispatch(setIsLoading(false));
-          alert(
-            "Video URL is incorrect. It must be a embed URL, follow the instructions."
-          );
         } else {
+          const urlReadyToSubmit = fixUrl(url);
           const result = await apiUpdateVideo(videoId, {
             title,
-            url,
+            url: urlReadyToSubmit,
             coverImage,
             introduction,
             tags,
@@ -380,14 +379,10 @@ const BodyArticle = ({ isArticle }) => {
         {!isArticle && (
           <div className={styles.inputContainer}>
             <label htmlFor="">
-              Embed URL
+              Video URL
               <span className={styles.required}>*</span>
-              <span
-                className={styles.urlInstructionsSpan}
-                onClick={openLinkInNewTab}
-              >
-                See how to set the proper URL{" "}
-                <span className={styles.urlInstructionsIcon}>&#x1F6C8;</span>
+              <span className={styles.urlInstructionsSpan}>
+                (copy the YouTube video URL)
               </span>
             </label>
 
