@@ -29,6 +29,7 @@ const TreasuryMap = () => {
     'category-12': 'eBAM (electronic Bank Account Management)',
     'category-13': 'BSG (Bank Single gateway)',
     'category-14': 'TR (Treasury Reporting)',
+    'category-15': 'PSP (Payment Service Provider)',
   }
 
 

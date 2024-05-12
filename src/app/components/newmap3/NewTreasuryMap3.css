@@ -2646,11 +2646,11 @@ body{
 }
 
 .category-title.category-title-1 {
-  transform: translate(98px, -25px) scale(0.8);
+  transform: translate(9%, -25px) scale(0.8);
 }
 
 .category-title.category-title-2 {
-  transform: translate(364px, -8px) scale(0.9);
+  transform: translate(27%, -36px) scale(0.7);
 }
 
 .category-title.category-title-3 {
@@ -2678,7 +2678,7 @@ body{
 }
 
 .category-title.category-title-9 {
-  transform: translate(555px, -22px);
+  transform: translate(46%, -20px);
 }
 
 .category-title.category-title-10 {
@@ -2694,11 +2694,15 @@ body{
 }
 
 .category-title.category-title-13 {
-  transform: translate(-32%, -19px) scale(0.8);
+  transform: translate(-33%, -37px) scale(0.65);
 }
 
 .category-title.category-title-14 {
-  transform: translate(-43%, -19px) scale(0.9);
+  transform: translate(-47%, -19px) scale(0.9);
+}
+
+.category-title.category-title-15 {
+  transform: translate(-6%, -41px) scale(0.61)
 }
 
 div.category-title.selected {
