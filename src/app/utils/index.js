@@ -153,3 +153,11 @@ export const fixUrl = (url) => {
     return url;
   }
 };
+
+export const returnOnlyCategoryName = (categoryName) => {
+  const index = categoryName.indexOf("(");
+  if (index !== -1) {
+    return categoryName.substring(0, index).trim();
+  }
+  return categoryName.trim();
+};
