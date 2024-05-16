@@ -10,11 +10,16 @@ import { apiGetArticleById } from "../service/apiGetArticleById";
 import { apiGetVideoById } from "../service/apiGetVideoById";
 import InsightsArticlesMobile from "./InsightsArticlesMobile";
 import InsightsRowOfArticles from "./InsightsRowOfArticles";
+import { apiGetCompanyData } from "../service/apiGetCompanyData";
+import { apiGetCategoryById } from "../service/apiGetCategoryById";
+import { returnOnlyCategoryName } from "../utils";
 
 const Insights = () => {
   const dispatch = useDispatch();
   const [publications, setPublications] = useState([]);
   const [mainPublication, setMainPublication] = useState();
+  const [company, setCompany] = useState();
+  const [mainCategory, setMainCategory] = useState();
 
   useEffect(() => {
     getAllPublications();
@@ -27,10 +32,18 @@ const Insights = () => {
     setPublications(publications);
     if (mainPublication?.isArticle) {
       const article = await apiGetArticleById(mainPublication?.publicationId);
+      const company = await apiGetCompanyData(article?.companyId);
+      const mainCategory = await apiGetCategoryById(...company?.maincategory);
       setMainPublication(article);
+      setCompany(company);
+      setMainCategory(mainCategory);
     } else {
       const video = await apiGetVideoById(mainPublication?.publicationId);
+      const company = await apiGetCompanyData(video?.companyId);
+      const mainCategory = await apiGetCategoryById(...company?.maincategory);
       setMainPublication(video);
+      setCompany(company);
+      setMainCategory(mainCategory);
     }
     if (mainPublication?.coverImage) dispatch(setIsLoading(false));
   };
@@ -65,8 +78,11 @@ const Insights = () => {
               <h2 className={styles.mainTitle}>{mainPublication?.title}</h2>
             </a>
             <p>
-              By 360Crossmedia | Bussines / Tech |
-              {mainPublication?.url ? " Video" : " Article"}
+              {company?.name ? `By ${company?.name} | ` : ``}
+              <a className={styles.link} href={`/insights/${mainCategory?.id}`}>
+                {returnOnlyCategoryName(mainCategory?.name)}
+              </a>
+              {mainPublication?.url ? " | Video" : " | Article"}`
             </p>
           </div>
           <div className={styles.articlesMainContainer}>
