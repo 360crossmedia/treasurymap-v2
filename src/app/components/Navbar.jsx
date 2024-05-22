@@ -62,9 +62,9 @@ const Navbar = ({ buttonLabel }) => {
           <a className={styles.navbarA} href="/contactUs">
             Contact us
           </a>
-          {/* <a className={styles.navbarA} href="/insights">
+          <a className={styles.navbarA} href="/insights">
             Insights
-          </a> */}
+          </a>
         </div>
       </div>
       <div className={styles.navbarRight}>
