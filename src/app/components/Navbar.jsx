@@ -27,80 +27,88 @@ const Navbar = ({ buttonLabel }) => {
   }, []);
 
   return (
-    <nav className={styles.navbar}>
-      <Image
-        className={styles.MobileMenuNavbar}
-        src={MobileMenuNavbar}
-        alt="logo"
-        onClick={() => {
-          setIsMenuOpen(!isMenuOpen);
-          console.log(isMenuOpen);
-        }}
-      />
-      <div className={styles.navbarLeft}>
+    <>
+      <nav className={styles.navbar}>
         <Image
-          className={styles.navbarLogo}
-          onClick={() => router.push("/")}
-          src={navbarlogo}
+          className={styles.MobileMenuNavbar}
+          src={MobileMenuNavbar}
           alt="logo"
+          onClick={() => {
+            setIsMenuOpen(!isMenuOpen);
+            console.log(isMenuOpen);
+          }}
         />
-        <div
-          className={`${styles.navbarLinks} ${
-            isMenuOpen ? styles.navbarLinksMobile : ""
-          }`}
-        >
-          {loggedIn ? (
-            <a className={styles.navbarA} href="/dashboard">
-              Admin Dashboard
-            </a>
-          ) : (
-            <a className={styles.navbarA} href="/signup">
-              Be on the map
-            </a>
-          )}
+        <div className={styles.navbarLeft}>
+          <Image
+            className={styles.navbarLogo}
+            onClick={() => router.push("/")}
+            src={navbarlogo}
+            alt="logo"
+          />
+          <div
+            className={`${styles.navbarLinks} ${
+              isMenuOpen ? styles.navbarLinksMobile : ""
+            }`}
+          >
+            {loggedIn ? (
+              <a className={styles.navbarA} href="/dashboard">
+                Admin Dashboard
+              </a>
+            ) : (
+              <a className={styles.navbarA} href="/signup">
+                Be on the map
+              </a>
+            )}
 
-          <a className={styles.navbarA} href="/contactUs">
-            Contact us
-          </a>
-          <a className={styles.navbarA} href="/insights">
-            Insights
-          </a>
+            <a className={styles.navbarA} href="/contactUs">
+              Contact us
+            </a>
+            <a className={styles.navbarA} href="/insights">
+              Insights
+            </a>
+          </div>
         </div>
-      </div>
-      <div className={styles.navbarRight}>
-        {loggedIn !== undefined &&
-          (loggedIn ? (
-            <button
-              onClick={() => {
-                dispatch(setCompanyId(false));
-                dispatch(setUser(0));
-                localStorage.removeItem("userId");
-                localStorage.removeItem("companyId");
+        <div className={styles.navbarRight}>
+          {loggedIn !== undefined &&
+            (loggedIn ? (
+              <button
+                onClick={() => {
+                  dispatch(setCompanyId(false));
+                  dispatch(setUser(0));
+                  localStorage.removeItem("userId");
+                  localStorage.removeItem("companyId");
 
-                if (pathname === "/") {
-                  window.location.reload();
-                } else {
-                  router.push("/");
+                  if (pathname === "/") {
+                    window.location.reload();
+                  } else {
+                    router.push("/");
+                  }
+                }}
+                className={styles.navbarButtonLogOut}
+              >
+                Log Out
+              </button>
+            ) : (
+              <button
+                onClick={() =>
+                  buttonLabel == "Sign up"
+                    ? router.push("/signup")
+                    : router.push("/login")
                 }
-              }}
-              className={styles.navbarButtonLogOut}
-            >
-              Log Out
-            </button>
-          ) : (
-            <button
-              onClick={() =>
-                buttonLabel == "Sign up"
-                  ? router.push("/signup")
-                  : router.push("/login")
-              }
-              className={styles.navbarButton}
-            >
-              {buttonLabel}
-            </button>
-          ))}
-      </div>
-    </nav>
+                className={styles.navbarButton}
+              >
+                {buttonLabel}
+              </button>
+            ))}
+        </div>
+      </nav>
+      <button
+        onClick={() => router.push("/insights")}
+        className={styles.insightsButton}
+      >
+        Go to Insights Page
+      </button>
+    </>
   );
 };
 

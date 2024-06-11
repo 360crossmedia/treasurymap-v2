@@ -14,7 +14,8 @@
   text-decoration: none;
 }
 
-.navbarButton {
+.navbarButton,
+.insightsButton {
   border-radius: 48px;
   background: linear-gradient(277deg, #4ab2c4 -0.01%, #094895 94.83%);
   padding: 10px 37px;
@@ -58,6 +59,10 @@
   display: none;
 }
 
+.insightsButton {
+  display: none;
+}
+
 @media screen and (max-width: 880px) {
   .MobileMenuNavbar {
     display: inherit;
@@ -80,12 +85,19 @@
     padding: 0px 16px;
   }
 
-  .navbarButton {
+  .navbarButton,
+  .insightsButton {
     padding: 6.583px 24.358px;
     gap: 5.267px;
     border-radius: 31.6px;
     font-size: 10.533px;
     font-weight: 500;
+  }
+
+  .insightsButton {
+    display: inherit;
+    margin: 0 auto;
+    margin-top: 10px;
   }
 
   .navbarButtonLogOut {
