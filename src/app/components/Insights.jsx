@@ -82,7 +82,7 @@ const Insights = () => {
               <a className={styles.link} href={`/insights/${mainCategory?.id}`}>
                 {returnOnlyCategoryName(mainCategory?.name)}
               </a>
-              {mainPublication?.url ? " | Video" : " | Article"}`
+              {mainPublication?.url ? " | Video" : " | Article"}
             </p>
           </div>
           <div className={styles.articlesMainContainer}>
