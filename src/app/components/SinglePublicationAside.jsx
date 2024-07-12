@@ -18,17 +18,11 @@ const SinglePublicationAside = ({ publication }) => {
           style={{
             backgroundImage: `url(${publication?.coverImage})`,
           }}
-          onClick={() => handleOnClick(publication?.url, publication?.id)}
         ></div>
       </a>
       <div>
         <a className={styles.link} href={handleHref(publication)}>
-          <h4
-            onClick={() => handleOnClick(publication?.url, publication?.id)}
-            className={styles.mainTitle}
-          >
-            {publication?.title}
-          </h4>
+          <h4 className={styles.mainTitle}>{publication?.title}</h4>
         </a>
         <p className={styles.articleDate}>
           {`${formatDate(publication?.createdAt)} ${

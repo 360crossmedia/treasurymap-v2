@@ -13,33 +13,6 @@ const InsightsArticlesMobile = ({ publications }) => {
         <div
           onClick={() =>
             router.push(
-              publications[0]?.url
-                ? `/publication/video/${publications[0]?.id}`
-                : `/publication/article/${publications[0]?.id}`
-            )
-          }
-          className={styles.bigArticle}
-        >
-          <div
-            onClick={() =>
-              handleOnClick(publications?.[0]?.url, publications?.[0]?.id)
-            }
-            className={styles.smallCardImageContainer}
-            style={{
-              backgroundImage: `url(${publications?.[0]?.coverImage})`,
-            }}
-          ></div>
-
-          <h4 className={`${styles.mainTitle} ${styles.bold}`}>
-            {truncateHtmlString(publications?.[0]?.title, 50)}
-          </h4>
-          <p>{`${formatDate(publications?.[0]?.createdAt)} | ${
-            publications?.[0]?.url ? "Video" : "Article"
-          }`}</p>
-        </div>
-        <div
-          onClick={() =>
-            router.push(
               publications[1]?.url
                 ? `/publication/video/${publications[1]?.id}`
                 : `/publication/article/${publications[1]?.id}`
@@ -58,18 +31,45 @@ const InsightsArticlesMobile = ({ publications }) => {
           ></div>
 
           <h4 className={`${styles.mainTitle} ${styles.bold}`}>
-            {publications?.[1]?.title}
+            {truncateHtmlString(publications?.[1]?.title, 50)}
+          </h4>
+          <p>{`${formatDate(publications?.[1]?.createdAt)} | ${
+            publications?.[1]?.url ? "Video" : "Article"
+          }`}</p>
+        </div>
+        <div
+          onClick={() =>
+            router.push(
+              publications[2]?.url
+                ? `/publication/video/${publications[2]?.id}`
+                : `/publication/article/${publications[2]?.id}`
+            )
+          }
+          className={styles.bigArticle}
+        >
+          <div
+            onClick={() =>
+              handleOnClick(publications?.[2]?.url, publications?.[2]?.id)
+            }
+            className={styles.smallCardImageContainer}
+            style={{
+              backgroundImage: `url(${publications?.[2]?.coverImage})`,
+            }}
+          ></div>
+
+          <h4 className={`${styles.mainTitle} ${styles.bold}`}>
+            {publications?.[2]?.title}
           </h4>
           <p>{`${formatDate(publications?.[0]?.createdAt)} | ${
-            publications?.[1]?.url ? "Video" : "Article"
+            publications?.[2]?.url ? "Video" : "Article"
           }`}</p>
         </div>
       </div>
       <div className={styles.line2}></div>
-      <InsightsCard publication={publications?.[2]} />
       <InsightsCard publication={publications?.[3]} />
       <InsightsCard publication={publications?.[4]} />
       <InsightsCard publication={publications?.[5]} />
+      <InsightsCard publication={publications?.[6]} />
     </>
   );
 };

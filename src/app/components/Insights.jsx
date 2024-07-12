@@ -2,50 +2,47 @@
 import styles from "../styles/Insights.module.css";
 import Cards from "./Cards";
 import { useEffect, useState } from "react";
-import { apiGetLatestPublications } from "../service/apiGetLatestPublications";
-import { apiGetMainPublication } from "../service/apiGetMainPublication";
 import { useDispatch } from "react-redux";
 import { setIsLoading } from "../store/slices/isLoading.slice";
-import { apiGetArticleById } from "../service/apiGetArticleById";
-import { apiGetVideoById } from "../service/apiGetVideoById";
 import InsightsArticlesMobile from "./InsightsArticlesMobile";
 import InsightsRowOfArticles from "./InsightsRowOfArticles";
 import { apiGetCompanyData } from "../service/apiGetCompanyData";
 import { apiGetCategoryById } from "../service/apiGetCategoryById";
 import { returnOnlyCategoryName } from "../utils";
+import { apiGetFullMainPublications } from "../service/apiGetFullMainPublications";
 
 const Insights = () => {
   const dispatch = useDispatch();
-  const [publications, setPublications] = useState([]);
   const [mainPublication, setMainPublication] = useState();
   const [company, setCompany] = useState();
   const [mainCategory, setMainCategory] = useState();
+  const [mainPublications, setMainPublications] = useState([]);
 
   useEffect(() => {
+    dispatch(setIsLoading(true));
     getAllPublications();
   }, []);
 
+  useEffect(() => {
+    if (mainPublication?.coverImage) dispatch(setIsLoading(false));
+  }, [mainPublication]);
+
   const getAllPublications = async () => {
-    dispatch(setIsLoading(true));
-    const publications = await apiGetLatestPublications();
-    const mainPublication = await apiGetMainPublication();
-    setPublications(publications);
-    if (mainPublication?.isArticle) {
-      const article = await apiGetArticleById(mainPublication?.publicationId);
-      const company = await apiGetCompanyData(article?.companyId);
+    const mainPublication = await apiGetFullMainPublications();
+    setMainPublications(mainPublication);
+    if (!mainPublication?.[0]?.url) {
+      const company = await apiGetCompanyData(mainPublication?.[0]?.companyId);
       const mainCategory = await apiGetCategoryById(...company?.maincategory);
       setMainPublication(article);
       setCompany(company);
       setMainCategory(mainCategory);
     } else {
-      const video = await apiGetVideoById(mainPublication?.publicationId);
-      const company = await apiGetCompanyData(video?.companyId);
+      const company = await apiGetCompanyData(mainPublication?.[0]?.companyId);
       const mainCategory = await apiGetCategoryById(...company?.maincategory);
       setMainPublication(video);
       setCompany(company);
       setMainCategory(mainCategory);
     }
-    if (mainPublication?.coverImage) dispatch(setIsLoading(false));
   };
 
   if (mainPublication?.coverImage)
@@ -82,65 +79,71 @@ const Insights = () => {
               <a className={styles.link} href={`/insights/${mainCategory?.id}`}>
                 {returnOnlyCategoryName(mainCategory?.name)}
               </a>
-              {mainPublication?.url ? " | Video" : " | Article"}`
+              {mainPublication?.url ? " | Video" : " | Article"}
             </p>
           </div>
           <div className={styles.articlesMainContainer}>
             <div className={styles.line2}></div>
-            {publications.length > 0 && (
-              <InsightsRowOfArticles publications={publications} />
+            {mainPublications.length > 1 && (
+              <InsightsRowOfArticles
+                publications={[
+                  mainPublications?.[1],
+                  mainPublications?.[2],
+                  mainPublications?.[3],
+                ]}
+              />
             )}
-            {publications.length > 3 && (
+            {mainPublications.length > 4 && (
               <>
                 <div className={styles.line2}></div>
                 <InsightsRowOfArticles
                   publications={[
-                    publications?.[3],
-                    publications?.[4],
-                    publications?.[5],
+                    mainPublications?.[4],
+                    mainPublications?.[5],
+                    mainPublications?.[6],
                   ]}
                 />
               </>
             )}
-            {publications.length > 6 && (
+            {mainPublications.length > 7 && (
               <>
                 <div className={styles.line2}></div>
                 <InsightsRowOfArticles
                   publications={[
-                    publications?.[6],
-                    publications?.[7],
-                    publications?.[8],
+                    mainPublications?.[7],
+                    mainPublications?.[8],
+                    mainPublications?.[9],
                   ]}
                 />
               </>
             )}
-            {publications.length > 9 && (
+            {mainPublications.length > 10 && (
               <>
                 <div className={styles.line2}></div>
                 <InsightsRowOfArticles
                   publications={[
-                    publications?.[9],
-                    publications?.[10],
-                    publications?.[11],
+                    mainPublications?.[10],
+                    mainPublications?.[11],
+                    mainPublications?.[12],
                   ]}
                 />
               </>
             )}
-            {publications.length > 12 && (
+            {mainPublications.length > 13 && (
               <>
                 <div className={styles.line2}></div>
                 <InsightsRowOfArticles
                   publications={[
-                    publications?.[12],
-                    publications?.[13],
-                    publications?.[14],
+                    mainPublications?.[13],
+                    mainPublications?.[14],
+                    mainPublications?.[15],
                   ]}
                 />
               </>
             )}
           </div>
           <div className={styles.articlesMainContainerMobile}>
-            <InsightsArticlesMobile publications={publications} />
+            <InsightsArticlesMobile publications={mainPublications} />
           </div>
         </div>
         <div className={styles.line}></div>

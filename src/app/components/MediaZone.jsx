@@ -71,14 +71,12 @@ const MediaZone = ({ companyId }) => {
       {!haveMediaContentToShow(videos, articles) && (
         <h2 className={styles.title}>No media content uploaded yet.</h2>
       )}
-      {articles?.map(
-        (article, index) =>
-          article.live && <InsightsCard key={index} publication={article} />
-      )}
-      {videos?.map(
-        (video, index) =>
-          videos.live && <InsightsCard key={index} publication={video} />
-      )}
+      {articles?.map((article, index) => (
+        <InsightsCard key={index} publication={article} />
+      ))}
+      {videos?.map((video, index) => (
+        <InsightsCard key={index} publication={video} />
+      ))}
     </div>
   );
 };
