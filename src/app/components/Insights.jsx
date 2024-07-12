@@ -33,13 +33,13 @@ const Insights = () => {
     if (!mainPublication?.[0]?.url) {
       const company = await apiGetCompanyData(mainPublication?.[0]?.companyId);
       const mainCategory = await apiGetCategoryById(...company?.maincategory);
-      setMainPublication(article);
+      setMainPublication(mainPublication?.[0]);
       setCompany(company);
       setMainCategory(mainCategory);
     } else {
       const company = await apiGetCompanyData(mainPublication?.[0]?.companyId);
       const mainCategory = await apiGetCategoryById(...company?.maincategory);
-      setMainPublication(video);
+      setMainPublication(mainPublication?.[0]);
       setCompany(company);
       setMainCategory(mainCategory);
     }
