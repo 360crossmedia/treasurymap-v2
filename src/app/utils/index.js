@@ -1,4 +1,4 @@
-import { apiGetMainPublication } from "../service/apiGetMainPublication";
+import { apiGetMainPublications } from "../service/apiGetMainPublication";
 import { apiUploadImage } from "../service/apiUploadImage";
 
 // modules for custom input
@@ -107,7 +107,7 @@ export const isThisPublicationMainPublication = async (
   isArticle,
   publicationId
 ) => {
-  const mainPublication = await apiGetMainPublication();
+  const mainPublication = await apiGetMainPublications();
   if (
     mainPublication?.isArticle == isArticle &&
     mainPublication?.publicationId == publicationId
