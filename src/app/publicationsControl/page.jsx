@@ -2,8 +2,8 @@
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import styles from "../styles/layout.module.css";
-import HeaderMediaZone from "./components/HeaderMediaZone";
-import BodyMediaZone from "./components/BodyMediaZone";
+import HeaderPublicationsControl from "./components/HeaderPublicationsControl";
+import BodyPublicationsControl from "./components/BodyPublicationsControl";
 
 const Layout = () => {
   return (
@@ -13,9 +13,9 @@ const Layout = () => {
         style={{ backgroundPosition: "bottom", paddingBottom: "1.65%" }}
       >
         <Navbar buttonLabel={"Login"} />
-        <HeaderMediaZone />
+        <HeaderPublicationsControl />
       </div>
-      <BodyMediaZone />
+      <BodyPublicationsControl />
       <Footer />
     </>
   );

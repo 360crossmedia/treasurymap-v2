@@ -2,13 +2,14 @@
 import { useEffect, useState } from "react";
 import styles from "../../styles/BodyDashboard.module.css";
 import styles2 from "../../styles/BodyMediaZone.module.css";
+import styles3 from "../styles/main.module.css";
 import { useDispatch } from "react-redux";
 import { setIsLoading } from "../../store/slices/isLoading.slice";
 import { truncateHtmlString } from "../../utils";
 import ModalReady from "./ModalReady";
 import { apiGetMainPublications } from "@/app/service/apiGetMainPublication";
 
-const BodyMediaZone = () => {
+const BodyPublicationsControl = () => {
   const dispatch = useDispatch();
   const [show, setShow] = useState(false);
   const [mainPublications, setMainPublications] = useState();
@@ -36,12 +37,14 @@ const BodyMediaZone = () => {
   }, [mainPublications]);
 
   return (
-    <div className={`${styles.mainContainer} ${styles2.mainContainer}`}>
+    <div
+      className={`${styles.mainContainer} ${styles2.mainContainer} ${styles3.mainContainer}`}
+    >
       <div>
-        <div className={`${styles2.videosList} ${styles2.headerList}`}>
-          <div style={{ display: "flex", gap: "1rem" }}>
-            <p className={styles2.headerP}>N°</p>
-          </div>
+        <div
+          className={`${styles2.videosList} ${styles2.headerList} ${styles3.fullWidth}`}
+        >
+          <p className={styles2.headerP}>N°</p>
           <p className={styles2.headerP}>Creation Date</p>
         </div>
         {mainPublications?.map((publication, index) => (
@@ -65,8 +68,13 @@ const BodyMediaZone = () => {
                 </a>
               </label>
             </div>
-            <div className={styles.buttonsContainer}>
-              <button onClick={() => handleShowModal(index + 1)}>Change</button>
+            <div>
+              <button
+                className={styles3.updateButton}
+                onClick={() => handleShowModal(index + 1)}
+              >
+                Change
+              </button>
             </div>
           </div>
         ))}
@@ -82,4 +90,4 @@ const BodyMediaZone = () => {
   );
 };
 
-export default BodyMediaZone;
+export default BodyPublicationsControl;

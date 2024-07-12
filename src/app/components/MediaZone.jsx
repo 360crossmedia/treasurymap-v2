@@ -39,9 +39,6 @@ const MediaZone = ({ companyId }) => {
     getCompanyData();
   }, []);
 
-  console.log(articles);
-  console.log(videos);
-
   return (
     <div className={styles.mainContainer}>
       <div className={styles.countriesContainer}>
