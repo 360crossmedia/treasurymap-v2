@@ -1195,6 +1195,7 @@ const TreasuryMap = () => {
               {renderCategoryLogos('category-12')}  
               {renderCategoryLogos('category-13')}
               {renderCategoryLogos('category-14')}   
+              {renderCategoryLogos('category-15')}   
 
               {/* 
               {renderCategoryLogos('category-3', 5)}
@@ -1242,7 +1243,14 @@ const TreasuryMap = () => {
                   {
 
                   //EN ESTE BLOQUE SE RENDERIZAN LOS LOGOS SELECCIONADOS. 
+
+                  // AQUI AQUI AQUI AQUI HAY QUE FILTRAR SOLO LOS QUE ESTAN CON LIVE  AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI
+                  // AQUI AQUI AQUI AQUI HAY QUE FILTRAR SOLO LOS QUE ESTAN CON LIVE  AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI
+                  // AQUI AQUI AQUI AQUI HAY QUE FILTRAR SOLO LOS QUE ESTAN CON LIVE  AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI
+                  // AQUI AQUI AQUI AQUI HAY QUE FILTRAR SOLO LOS QUE ESTAN CON LIVE  AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI
+
                   
+
                   filteredLogos.map((logo, index) => (
                     logo.live &&
                     <div key={index} className="category-logo">
