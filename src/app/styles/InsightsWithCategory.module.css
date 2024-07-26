@@ -1,0 +1,162 @@
+.mainContainer {
+  margin: 0 56px;
+}
+
+.categoryName {
+  padding-bottom: 15px;
+  border-bottom: 2px solid black;
+}
+
+.card {
+  display: flex;
+  gap: 50px;
+  margin-top: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid black;
+  justify-content: space-between;
+}
+
+.cardData {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 77.5%;
+}
+
+.cardCoverImage {
+  height: 100%;
+  width: 100%;
+  max-height: 260px;
+  min-width: 260px;
+}
+
+.title:hover,
+.cardCoverImage:hover,
+.cardImageContainer:hover {
+  -webkit-filter: opacity(0.8);
+  filter: opacity(0.8);
+  cursor: pointer;
+}
+
+.cardImageContainer {
+  width: 23vw;
+  height: 200px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 10px;
+}
+
+.link {
+  text-decoration: none;
+  color: #000;
+}
+
+@media screen and (max-width: 1150px) {
+  .cardImageContainer {
+    width: 30vw;
+  }
+
+  .cardData {
+    width: 70%;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .cardImageContainer {
+    width: 35vw;
+  }
+
+  .cardData {
+    width: 65%;
+  }
+
+  .card {
+    gap: 15px;
+  }
+}
+
+@media screen and (max-width: 880px) {
+  .mainContainer {
+    margin: 0 20px;
+  }
+  .card {
+    gap: 15px;
+  }
+}
+
+@media screen and (max-width: 750px) {
+  .cardImageContainer {
+    width: 40vw;
+  }
+
+  .cardData {
+    width: 60%;
+  }
+}
+
+@media screen and (max-width: 650px) {
+  .cardImageContainer {
+    width: 45vw;
+  }
+
+  .cardData {
+    width: 50%;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .description {
+    max-height: 145px;
+    overflow: hidden;
+  }
+}
+
+@media screen and (max-width: 580px) {
+  .cardCoverImage {
+    min-width: 200px;
+    max-height: 200px;
+  }
+}
+
+@media screen and (max-width: 520px) {
+  .cardCoverImage {
+    min-width: 150px;
+    max-height: 150px;
+  }
+  .title {
+    font-size: 17px;
+    margin-bottom: 5px;
+  }
+  .cardData {
+    .description {
+      font-size: 13px;
+      margin-bottom: 5px;
+    }
+    .metadata {
+      font-size: 10px;
+      margin-bottom: 5px;
+    }
+  }
+  .card {
+    gap: 15px !important;
+  }
+  .description {
+    max-height: 80px;
+  }
+  .cardImageContainer {
+    height: 175px;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  .cardImageContainer {
+    height: 150px;
+  }
+}
+
+@media screen and (max-width: 420px) {
+  .cardImageContainer {
+    height: 120px;
+  }
+}

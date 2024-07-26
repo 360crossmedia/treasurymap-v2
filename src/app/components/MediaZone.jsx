@@ -1,7 +1,5 @@
 "use client";
 import styles from "../styles/MediaZone.module.css";
-import Image from "next/image";
-import ArrowRight from "../assets/arrow-right.svg";
 import { useEffect, useState } from "react";
 import { apiGetCompanyData } from "../service/apiGetCompanyData";
 import { apiGetCountryById } from "../service/apiGetCountryById";
@@ -9,13 +7,14 @@ import { apiGetAllVideosByCompanyId } from "../service/apiGetAllVideosByCompanyI
 import { apiGetAllArticlesByCompanyId } from "../service/apiGetAllArticlesByCompanyId";
 import { setIsLoading } from "../store/slices/isLoading.slice";
 import { useDispatch } from "react-redux";
+import { haveMediaContentToShow } from "../utils";
+import InsightsCard from "./InsightsCard";
 
 const MediaZone = ({ companyId }) => {
   const dispatch = useDispatch();
   const [countries, setCountries] = useState();
   const [videos, setVideos] = useState([]);
   const [articles, setArticles] = useState([]);
-  const [articleSelected, setArticleSelected] = useState(false);
   const [seeMoreActive, setSeeMoreActive] = useState(false);
 
   const getCompanyData = async () => {
@@ -39,8 +38,6 @@ const MediaZone = ({ companyId }) => {
   useEffect(() => {
     getCompanyData();
   }, []);
-
-  useEffect(() => console.log(articleSelected), [articleSelected]);
 
   return (
     <div className={styles.mainContainer}>
@@ -71,62 +68,15 @@ const MediaZone = ({ companyId }) => {
           </p>
         )}
       </div>
-      { (videos.length === 0 && articles.length === 0) && <h2 className={styles.title}>No media content uploaded yet.</h2> }
-      {!articleSelected &&
-        videos?.map((video, index) => (
-          <div key={index} className={styles.videoContainer}>
-            <div>
-              <p className={styles.title}>{video?.title}</p>
-              <iframe
-                className={styles.video}
-                src={video?.url}
-                title={video?.title}
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen
-              ></iframe>
-            </div>
-            <div className={styles.line}></div>
-          </div>
-        ))}
-      {!articleSelected &&
-        articles?.map((article, index) => (
-          <div key={index}>
-            <div className={styles.articleContainer}>
-              <p className={styles.articleTitle}>{article?.title}</p>
-              <p className={styles.articleDescription}>
-                {article?.body.length > 200
-                  ? `${article?.body.slice(0, 200)}...`
-                  : article?.body}
-              </p>
-              <a
-                className={styles.articleA}
-                onClick={() => setArticleSelected(index + 1)}
-              >
-                Read More
-                <Image src={ArrowRight} alt="" />
-              </a>
-            </div>
-            <div className={styles.line}></div>
-          </div>
-        ))}
-      {articleSelected && (
-        <div className={styles.articleContainer}>
-          <p className={styles.articleTitle}>
-            {articles[articleSelected - 1]?.title}
-          </p>
-          <p className={styles.articleDescription}>
-            {articles[articleSelected - 1]?.body}
-          </p>
-          <a
-            className={styles.articleA}
-            onClick={() => setArticleSelected(false)}
-          >
-            <Image className={styles.leftArrow} src={ArrowRight} alt="" />
-            Go back
-          </a>
-        </div>
+      {!haveMediaContentToShow(videos, articles) && (
+        <h2 className={styles.title}>No media content uploaded yet.</h2>
       )}
+      {articles?.map((article, index) => (
+        <InsightsCard key={index} publication={article} />
+      ))}
+      {videos?.map((video, index) => (
+        <InsightsCard key={index} publication={video} />
+      ))}
     </div>
   );
 };

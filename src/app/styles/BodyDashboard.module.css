@@ -24,7 +24,13 @@
   display: flex;
   align-items: center;
   margin-top: 65px;
-  margin-bottom: 58px;
+}
+
+.moreCountriesContainer {
+  .linesContainer {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
 }
 
 .line {
@@ -48,7 +54,6 @@
   width: 458px;
   height: 58px;
   padding: 16px 22px;
-  margin-bottom: 76px;
 }
 
 .colorWhite {
@@ -61,6 +66,69 @@
   margin-bottom: 15%;
 }
 
+.line2 {
+  width: 1.6px;
+  background-color: #e3e3e5;
+  height: 100%;
+}
+
+.radioButtonsContainer {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+}
+
+.inputsContianer {
+  display: flex;
+  gap: 5px;
+}
+
+.updateButton {
+  border-radius: 100px;
+  border: 0.8px solid #d9d9d9;
+  background: linear-gradient(89deg, #0f5199 4.29%, #44a8c0 99.49%);
+  box-shadow: 0px 10px 60px 0px rgba(0, 0, 0, 0.12);
+  color: #fff;
+  padding: 16.2px 22px;
+  width: 179px;
+}
+
+.deleteButton {
+  border-radius: 100px;
+  border: 0.8px solid #d9d9d9;
+  background: #fff;
+  box-shadow: 0px 10px 60px 0px rgba(0, 0, 0, 0.12);
+  padding: 16.2px 22px;
+  width: 179px;
+}
+
+.buttonsContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  gap: 20px;
+}
+
+.buttonsContainer2 {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 5rem;
+  justify-content: center;
+  align-items: center;
+  height: 20vh;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.modalLabel:hover {
+  cursor: pointer;
+}
+
+.modalLink {
+  font-size: 10px;
+  margin-right: 5px;
+}
+
 @media screen and (max-width: 1270px) {
   .mainContainer {
     margin-top: 140px;
@@ -70,10 +138,14 @@
 @media screen and (max-width: 950px) {
   .mediaZoneButton,
   .createCompanyButton {
-    width: 340px;
+    width: 160px;
+    height: 82px;
   }
   .line {
     width: 47vw;
+  }
+  .buttonsContainer2 {
+    gap: 1rem;
   }
 }
 

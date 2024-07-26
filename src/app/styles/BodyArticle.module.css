@@ -19,22 +19,17 @@
   gap: 24px;
 }
 
-.input {
+.input,
+.inputTextArea {
   border-radius: 30px;
-  border: 1px solid #eee;
+  border: 1px solid #ccc;
   background: #fff;
-  width: 851px;
   height: 63px;
   padding: 18px 26px;
 }
 
 .inputTextArea {
-  border-radius: 30px;
-  border: 1px solid #eee;
-  background: #fff;
-  width: 851px;
-  padding: 18px 26px;
-  resize: vertical;
+  height: inherit;
 }
 
 .buttonsContainer {
@@ -60,6 +55,84 @@
   box-shadow: 0px 10px 60px 0px rgba(0, 0, 0, 0.12);
   padding: 16.2px 22px;
   width: 179px;
+}
+
+.customButton {
+  height: 40vh;
+  margin-bottom: 7vh;
+}
+
+.customButton div {
+  background-color: white;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+}
+
+.customButton div:first-child {
+  background-color: white;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  border-bottom-left-radius: inherit;
+  border-bottom-right-radius: inherit;
+}
+
+.urlInstructionsSpan {
+  font-size: 12px;
+  color: red;
+  opacity: 100%;
+  margin-left: 15px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.urlInstructionsIcon {
+  font-size: 18px;
+  font-weight: normal;
+}
+
+.radius {
+  border-radius: 30px;
+  border: 1px solid #ccc;
+}
+
+.uploadPhotoContainer {
+  display: flex;
+  height: fit-content;
+  align-items: center;
+}
+
+.imageCard {
+  border-radius: 6px;
+  background: #f6fafe;
+  display: flex;
+  align-items: center;
+  padding: 20px 40px;
+}
+
+.inputFile {
+  position: absolute;
+  opacity: 0;
+  height: 25vh;
+  width: 15vw;
+  cursor: pointer;
+}
+
+.imageContainer {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.imageLabel {
+  position: absolute;
+  margin-bottom: 12%;
+  margin-left: 3.25%;
+  z-index: -2;
+  cursor: pointer;
+}
+
+.required {
+  color: red;
 }
 
 @media screen and (max-width: 1360px) {

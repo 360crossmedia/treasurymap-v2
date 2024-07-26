@@ -1,0 +1,21 @@
+.mainContainer {
+  margin: 30px 430px;
+  text-align: justify;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.link {
+  color: black;
+}
+
+.link:hover {
+  color: blue;
+}
+
+.strong {
+  font-weight: bold;
+}

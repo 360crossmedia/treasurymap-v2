@@ -8,6 +8,7 @@ import { apiGetCompanyAnswers } from "../service/apiGetCompanyAnswers";
 import { apiGetCountryById } from "../service/apiGetCountryById";
 import { useDispatch } from "react-redux";
 import { setIsLoading } from "../store/slices/isLoading.slice";
+import { formatTurnover } from "../utils";
 
 const Overview = ({ companyId }) => {
   const dispatch = useDispatch();
@@ -50,14 +51,22 @@ const Overview = ({ companyId }) => {
         </div>
         <div>
           <p className={styles.title}>Website</p>
-          <a className={styles.link} href={company?.companyWebsite}>
+          <a
+            className={styles.link}
+            target="_blank"
+            href={company?.companyWebsite}
+          >
             {company?.companyWebsite}
           </a>
         </div>
-        <div>
-          <p className={styles.title}>Turnover</p>
-          <p className={styles.description}>{company?.turnover}</p>
-        </div>
+        {company?.showTurnover && (
+          <div>
+            <p className={styles.title}>Turnover</p>
+            <p className={styles.description}>
+              {formatTurnover(company?.turnover)}
+            </p>
+          </div>
+        )}
         {company?.productName && (
           <div>
             <p className={styles.title}>Name of Product</p>
@@ -87,7 +96,7 @@ const Overview = ({ companyId }) => {
           width={0}
           height={0}
           sizes="100vw"
-          style={{ width: '80%', height: 'auto', maxHeight: "95%" }} // optional
+          style={{ width: "80%", height: "auto", maxHeight: "95%" }} // optional
         />
       </div>
       <div className={styles.countriesContainer}>
