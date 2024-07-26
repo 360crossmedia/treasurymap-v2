@@ -3897,10 +3897,10 @@ div.category-title.selected:hover {
     overflow: hidden;
 
   }
-  .interactive-map-inner {
-    /* overflow: hidden;
-    position: static; */
-  }
+  /* .interactive-map-inner {
+
+  } 
+  */
   .interactive-map-wrapper {
     width: 100%;
     margin-left: 0;
