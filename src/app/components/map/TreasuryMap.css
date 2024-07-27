@@ -2543,7 +2543,7 @@ top: 562px;
 }
 
 .category-title.category-title-2 {
-  transform: translate(430px,-20px);
+  transform: translate(430px, -20px) scale(0.85);
 }
 
 .category-title.category-title-3 {
@@ -2587,7 +2587,7 @@ top: 562px;
 }
 
 .category-title.category-title-13 {
-  transform: translate(-430px, -18px);
+  transform: translate(-462px, -36px) scale(0.75);
 }
 
 .category-title.category-title-14 {
