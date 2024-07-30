@@ -1164,7 +1164,7 @@ const TreasuryMap = () => {
             {/* LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO */}
 
             <div style={{transform: "translate(267px, -294px) scale(0.52)"}}>
-              <img src={`https://res.cloudinary.com/dq7aof6vb/image/upload/v1715385412/Frame_19_1_zxd0hz.png`} alt="" />
+              <img className='hardcodeLogo' src={`https://res.cloudinary.com/dq7aof6vb/image/upload/v1715385412/Frame_19_1_zxd0hz.png`} alt=""  />
             </div>
 
             {/* LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO */}

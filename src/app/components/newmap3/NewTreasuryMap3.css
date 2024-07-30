@@ -3203,6 +3203,28 @@ div.category-title.selected:hover {
   }
 }
 
+/* EFECTO DEL LOGO HARDCODEADO - EFECTO DEL LOGO HARDCODEADO EFECTO DEL LOGO HARDCODEADO - EFECTO DEL LOGO HARDCODEADO */
+/* EFECTO DEL LOGO HARDCODEADO - EFECTO DEL LOGO HARDCODEADO EFECTO DEL LOGO HARDCODEADO - EFECTO DEL LOGO HARDCODEADO */
+
+
+.hardcodeLogo {
+  border-radius: 8px;
+    cursor: pointer;
+    position: relative;
+    padding: 8px;
+    margin-top: -8px;
+    pointer-events: initial;
+    transition: 0.34s ease-in;
+    opacity: 0;
+    transform: scale(0.72) rotate3d(16, 28, 40, -4deg);
+    animation: showCategoryTitle 2.1s 0.84s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
+    z-index: 2;
+}
+
+/* EFECTO DEL LOGO HARDCODEADO - EFECTO DEL LOGO HARDCODEADO EFECTO DEL LOGO HARDCODEADO - EFECTO DEL LOGO HARDCODEADO */
+/* EFECTO DEL LOGO HARDCODEADO - EFECTO DEL LOGO HARDCODEADO EFECTO DEL LOGO HARDCODEADO - EFECTO DEL LOGO HARDCODEADO */
+
+
 .front-category-logos .category-logo .category-logo-inner:hover div {
   transition: 0.21s ease-out;
 }
