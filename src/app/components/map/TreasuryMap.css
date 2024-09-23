@@ -699,6 +699,18 @@ top: 562px;
     max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
 }
 
+.map-static-logos .category-4>div:nth-child(17) {
+  top: 346px;
+  left: 946px;
+
+}
+.map-static-logos .category-4>div:nth-child(17) .imagen {
+    max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
+    max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
+}
+
+/* CAMBIO */
+
 /* Static map logos - Category 5 */
 .map-static-logos .category-5 > div:nth-child(1) {
     top: 466px;
