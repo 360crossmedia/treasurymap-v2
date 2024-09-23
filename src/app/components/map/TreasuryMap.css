@@ -709,6 +709,7 @@ top: 562px;
     max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
 }
 
+/* CAMBIO */
 
 /* Static map logos - Category 5 */
 .map-static-logos .category-5 > div:nth-child(1) {
