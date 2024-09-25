@@ -599,17 +599,17 @@ top: 562px;
   left: 859px;
 }
 .map-static-logos .category-4>div:nth-child(6) .imagen {
-    max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
-    max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
+    max-height: calc( var(--maxHeight) * var(--sizeLogo) * 0.8 ) ;
+    max-width: calc( var(--maxWidth) * var(--sizeLogo) * 0.8 );
   }
 
 .map-static-logos .category-4 > div:nth-child(7) {
-    top: 478px;
-    left: 919px;
+    top: 484px;
+    left: 916px;
 }
 .map-static-logos .category-4>div:nth-child(7) .imagen {
-    max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
-    max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
+    max-height: calc( var(--maxHeight) * var(--sizeLogo) * 0.85 ) ;
+    max-width: calc( var(--maxWidth) * var(--sizeLogo) * 0.85 );
   }
 
 .map-static-logos .category-4 > div:nth-child(8) {
