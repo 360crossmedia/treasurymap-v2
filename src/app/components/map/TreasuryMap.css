@@ -655,8 +655,8 @@ top: 562px;
 .map-static-logos .category-4>div:nth-child(12) {
   top: 381px;
   left: 785px;
-
 }
+
 .map-static-logos .category-4>div:nth-child(12) .imagen {
     max-height: calc( var(--maxHeight) * var(--sizeLogo) * 0.85 ) ;
     max-width: calc( var(--maxWidth) * var(--sizeLogo) * 0.85 );
