@@ -549,7 +549,8 @@
 
 /* Static map logos - Category 4 */
 .map-static-logos .category-4 > div:nth-child(1) {
-  top: 515px;
+  /* top: 515px; */
+  top: 530px;
   left: 834px;
 }
 .map-static-logos .category-4>div:nth-child(1) .imagen {
@@ -649,14 +650,16 @@ top: 562px;
     max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
 }
 
+
+/* CAMBIOS AQUI  TOP, LEFT, SIZE*/
 .map-static-logos .category-4>div:nth-child(12) {
-  top: 376px;
-  left: 808px;
+  top: 381px;
+  left: 785px;
 
 }
 .map-static-logos .category-4>div:nth-child(12) .imagen {
-    max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
-    max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
+    max-height: calc( var(--maxHeight) * var(--sizeLogo) * 0.85 ) ;
+    max-width: calc( var(--maxWidth) * var(--sizeLogo) * 0.85 );
 }
 
 .map-static-logos .category-4>div:nth-child(13) {
