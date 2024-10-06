@@ -897,9 +897,7 @@ const TreasuryMap = () => {
               <div className={`category-logos ${frontMapOpen ? 'open' : ''}`} style={{ transform: `scale(${scaleMobileIcons})` }}>
                 <div className={`category-logos-inner ${filteredLogos.length > 10 ? 'more-than-10' : ''}`}>
                   
-                  
                   {
-
                   //EN ESTE BLOQUE SE RENDERIZAN LOS LOGOS SELECCIONADOS. 
                   
                   filteredLogos.map((logo, index) => (
@@ -913,7 +911,6 @@ const TreasuryMap = () => {
                     </div>
 
                   ))
-                  
                   }
 
                 </div>
