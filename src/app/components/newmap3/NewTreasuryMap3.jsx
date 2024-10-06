@@ -367,7 +367,7 @@ const TreasuryMap = () => {
 
     toggleSelectFilters(key)
     
-
+// CUANDO UN EL FILTRO DE KEYWORD ES ACTIVADO, LAS LINEAS A CONTINUACIÓN CORREN.
     if( key == 'keywords'){
 
       setFiltersConfig((prevConfig) => {
@@ -1254,42 +1254,16 @@ const TreasuryMap = () => {
               <div className={`category-logos ${frontMapOpen ? 'open' : ''}`} style={{ transform: `scale(${scaleMobileIcons})` }}>
                 <div className={`category-logos-inner ${filteredLogos.length > 10 ? 'more-than-10' : ''}`}>
                   
+                {
+  // AQUI VA EL NUEVO BLOQUE DE CODIGO QUE FILTRA LOS LOGOS DEL MAPA FRONTAL QUE YA FILTA LOS LOGOS CORRECTAMENTE
+                }
                   
-                  {
-
-                  //EN ESTE BLOQUE SE RENDERIZAN LOS LOGOS SELECCIONADOS. 
-
-                  // AQUI AQUI AQUI AQUI HAY QUE FILTRAR SOLO LOS QUE ESTAN CON LIVE  AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI
-                  // AQUI AQUI AQUI AQUI HAY QUE FILTRAR SOLO LOS QUE ESTAN CON LIVE  AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI
-                  // AQUI AQUI AQUI AQUI HAY QUE FILTRAR SOLO LOS QUE ESTAN CON LIVE  AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI
-                  // AQUI AQUI AQUI AQUI HAY QUE FILTRAR SOLO LOS QUE ESTAN CON LIVE  AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI
-
-                  
-
-                  // filteredLogos.map((logo, index) => (
-                  //   logo.live &&
-                  //   <div key={index} className="category-logo">
-                  //     <div className="category-logo-inner">
-                  //       <a href={logo.url}>
-                  //         <div style={{ backgroundImage: `url(${logo.image})` }}></div>
-                  //       </a>
-                  //     </div>
-                  //   </div>
-                  // ))
-
-                  // AQUI VA EL NUEVO BLOQUE DE CODIGO QUE FILTRA LOS LOGOS DEL MAPA FRONTAL QUE YA FILTA LOS LOGOS CORRECTAMENTE
-                  // AQUI VA EL NUEVO BLOQUE DE CODIGO QUE FILTRA LOS LOGOS DEL MAPA FRONTAL QUE YA FILTA LOS LOGOS CORRECTAMENTE
-                  // AQUI VA EL NUEVO BLOQUE DE CODIGO QUE FILTRA LOS LOGOS DEL MAPA FRONTAL QUE YA FILTA LOS LOGOS CORRECTAMENTE
-                  // AQUI VA EL NUEVO BLOQUE DE CODIGO QUE FILTRA LOS LOGOS DEL MAPA FRONTAL QUE YA FILTA LOS LOGOS CORRECTAMENTE
-
-
+                {
                   dataByCategories[selectedCategory]?.map(( companyElement , index) => {
                     console.log('selectedCategory ',selectedCategory);
 
                     if(companyElement.live){
                       return(
-
-
                         <div key={index} className="category-logo">
                           <div className="category-logo-inner">
                             <a href={`/companyPage/${companyElement.id}`}>
@@ -1297,28 +1271,30 @@ const TreasuryMap = () => {
                             </a>
                           </div>
                         </div>
-
-
-                        // <div key={index} id={`div-static-${companyElement.id}`}>
-                        //   <a href={`/companyPage/${companyElement.id}`} >
-                        //     <div className="category-logo-wrapper">              
-                        //       <img
-                        //         src={companyElement.logo}
-                        //         id={`image-${companyElement.id}`}
-                        //         alt="Logo"
-                        //         className={`imagen`}
-                        //       />
-                        //     </div>
-                        //   </a>
-                        // </div> 
-
                         )
                     }
                   })
-
-                  
-                  
-                  }
+                }
+                {
+                  frontMapOpen > 0 && 
+                    filteredLogos.map((company, index) =>{
+                      // console.log(`frontMapOpen > 0 :${frontMapOpen > 0}`);                  
+                      // console.log(company);
+                      // console.log(company.live);
+                      if(company.live){
+                        //console.log("entró al true");
+                        return(
+                          <div key={index} className="category-logo">
+                            <div className="category-logo-inner">
+                              <a href={company.url}>
+                                <div style={{ backgroundImage: `url(${company.image})` }}></div>
+                              </a>
+                            </div>
+                          </div>
+                        )
+                      }
+                    }) 
+                }
 
                 </div>
               </div>
