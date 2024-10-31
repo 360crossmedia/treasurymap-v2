@@ -916,8 +916,8 @@ top: 562px;
 
 /* Static map logos - Category 6 */
 .map-static-logos .category-6 > div:nth-child(1) {
-  top: 412px;
-  left: 519px;
+  top: 424px;
+  left: 502px;
 }
 .map-static-logos .category-6>div:nth-child(1) .imagen {
     max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
@@ -926,16 +926,16 @@ top: 562px;
 
 .map-static-logos .category-6 > div:nth-child(2) {
   top: 420px;
-  left: 602px;
+  left: 579px;
 }
 .map-static-logos .category-6>div:nth-child(2) .imagen {
-    max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
-    max-width: calc( var(--maxWidth) * var(--sizeLogo) * 1 );
+    max-height: calc( var(--maxHeight) * var(--sizeLogo) * 0.9 ) ;
+    max-width: calc( var(--maxWidth) * var(--sizeLogo) * 0.9 );
   }
 
 .map-static-logos .category-6 > div:nth-child(3) {
-  top: 445px;
-  left: 547px;
+  top: 455px;
+  left: 570px;
 }
 .map-static-logos .category-6>div:nth-child(3) .imagen {
     max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
@@ -952,8 +952,8 @@ top: 562px;
   }
 
 .map-static-logos .category-6 > div:nth-child(5) {
-  top: 464px;
-  left: 609px;
+  top: 471px;
+  left: 618px;
 }
 .map-static-logos .category-6>div:nth-child(5) .imagen {
     max-height: calc( var(--maxHeight) * var(--sizeLogo) * 1 ) ;
@@ -1069,8 +1069,8 @@ top: 562px;
 }
 
 .map-static-logos .category-6>div:nth-child(18) {
-  top: 622px;
-  left: 497px;
+  top: 389px;
+  left: 545px;
 
 }
 
@@ -1091,8 +1091,8 @@ top: 562px;
 }
 
 .map-static-logos .category-6>div:nth-child(20) {
-  top: 622px;
-  left: 497px;
+  top: 558px;
+  left: 653px;
 
 }
 
@@ -1102,8 +1102,8 @@ top: 562px;
 }
 
 .map-static-logos .category-6>div:nth-child(21) {
-  top: 622px;
-  left: 497px;
+  top: 623px;
+  left: 613px;
 
 }
 
@@ -1113,13 +1113,13 @@ top: 562px;
 }
 
 .map-static-logos .category-6>div:nth-child(22) {
-  top: 622px;
+  top: 383px;
   left: 497px;
 }
 
 .map-static-logos .category-6>div:nth-child(22) .imagen {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1.1);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1.1); 
 }
 
 .map-static-logos .category-6>div:nth-child(23) {
@@ -2586,7 +2586,7 @@ top: 562px;
 }
 
 .category-title.category-title-6 {
-  transform: translate(192px, 544px);
+  transform: translate(221px,556px) scale(0.8);
 }
 
 .category-title.category-title-7 {
