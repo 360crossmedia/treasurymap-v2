@@ -3,11 +3,11 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import styles from "./styles/layout.module.css";
 
-import TreasuryMap from "./components/map/TreasuryMap";
-import "./components/map/TreasuryMap.css";
+// import TreasuryMap from "./components/map/TreasuryMap";
+// import "./components/map/TreasuryMap.css";
 
-// import NewTreasuryMap from './components/newmap/NewTreasuryMap';
-// import './components/newmap/NewTreasuryMap.css'
+import NewTreasuryMap from './components/newmap3/NewTreasuryMap3.jsx';
+import './components/newmap3/NewTreasuryMap3.css'
 
 const Layout = () => {
   return (
@@ -19,7 +19,9 @@ const Layout = () => {
         <Navbar buttonLabel={"Log In"} />
       </div>
     
-      <TreasuryMap />
+      {/* <TreasuryMap /> */}
+
+      <NewTreasuryMap />
 
       <Footer />
     </div>
