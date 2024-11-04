@@ -6,7 +6,7 @@ import styles from "../styles/layout.module.css";
 // import TreasuryMap from "./components/map/TreasuryMap";
 // import "./components/map/TreasuryMap.css";
 
-import NewTreasuryMap from '../components/newmap3/NewTreasuryMap3.jsx';
+import NewTreasuryMap3 from '../components/newmap3/NewTreasuryMap3.jsx';
 import '../components/newmap3/NewTreasuryMap3.css'
 
 const Layout = () => {
@@ -26,7 +26,7 @@ const Layout = () => {
       
       */}
       
-      <NewTreasuryMap />
+      <NewTreasuryMap3 />
 
       <Footer />
     </div>
