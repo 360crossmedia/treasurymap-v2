@@ -1239,11 +1239,38 @@ const TreasuryMap = () => {
                     </div>
                   </div>
                   <div className="mobile-back-icons">
-                    {Array.from({ length: 6 }).map((_, index) => (
-                      <div key={index}>
-                        {category.logos[index - 1]?.image && <img src={category.logos[index - 1]?.image} alt="Logo" />}
-                      </div>
-                    ))}
+                    {
+                    // Array.from({ length: 6 }).map((_, index) => (
+                    //   <div key={index}>
+                    //     {category.logos[index - 1]?.live && <img src={category.logos[index - 1]?.image} id={category.logos[index - 1].url.split('/').pop()} alt="ogo" />}
+                    //   </div>
+                    // ))
+                    }
+
+                    {
+
+                      Array.from({ length: 6 }).map((_, i) => (
+                        
+                        
+                        <div key={i}>
+                          {
+                            
+                            //console.log(dataByCategories[category.categoryKey]?.[i]?.name)
+                            
+                            //console.log(`${dataByCategories[category.categoryKey][i].name} - live: ${dataByCategories[category.categoryKey][i].live}`)
+
+                            dataByCategories[category.categoryKey]?.[i]?.live && <img src={dataByCategories[category.categoryKey]?.[i]?.logo} id={dataByCategories[category.categoryKey]?.[i]?.id} alt="logo" />
+                          
+                          }
+                        
+                        </div>                        
+                        
+                      ))
+
+                    }
+
+
+
                   </div>
                   <div className="category-title-see-all" onClick={() => selectCategory(`category-${i + 1}`)}>
                     See all
