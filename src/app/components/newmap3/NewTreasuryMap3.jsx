@@ -1239,37 +1239,28 @@ const TreasuryMap = () => {
                     </div>
                   </div>
                   <div className="mobile-back-icons">
-                    {
-                    // Array.from({ length: 6 }).map((_, index) => (
-                    //   <div key={index}>
-                    //     {category.logos[index - 1]?.live && <img src={category.logos[index - 1]?.image} id={category.logos[index - 1].url.split('/').pop()} alt="ogo" />}
-                    //   </div>
-                    // ))
-                    }
 
                     {
+                        dataByCategories[category.categoryKey]?.reduce((acc, item, i) => {
+                          if (acc.count >= 6) return acc; // Stop after rendering 6 elements
 
-                      Array.from({ length: 6 }).map((_, i) => (
-                        
-                        
-                        <div key={i}>
-                          {
-                            
-                            //console.log(dataByCategories[category.categoryKey]?.[i]?.name)
-                            
-                            //console.log(`${dataByCategories[category.categoryKey][i].name} - live: ${dataByCategories[category.categoryKey][i].live}`)
-
-                            dataByCategories[category.categoryKey]?.[i]?.live && <img src={dataByCategories[category.categoryKey]?.[i]?.logo} id={dataByCategories[category.categoryKey]?.[i]?.id} alt="logo" />
-                          
+                          if (item?.live) {
+                            acc.count++; // Increment the count
+                            acc.elements.push(
+                                <div key={i}>
+                                  <img
+                                      src={item.logo}
+                                      id={item.id}
+                                      alt="logo"
+                                  />
+                                </div>
+                            );
                           }
-                        
-                        </div>                        
-                        
-                      ))
+
+                          return acc;
+                        }, { count: 0, elements: [] }).elements
 
                     }
-
-
 
                   </div>
                   <div className="category-title-see-all" onClick={() => selectCategory(`category-${i + 1}`)}>
