@@ -9,6 +9,7 @@ import "primereact/resources/themes/lara-light-cyan/theme.css";
 import LoadingLogic from "./components/LoadingLogic";
 import LoadingScreen from "./components/LoadingScreen";
 import ProtectedRoutes from "./components/ProtectedRoutes";
+import Script from 'next/script';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,6 +20,24 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head>
+        <Script
+          strategy="afterInteractive"
+          src="https://www.googletagmanager.com/gtag/js?id=G-T4FXYK0D5J"
+        />
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+        >
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-T4FXYK0D5J');
+          `}
+        </Script>
+      </head>
       <PrimeReactProvider value={{ unstyled: false }}>
         <Providers>
           <ProtectedRoutes>
