@@ -168,7 +168,7 @@ const HeaderCompanyPage = ({ companyId }) => {
                 <p className={styles.blueCardP}>{office?.name}</p>
               </div>
             ))}
-          {companyOffices?.length > 4 && (
+          {companyOffices?.length >= 4 && (
             <div
               onClick={() => setShow(true)}
               className={`${styles.blueCard} ${styles.color}`}
