@@ -818,183 +818,6 @@ const TreasuryMap = () => {
     <div className="map-wrapper">
 
       <div id="interactive-map" style={{ backgroundImage: `url(${mapBackgroundImage})` }}>
-        <div className={`interactive-map-wrapper ${loaded ? 'loaded' : ''}`} >
-
-      {/*
-      ASI ESTABA ANTES DEL NEW MAP 
-      <div id="interactive-map">
-        <div className={`interactive-map-wrapper ${loaded ? 'loaded' : ''}`} style={{ backgroundImage: `url(${mapBackgroundImage})` }}> 
-        */}
-          
-          <div className={`interactive-map-inner ${frontMapOpen ? 'front-open' : ''}`}>
-            
-            {/* LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO */}
-            {/* LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO */}
-            {/* LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO */}
-
-            {/* <div style={{transform: "translate(267px, -294px) scale(0.52)"}}>
-              <img className='hardcodeLogo' src={`https://res.cloudinary.com/dq7aof6vb/image/upload/v1715385412/Frame_19_1_zxd0hz.png`} alt=""  />
-            </div> */}
-
-            {/* LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO */}
-            {/* LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO */}
-            {/* LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO */}
-            
-
-            
-            <div className="map-title-wrapper">
-              <img className="map-title" src={mapCenterTitle} alt="" />
-            </div> 
-            <div className="map-static-logos">
-              <div className="dividers">
-                {Array.from({ length: 16 }).map((_, index) => (
-                  <div key={index}><span></span></div>
-                ))}
-              </div>
-              <div className='interfacedLogo'>
-                <div><img src={'https://res.cloudinary.com/dq7aof6vb/image/upload/v1704650633/category-7-logo-8_kpxhtq.png'} alt="" /></div>
-              </div>
-
-              {
-              /*  "MANUALMENTE" COLOCA CADA UNA DE LAS CATEGORIAS PATA QUE EJECUTE LA FUNCION RENDERCATEGORYLOGOS*/
-              // ! RENDERIZADO LOGOS ESTATICOS
-              // ! RENDERIZADO LOGOS ESTATICOS
-              // ! RENDERIZADO LOGOS ESTATICOS
-
-              }
-
-
-              {renderCategoryLogos('category-1')} 
-              {renderCategoryLogos('category-2')}
-              {renderCategoryLogos('category-3')}              
-              {renderCategoryLogos('category-4')}   
-              {renderCategoryLogos('category-5')}   
-              {renderCategoryLogos('category-6')}   
-              {renderCategoryLogos('category-7')}  
-              {renderCategoryLogos('category-8')}  
-              {renderCategoryLogos('category-9')}  
-              {renderCategoryLogos('category-10')}  
-              {renderCategoryLogos('category-11')}       
-              {renderCategoryLogos('category-12')}  
-              {renderCategoryLogos('category-13')}
-              {renderCategoryLogos('category-14')}   
-              {renderCategoryLogos('category-15')}   
-
-              {/* 
-              {renderCategoryLogos('category-3', 5)}
-              {renderCategoryLogos('category-4', 9)}
-              {renderCategoryLogos('category-5', 13)}
-              {renderCategoryLogos('category-6', 17)}
-              {renderCategoryLogos('category-7', 8)}
-              {renderCategoryLogos('category-8', 7)}
-              {renderCategoryLogos('category-9', 5)}
-              {renderCategoryLogos('category-10', 8)}
-              {renderCategoryLogos('category-11', 6)}
-              {renderCategoryLogos('category-12', 4)}
-              {renderCategoryLogos('category-13', 15)}
-              {renderCategoryLogos('category-14', 6)} */}
-
-
-            </div>
-            <div className={`front-category-logos ${resettingFrontLogos ? 'resetting' : ''}`}>
-              {mapData.map((category, i) => (
-                <div
-                  key={category.id}
-                  className={`category-title category-title-${category.id + 1} ${selectedCategory === `category-${i + 1}` ? 'selected' : ''}`}
-                >
-                  <div className="category-title-inner">
-                    <div className="category-title-image">
-                      <img src={category.categoryImage} onClick={() => selectCategory(`category-${i + 1}`)} />
-                    </div>
-                  </div>
-                  <div className="mobile-back-icons">
-
-                    {
-                        dataByCategories[category.categoryKey]?.reduce((acc, item, i) => {
-                          if (acc.count >= 6) return acc; // Stop after rendering 6 elements
-
-                          if (item?.live) {
-                            acc.count++; // Increment the count
-                            acc.elements.push(
-                                <div key={i}>
-                                  <img
-                                      src={item.logo}
-                                      id={item.id}
-                                      alt="logo"
-                                  />
-                                </div>
-                            );
-                          }
-
-                          return acc;
-                        }, { count: 0, elements: [] }).elements
-
-                    }
-
-                  </div>
-                  <div className="category-title-see-all" onClick={() => selectCategory(`category-${i + 1}`)}>
-                    See all
-                  </div>
-                </div>
-              ))}
-
-              <div className={`category-logos ${frontMapOpen ? 'open' : ''}`} style={{ transform: `scale(${scaleMobileIcons})` }}>
-                <div className={`category-logos-inner ${filteredLogos.length > 10 ? 'more-than-10' : ''}`}>
-                  
-                {
-  // AQUI VA EL NUEVO BLOQUE DE CODIGO QUE FILTRA LOS LOGOS DEL MAPA FRONTAL QUE YA FILTA LOS LOGOS CORRECTAMENTE
-                }
-                  
-                {
-                  dataByCategories[selectedCategory]?.map(( companyElement , index) => {
-                    console.log('selectedCategory ',selectedCategory);
-
-                    if(companyElement.live){
-                      return(
-                        <div key={index} className="category-logo">
-                          <div className="category-logo-inner">
-                            <a href={`/companyPage/${companyElement.id}`}>
-                              <div style={{ backgroundImage: `url(${companyElement.logo})` }}></div>
-                            </a>
-                          </div>
-                        </div>
-                        )
-                    }
-                  })
-                }
-                {
-                  frontMapOpen > 0 && 
-                    filteredLogos.map((company, index) =>{
-                      // console.log(`frontMapOpen > 0 :${frontMapOpen > 0}`);                  
-                      // console.log(company);
-                      // console.log(company.live);
-                      if(company.live){
-                        //console.log("entró al true");
-                        return(
-                          <div key={index} className="category-logo">
-                            <div className="category-logo-inner">
-                              <a href={company.url}>
-                                <div style={{ backgroundImage: `url(${company.image})` }}></div>
-                              </a>
-                            </div>
-                          </div>
-                        )
-                      }
-                    }) 
-                }
-
-                </div>
-              </div>
-            </div>
-            <div className={`menu-mobile ${mobileOpen ? 'open' : ''}`}>
-              <h2 className='mobile-header'>Filter by</h2>
-              <div onClick={toggleMobileFilters}>{ mobileOpen ? 'X' : '+' }</div>
-            </div>
-          </div>
-          <div className={`map-outline ${!!selectedCategory ? 'visible' : ''}`}></div>
-          {/* <div className={`map-outline ${!!selectedCategory ? 'visible' : ''}`} onClick={selectCategory}></div> */}
-
-        </div>
 
         <div className={`interactive-map-filter ${mobileOpen ? 'mobile-open' : ''}`}>
           <div className="interactive-map-filter-inner">
@@ -1326,6 +1149,186 @@ const TreasuryMap = () => {
             <div onClick={clearAllFilters}>Clear filters</div>
           </div>
         </div>
+
+        <div className={`interactive-map-wrapper ${loaded ? 'loaded' : ''}`} >
+
+      {/*
+      ASI ESTABA ANTES DEL NEW MAP 
+      <div id="interactive-map">
+        <div className={`interactive-map-wrapper ${loaded ? 'loaded' : ''}`} style={{ backgroundImage: `url(${mapBackgroundImage})` }}> 
+        */}
+          
+          <div className={`interactive-map-inner ${frontMapOpen ? 'front-open' : ''}`}>
+            
+            {/* LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO */}
+            {/* LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO */}
+            {/* LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO */}
+
+            {/* <div style={{transform: "translate(267px, -294px) scale(0.52)"}}>
+              <img className='hardcodeLogo' src={`https://res.cloudinary.com/dq7aof6vb/image/upload/v1715385412/Frame_19_1_zxd0hz.png`} alt=""  />
+            </div> */}
+
+            {/* LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO */}
+            {/* LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO */}
+            {/* LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO */}
+            
+
+            
+            <div className="map-title-wrapper">
+              <img className="map-title" src={mapCenterTitle} alt="" />
+            </div> 
+            <div className="map-static-logos">
+              <div className="dividers">
+                {Array.from({ length: 16 }).map((_, index) => (
+                  <div key={index}><span></span></div>
+                ))}
+              </div>
+              <div className='interfacedLogo'>
+                <div><img src={'https://res.cloudinary.com/dq7aof6vb/image/upload/v1704650633/category-7-logo-8_kpxhtq.png'} alt="" /></div>
+              </div>
+
+              {
+              /*  "MANUALMENTE" COLOCA CADA UNA DE LAS CATEGORIAS PATA QUE EJECUTE LA FUNCION RENDERCATEGORYLOGOS*/
+              // ! RENDERIZADO LOGOS ESTATICOS
+              // ! RENDERIZADO LOGOS ESTATICOS
+              // ! RENDERIZADO LOGOS ESTATICOS
+
+              }
+
+
+              {renderCategoryLogos('category-1')} 
+              {renderCategoryLogos('category-2')}
+              {renderCategoryLogos('category-3')}              
+              {renderCategoryLogos('category-4')}   
+              {renderCategoryLogos('category-5')}   
+              {renderCategoryLogos('category-6')}   
+              {renderCategoryLogos('category-7')}  
+              {renderCategoryLogos('category-8')}  
+              {renderCategoryLogos('category-9')}  
+              {renderCategoryLogos('category-10')}  
+              {renderCategoryLogos('category-11')}       
+              {renderCategoryLogos('category-12')}  
+              {renderCategoryLogos('category-13')}
+              {renderCategoryLogos('category-14')}   
+              {renderCategoryLogos('category-15')}   
+
+              {/* 
+              {renderCategoryLogos('category-3', 5)}
+              {renderCategoryLogos('category-4', 9)}
+              {renderCategoryLogos('category-5', 13)}
+              {renderCategoryLogos('category-6', 17)}
+              {renderCategoryLogos('category-7', 8)}
+              {renderCategoryLogos('category-8', 7)}
+              {renderCategoryLogos('category-9', 5)}
+              {renderCategoryLogos('category-10', 8)}
+              {renderCategoryLogos('category-11', 6)}
+              {renderCategoryLogos('category-12', 4)}
+              {renderCategoryLogos('category-13', 15)}
+              {renderCategoryLogos('category-14', 6)} */}
+
+
+            </div>
+            <div className={`front-category-logos ${resettingFrontLogos ? 'resetting' : ''}`}>
+              {mapData.map((category, i) => (
+                <div
+                  key={category.id}
+                  className={`category-title category-title-${category.id + 1} ${selectedCategory === `category-${i + 1}` ? 'selected' : ''}`}
+                >
+                  <div className="category-title-inner">
+                    <div className="category-title-image">
+                      <img src={category.categoryImage} onClick={() => selectCategory(`category-${i + 1}`)} />
+                    </div>
+                  </div>
+                  <div className="mobile-back-icons">
+
+                    {
+                        dataByCategories[category.categoryKey]?.reduce((acc, item, i) => {
+                          if (acc.count >= 6) return acc; // Stop after rendering 6 elements
+
+                          if (item?.live) {
+                            acc.count++; // Increment the count
+                            acc.elements.push(
+                                <div key={i}>
+                                  <img
+                                      src={item.logo}
+                                      id={item.id}
+                                      alt="logo"
+                                  />
+                                </div>
+                            );
+                          }
+
+                          return acc;
+                        }, { count: 0, elements: [] }).elements
+
+                    }
+
+                  </div>
+                  <div className="category-title-see-all" onClick={() => selectCategory(`category-${i + 1}`)}>
+                    See all
+                  </div>
+                </div>
+              ))}
+
+              <div className={`category-logos ${frontMapOpen ? 'open' : ''}`} style={{ transform: `scale(${scaleMobileIcons})` }}>
+                <div className={`category-logos-inner ${filteredLogos.length > 10 ? 'more-than-10' : ''}`}>
+                  
+                {
+  // AQUI VA EL NUEVO BLOQUE DE CODIGO QUE FILTRA LOS LOGOS DEL MAPA FRONTAL QUE YA FILTA LOS LOGOS CORRECTAMENTE
+                }
+                  
+                {
+                  dataByCategories[selectedCategory]?.map(( companyElement , index) => {
+                    console.log('selectedCategory ',selectedCategory);
+
+                    if(companyElement.live){
+                      return(
+                        <div key={index} className="category-logo">
+                          <div className="category-logo-inner">
+                            <a href={`/companyPage/${companyElement.id}`}>
+                              <div style={{ backgroundImage: `url(${companyElement.logo})` }}></div>
+                            </a>
+                          </div>
+                        </div>
+                        )
+                    }
+                  })
+                }
+                {
+                  frontMapOpen > 0 && 
+                    filteredLogos.map((company, index) =>{
+                      // console.log(`frontMapOpen > 0 :${frontMapOpen > 0}`);                  
+                      // console.log(company);
+                      // console.log(company.live);
+                      if(company.live){
+                        //console.log("entró al true");
+                        return(
+                          <div key={index} className="category-logo">
+                            <div className="category-logo-inner">
+                              <a href={company.url}>
+                                <div style={{ backgroundImage: `url(${company.image})` }}></div>
+                              </a>
+                            </div>
+                          </div>
+                        )
+                      }
+                    }) 
+                }
+
+                </div>
+              </div>
+            </div>
+            <div className={`menu-mobile ${mobileOpen ? 'open' : ''}`}>
+              <h2 className='mobile-header'>Filter by</h2>
+              <div onClick={toggleMobileFilters}>{ mobileOpen ? 'X' : '+' }</div>
+            </div>
+          </div>
+          <div className={`map-outline ${!!selectedCategory ? 'visible' : ''}`}></div>
+          {/* <div className={`map-outline ${!!selectedCategory ? 'visible' : ''}`} onClick={selectCategory}></div> */}
+
+        </div>
+
+
 
       </div>
 
