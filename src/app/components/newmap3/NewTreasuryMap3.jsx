@@ -817,337 +817,6 @@ const TreasuryMap = () => {
   return (
     <div className="map-wrapper">
 
-      <div className={`interactive-map-filter ${mobileOpen ? 'mobile-open' : ''}`}>
-        <div className="interactive-map-filter-inner">
-
-
-
-
-
-          <div className="category-filters-wrapper">
-            {/* <p>{filtersConfig['keywords'].title}</p> */}
-            
-
-            {/*  EMPIEZA EL SEARCH BAR DE KEYWORDS   ------------------------------*/}
-
-            <p className={"text-style-titles"}>{`Keywords`}</p>
-            
-            {/* <div className="category-filters"> */}
-
-
-                {/* <div className={`filters-selection-list ${filtersConfig['keywords'].open ? 'open' : ''}`}> */}
-                
-                <div className={"div-search-input"}>
-                  <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Enter keyword..."
-                    className={'input-placeholder'}
-                    style={{ flexGrow: 1, outline: "none" }}
-                  />
-                  <button 
-                  onClick={handleSearch} 
-                  className={"search-button"}
-                  >
-                    {/* <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--> */}
-                    <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6 .1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
-                  </button>
-                </div>
-
-
-
-                {/* PARA GENERAT LA ETIQUETA DEL KEYWOR ELEGIDO */}
-                <div className="current-filters-list">
-                  <div className="current-filters-list-wrapper">
-                  {
-                  filtersConfig['keywords'].selectedFilters.length >= 2 && (
-                    // <span onClick={() => clearFilters('keywords')}>Clear</span>
-
-                    <div key={'keyword1'} className="current-filters-list-item" onClick={() => clearFilters('keywords')}>
-                      {renderSearched} <span style={{display: 'inline', color:"black", fontSize: "larger" , fontWeight: "bold"}} >x</span>   
-                    </div>                      
-
-
-                  )
-                  }                     
-
-                  </div>
-
-                </div>
-
-
-          </div>
-
-
-
-
-          <div className="category-selection-wrapper">
-            <p className={"text-style-titles"}>Category</p>
-            <div className="category-selection">
-              <div className="category-selection-active" onClick={toggleSelectCategory}>
-                <span className="selected">{selectedCategory ? categories[selectedCategory] : null}</span>
-                <span style={{fontSize:"small"}}>{!selectedCategory && 'Select category'}</span>
-              </div>
-
-              {
-              // <div className={`category-selection-list ${selectCategoryOpen ? 'open' : ''}`}>
-              //   {Object.keys(categories).map((key) => (
-              //     <div
-              //       key={key}
-              //       className={selectedCategory === key ? 'selected' : ''}
-              //       onClick={() => selectCategory(key)}>
-              //       {categories[key]}
-              //     </div>
-              //   ))}
-              // </div>
-              }
-
-              <div className={`category-selection-list ${selectCategoryOpen ? 'open' : ''}`}>
-                {
-                  Object.entries(categories) // Convert object to array of key-value pairs
-                    .sort((a, b) => a[1].localeCompare(b[1])) // Sort the array alphabetically by value
-                    .map(([key, value]) => (
-                      <div
-                        key={key}
-                        className={selectedCategory === key ? 'selected' : ''}
-                        onClick={() => selectCategory(key)}>
-                        {value}
-                      </div>
-                    ))
-                }
-              </div>
-              
-
-            </div>
-          </div>
-
-
-
-
-          <div className="category-filters-wrapper">
-            <p className={"text-style-titles"}>{filtersConfig['subcategories'].title}</p>
-            {/* <p className={"text-style-titles"}>{`Sub-Category`}</p> */}
-
-            <div className="category-filters">
-              
-              {/* ESTE CODIGO ES PARA ABRIR EL DRIPDOWN */}
-              <span className="category-filters-placeholder" onClick={() => toggleSelectFilters('subcategories')}>
-                {filtersConfig['subcategories'].placeholder}
-              </span>
-              
-
-
-              {/* ESTE CODIGO ES LA RENDERIZACION DEL DROPDOWN */}
-              {
-              // <div className={`filters-selection-list ${filtersConfig['subcategories'].open ? 'open' : ''}`}>
-              //     {
-              //       // RENDERIZACION DEL DROPDOWN DE SUBCATEGORIES
-              //       subcategoriesData && Object.keys(filtersConfig['subcategories'].allFilters).map((key) => {
-                            
-              //               //console.log(key);
-              //               const subcategoryId = filtersConfig['subcategories'].allFilters[key];
-              //               const subcategory = subcategoriesData.find(subcat => subcat.id === subcategoryId);
-                            
-              //               return (
-              //                   <div
-              //                       key={key}
-              //                       onClick={() => selectFilter('subcategories', subcategoryId)}
-              //                       className={filtersConfig['subcategories'].selectedFilters.includes(subcategoryId) ? 'selected' : ''}>
-                                    
-              //                       {/* Render the name of the subcategory */}
-                                    
-              //                       {subcategory ? subcategory.name : 'Unknown Subcategory'}
-
-              //                   </div>
-              //               );
-              //           })
-              //     }      
-              // </div>
-              }
-
-
-              <div className={`filters-selection-list ${filtersConfig['subcategories'].open ? 'open' : ''}`}>
-                  {
-                      // RENDERIZACION DEL DROPDOWN DE SUBCATEGORIES
-                      subcategoriesData && 
-                      Object.keys(filtersConfig['subcategories'].allFilters)
-                      .map(key => {
-                          // Get the subcategory ID from the filtersConfig
-                          const subcategoryId = filtersConfig['subcategories'].allFilters[key];
-                          // Find the corresponding subcategory in the subcategoriesData
-                          return subcategoriesData.find(subcat => subcat.id === subcategoryId);
-                      })
-                      .filter(subcategory => subcategory) // Filter out any undefined subcategories
-                      .sort((a, b) => a.name.localeCompare(b.name)) // Sort the subcategories alphabetically
-                      .map(subcategory => (
-                          <div
-                              key={subcategory.id}
-                              onClick={() => selectFilter('subcategories', subcategory.id)}
-                              className={filtersConfig['subcategories'].selectedFilters.includes(subcategory.id) ? 'selected' : ''}>
-
-                              {/* Render the name of the subcategory */}
-                              {subcategory.name}
-                          </div>
-                      ))
-                  }      
-              </div>
-
-            </div>
-
-
-
-
-            <div className="current-filters-list">
-              <div className="current-filters-list-wrapper">
-                {filtersConfig['subcategories'].selectedFilters.map((filter) => (
-                  <div key={filter} className="current-filters-list-item" onClick={() => selectFilter('subcategories', filter)}>
-                    {subcategoriesData.find(r => r.id === filter)?.name || filter} <span style={{display: 'inline', color:"black", fontSize: "larger" , fontWeight: "bold"}} >x</span>                       
-                  </div>
-
-                ))}
-              </div>
-              {filtersConfig['subcategories'].selectedFilters.length >= 2 && (
-                <span onClick={() => clearFilters('subcategories')}>Clear</span>
-              )}
-            </div>
-          </div>
-
-
-
-
-
-          <div className="category-filters-wrapper">
-            <p className={"text-style-titles"}>{filtersConfig['headequarterLocation'].title}</p>
-            {/* <p className={"text-style-titles"}>{`Headquarter location`}</p>               */}
-            <div className="category-filters">
-              <span className="category-filters-placeholder" onClick={() => toggleSelectFilters('headequarterLocation')}>
-                {filtersConfig['headequarterLocation'].placeholder}
-              </span>
-              <div className={`filters-selection-list ${filtersConfig['headequarterLocation'].open ? 'open' : ''}`}>
-                
-                {
-
-                //RENDERIZACION DEL DROPDOWN DE HEADQUARTER
-
-                Object.keys(filtersConfig['headequarterLocation'].allFilters).map((key) => (
-                  <div
-                    key={key}
-                    onClick={() => selectFilter('headequarterLocation', filtersConfig['headequarterLocation'].allFilters[key])}
-                    className={filtersConfig['headequarterLocation'].selectedFilters.includes(filtersConfig['headequarterLocation'].allFilters[key]) ? 'selected' : ''}>
-                    {filtersConfig['headequarterLocation'].allFilters[key]}
-                  </div>
-                ))
-                
-                }
-              </div>
-            </div>
-            
-
-            
-            <div className="current-filters-list">
-              <div className="current-filters-list-wrapper">
-                {filtersConfig['headequarterLocation'].selectedFilters.map((filter) => (
-
-                  <div key={filter} className="current-filters-list-item" onClick={() => selectFilter('headequarterLocation', filter)}>
-                    {filter} <span style={{display: 'inline', color:"black", fontSize: "larger" , fontWeight: "bold"}} >x</span>   
-                  </div>
-
-                ))}
-              </div>
-              {filtersConfig['headequarterLocation'].selectedFilters.length >= 2 && (
-                <span onClick={() => clearFilters('headequarterLocation')}>Clear</span>
-              )}
-            </div>
-          </div>
-
-
-          <div className="category-filters-wrapper">
-            <p className={"text-style-titles"}>{filtersConfig['activeIn'].title}</p>
-            {/* <p className={"text-style-titles"}>{`Active in`}</p>                    */}
-            <div className="category-filters">
-              <span className="category-filters-placeholder" onClick={() => toggleSelectFilters('activeIn')}>
-                {filtersConfig['activeIn'].placeholder}
-              </span>
-              <div className={`filters-selection-list ${filtersConfig['activeIn'].open ? 'open' : ''}`}>
-
-
-                        {
-                            // Check if activeinData exists and then sort and map it
-                            activeinData && 
-                            [...activeinData] // Create a shallow copy to avoid mutating the original array
-                            .sort((a, b) => a.name.localeCompare(b.name)) // Sort by name
-                            .map(activein => {
-                                // Find the key corresponding to the activein's id in allFilters
-                                const key = Object.keys(filtersConfig['activeIn'].allFilters)
-                                                .find(key => filtersConfig['activeIn'].allFilters[key] === activein.id);
-
-                                // console.log('key del active');
-                                // console.log(key);
-                                // Render the div for each activein
-                                if( key){
-                                  return (
-                                      <div
-                                          key={key}
-                                          onClick={() => selectFilter('activeIn', activein.id)}
-                                          className={filtersConfig['activeIn'].selectedFilters.includes(activein.id) ? 'selected' : ''}>
-
-                                          {activein.name}
-                                      </div>
-                                  );
-                                }else{
-                                  return null
-                                }
-
-
-                            })
-                        }
-
-
-
-
-
-                
-                {
-                  // Object.keys(filtersConfig['activeIn'].allFilters).map((key) => (
-                  //   <div
-                  //     key={key}
-                  //     onClick={() => selectFilter('activeIn', filtersConfig['activeIn'].allFilters[key])}
-                  //     className={filtersConfig['activeIn'].selectedFilters.includes(filtersConfig['activeIn'].allFilters[key]) ? 'selected' : ''}>
-                  //     {filtersConfig['activeIn'].allFilters[key]}
-                  //   </div>
-                  // ))
-                }
-
-              </div>
-            </div>
-
-
-
-            <div className="current-filters-list">
-              <div className="current-filters-list-wrapper">
-                {filtersConfig['activeIn'].selectedFilters.map((filter) => (
-                            
-                  <div key={filter} className="current-filters-list-item" onClick={() => selectFilter('activeIn', filter)}>
-                    {activeinData.find(r => r.id === filter)?.name || filter} <span style={{display: 'inline', color:"black", fontSize: "larger" , fontWeight: "bold"}} >x</span>
-                  </div>
-
-                ))}
-              </div>
-              {filtersConfig['activeIn'].selectedFilters.length >= 2 && (
-                <span onClick={() => clearFilters('activeIn')}>Clear</span>
-              )}
-            </div>
-
-
-
-          </div>
-        </div>
-        <div className="clear-filters-mobile">
-          <div onClick={clearAllFilters}>Clear filters</div>
-        </div>
-      </div>
-
       <div id="interactive-map" style={{ backgroundImage: `url(${mapBackgroundImage})` }}>
         <div className={`interactive-map-wrapper ${loaded ? 'loaded' : ''}`} >
 
@@ -1327,7 +996,343 @@ const TreasuryMap = () => {
 
         </div>
 
+        <div className={`interactive-map-filter ${mobileOpen ? 'mobile-open' : ''}`}>
+          <div className="interactive-map-filter-inner">
+
+
+
+
+
+            <div className="category-filters-wrapper">
+              {/* <p>{filtersConfig['keywords'].title}</p> */}
+              
+
+              {/*  EMPIEZA EL SEARCH BAR DE KEYWORDS   ------------------------------*/}
+
+              <p className={"text-style-titles"}>{`Keywords`}</p>
+              
+              {/* <div className="category-filters"> */}
+
+
+                  {/* <div className={`filters-selection-list ${filtersConfig['keywords'].open ? 'open' : ''}`}> */}
+                  
+                  <div className={"div-search-input"}>
+                    <input
+                      type="text"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      placeholder="Enter keyword..."
+                      className={'input-placeholder'}
+                      style={{ flexGrow: 1, outline: "none" }}
+                    />
+                    <button 
+                    onClick={handleSearch} 
+                    className={"search-button"}
+                    >
+                      {/* <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--> */}
+                      <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6 .1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+                    </button>
+                  </div>
+
+
+
+                  {/* PARA GENERAT LA ETIQUETA DEL KEYWOR ELEGIDO */}
+                  <div className="current-filters-list">
+                    <div className="current-filters-list-wrapper">
+                    {
+                    filtersConfig['keywords'].selectedFilters.length >= 2 && (
+                      // <span onClick={() => clearFilters('keywords')}>Clear</span>
+
+                      <div key={'keyword1'} className="current-filters-list-item" onClick={() => clearFilters('keywords')}>
+                        {renderSearched} <span style={{display: 'inline', color:"black", fontSize: "larger" , fontWeight: "bold"}} >x</span>   
+                      </div>                      
+
+
+                    )
+                    }                     
+
+                    </div>
+
+                  </div>
+
+
+            </div>
+
+
+
+
+            <div className="category-selection-wrapper">
+              <p className={"text-style-titles"}>Category</p>
+              <div className="category-selection">
+                <div className="category-selection-active" onClick={toggleSelectCategory}>
+                  <span className="selected">{selectedCategory ? categories[selectedCategory] : null}</span>
+                  <span style={{fontSize:"small"}}>{!selectedCategory && 'Select category'}</span>
+                </div>
+
+                {
+                // <div className={`category-selection-list ${selectCategoryOpen ? 'open' : ''}`}>
+                //   {Object.keys(categories).map((key) => (
+                //     <div
+                //       key={key}
+                //       className={selectedCategory === key ? 'selected' : ''}
+                //       onClick={() => selectCategory(key)}>
+                //       {categories[key]}
+                //     </div>
+                //   ))}
+                // </div>
+                }
+
+                <div className={`category-selection-list ${selectCategoryOpen ? 'open' : ''}`}>
+                  {
+                    Object.entries(categories) // Convert object to array of key-value pairs
+                      .sort((a, b) => a[1].localeCompare(b[1])) // Sort the array alphabetically by value
+                      .map(([key, value]) => (
+                        <div
+                          key={key}
+                          className={selectedCategory === key ? 'selected' : ''}
+                          onClick={() => selectCategory(key)}>
+                          {value}
+                        </div>
+                      ))
+                  }
+                </div>
+                
+
+              </div>
+            </div>
+
+
+
+
+            <div className="category-filters-wrapper">
+              <p className={"text-style-titles"}>{filtersConfig['subcategories'].title}</p>
+              {/* <p className={"text-style-titles"}>{`Sub-Category`}</p> */}
+
+              <div className="category-filters">
+                
+                {/* ESTE CODIGO ES PARA ABRIR EL DRIPDOWN */}
+                <span className="category-filters-placeholder" onClick={() => toggleSelectFilters('subcategories')}>
+                  {filtersConfig['subcategories'].placeholder}
+                </span>
+                
+
+
+                {/* ESTE CODIGO ES LA RENDERIZACION DEL DROPDOWN */}
+                {
+                // <div className={`filters-selection-list ${filtersConfig['subcategories'].open ? 'open' : ''}`}>
+                //     {
+                //       // RENDERIZACION DEL DROPDOWN DE SUBCATEGORIES
+                //       subcategoriesData && Object.keys(filtersConfig['subcategories'].allFilters).map((key) => {
+                              
+                //               //console.log(key);
+                //               const subcategoryId = filtersConfig['subcategories'].allFilters[key];
+                //               const subcategory = subcategoriesData.find(subcat => subcat.id === subcategoryId);
+                              
+                //               return (
+                //                   <div
+                //                       key={key}
+                //                       onClick={() => selectFilter('subcategories', subcategoryId)}
+                //                       className={filtersConfig['subcategories'].selectedFilters.includes(subcategoryId) ? 'selected' : ''}>
+                                      
+                //                       {/* Render the name of the subcategory */}
+                                      
+                //                       {subcategory ? subcategory.name : 'Unknown Subcategory'}
+
+                //                   </div>
+                //               );
+                //           })
+                //     }      
+                // </div>
+                }
+
+
+                <div className={`filters-selection-list ${filtersConfig['subcategories'].open ? 'open' : ''}`}>
+                    {
+                        // RENDERIZACION DEL DROPDOWN DE SUBCATEGORIES
+                        subcategoriesData && 
+                        Object.keys(filtersConfig['subcategories'].allFilters)
+                        .map(key => {
+                            // Get the subcategory ID from the filtersConfig
+                            const subcategoryId = filtersConfig['subcategories'].allFilters[key];
+                            // Find the corresponding subcategory in the subcategoriesData
+                            return subcategoriesData.find(subcat => subcat.id === subcategoryId);
+                        })
+                        .filter(subcategory => subcategory) // Filter out any undefined subcategories
+                        .sort((a, b) => a.name.localeCompare(b.name)) // Sort the subcategories alphabetically
+                        .map(subcategory => (
+                            <div
+                                key={subcategory.id}
+                                onClick={() => selectFilter('subcategories', subcategory.id)}
+                                className={filtersConfig['subcategories'].selectedFilters.includes(subcategory.id) ? 'selected' : ''}>
+
+                                {/* Render the name of the subcategory */}
+                                {subcategory.name}
+                            </div>
+                        ))
+                    }      
+                </div>
+
+              </div>
+
+
+
+
+              <div className="current-filters-list">
+                <div className="current-filters-list-wrapper">
+                  {filtersConfig['subcategories'].selectedFilters.map((filter) => (
+                    <div key={filter} className="current-filters-list-item" onClick={() => selectFilter('subcategories', filter)}>
+                      {subcategoriesData.find(r => r.id === filter)?.name || filter} <span style={{display: 'inline', color:"black", fontSize: "larger" , fontWeight: "bold"}} >x</span>                       
+                    </div>
+
+                  ))}
+                </div>
+                {filtersConfig['subcategories'].selectedFilters.length >= 2 && (
+                  <span onClick={() => clearFilters('subcategories')}>Clear</span>
+                )}
+              </div>
+            </div>
+
+
+
+
+
+            <div className="category-filters-wrapper">
+              <p className={"text-style-titles"}>{filtersConfig['headequarterLocation'].title}</p>
+              {/* <p className={"text-style-titles"}>{`Headquarter location`}</p>               */}
+              <div className="category-filters">
+                <span className="category-filters-placeholder" onClick={() => toggleSelectFilters('headequarterLocation')}>
+                  {filtersConfig['headequarterLocation'].placeholder}
+                </span>
+                <div className={`filters-selection-list ${filtersConfig['headequarterLocation'].open ? 'open' : ''}`}>
+                  
+                  {
+
+                  //RENDERIZACION DEL DROPDOWN DE HEADQUARTER
+
+                  Object.keys(filtersConfig['headequarterLocation'].allFilters).map((key) => (
+                    <div
+                      key={key}
+                      onClick={() => selectFilter('headequarterLocation', filtersConfig['headequarterLocation'].allFilters[key])}
+                      className={filtersConfig['headequarterLocation'].selectedFilters.includes(filtersConfig['headequarterLocation'].allFilters[key]) ? 'selected' : ''}>
+                      {filtersConfig['headequarterLocation'].allFilters[key]}
+                    </div>
+                  ))
+                  
+                  }
+                </div>
+              </div>
+              
+
+              
+              <div className="current-filters-list">
+                <div className="current-filters-list-wrapper">
+                  {filtersConfig['headequarterLocation'].selectedFilters.map((filter) => (
+
+                    <div key={filter} className="current-filters-list-item" onClick={() => selectFilter('headequarterLocation', filter)}>
+                      {filter} <span style={{display: 'inline', color:"black", fontSize: "larger" , fontWeight: "bold"}} >x</span>   
+                    </div>
+
+                  ))}
+                </div>
+                {filtersConfig['headequarterLocation'].selectedFilters.length >= 2 && (
+                  <span onClick={() => clearFilters('headequarterLocation')}>Clear</span>
+                )}
+              </div>
+            </div>
+
+
+            <div className="category-filters-wrapper">
+              <p className={"text-style-titles"}>{filtersConfig['activeIn'].title}</p>
+              {/* <p className={"text-style-titles"}>{`Active in`}</p>                    */}
+              <div className="category-filters">
+                <span className="category-filters-placeholder" onClick={() => toggleSelectFilters('activeIn')}>
+                  {filtersConfig['activeIn'].placeholder}
+                </span>
+                <div className={`filters-selection-list ${filtersConfig['activeIn'].open ? 'open' : ''}`}>
+
+
+                          {
+                              // Check if activeinData exists and then sort and map it
+                              activeinData && 
+                              [...activeinData] // Create a shallow copy to avoid mutating the original array
+                              .sort((a, b) => a.name.localeCompare(b.name)) // Sort by name
+                              .map(activein => {
+                                  // Find the key corresponding to the activein's id in allFilters
+                                  const key = Object.keys(filtersConfig['activeIn'].allFilters)
+                                                  .find(key => filtersConfig['activeIn'].allFilters[key] === activein.id);
+
+                                  // console.log('key del active');
+                                  // console.log(key);
+                                  // Render the div for each activein
+                                  if( key){
+                                    return (
+                                        <div
+                                            key={key}
+                                            onClick={() => selectFilter('activeIn', activein.id)}
+                                            className={filtersConfig['activeIn'].selectedFilters.includes(activein.id) ? 'selected' : ''}>
+
+                                            {activein.name}
+                                        </div>
+                                    );
+                                  }else{
+                                    return null
+                                  }
+
+
+                              })
+                          }
+
+
+
+
+
+                  
+                  {
+                    // Object.keys(filtersConfig['activeIn'].allFilters).map((key) => (
+                    //   <div
+                    //     key={key}
+                    //     onClick={() => selectFilter('activeIn', filtersConfig['activeIn'].allFilters[key])}
+                    //     className={filtersConfig['activeIn'].selectedFilters.includes(filtersConfig['activeIn'].allFilters[key]) ? 'selected' : ''}>
+                    //     {filtersConfig['activeIn'].allFilters[key]}
+                    //   </div>
+                    // ))
+                  }
+
+                </div>
+              </div>
+
+
+
+              <div className="current-filters-list">
+                <div className="current-filters-list-wrapper">
+                  {filtersConfig['activeIn'].selectedFilters.map((filter) => (
+                              
+                    <div key={filter} className="current-filters-list-item" onClick={() => selectFilter('activeIn', filter)}>
+                      {activeinData.find(r => r.id === filter)?.name || filter} <span style={{display: 'inline', color:"black", fontSize: "larger" , fontWeight: "bold"}} >x</span>
+                    </div>
+
+                  ))}
+                </div>
+                {filtersConfig['activeIn'].selectedFilters.length >= 2 && (
+                  <span onClick={() => clearFilters('activeIn')}>Clear</span>
+                )}
+              </div>
+
+
+
+            </div>
+          </div>
+          <div className="clear-filters-mobile">
+            <div onClick={clearAllFilters}>Clear filters</div>
+          </div>
+        </div>
+
       </div>
+
+
+
+
+
     </div>
   );
 };

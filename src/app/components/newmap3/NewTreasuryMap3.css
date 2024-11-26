@@ -4063,17 +4063,18 @@ div.category-title.selected:hover {
   }
   .interactive-map-filter.mobile-open {
     transform: translate(0, 0);
-    margin-top: 120px;
+    margin-top: 0px;
   }
   .interactive-map-filter-inner {
-    padding-top: 92px;
+    padding-top: 55px;
+    padding-bottom: 75px;
     height: calc(100% - 84px);
     flex-direction: column;
   }
   .category-selection-wrapper,
   .category-filters-wrapper {
     max-width: 600px;
-    margin: 0 auto 10px auto;
+    /* margin: 0 auto 10px auto; */
   }
   .category-selection,
   .category-filters {
