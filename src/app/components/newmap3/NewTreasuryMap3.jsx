@@ -1330,7 +1330,17 @@ const TreasuryMap = () => {
             </div>
             <div className={`menu-mobile ${mobileOpen ? 'open' : ''}`}>
               <h2 className='mobile-header'>Filter by</h2>
+              { 
+                mobileOpen && <span className='button-clear-filter' onClick={clearAllFilters}>Clear all filters</span>
+              }
               <div onClick={toggleMobileFilters}>{ mobileOpen ? 'X' : '+' }</div>
+              
+
+              {/* ADICION DEL BOTON CLEAR */}
+              {/* <div className="clear-filters-mobile">
+               <div onClick={clearAllFilters}>Clear filters</div>
+              </div> */}
+            
             </div>
           </div>
           <div className={`map-outline ${!!selectedCategory ? 'visible' : ''}`}></div>

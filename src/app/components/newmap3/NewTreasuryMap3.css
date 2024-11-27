@@ -4157,12 +4157,12 @@ div.category-title.selected:hover {
     border-bottom: 2px solid;
   }
   .menu-mobile div {
-    height: 20px;
-    width: 20px;
+    height: 35px;
+    width: 35px;
     border-radius: 50%;
     box-shadow: 0 0 4px -1px black;
     cursor: pointer;
-    font-size: small;
+    font-size: medium;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -4204,4 +4204,14 @@ div.category-title.selected:hover {
   .interactive-map-wrapper {
     height: 100vh;
   }
+}
+
+
+
+.button-clear-filter{
+  /* background-color: #033164; */
+  color: white;
+  background: linear-gradient(277deg, #4ab2c4 -0.01%, #094895 94.83%);
+  padding: 0px 10px;
+  border-radius: 15px;
 }
