@@ -317,6 +317,10 @@ const TreasuryMap = () => {
     setSelectedCategory((prevSelectedCategory) =>
       prevSelectedCategory === key ? '' : key
     );
+
+    if(mobileOpen){
+      toggleMobileFilters()
+    }
   };
 
   // const clickedOnFilter = (key) =>{
@@ -410,6 +414,12 @@ const TreasuryMap = () => {
         }
       };
     });
+
+    
+    if(mobileOpen){
+      toggleMobileFilters()
+    }  
+
   };
   
   const clearFilters = (filterKey) => {
