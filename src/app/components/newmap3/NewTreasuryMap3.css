@@ -1216,33 +1216,33 @@ body{
 
 .map-static-logos .category-6>div:nth-child(20) {
   top: 380px;
-  left: 48%;
+  left: 50.25%;
 }
 
 .map-static-logos .category-6>div:nth-child(20) .imagen {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 .map-static-logos .category-6>div:nth-child(21) {
   top: 380px;
-  left: 54%;
+  left: 55.2%;
 
 }
 
 .map-static-logos .category-6>div:nth-child(21) .imagen {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.87);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.87);
 }
 
 .map-static-logos .category-6>div:nth-child(22) {
-  top: 380px;
-  left: 60%;
+  top: 367px;
+  left: 60.8%;
 }
 
 .map-static-logos .category-6>div:nth-child(22) .imagen {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.87);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.87);
 }
 
 .map-static-logos .category-6>div:nth-child(23) {
@@ -1251,18 +1251,28 @@ body{
 }
 
 .map-static-logos .category-6>div:nth-child(23) .imagen {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.87);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.87);
 }
 
 .map-static-logos .category-6>div:nth-child(24) {
-  top: 622px;
-  left: 0px;
+  top: 380px;
+  left: 46%;
 
 }
 .map-static-logos .category-6>div:nth-child(24) .imagen {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.87);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.87);
+}
+
+.map-static-logos .category-6>div:nth-child(25) {
+  top: 380px;
+  left: 46%;
+
+}
+.map-static-logos .category-6>div:nth-child(25) .imagen {
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.87);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.87);
 }
 
 /* Static map logos - Category 7 */
