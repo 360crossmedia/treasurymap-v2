@@ -88,10 +88,33 @@
     padding: 15px;
   }
 
-  .leftSection,
-  .centerSection,
-  .rightSection {
+  .leftSection {
     width: 100%;
     justify-content: center;
   }
+
+  .gdprText {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .centerSection{
+    flex-flow: column;
+  }
+
+  .addressText {
+    text-align: center;
+  }
+
+  .grayText {
+    width: auto;
+    
+  }
+
+  
+  .rightSection{
+    flex-flow: row;
+  }
+
 }
