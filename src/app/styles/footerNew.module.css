@@ -1,0 +1,97 @@
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px 70px;
+  background-color: #ffffff;
+  border-top: 1px solid #e7e7e7;
+  width: 100%;
+}
+
+.leftSection {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.centerSection {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #333;
+}
+
+.rightSection {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.grayText {
+  color: #666;
+  font-size: 14px;
+  font-weight: normal;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.gdprText {
+  color: #666;
+  font-size: 14px;
+  font-weight: normal;
+}
+
+.addressText {
+  font-size: 14px;
+  color: #333;
+}
+
+.locationIcon {
+  color: #4285f4;
+  width: 16px;
+  height: 16px;
+}
+
+.bnpLogo {
+  height: 24px !important;
+  width: auto !important;
+}
+
+.crossmediaLogo {
+  height: 25px !important;
+  width: auto !important;
+}
+
+.leftInnerOne{
+  display: flex;
+  align-items: center;
+  gap: 5px;  
+}
+
+.leftInnerTwo{
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+  align-items: flex-start;
+
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .footer {
+    flex-direction: column;
+    gap: 12px;
+    padding: 15px;
+  }
+
+  .leftSection,
+  .centerSection,
+  .rightSection {
+    width: 100%;
+    justify-content: center;
+  }
+}
