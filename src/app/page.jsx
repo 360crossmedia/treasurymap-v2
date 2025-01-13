@@ -5,18 +5,24 @@ import styles from "./styles/layout.module.css";
 import NewTreasuryMap from "./components/newmap3/NewTreasuryMap3";
 import MultiplayerMap from "./components/multiplayerMap/MultiplayerMap";
 import "./components/newmap3/NewTreasuryMap3.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Layout = () => {
-  const [isMultiplayerMap, setIsMultiplayerMap] = useState(false);
-  const [flipping, setFlipping] = useState(false);
+  const [isMultiplayerMap, setIsMultiplayerMap] = useState(true);
+  const [animating, setAnimating] = useState(false);
+
+  useEffect(() => {
+    if (animating) {
+      const timer = setTimeout(() => {
+        setAnimating(false);
+      }, 600); // Duración de la animación
+      return () => clearTimeout(timer);
+    }
+  }, [animating]);
 
   const handleToggleMap = () => {
-    setFlipping(true);
-    setTimeout(() => {
-      setIsMultiplayerMap(!isMultiplayerMap);
-      setFlipping(false);
-    }, 600); // Duración de la animación (coincide con el CSS)
+    setAnimating(true);
+    setIsMultiplayerMap((prev) => !prev);
   };
 
   return (
@@ -33,16 +39,32 @@ const Layout = () => {
         />
       </div>
 
-      <div
-        className={`${styles.flipContainer} ${flipping ? styles.flipping : ""}`}
-      >
-        <div className={styles.flipCard}>
-          <div className={styles.front}>
-            {isMultiplayerMap ? <MultiplayerMap /> : <NewTreasuryMap />}
-          </div>
-          <div className={styles.back}>
-            {!isMultiplayerMap ? <NewTreasuryMap /> : <MultiplayerMap />}
-          </div>
+      <div className={styles.mapContainer}>
+        <div
+          className={`${styles.mapWrapper} ${styles.treasuryMap} ${
+            isMultiplayerMap
+              ? animating
+                ? styles.slideOutLeft
+                : styles.hidden
+              : animating
+              ? styles.slideInLeft
+              : ""
+          }`}
+        >
+          <NewTreasuryMap />
+        </div>
+        <div
+          className={`${styles.mapWrapper} ${styles.multiplayerMap} ${
+            isMultiplayerMap
+              ? animating
+                ? styles.slideInRight
+                : ""
+              : animating
+              ? styles.slideOutRight
+              : styles.hidden
+          }`}
+        >
+          <MultiplayerMap />
         </div>
       </div>
 

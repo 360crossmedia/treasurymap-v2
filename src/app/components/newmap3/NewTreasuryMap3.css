@@ -4539,3 +4539,12 @@ div.category-title.selected:hover {
   padding: 0px 10px;
   border-radius: 15px;
 }
+
+/* ! CAMBIOS CSS SEBAS MAPA MULTIPLAYER VERSION */
+/* ! CAMBIOS CSS SEBAS MAPA MULTIPLAYER VERSION */
+/* ! CAMBIOS CSS SEBAS MAPA MULTIPLAYER VERSION */
+
+#interactive-map {
+  background-repeat: no-repeat;
+  background-size: cover;
+}

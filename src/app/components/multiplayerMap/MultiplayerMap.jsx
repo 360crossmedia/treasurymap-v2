@@ -5,10 +5,10 @@ import { apiGetMultiplayerMapData } from "@/app/service/apiGetMultiplayerMapData
 
 const TreasuryMap = () => {
   const mapCenterTitle =
-    "https://res.cloudinary.com/dq7aof6vb/image/upload/v1712693505/CENTRAL_TEXT_my9777.png";
+    "https://res.cloudinary.com/dq7aof6vb/image/upload/v1736792569/TITULO_CENTRAL_MULTIPLAYER_cutpvt.png";
 
   const mapBackgroundImage =
-    "https://res.cloudinary.com/dq7aof6vb/image/upload/v1704675763/background_gs0j76.webp";
+    "https://res.cloudinary.com/dq7aof6vb/image/upload/v1736792699/BACKGROUND_MULTIPLAYER_yb36em.png";
 
   const categories = {
     "category-1": "FIDP (Financial Instrument Dealing Platform)",
@@ -387,7 +387,6 @@ const TreasuryMap = () => {
   // ** ------- START REFACTOR 2 DE RENDERCATEGORYLOGOS -> WITH LIVE DATA
 
   const renderCategoryLogos = (category) => {
-    console.log(dataByCategories);
     return (
       <div className={`category-static ${category}`}>
         {dataByCategories?.[category]?.map((companyElement, index) => {

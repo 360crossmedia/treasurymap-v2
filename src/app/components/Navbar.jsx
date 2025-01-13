@@ -36,10 +36,10 @@ const Navbar = ({ buttonLabel, multiplayerMap, set, rotate }) => {
 
   const redButtonLabel = (isDesktop, multiplayerMap) => {
     if (isDesktop) {
-      if (multiplayerMap) return "Treasury Map";
+      if (!multiplayerMap) return "Treasury Map";
       else return "Multiplayer Map";
     } else {
-      if (multiplayerMap) return "TM";
+      if (!multiplayerMap) return "TM";
       else return "MP";
     }
   };
@@ -91,10 +91,8 @@ const Navbar = ({ buttonLabel, multiplayerMap, set, rotate }) => {
         <div className={styles.navbarRight}>
           <button
             onClick={() => {
-              if (set) {
-                set(!multiplayerMap);
-                rotate();
-              } else router.push("/");
+              if (set) rotate();
+              else router.push("/");
             }}
             className={styles.redButton}
           >
