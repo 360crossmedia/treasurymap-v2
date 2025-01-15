@@ -5,7 +5,7 @@ import { apiGetMultiplayerMapData } from "@/app/service/apiGetMultiplayerMapData
 
 const TreasuryMap = () => {
   const mapCenterTitle =
-    "https://res.cloudinary.com/dq7aof6vb/image/upload/v1736792569/TITULO_CENTRAL_MULTIPLAYER_cutpvt.png";
+    "https://res.cloudinary.com/dq7aof6vb/image/upload/v1736911729/TITULO_CENTRAL_MULTIPLAYER_CENTER.png";
 
   const mapBackgroundImage =
     "https://res.cloudinary.com/dq7aof6vb/image/upload/v1736792699/BACKGROUND_MULTIPLAYER_yb36em.png";
