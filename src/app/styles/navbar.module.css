@@ -34,16 +34,17 @@
 }
 
 .navbarLeft {
-  width: 80%;
+  width: 70%;
   display: flex;
   align-items: center;
   gap: 48px;
 }
 
 .navbarRight {
-  width: 20%;
+  width: 30%;
   display: flex;
   justify-content: flex-end;
+  gap: 5%;
 }
 
 .navbarLinks {
@@ -63,7 +64,63 @@
   display: none;
 }
 
-@media screen and (max-width: 880px) {
+.redButton {
+  background: #b30000;
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 7px 18px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.redButton::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("https://res.cloudinary.com/dq7aof6vb/image/upload/v1736461984/dark-red-background-with-spots-vector_dcuwnn.jpg");
+  background-size: cover;
+  opacity: 0.4;
+  z-index: 1;
+  mix-blend-mode: multiply;
+}
+
+.redButton:hover {
+  background: #cc0000;
+}
+
+.redButton:active {
+  transform: scale(0.95);
+}
+
+.redButton span {
+  position: relative;
+  z-index: 2;
+  color: #ffffff;
+  mix-blend-mode: normal;
+  font-weight: 400;
+}
+
+@media screen and (max-width: 1090px) {
+  .navbarLinks {
+    gap: 1rem;
+    margin-right: 1rem;
+  }
+  .navbarLeft {
+    gap: 1rem;
+  }
+  .navbarRight {
+    width: 25%;
+  }
+}
+
+@media screen and (max-width: 925px) {
   .MobileMenuNavbar {
     display: inherit;
     cursor: pointer;
@@ -113,8 +170,10 @@
     gap: 30.643px;
   }
 
-  .navbarRight {
-    width: inherit;
+  .navbarRight,
+  .navbarLeft,
+  .logoNavbar {
+    width: 33%;
   }
 
   .navbarLinksMobile {
@@ -131,5 +190,20 @@
       border-bottom: 1px solid #c1c1c1;
       padding: 8px 16px;
     }
+  }
+}
+
+@media screen and (max-width: 520px) {
+  .navbarButton,
+  .redButton,
+  .navbarButtonLogOut {
+    padding: 4px 11px;
+    font-size: 0.6rem;
+  }
+  .navbar {
+    padding: 0 7px;
+  }
+  .navbarLogo {
+    width: 95px;
   }
 }
