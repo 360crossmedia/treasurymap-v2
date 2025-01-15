@@ -48,6 +48,9 @@ const HeaderDashboard = () => {
         alert("Company deleted");
         window.location.reload();
       } else {
+        alert(
+          "This company owns media. If you want to delete it, you should first erase all videos and articles."
+        );
         console.log(result);
       }
     } else alert("Please select any company");
