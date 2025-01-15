@@ -47,11 +47,9 @@ const HeaderDashboard = () => {
       if (result.status == 200) {
         alert("Company deleted");
         window.location.reload();
-      } else if (result.status == 400) {
-        alert(
-          "This company owns media. If you want to delete it, you should first erase all videos and articles."
-        );
-      } else console.log(result);
+      } else {
+        console.log(result);
+      }
     } else alert("Please select any company");
   };
 
