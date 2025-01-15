@@ -58,6 +58,7 @@ const BodyForm = () => {
   const [isLive, setIsLive] = useState();
   const [selectMainCategory, setSelectMainCategory] = useState();
   const [showTurnover, setShowTurnover] = useState(true);
+  const [isMultiplayerMap, setIsMultiplayerMap] = useState();
   const userId = useSelector((state) => state.user);
   const companyId = useSelector((state) => state.companyId);
   let user;
@@ -90,6 +91,7 @@ const BodyForm = () => {
         companyOffices: selectedCountriesIds,
         userId: !userId ? backUpUserId : userId,
         live: isLive,
+        multiplayerMap: isMultiplayerMap,
         showTurnover,
         logo,
         creationDate,
@@ -255,6 +257,7 @@ const BodyForm = () => {
     setIsLive(companyData?.live);
     setUserSelected(companyData?.userId);
     setShowTurnover(companyData?.showTurnover);
+    setIsMultiplayerMap(companyData?.multiplayerMap);
     let inputKeywords = companyData?.keywords;
     let toSetKeyword = inputKeywords?.filter(
       (item) => item !== companyData?.name
@@ -360,6 +363,20 @@ const BodyForm = () => {
               label={isLive ? "On" : "Off"}
               onChange={(e) => setIsLive(e.target.checked)}
               checked={isLive}
+            />
+          </div>
+        )}
+        {(userId == 1 || backUpUserId == 1) && (
+          <div className={styles.inputContainer}>
+            <label className={styles.label} htmlFor="">
+              Live on the Multiplayer Map:
+            </label>
+            <Form.Check
+              type="switch"
+              id="custom-switch"
+              label={isMultiplayerMap ? "On" : "Off"}
+              onChange={(e) => setIsMultiplayerMap(e.target.checked)}
+              checked={isMultiplayerMap}
             />
           </div>
         )}

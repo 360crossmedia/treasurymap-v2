@@ -4,16 +4,58 @@
   background-size: cover;
 }
 
-.map {
-  width: 100%;
-  height: 650px;
-  margin-bottom: 35px;
-}
-
 .mainContainerMap {
   padding-top: 10px;
   padding-bottom: 10px;
   background: url("../assets/background.svg");
   background-size: cover;
   background-position: center;
+}
+
+.mapContainer {
+  position: relative;
+  width: 100%;
+  min-height: 764px;
+  overflow: hidden;
+}
+
+.mapWrapper {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s ease-in-out;
+}
+
+.treasuryMap {
+  transform: translateX(0);
+}
+
+.multiplayerMap {
+  transform: translateX(100%);
+}
+
+.hidden {
+  transform: translateX(0%);
+}
+
+.slideOutLeft {
+  transform: translateX(-100%);
+}
+
+.slideInLeft {
+  transform: translateX(0);
+}
+
+.slideOutRight {
+  transform: translateX(100%);
+}
+
+.slideInRight {
+  transform: translateX(0);
+}
+
+@media screen and (max-width: 978px) {
+  .mapContainer {
+    min-height: 650px;
+  }
 }

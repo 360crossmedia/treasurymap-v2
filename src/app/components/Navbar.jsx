@@ -10,12 +10,13 @@ import { setCompanyId } from "../store/slices/companyToUpdate.slice";
 import { setUser } from "../store/slices/user.slice";
 import { usePathname } from "next/navigation";
 
-const Navbar = ({ buttonLabel }) => {
+const Navbar = ({ buttonLabel, multiplayerMap, set, rotate }) => {
   const pathname = usePathname();
   const router = useRouter();
   const dispatch = useDispatch();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [loggedIn, setLoggedIn] = useState(undefined);
+  const [isDesktop, setIsDesktop] = useState();
 
   useEffect(() => {
     let userFound = localStorage.getItem("userId");
@@ -26,18 +27,37 @@ const Navbar = ({ buttonLabel }) => {
     }
   }, []);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 1140);
+    };
+    handleResize();
+  }, []);
+
+  const redButtonLabel = (isDesktop, multiplayerMap) => {
+    if (isDesktop) {
+      if (!multiplayerMap) return "Treasury Map";
+      else return "Multiplayer Map";
+    } else {
+      if (!multiplayerMap) return "TM";
+      else return "MP";
+    }
+  };
+
   return (
     <>
       <nav className={styles.navbar}>
-        <Image
-          className={styles.MobileMenuNavbar}
-          src={MobileMenuNavbar}
-          alt="logo"
-          onClick={() => {
-            setIsMenuOpen(!isMenuOpen);
-            console.log(isMenuOpen);
-          }}
-        />
+        <div className={styles.logoNavbar}>
+          <Image
+            className={styles.MobileMenuNavbar}
+            src={MobileMenuNavbar}
+            alt="logo"
+            onClick={() => {
+              setIsMenuOpen(!isMenuOpen);
+              console.log(isMenuOpen);
+            }}
+          />
+        </div>
         <div className={styles.navbarLeft}>
           <Image
             className={styles.navbarLogo}
@@ -69,6 +89,17 @@ const Navbar = ({ buttonLabel }) => {
           </div>
         </div>
         <div className={styles.navbarRight}>
+          <button
+            onClick={() => {
+              if (set) rotate();
+              else router.push("/");
+            }}
+            className={styles.redButton}
+          >
+            <span className={styles.spanButton}>
+              {redButtonLabel(isDesktop, multiplayerMap)}
+            </span>
+          </button>
           {loggedIn !== undefined &&
             (loggedIn ? (
               <button
