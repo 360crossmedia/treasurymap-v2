@@ -4528,7 +4528,7 @@ div.category-title.selected:hover {
 
 @media screen and (max-width: 600px) {
   .interactive-map-wrapper {
-    height: 100vh;
+    /* height: 100vh; */
   }
 }
 
