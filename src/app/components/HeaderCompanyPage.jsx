@@ -68,12 +68,12 @@ const HeaderCompanyPage = ({ companyId }) => {
 
   const thisCompanyHasSubOptions = async (result2, companyCategories) => {
     const result = await apiGetSubOptionsByCompany(companyId);
-    if (result) {
+    if (result.length > 0) {
       const finalResult = await apiGetAllSubOptions();
       const match = finalResult.find(
-        (subOption) => subOption.id == result[0].subOptionId
+        (subOption) => subOption.id == result[0]?.subOptionId
       );
-      result2.name = result2.name + ": " + match.name;
+      result2.name = result2.name + ": " + match?.name;
       companyCategories.push(result2);
     }
   };
