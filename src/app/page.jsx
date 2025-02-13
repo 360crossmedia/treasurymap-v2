@@ -4,7 +4,6 @@ import Footer from "./components/Footer";
 import styles from "./styles/layout.module.css";
 import NewTreasuryMap from "./components/newmap3/NewTreasuryMap3";
 import MultiplayerMap from "./components/multiplayerMap/MultiplayerMap";
-import "./components/newmap3/NewTreasuryMap3.css";
 import { useState, useEffect } from "react";
 
 const Layout = () => {

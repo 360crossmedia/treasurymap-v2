@@ -73,6 +73,12 @@
   color: #000;
 }
 
+.modal {
+  display: block;
+  position: absolute;
+  top: 25%;
+}
+
 @media screen and (max-width: 1270px) {
   .selectContainer {
     flex-direction: column;

@@ -7,6 +7,9 @@ import { useRouter } from "next/navigation";
 import { apiDeleteCompanyById } from "../service/apiDeleteCompanyById";
 import { setCompanyId } from "../store/slices/companyToUpdate.slice";
 import { apiGetAllCompanies } from "../service/apiGetAllCompanies";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
+import { apiGetCompanyHasMedia } from "../service/apiGetCompanyHasMedia";
 
 const HeaderDashboard = () => {
   const dispatch = useDispatch();
@@ -15,6 +18,7 @@ const HeaderDashboard = () => {
   const [backUpUserId, setBackUpUserId] = useState();
   const [companies, setCompanies] = useState([]);
   const [isSelectedAnyCompany, setIsSelectedAnyCompany] = useState(false);
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -44,13 +48,21 @@ const HeaderDashboard = () => {
   const deleteButton = async () => {
     if (isSelectedAnyCompany) {
       const result = await apiDeleteCompanyById(isSelectedAnyCompany);
-      if (result.status == 200) {
+      if (result?.status == 200) {
         alert("Company deleted");
         window.location.reload();
-      } else {
-        console.log(result);
       }
     } else alert("Please select any company");
+  };
+
+  const showModal = () => {
+    setShow((prev) => !prev);
+  };
+
+  const companyHasMedia = async () => {
+    const result = await apiGetCompanyHasMedia(isSelectedAnyCompany);
+    if (result) showModal();
+    else deleteButton();
   };
 
   return (
@@ -86,12 +98,37 @@ const HeaderDashboard = () => {
             Update
           </button>
           {(userId == 1 || backUpUserId == 1) && (
-            <button onClick={deleteButton} className={styles.deleteButton}>
+            <button onClick={companyHasMedia} className={styles.deleteButton}>
               Delete
             </button>
           )}
         </div>
       </div>
+      {show && (
+        <div className={`${styles.modal} modal show`}>
+          <Modal.Dialog>
+            <Modal.Header onClick={showModal} closeButton>
+              <Modal.Title>Detele company</Modal.Title>
+            </Modal.Header>
+
+            <Modal.Body>
+              <p>
+                This company owns media. Deleting it will also delete its media.
+                Are you sure you want to proceed?
+              </p>
+            </Modal.Body>
+
+            <Modal.Footer>
+              <Button onClick={showModal} variant="secondary">
+                Close
+              </Button>
+              <Button onClick={deleteButton} variant="danger">
+                Delete
+              </Button>
+            </Modal.Footer>
+          </Modal.Dialog>
+        </div>
+      )}
     </div>
   );
 };

@@ -25,6 +25,9 @@ import { apiDeleteAllAnswersByCompanyId } from "../service/apiDeleteAllAnswersBy
 import { apiSendUpdateEmail } from "../service/apiSendUpdateEmail";
 import { apiSendCreateEmail } from "../service/apiSendCreateEmail";
 import { uploadImage } from "../utils";
+import { RadioButton } from "primereact/radiobutton";
+import { apiUploadSubOptions } from "../service/apiUploadSubOptions";
+import { apiGetSubOptionsByCompany } from "../service/apiGetSubOptionsByCompany";
 
 const BodyForm = () => {
   const dispatch = useDispatch();
@@ -59,6 +62,7 @@ const BodyForm = () => {
   const [selectMainCategory, setSelectMainCategory] = useState();
   const [showTurnover, setShowTurnover] = useState(true);
   const [isMultiplayerMap, setIsMultiplayerMap] = useState();
+  const [selectedSubOptions, setSelectedSubOptions] = useState({});
   const userId = useSelector((state) => state.user);
   const companyId = useSelector((state) => state.companyId);
   let user;
@@ -121,20 +125,27 @@ const BodyForm = () => {
               answers
             );
             if (answersCreate?.status == 201) {
-              const sendEmail = await apiSendUpdateEmail({
-                companyName,
-                name: users[!userId ? backUpUserId - 1 : userId - 1]?.fullName,
-                previousValue: result.data,
-                newValue: JSON.parse(result.config.data),
-              });
-              if (sendEmail?.status == 200) {
-                alert("Company updated successfully");
-                dispatch(setCompanyId(false));
-                dispatch(setIsLoading(false));
-                router.push("/dashboard");
-              } else {
-                console.log(sendEmail);
-                dispatch(setIsLoading(false));
+              const uploadSubOptions = await apiUploadSubOptions(
+                companyId ? companyId : backUpCompanyId,
+                selectedSubOptions
+              );
+              if (uploadSubOptions?.status == 200) {
+                const sendEmail = await apiSendUpdateEmail({
+                  companyName,
+                  name: users[!userId ? backUpUserId - 1 : userId - 1]
+                    ?.fullName,
+                  previousValue: result.data,
+                  newValue: JSON.parse(result.config.data),
+                });
+                if (sendEmail?.status == 200) {
+                  alert("Company updated successfully");
+                  dispatch(setCompanyId(false));
+                  dispatch(setIsLoading(false));
+                  router.push("/dashboard");
+                } else {
+                  console.log(sendEmail);
+                  dispatch(setIsLoading(false));
+                }
               }
             }
           }
@@ -240,6 +251,9 @@ const BodyForm = () => {
     const companyAnswers = await apiGetCompanyAnswers(
       !companyId ? backUpCompanyId : companyId
     );
+    const categoriesSubOptions = await apiGetSubOptionsByCompany(
+      !companyId ? backUpCompanyId : companyId
+    );
     setCompanyName(companyData?.name);
     setCompanyDescription(companyData?.description);
     setCreationDate(companyData?.creationDate);
@@ -264,6 +278,7 @@ const BodyForm = () => {
     );
     setKeywords(toSetKeyword);
     setSelectMainCategory(...companyData?.maincategory);
+    parseCategoriesSubOptions(categoriesSubOptions);
     dispatch(setIsLoading(false));
   };
 
@@ -291,6 +306,15 @@ const BodyForm = () => {
         return [...updatedIds, categoryId];
       });
     }, 50);
+  };
+
+  const parseCategoriesSubOptions = (categoriesSubOptions) => {
+    const selectedSubOptions = categoriesSubOptions.reduce((acc, item) => {
+      acc[item.categoryId] = item.subOptionId;
+      return acc;
+    }, {});
+
+    setSelectedSubOptions(selectedSubOptions);
   };
 
   useEffect(() => {
@@ -566,32 +590,162 @@ const BodyForm = () => {
             </p>
           </div>
           <div className={styles.categoriesContainer}>
-            {categories?.map((category, index) => (
-              <div className={styles.inputCheckboxContainer} key={index}>
-                <Checkbox
-                  disabled={category.id == selectMainCategory}
-                  onChange={(e) => {
-                    if (e.checked) {
-                      setSelectedCategoryIds((prevIds) => [
-                        ...(prevIds || []),
-                        category.id,
-                      ]);
-                    } else {
-                      setSelectedCategoryIds((prevIds) =>
-                        prevIds.filter((id) => id !== category.id)
-                      );
-                    }
-                  }}
-                  checked={
-                    selectedCategoryIds?.includes(category.id) ||
-                    category.id === selectMainCategory
-                  }
-                ></Checkbox>
-                <label className={styles.labelCheckbox} for={category.name}>
-                  {category.name}
-                </label>
-              </div>
-            ))}
+            <div className={styles.column}>
+              {categories
+                .slice(0, Math.ceil(categories.length / 2))
+                .map((category, index) => (
+                  <div className={styles.categoryColumn}>
+                    <div className={styles.inputCheckboxContainer} key={index}>
+                      <Checkbox
+                        disabled={category.id == selectMainCategory}
+                        onChange={(e) => {
+                          if (e.checked) {
+                            setSelectedCategoryIds((prevIds) => [
+                              ...(prevIds || []),
+                              category.id,
+                            ]);
+                          } else {
+                            setSelectedCategoryIds((prevIds) =>
+                              prevIds.filter((id) => id !== category.id)
+                            );
+
+                            setSelectedSubOptions((prevState) => {
+                              const newState = { ...prevState };
+                              delete newState[category.id]; // Elimina la selección de esa categoría
+                              return newState;
+                            });
+                          }
+                        }}
+                        checked={
+                          selectedCategoryIds?.includes(category.id) ||
+                          category.id === selectMainCategory
+                        }
+                      ></Checkbox>
+                      <label
+                        className={styles.labelCheckbox}
+                        for={category.name}
+                      >
+                        {category.name}
+                      </label>
+                    </div>
+                    {selectedCategoryIds.includes(category.id) &&
+                      category.sub_options.length > 0 && (
+                        <div className={styles.inputRadioContainer}>
+                          <p className={styles.labelCheckbox}>
+                            How do you proceed?{" "}
+                            <span className={styles.span}>*</span>
+                          </p>
+                          {category.sub_options.map((subOption) => (
+                            <div
+                              key={subOption.id}
+                              className={styles.radioButtonsContainer}
+                            >
+                              <RadioButton
+                                inputId={`${category.id}-${subOption.id}`} // Un identificador único para cada radio button
+                                name={`subOption-${category.id}`} // Agrupa por categoría
+                                value={subOption.id} // Almacena solo el id de la sub-opción
+                                onChange={(e) =>
+                                  setSelectedSubOptions((prevState) => ({
+                                    ...prevState,
+                                    [category.id]: e.value, // Almacena el id de la sub-opción seleccionada para esta categoría
+                                  }))
+                                }
+                                checked={
+                                  selectedSubOptions[category.id] ===
+                                  subOption.id
+                                }
+                              />
+                              <label
+                                htmlFor={`${category.id}-${subOption.id}`}
+                                className={styles.labelCheckbox}
+                              >
+                                {subOption.name}
+                              </label>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                  </div>
+                ))}
+            </div>
+            <div className={styles.column}>
+              {categories
+                .slice(Math.ceil(categories.length / 2))
+                .map((category, index) => (
+                  <div className={styles.categoryColumn}>
+                    <div className={styles.inputCheckboxContainer} key={index}>
+                      <Checkbox
+                        disabled={category.id == selectMainCategory}
+                        onChange={(e) => {
+                          if (e.checked) {
+                            setSelectedCategoryIds((prevIds) => [
+                              ...(prevIds || []),
+                              category.id,
+                            ]);
+                          } else {
+                            setSelectedCategoryIds((prevIds) =>
+                              prevIds.filter((id) => id !== category.id)
+                            );
+
+                            setSelectedSubOptions((prevState) => {
+                              const newState = { ...prevState };
+                              delete newState[category.id]; // Elimina la selección de esa categoría
+                              return newState;
+                            });
+                          }
+                        }}
+                        checked={
+                          selectedCategoryIds?.includes(category.id) ||
+                          category.id === selectMainCategory
+                        }
+                      ></Checkbox>
+                      <label
+                        className={styles.labelCheckbox}
+                        for={category.name}
+                      >
+                        {category.name}
+                      </label>
+                    </div>
+                    {selectedCategoryIds.includes(category.id) &&
+                      category.sub_options.length > 0 && (
+                        <div className={styles.inputRadioContainer}>
+                          <p className={styles.labelCheckbox}>
+                            How do you proceed?{" "}
+                            <span className={styles.span}>*</span>
+                          </p>
+                          {category.sub_options.map((subOption) => (
+                            <div
+                              key={subOption.id}
+                              className={styles.radioButtonsContainer}
+                            >
+                              <RadioButton
+                                inputId={`${category.id}-${subOption.id}`} // Un identificador único para cada radio button
+                                name={`subOption-${category.id}`} // Agrupa por categoría
+                                value={subOption.id} // Almacena solo el id de la sub-opción
+                                onChange={(e) =>
+                                  setSelectedSubOptions((prevState) => ({
+                                    ...prevState,
+                                    [category.id]: e.value, // Almacena el id de la sub-opción seleccionada para esta categoría
+                                  }))
+                                }
+                                checked={
+                                  selectedSubOptions[category.id] ===
+                                  subOption.id
+                                }
+                              />
+                              <label
+                                htmlFor={`${category.id}-${subOption.id}`}
+                                className={styles.labelCheckbox}
+                              >
+                                {subOption.name}
+                              </label>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                  </div>
+                ))}
+            </div>
           </div>
         </div>
         <div>
@@ -600,7 +754,7 @@ const BodyForm = () => {
               Sub-Categories <span className={styles.span}>*</span>
             </p>
           </div>
-          <div className={styles.categoriesContainer}>
+          <div className={styles.subCategoriesContainer}>
             {subCategories?.map((subCategory, index) => (
               <div className={styles.inputCheckboxContainer} key={index}>
                 <Checkbox

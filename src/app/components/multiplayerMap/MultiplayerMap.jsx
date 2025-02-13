@@ -2,13 +2,15 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { url } from "../../service/url.js";
 import { apiGetMultiplayerMapData } from "@/app/service/apiGetMultiplayerMapData";
+import styles from "./multiplayerMap.module.css";
+import { MultiplayerMapCategories } from "./staticdata.jsx";
 
 const TreasuryMap = () => {
   const mapCenterTitle =
-    "https://res.cloudinary.com/dq7aof6vb/image/upload/v1736911729/TITULO_CENTRAL_MULTIPLAYER_CENTER.png";
+    "https://res.cloudinary.com/dq7aof6vb/image/upload/v1739253864/THE_TRASURYR-removebg-preview_c1fm34.png";
 
   const mapBackgroundImage =
-    "https://res.cloudinary.com/dq7aof6vb/image/upload/v1736792699/BACKGROUND_MULTIPLAYER_yb36em.png";
+    "https://res.cloudinary.com/dq7aof6vb/image/upload/v1739329651/bgmultiplayer_nuy6yj.png";
 
   const categories = {
     "category-1": "FIDP (Financial Instrument Dealing Platform)",
@@ -388,7 +390,7 @@ const TreasuryMap = () => {
 
   const renderCategoryLogos = (category) => {
     return (
-      <div className={`category-static ${category}`}>
+      <div className={`category-static ${category} ${styles[category]}`}>
         {dataByCategories?.[category]?.map((companyElement, index) => {
           if (companyElement.live) {
             return (
@@ -1008,8 +1010,8 @@ const TreasuryMap = () => {
               <img className="map-title" src={mapCenterTitle} alt="" />
             </div>
             <div className="map-static-logos">
-              <div className="dividers">
-                {Array.from({ length: 16 }).map((_, index) => (
+              <div className={`${styles.dividers} dividers`}>
+                {Array.from({ length: 10 }).map((_, index) => (
                   <div key={index}>
                     <span></span>
                   </div>
@@ -1054,24 +1056,29 @@ const TreasuryMap = () => {
                 resettingFrontLogos ? "resetting" : ""
               }`}
             >
-              {mapData?.map((category, i) => (
+              {/* // ! Renderizado de las imagenes de las categorias (TR, eBAM, BSG...) */}
+
+              {MultiplayerMapCategories?.map((category, i) => (
                 <div
                   key={category.id}
                   className={`category-title category-title-${
                     category.id + 1
                   } ${
                     selectedCategory === `category-${i + 1}` ? "selected" : ""
-                  }`}
+                  } ${styles[`category-img-position-${category.id + 1}`]}`}
                 >
                   <div className="category-title-inner">
                     <div className="category-title-image">
                       <img
                         src={category.categoryImage}
-                        onClick={() => selectCategory(`category-${i + 1}`)}
+                        onClick={() =>
+                          selectCategory(`category-${category.id + 1}`)
+                        }
                       />
                     </div>
                   </div>
                   <div className="mobile-back-icons">
+                    {/* // ! Renderizado de las companies en mobile (Necto, PayPal, Visa...) */}
                     {
                       dataByCategories?.[category.categoryKey]?.reduce(
                         (acc, item, i) => {

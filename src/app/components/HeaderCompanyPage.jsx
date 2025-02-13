@@ -13,6 +13,8 @@ import { setIsLoading } from "../store/slices/isLoading.slice";
 import { apiGetSubCategoryById } from "../service/apiGetSubCategoryById";
 import { formatTurnover } from "../utils";
 import Modal from "react-bootstrap/Modal";
+import { apiGetSubOptionsByCompany } from "../service/apiGetSubOptionsByCompany";
+import { apiGetAllSubOptions } from "../service/apiGetAllSubOptions";
 
 const HeaderCompanyPage = ({ companyId }) => {
   const isOverview = useSelector((state) => state.isOverview);
@@ -33,7 +35,9 @@ const HeaderCompanyPage = ({ companyId }) => {
       const result = await apiGetCategoryById(
         companyData?.companyCategories[i]
       );
-      companyCategories.push(result);
+      if (result.sub_options.length > 0) {
+        await thisCompanyHasSubOptions(result, companyCategories);
+      } else companyCategories.push(result);
     }
     for (let i = 0; i < companyData?.companySubcategories.length; i++) {
       const result = await apiGetSubCategoryById(
@@ -60,6 +64,18 @@ const HeaderCompanyPage = ({ companyId }) => {
 
     setCompanyOffices(companyOffices);
     dispatch(setIsLoading(false));
+  };
+
+  const thisCompanyHasSubOptions = async (result2, companyCategories) => {
+    const result = await apiGetSubOptionsByCompany(companyId);
+    if (result) {
+      const finalResult = await apiGetAllSubOptions();
+      const match = finalResult.find(
+        (subOption) => subOption.id == result[0].subOptionId
+      );
+      result2.name = result2.name + ": " + match.name;
+      companyCategories.push(result2);
+    }
   };
 
   useEffect(() => {
