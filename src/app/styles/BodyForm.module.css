@@ -97,11 +97,20 @@
   max-width: 320px;
 }
 
-.categoriesContainer {
+.subCategoriesContainer {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   justify-content: space-between;
-  margin-bottom: 30px;
+}
+
+.categoriesContainer {
+  display: flex;
+  gap: 16px;
+}
+
+.column {
+  width: 50%;
+  box-sizing: border-box;
 }
 
 .rightContainer {
@@ -148,6 +157,17 @@
 
 .showTurnoverSwitch label {
   font-size: 14px;
+}
+
+.inputRadioContainer {
+  margin-left: 2.5rem;
+  grid-column: 2;
+}
+
+.radioButtonsContainer {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 
 @media screen and (max-width: 1100px) {
