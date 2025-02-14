@@ -101,14 +101,7 @@
 
 :global(.category-title).category-img-position-1 {
   transform: translate(13%, -25px) scale(0.77);
-}
-
-:global(.category-title).category-img-position-1:hover {
-  transform: translate(13%, 0px) scale(0.77);
-}
-
-:global(.category-title).category-img-position-1 {
-  transform: translate(13%, -25px) scale(0.77);
+  display: none;
 }
 
 :global(.category-title).category-img-position-1:hover {
@@ -117,6 +110,7 @@
 
 :global(.category-title).category-img-position-2 {
   transform: translate(32.5%, -40px) scale(0.59);
+  display: none;
 }
 :global(.category-title).category-img-position-2:hover {
   transform: translate(32.5%, -20px) scale(0.59);
@@ -131,6 +125,7 @@
 
 :global(.category-title).category-img-position-4 {
   transform: translate(-30%, 593px) scale(1);
+  display: none;
 }
 :global(.category-title).category-img-position-4:hover {
   transform: translate(-30%, 583px) scale(1);
@@ -159,6 +154,7 @@
 
 :global(.category-title).category-img-position-8 {
   transform: translate(46.5%, 579px) scale(0.9);
+  display: none;
 }
 :global(.category-title).category-img-position-8:hover {
   transform: translate(43%, 579px) scale(0.9);
@@ -208,6 +204,7 @@
 
 :global(.category-title).category-img-position-15 {
   transform: translate(-4.5%, -41px) scale(0.52);
+  display: none;
 }
 :global(.category-title).category-img-position-15:hover {
   transform: translate(-4.5%, -21px) scale(0.52);
