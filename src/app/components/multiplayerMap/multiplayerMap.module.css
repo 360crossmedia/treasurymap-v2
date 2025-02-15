@@ -210,6 +210,16 @@
   transform: translate(-4.5%, -21px) scale(0.52);
 }
 
+/* ! Categories IMG MOBILE */
+/* ! Categories IMG MOBILE */
+/* ! Categories IMG MOBILE */
+
+@media screen and (max-width: 978px) {
+  .categoryTitle {
+    background: linear-gradient(-90deg, #82b67f, #add5ab 120px, #beffbb57 80%);
+  }
+}
+
 /* ! LOGOS DE EMPRESAS POR CATEGORIA */
 /* ! LOGOS DE EMPRESAS POR CATEGORIA */
 /* ! LOGOS DE EMPRESAS POR CATEGORIA */
