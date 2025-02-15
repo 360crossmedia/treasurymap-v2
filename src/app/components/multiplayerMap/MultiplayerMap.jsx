@@ -10,7 +10,7 @@ const TreasuryMap = () => {
     "https://res.cloudinary.com/dq7aof6vb/image/upload/v1739253864/THE_TRASURYR-removebg-preview_c1fm34.png";
 
   const mapBackgroundImage =
-    "https://res.cloudinary.com/dq7aof6vb/image/upload/v1739329651/bgmultiplayer_nuy6yj.png";
+    "https://res.cloudinary.com/dq7aof6vb/image/upload/v1739563300/bgmultiplayer_bdasc3.png";
 
   const categories = {
     "category-1": "FIDP (Financial Instrument Dealing Platform)",
@@ -1061,9 +1061,9 @@ const TreasuryMap = () => {
               {MultiplayerMapCategories?.map((category, i) => (
                 <div
                   key={category.id}
-                  className={`category-title category-title-${
-                    category.id + 1
-                  } ${
+                  className={`category-title ${
+                    styles.categoryTitle
+                  } category-title-${category.id + 1} ${
                     selectedCategory === `category-${i + 1}` ? "selected" : ""
                   } ${styles[`category-img-position-${category.id + 1}`]}`}
                 >
