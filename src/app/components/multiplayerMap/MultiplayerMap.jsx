@@ -7,7 +7,7 @@ import { MultiplayerMapCategories } from "./staticdata.jsx";
 
 const TreasuryMap = () => {
   const mapCenterTitle =
-    "https://res.cloudinary.com/dq7aof6vb/image/upload/v1739253864/THE_TRASURYR-removebg-preview_c1fm34.png";
+    "https://res.cloudinary.com/dq7aof6vb/image/upload/v1739685416/MultiplayerMapBg_z1htg0.png";
 
   const mapBackgroundImage =
     "https://res.cloudinary.com/dq7aof6vb/image/upload/v1739563300/bgmultiplayer_bdasc3.png";
@@ -1070,6 +1070,7 @@ const TreasuryMap = () => {
                   <div className="category-title-inner">
                     <div className="category-title-image">
                       <img
+                        className={styles.categoryImage}
                         src={category.categoryImage}
                         onClick={() =>
                           selectCategory(`category-${category.id + 1}`)
