@@ -218,6 +218,13 @@
   .categoryTitle {
     background: linear-gradient(-90deg, #82b67f, #add5ab 120px, #beffbb57 80%);
   }
+
+  :global(.category-title .category-title-inner .category-title-image)
+    .categoryImage {
+    /* display: none; */
+    padding: 0 2px;
+    min-height: 85px;
+  }
 }
 
 /* ! LOGOS DE EMPRESAS POR CATEGORIA */
