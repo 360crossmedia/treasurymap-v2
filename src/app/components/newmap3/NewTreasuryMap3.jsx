@@ -1,14 +1,11 @@
 "use client";
 import React, { useState, useEffect, useMemo, useRef } from "react";
-//import './TreasuryMap.module.css'
 import staticdata from "./staticdata.json";
 import { url } from "../../service/url.js";
 import realdata from "./realdata.json";
 import "./NewTreasuryMap3.css";
 
 const TreasuryMap = () => {
-  //const mapCenterTitle = 'https://res.cloudinary.com/dq7aof6vb/image/upload/v1704675764/the-treasury-tech-landscape-title_g8yzli.png';
-  // const mapCenterTitle = 'https://res.cloudinary.com/dq7aof6vb/image/upload/v1707284047/the-treasury-tech-landscape-title_jqryte.png';
   const mapCenterTitle =
     "https://res.cloudinary.com/dq7aof6vb/image/upload/v1712693505/CENTRAL_TEXT_my9777.png";
 
