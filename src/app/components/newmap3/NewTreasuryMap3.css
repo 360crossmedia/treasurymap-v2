@@ -3351,10 +3351,10 @@ body{
 }
 
 .category-title.category-title-5 {
-  transform: translate(23%, 568px) scale(0.77);
+  transform: translate(22.5%, 550px) scale(0.7);
 }
 .category-title.category-title-5:hover {
-  transform: translate(23%, 552px) scale(0.77);
+  transform: translate(23%, 520px) scale(0.7);
 }
 
 .category-title.category-title-6 {
@@ -3393,7 +3393,7 @@ body{
 }
 
 .category-title.category-title-11 {
-  transform: translate(-47.5%, 215px) scale(0.75);
+  transform: translate(-47.5%, 205px) scale(0.75);
 }
 .category-title.category-title-11:hover {
   transform: translate(-45.5%, 215px) scale(0.75);
