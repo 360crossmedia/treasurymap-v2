@@ -9,7 +9,6 @@ import { setCompanyId } from "../store/slices/companyToUpdate.slice";
 import { apiGetAllCompanies } from "../service/apiGetAllCompanies";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import { apiGetCompanyHasMedia } from "../service/apiGetCompanyHasMedia";
 
 const HeaderDashboard = () => {
   const dispatch = useDispatch();
@@ -59,12 +58,6 @@ const HeaderDashboard = () => {
     setShow((prev) => !prev);
   };
 
-  const companyHasMedia = async () => {
-    const result = await apiGetCompanyHasMedia(isSelectedAnyCompany);
-    if (result) showModal();
-    else deleteButton();
-  };
-
   return (
     <div className={styles.mainContainer}>
       <p className={styles.title}>Company Admin</p>
@@ -98,7 +91,10 @@ const HeaderDashboard = () => {
             Update
           </button>
           {(userId == 1 || backUpUserId == 1) && (
-            <button onClick={companyHasMedia} className={styles.deleteButton}>
+            <button
+              onClick={() => showModal(!showModal)}
+              className={styles.deleteButton}
+            >
               Delete
             </button>
           )}
