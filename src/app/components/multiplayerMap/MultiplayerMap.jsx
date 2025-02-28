@@ -982,30 +982,16 @@ const TreasuryMap = () => {
           </div>
         </div>
 
-        <div className={`interactive-map-wrapper ${loaded ? "loaded" : ""}`}>
-          {/*
-      ASI ESTABA ANTES DEL NEW MAP 
-      <div id="interactive-map">
-        <div className={`interactive-map-wrapper ${loaded ? 'loaded' : ''}`} style={{ backgroundImage: `url(${mapBackgroundImage})` }}> 
-        */}
-
+        <div
+          className={`interactive-map-wrapper ${loaded ? "loaded" : ""} ${
+            styles.interactive_map_wrapper
+          }`}
+        >
           <div
             className={`interactive-map-inner ${
               frontMapOpen ? "front-open" : ""
             }`}
           >
-            {/* LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO */}
-            {/* LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO */}
-            {/* LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO */}
-
-            {/* <div style={{transform: "translate(267px, -294px) scale(0.52)"}}>
-              <img className='hardcodeLogo' src={`https://res.cloudinary.com/dq7aof6vb/image/upload/v1715385412/Frame_19_1_zxd0hz.png`} alt=""  />
-            </div> */}
-
-            {/* LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO */}
-            {/* LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO */}
-            {/* LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO -- LINEA DE CODIGO DEL LOGO DE CAT 15 HARDCODEADO */}
-
             <div className="map-title-wrapper">
               <img className="map-title" src={mapCenterTitle} alt="" />
             </div>

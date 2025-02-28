@@ -3033,7 +3033,7 @@
 
   :global(.category-7).category-7 > div:nth-child(8) {
     top: 368px;
-    left: 83.3%;
+    left: 88%;
   }
   :global(.category-7).category-7 > div:nth-child(8) :global(.imagen) {
     max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
@@ -3047,5 +3047,10 @@
   :global(.category-7).category-7 > div:nth-child(9) :global(.imagen) {
     max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
     max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  }
+
+  .interactive_map_wrapper {
+    width: 1800px;
+    margin: 0 auto;
   }
 }
