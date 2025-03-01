@@ -522,8 +522,8 @@
 }
 
 :global(.category-5).category-5 > div:nth-child(1) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 :global(.category-5).category-5 > div:nth-child(2) {
@@ -532,8 +532,8 @@
 }
 
 :global(.category-5).category-5 > div:nth-child(2) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 :global(.category-5).category-5 > div:nth-child(3) {
@@ -542,8 +542,8 @@
 }
 
 :global(.category-5).category-5 > div:nth-child(3) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 :global(.category-5).category-5 > div:nth-child(4) {
@@ -552,8 +552,8 @@
 }
 
 :global(.category-5).category-5 > div:nth-child(4) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 :global(.category-5).category-5 > div:nth-child(5) {
@@ -562,8 +562,8 @@
 }
 
 :global(.category-5).category-5 > div:nth-child(5) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 :global(.category-5).category-5 > div:nth-child(6) {
@@ -573,8 +573,8 @@
 
 :global(.category-5).category-5 > div:nth-child(6) :global(.imagen) {
   display: inherit;
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 :global(.category-5).category-5 > div:nth-child(7) {
@@ -583,8 +583,8 @@
 }
 
 :global(.category-5).category-5 > div:nth-child(7) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 :global(.category-5).category-5 > div:nth-child(8) {
@@ -593,8 +593,8 @@
 }
 
 :global(.category-5).category-5 > div:nth-child(8) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 :global(.category-5).category-5 > div:nth-child(9) {
@@ -603,8 +603,8 @@
 }
 
 :global(.category-5).category-5 > div:nth-child(9) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 :global(.category-5).category-5 > div:nth-child(10) {
@@ -613,8 +613,8 @@
 }
 
 :global(.category-5).category-5 > div:nth-child(10) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 :global(.category-5).category-5 > div:nth-child(11) {
@@ -623,8 +623,8 @@
 }
 
 :global(.category-5).category-5 > div:nth-child(11) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 :global(.category-5).category-5 > div:nth-child(12) {
@@ -633,8 +633,8 @@
 }
 
 :global(.category-5).category-5 > div:nth-child(12) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 :global(.category-5).category-5 > div:nth-child(13) {
@@ -644,8 +644,8 @@
 
 :global(.category-5).category-5 > div:nth-child(13) :global(.imagen) {
   display: inherit;
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 :global(.category-5).category-5 > div:nth-child(14) {
@@ -654,8 +654,8 @@
 }
 
 :global(.category-5).category-5 > div:nth-child(14) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 :global(.category-5).category-5 > div:nth-child(15) {
@@ -665,8 +665,8 @@
 
 :global(.category-5).category-5 > div:nth-child(15) :global(.imagen) {
   display: inherit;
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 :global(.category-5).category-5 > div:nth-child(16) {
@@ -676,8 +676,8 @@
 
 :global(.category-5).category-5 > div:nth-child(16) :global(.imagen) {
   display: inherit;
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 :global(.category-5).category-5 > div:nth-child(17) {
@@ -687,8 +687,8 @@
 
 :global(.category-5).category-5 > div:nth-child(17) :global(.imagen) {
   display: inherit;
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 :global(.category-5).category-5 > div:nth-child(18) {
@@ -698,8 +698,8 @@
 
 :global(.category-5).category-5 > div:nth-child(18) :global(.imagen) {
   display: inherit;
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 :global(.category-5).category-5 > div:nth-child(19) {
@@ -728,8 +728,8 @@
 }
 
 :global(.category-5).category-5 > div:nth-child(21) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
   display: inherit;
 }
 
@@ -739,8 +739,8 @@
 }
 
 :global(.category-5).category-5 > div:nth-child(22) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
   display: inherit;
 }
 
@@ -750,8 +750,8 @@
 }
 
 :global(.category-5).category-5 > div:nth-child(23) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
   display: inherit;
 }
 
@@ -761,8 +761,8 @@
 }
 
 :global(.category-5).category-5 > div:nth-child(24) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
   display: inherit;
 }
 
@@ -772,8 +772,8 @@
 }
 
 :global(.category-5).category-5 > div:nth-child(25) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
   display: inherit;
 }
 
@@ -783,8 +783,8 @@
 }
 
 :global(.category-5).category-5 > div:nth-child(26) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
   display: inherit;
 }
 
@@ -795,8 +795,8 @@
 
 :global(.category-5).category-5 > div:nth-child(27) :global(.imagen) {
   display: inherit;
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 :global(.category-5).category-5 > div:nth-child(28) :global(.imagen),
@@ -1590,8 +1590,8 @@
 }
 
 :global(.category-11).category-11 > div:nth-child(1) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 :global(.category-11).category-11 > div:nth-child(2) {
@@ -1600,8 +1600,8 @@
 }
 
 :global(.category-11).category-11 > div:nth-child(2) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 :global(.category-11).category-11 > div:nth-child(3) {
@@ -1610,8 +1610,8 @@
 }
 
 :global(.category-11).category-11 > div:nth-child(3) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 :global(.category-11).category-11 > div:nth-child(4) {
@@ -1620,8 +1620,8 @@
 }
 
 :global(.category-11).category-11 > div:nth-child(4) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
   display: inherit;
 }
 
@@ -1631,8 +1631,8 @@
 }
 
 :global(.category-11).category-11 > div:nth-child(5) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
   display: inherit;
 }
 
@@ -1642,8 +1642,8 @@
 }
 
 :global(.category-11).category-11 > div:nth-child(6) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
   display: inherit;
 }
 
@@ -1653,8 +1653,8 @@
 }
 
 :global(.category-11).category-11 > div:nth-child(7) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 :global(.category-11).category-11 > div:nth-child(8) {
@@ -1662,8 +1662,8 @@
   left: 91.7%;
 }
 :global(.category-11).category-11 > div:nth-child(8) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 :global(.category-11).category-11 > div:nth-child(9) {
@@ -1672,8 +1672,8 @@
 }
 
 :global(.category-11).category-11 > div:nth-child(9) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 :global(.category-11).category-11 > div:nth-child(10) {
@@ -1682,8 +1682,8 @@
 }
 
 :global(.category-11).category-11 > div:nth-child(10) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
   display: inherit;
 }
 
@@ -1692,8 +1692,8 @@
   left: 76.8%;
 }
 :global(.category-11).category-11 > div:nth-child(11) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1.1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1.1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 :global(.category-11).category-11 > div:nth-child(12) {
@@ -1702,8 +1702,8 @@
 }
 
 :global(.category-11).category-11 > div:nth-child(12) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 :global(.category-11).category-11 > div:nth-child(13) {
@@ -1712,8 +1712,8 @@
 }
 
 :global(.category-11).category-11 > div:nth-child(13) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
   display: inherit;
 }
 
@@ -1722,8 +1722,8 @@
   left: 81%;
 }
 :global(.category-11).category-11 > div:nth-child(14) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1.1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1.1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95.1);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95.1);
   display: inherit;
 }
 
@@ -1733,8 +1733,8 @@
 }
 
 :global(.category-11).category-11 > div:nth-child(15) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
   display: inherit;
 }
 
@@ -1744,8 +1744,8 @@
 }
 
 :global(.category-11).category-11 > div:nth-child(16) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
   display: inherit;
 }
 
@@ -1755,8 +1755,8 @@
 }
 
 :global(.category-11).category-11 > div:nth-child(17) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
   display: inherit;
 }
 
@@ -1766,8 +1766,8 @@
 }
 
 :global(.category-11).category-11 > div:nth-child(18) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
   display: inherit;
 }
 
@@ -1777,8 +1777,8 @@
 }
 
 :global(.category-11).category-11 > div:nth-child(19) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
   display: inherit;
 }
 
@@ -1788,8 +1788,8 @@
 }
 
 :global(.category-11).category-11 > div:nth-child(20) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
   display: inherit;
 }
 
@@ -1799,8 +1799,8 @@
 }
 
 :global(.category-11).category-11 > div:nth-child(21) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
   display: inherit;
 }
 
@@ -1809,8 +1809,8 @@
   left: 76%;
 }
 :global(.category-11).category-11 > div:nth-child(22) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
   display: inherit;
 }
 
@@ -1819,8 +1819,8 @@
   left: 80.5%;
 }
 :global(.category-11).category-11 > div:nth-child(23) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
   display: inherit;
 }
 
@@ -2535,8 +2535,8 @@
 }
 
 :global(.category-14).category-14 > div:nth-child(8) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 :global(.category-14).category-14 > div:nth-child(9) {
@@ -2545,8 +2545,8 @@
 }
 
 :global(.category-14).category-14 > div:nth-child(9) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
 }
 
 :global(.category-14).category-14 > div:nth-child(10) {
@@ -2632,8 +2632,8 @@
 }
 
 :global(.category-14).category-14 > div:nth-child(17) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
   display: inherit;
 }
 
@@ -2654,8 +2654,8 @@
 }
 
 :global(.category-14).category-14 > div:nth-child(19) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
   display: inherit;
 }
 
@@ -2665,8 +2665,8 @@
 }
 
 :global(.category-14).category-14 > div:nth-child(20) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
   display: inherit;
 }
 
@@ -2676,8 +2676,8 @@
 }
 
 :global(.category-14).category-14 > div:nth-child(21) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
   display: inherit;
 }
 
@@ -2686,8 +2686,8 @@
   left: 56.5%;
 }
 :global(.category-14).category-14 > div:nth-child(22) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
   display: inherit;
 }
 
@@ -2696,8 +2696,8 @@
   left: 61.5%;
 }
 :global(.category-14).category-14 > div:nth-child(23) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
   display: inherit;
 }
 
@@ -2706,8 +2706,8 @@
   left: 66.7%;
 }
 :global(.category-14).category-14 > div:nth-child(24) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
   display: inherit;
 }
 
