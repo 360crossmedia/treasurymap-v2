@@ -992,7 +992,7 @@ const TreasuryMap = () => {
               frontMapOpen ? "front-open" : ""
             }`}
           >
-            <div className="map-title-wrapper">
+            <div className={`map-title-wrapper ${styles.map_title_wrapper}`}>
               <img className="map-title" src={mapCenterTitle} alt="" />
             </div>
             <div className="map-static-logos">
