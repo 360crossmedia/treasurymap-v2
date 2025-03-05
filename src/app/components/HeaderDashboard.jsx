@@ -9,6 +9,7 @@ import { setCompanyId } from "../store/slices/companyToUpdate.slice";
 import { apiGetAllCompanies } from "../service/apiGetAllCompanies";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import { apiGetCompanyHasMedia } from "../service/apiGetCompanyHasMedia";
 
 const HeaderDashboard = () => {
   const dispatch = useDispatch();
@@ -18,6 +19,7 @@ const HeaderDashboard = () => {
   const [companies, setCompanies] = useState([]);
   const [isSelectedAnyCompany, setIsSelectedAnyCompany] = useState(false);
   const [show, setShow] = useState(false);
+  const [companyHaveMedia, setCompanyHaveMedia] = useState();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -58,6 +60,19 @@ const HeaderDashboard = () => {
     setShow((prev) => !prev);
   };
 
+  const companyHasMedia = async () => {
+    const result = await apiGetCompanyHasMedia(isSelectedAnyCompany);
+    setCompanyHaveMedia(result);
+    showModal();
+  };
+
+  const findCompanyNameById = () => {
+    const company = companies.find(
+      (company) => company.id == isSelectedAnyCompany
+    );
+    return company?.name;
+  };
+
   return (
     <div className={styles.mainContainer}>
       <p className={styles.title}>Company Admin</p>
@@ -91,10 +106,7 @@ const HeaderDashboard = () => {
             Update
           </button>
           {(userId == 1 || backUpUserId == 1) && (
-            <button
-              onClick={() => showModal(!showModal)}
-              className={styles.deleteButton}
-            >
+            <button onClick={companyHasMedia} className={styles.deleteButton}>
               Delete
             </button>
           )}
@@ -109,8 +121,9 @@ const HeaderDashboard = () => {
 
             <Modal.Body>
               <p>
-                This company owns media. Deleting it will also delete its media.
-                Are you sure you want to proceed?
+                {companyHaveMedia
+                  ? "This company owns media. Deleting it will also delete its media. Are you sure you want to proceed?"
+                  : `Are you sure? Do you want to delete ${findCompanyNameById()}`}
               </p>
             </Modal.Body>
 
