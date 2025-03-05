@@ -1722,8 +1722,8 @@
   left: 81%;
 }
 :global(.category-11).category-11 > div:nth-child(14) :global(.imagen) {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95.1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95.1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.95);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.95);
   display: inherit;
 }
 
