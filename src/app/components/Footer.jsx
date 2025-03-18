@@ -4,6 +4,8 @@ import Image from "next/image";
 import styles from "../styles/footerNew.module.css"
 import footerLocationIcon from "../assets/footerLocationIcon.svg";
 import bnpLogo from "../assets/BNP_logo.png"
+import intensumLogo from "../assets/intensum-logo.jpg"
+import kantoxLogo from "../assets/Kantox-logo.png"
 import crossmediaLogo from "../assets/360cross.png"
 
 const Footer = () => {
@@ -14,7 +16,7 @@ const Footer = () => {
       <div className={styles.leftSection}>
         
         <div className={styles.leftInnerOne}>
-          <span className={styles.grayText}>Official partner</span>
+          <span className={styles.grayText}>Official partners</span>
           <Image 
             src={bnpLogo}
             alt="BNP Paribas"
@@ -22,6 +24,20 @@ const Footer = () => {
             height={30}
             className={styles.bnpLogo}
           />
+          <Image 
+            src={intensumLogo}
+            alt="Intensum"
+            width={100}
+            height={30}
+            className={styles.bnpLogo}
+          />
+          <Image 
+            src={kantoxLogo}
+            alt="Kantox"
+            width={100}
+            height={30}
+            className={styles.bnpLogo}
+          />          
         </div>
 
         <div className={styles.leftInnerTwo}>
