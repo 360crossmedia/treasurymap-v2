@@ -13,6 +13,8 @@
   flex-flow: column;
   align-items: center;
   gap: 5px;
+
+  width: 35%;
 }
 
 .centerSection {
@@ -20,6 +22,9 @@
   align-items: center;
   gap: 8px;
   color: #333;
+
+  width: 40%;
+  justify-content: center;
 }
 
 .rightSection {
@@ -28,13 +33,15 @@
   align-items: center;
   justify-content: flex-end;
   gap: 4px;
+
+  width: 25%;
 }
 
 .grayText {
   color: #666;
   font-size: 14px;
   font-weight: normal;
-  width: 100%;
+  width: auto;
   display: flex;
   justify-content: flex-end;
 }
@@ -69,7 +76,8 @@
 .leftInnerOne{
   display: flex;
   align-items: center;
-  gap: 5px;  
+  gap: 10px;  
+  width: 100%;
 }
 
 .leftInnerTwo{
