@@ -36,7 +36,7 @@ const Footer = () => {
             alt="Kantox"
             width={50}
             height={10}
-            className={styles.bnpLogo}
+            className={styles.kantoxLogo}
           />          
         </div>
 
