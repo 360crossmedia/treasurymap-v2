@@ -1075,12 +1075,12 @@ body{
 }
 
 .map-static-logos .category-5 > div:nth-child(18) {
-  top: 384px;
-  left: 55%;
+  top: 370px;
+  left: 70%;
 }
 .map-static-logos .category-5 > div:nth-child(18) .imagen {
-  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 1);
-  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 1);
+  max-height: calc(var(--maxHeight) * var(--sizeLogo) * 0.9);
+  max-width: calc(var(--maxWidth) * var(--sizeLogo) * 0.9);
 }
 
 .map-static-logos .category-5 > div:nth-child(19) {
