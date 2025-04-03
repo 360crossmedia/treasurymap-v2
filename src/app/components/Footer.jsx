@@ -34,8 +34,8 @@ const Footer = () => {
           <Image 
             src={kantoxLogo}
             alt="Kantox"
-            width={50}
-            height={10}
+            width={100}
+            height={30}
             className={styles.kantoxLogo}
           />          
         </div>
