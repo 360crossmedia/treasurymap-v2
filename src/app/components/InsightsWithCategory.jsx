@@ -25,9 +25,9 @@ const InsightsWithCategory = ({ categoryId }) => {
       <div className={styles.mainContainer}>
         <h4 className={styles.categoryName}>{category?.name}</h4>
         {publications?.map(
-          (publication) =>
+          (publication, index) =>
             publication.live && (
-              <InsightsCard key={publication.id} publication={publication} />
+              <InsightsCard key={index} publication={publication} />
             )
         )}
       </div>

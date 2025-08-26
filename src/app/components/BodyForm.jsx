@@ -58,10 +58,10 @@ const BodyForm = () => {
   const [users, setUsers] = useState();
   const [userSelected, setUserSelected] = useState(1);
   const [backUpUserId, setBackUpUserId] = useState();
-  const [isLive, setIsLive] = useState();
+  const [isLive, setIsLive] = useState(false);
   const [selectMainCategory, setSelectMainCategory] = useState();
   const [showTurnover, setShowTurnover] = useState(true);
-  const [isMultiplayerMap, setIsMultiplayerMap] = useState();
+  const [isMultiplayerMap, setIsMultiplayerMap] = useState(false);
   const [selectedSubOptions, setSelectedSubOptions] = useState({});
   const userId = useSelector((state) => state.user);
   const companyId = useSelector((state) => state.companyId);
@@ -427,7 +427,7 @@ const BodyForm = () => {
             name="description"
             id="description"
             rows="6"
-            value={companyDescription}
+            value={companyDescription ?? ""}
             onChange={(e) => setCompanyDescription(e.target.value)}
             required
             maxLength={6000}
@@ -594,7 +594,7 @@ const BodyForm = () => {
               {categories
                 .slice(0, Math.ceil(categories.length / 2))
                 .map((category, index) => (
-                  <div className={styles.categoryColumn}>
+                  <div key={index} className={styles.categoryColumn}>
                     <div className={styles.inputCheckboxContainer} key={index}>
                       <Checkbox
                         disabled={category.id == selectMainCategory}
@@ -623,7 +623,7 @@ const BodyForm = () => {
                       ></Checkbox>
                       <label
                         className={styles.labelCheckbox}
-                        for={category.name}
+                        htmlFor={category.name}
                       >
                         {category.name}
                       </label>
@@ -672,7 +672,7 @@ const BodyForm = () => {
               {categories
                 .slice(Math.ceil(categories.length / 2))
                 .map((category, index) => (
-                  <div className={styles.categoryColumn}>
+                  <div key={index} className={styles.categoryColumn}>
                     <div className={styles.inputCheckboxContainer} key={index}>
                       <Checkbox
                         disabled={category.id == selectMainCategory}
@@ -701,7 +701,7 @@ const BodyForm = () => {
                       ></Checkbox>
                       <label
                         className={styles.labelCheckbox}
-                        for={category.name}
+                        htmlFor={category.name}
                       >
                         {category.name}
                       </label>
@@ -772,7 +772,10 @@ const BodyForm = () => {
                   }}
                   checked={selectedSubCategoryIds?.includes(subCategory.id)}
                 ></Checkbox>
-                <label className={styles.labelCheckbox} for={subCategory.name}>
+                <label
+                  className={styles.labelCheckbox}
+                  htmlFor={subCategory.name}
+                >
                   {subCategory.name}
                 </label>
               </div>

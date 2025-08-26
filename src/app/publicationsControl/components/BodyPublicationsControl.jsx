@@ -48,7 +48,7 @@ const BodyPublicationsControl = () => {
           <p className={styles2.headerP}>Creation Date</p>
         </div>
         {mainPublications?.map((publication, index) => (
-          <div key={publication.id} className={styles2.videosList}>
+          <div key={index} className={styles2.videosList}>
             <div className={styles2.checkboxContainer}>
               <p className={styles2.videoP}>{index}</p>
               <label

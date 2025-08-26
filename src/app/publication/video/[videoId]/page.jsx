@@ -4,8 +4,10 @@ import Footer from "../../../components/Footer";
 import styles from "../../../styles/layout.module.css";
 import InsightsNavbar from "@/app/components/InsightsNavbar";
 import Video from "@/app/components/Video";
+import { use } from "react";
 
 const Layout = ({ params }) => {
+  const { videoId } = use(params);
   return (
     <>
       <div
@@ -14,7 +16,7 @@ const Layout = ({ params }) => {
       >
         <Navbar buttonLabel={"Login"} />
         <InsightsNavbar />
-        <Video videoId={params.videoId} />
+        <Video videoId={videoId} />
       </div>
       <Footer />
     </>

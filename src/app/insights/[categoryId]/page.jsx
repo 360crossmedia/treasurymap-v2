@@ -4,8 +4,10 @@ import Footer from "../../components/Footer";
 import styles from "../../styles/layout.module.css";
 import InsightsNavbar from "@/app/components/InsightsNavbar";
 import InsightsWithCategory from "@/app/components/InsightsWithCategory";
+import { use } from "react";
 
 const Layout = ({ params }) => {
+  const { categoryId } = use(params);
   return (
     <>
       <div
@@ -13,8 +15,8 @@ const Layout = ({ params }) => {
         style={{ backgroundPosition: "bottom", paddingBottom: "1.65%" }}
       >
         <Navbar buttonLabel={"Login"} />
-        <InsightsNavbar categoryId={params.categoryId} />
-        <InsightsWithCategory categoryId={params.categoryId} />
+        <InsightsNavbar categoryId={categoryId} />
+        <InsightsWithCategory categoryId={categoryId} />
       </div>
       <Footer />
     </>

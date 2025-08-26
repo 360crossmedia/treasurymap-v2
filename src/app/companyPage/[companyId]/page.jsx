@@ -6,9 +6,11 @@ import Overview from "../../components/Overview";
 import HeaderCompanyPage from "../../components/HeaderCompanyPage";
 import MediaZone from "../../components/MediaZone";
 import { useSelector } from "react-redux";
+import { use } from "react";
 
 const Layout = ({ params }) => {
   const isOverview = useSelector((state) => state.isOverview);
+  const { companyId } = use(params);
   return (
     <>
       <div
@@ -16,10 +18,10 @@ const Layout = ({ params }) => {
         style={{ backgroundPosition: "bottom" }}
       >
         <Navbar buttonLabel={"Login"} />
-        <HeaderCompanyPage companyId={params.companyId} />
+        <HeaderCompanyPage companyId={companyId} />
       </div>
-      {isOverview && <Overview companyId={params.companyId} />}
-      {!isOverview && <MediaZone companyId={params.companyId} />}
+      {isOverview && <Overview companyId={companyId} />}
+      {!isOverview && <MediaZone companyId={companyId} />}
       <Footer />
     </>
   );
