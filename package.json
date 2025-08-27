@@ -18,11 +18,11 @@
     "jsonwebtoken": "8.5.1",
     "next": "^15.5.0",
     "primereact": "^10.9.7",
+    "quill": "^2.0.3",
     "react": "^19.1.1",
     "react-bootstrap": "^2.10.10",
     "react-bootstrap-typeahead": "^6.4.1",
     "react-dom": "^19.1.1",
-    "react-quill": "^2.0.0",
     "react-redux": "^9.2.0"
   }
 }

@@ -21,8 +21,7 @@ import {
 } from "../utils";
 import Image from "next/image";
 import PhotoImg from "../assets/photoImg.svg";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import QuillEditor from "@/app/components/QuillEditor/QuillEditor";
 import { apiNewPublicationAlert } from "../service/apiNewPublicationAlert";
 import { apiGetCompanyData } from "../service/apiGetCompanyData";
 import { Form } from "react-bootstrap";
@@ -30,7 +29,7 @@ import { Form } from "react-bootstrap";
 const BodyArticle = ({ isArticle }) => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const [title, setTitle] = useState();
+  const [title, setTitle] = useState("");
   const [body, setBody] = useState();
   const [introduction, setIntroduction] = useState();
   const [url, setUrl] = useState();
@@ -234,7 +233,7 @@ const BodyArticle = ({ isArticle }) => {
               id="custom-switch"
               label={live ? "On" : "Off"}
               onChange={(e) => setLive(e.target.checked)}
-              checked={live}
+              checked={live ?? false}
             />
           </div>
         )}
@@ -353,7 +352,7 @@ const BodyArticle = ({ isArticle }) => {
               <label>
                 Body <span className={styles.required}>*</span>
               </label>
-              <ReactQuill
+              <QuillEditor
                 className={styles.customButton}
                 formats={formats}
                 modules={modules}

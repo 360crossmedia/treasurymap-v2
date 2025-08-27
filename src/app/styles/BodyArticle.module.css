@@ -58,22 +58,13 @@
 }
 
 .customButton {
-  height: 40vh;
-  margin-bottom: 7vh;
+  height: 40vh !important;
+  border: none !important;
 }
 
 .customButton div {
   background-color: white;
-  border-bottom-left-radius: 30px;
-  border-bottom-right-radius: 30px;
-}
-
-.customButton div:first-child {
-  background-color: white;
-  border-top-left-radius: 30px;
-  border-top-right-radius: 30px;
-  border-bottom-left-radius: inherit;
-  border-bottom-right-radius: inherit;
+  border-radius: 30px !important;
 }
 
 .urlInstructionsSpan {
