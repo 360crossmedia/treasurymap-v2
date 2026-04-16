@@ -212,7 +212,7 @@ export function MapContainer({ initialData }: MapContainerProps) {
                           <div className={`w-[44px] h-[24px] bg-white rounded-[4px] flex items-center justify-center transition-all ${
                             hoveredCompany === key ? "shadow-lg scale-125 z-20 ring-1" : "shadow-sm"
                           }`}
-                            style={hoveredCompany === key ? { ringColor: zone.color } : {}}
+                            style={hoveredCompany === key ? { boxShadow: `0 0 0 2px ${zone.color}` } : {}}
                           >
                             {logo.image ? (
                               <Image
