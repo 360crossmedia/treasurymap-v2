@@ -1,48 +1,33 @@
 // MAP CORE — do not refactor without explicit instruction
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { MapCategory } from "@/lib/api";
 
-// Each zone is a blob/region on the map canvas
-// x,y are percentage-based positions on a 100x100 grid
-const ZONES: Record<number, { x: number; y: number; w: number; h: number; color: string; glow: string }> = {
-  0:  { x: 0,  y: 0,  w: 25, h: 20, color: "#3B82F6", glow: "rgba(59,130,246,0.12)" },   // FIDP - blue
-  1:  { x: 25, y: 0,  w: 20, h: 20, color: "#6366F1", glow: "rgba(99,102,241,0.12)" },   // FDF - indigo
-  2:  { x: 45, y: 0,  w: 20, h: 20, color: "#EC4899", glow: "rgba(236,72,153,0.12)" },   // CMA - pink
-  3:  { x: 65, y: 0,  w: 35, h: 22, color: "#10B981", glow: "rgba(16,185,129,0.12)" },   // Integrators - emerald
-  4:  { x: 0,  y: 20, w: 22, h: 22, color: "#F59E0B", glow: "rgba(245,158,11,0.12)" },   // OTS - amber
-  5:  { x: 22, y: 20, w: 30, h: 25, color: "#06B6D4", glow: "rgba(6,182,212,0.12)" },    // TMS - cyan (large)
-  6:  { x: 52, y: 22, w: 22, h: 20, color: "#8B5CF6", glow: "rgba(139,92,246,0.12)" },   // BI - violet
-  7:  { x: 74, y: 22, w: 26, h: 20, color: "#EF4444", glow: "rgba(239,68,68,0.12)" },    // ERP - red
-  8:  { x: 0,  y: 42, w: 20, h: 18, color: "#14B8A6", glow: "rgba(20,184,166,0.12)" },   // ETL - teal
-  9:  { x: 20, y: 45, w: 25, h: 20, color: "#F97316", glow: "rgba(249,115,22,0.12)" },   // FSC - orange
-  10: { x: 45, y: 42, w: 25, h: 20, color: "#A855F7", glow: "rgba(168,85,247,0.12)" },   // CFF - purple
-  11: { x: 70, y: 42, w: 30, h: 20, color: "#0EA5E9", glow: "rgba(14,165,233,0.12)" },   // RegTech - sky
-  12: { x: 0,  y: 62, w: 35, h: 20, color: "#22C55E", glow: "rgba(34,197,94,0.12)" },    // Banking - green
-  13: { x: 35, y: 65, w: 30, h: 18, color: "#E11D48", glow: "rgba(225,29,72,0.12)" },    // Insurance - rose
-  14: { x: 65, y: 62, w: 35, h: 20, color: "#64748B", glow: "rgba(100,116,139,0.12)" },  // Other - slate
+const CAT_META: Record<number, { label: string; full: string; color: string; angle: number }> = {
+  0:  { label: "FIDP",       full: "Financial Instrument Dealing Platform", color: "#3B82F6", angle: 0 },
+  1:  { label: "FDF",        full: "Financial Data Feeding",               color: "#6366F1", angle: 24 },
+  2:  { label: "CMA",        full: "Currency Management Automation",       color: "#EC4899", angle: 48 },
+  3:  { label: "Integrators",full: "Integrators & Consultants",            color: "#10B981", angle: 72 },
+  4:  { label: "OTS",        full: "Other Treasury Solutions",             color: "#F59E0B", angle: 96 },
+  5:  { label: "TMS",        full: "Treasury Management Systems",          color: "#06B6D4", angle: 120 },
+  6:  { label: "BI",         full: "BI & Analytics",                       color: "#8B5CF6", angle: 144 },
+  7:  { label: "ERP",        full: "Enterprise Resource Planning",         color: "#EF4444", angle: 168 },
+  8:  { label: "ETL",        full: "Extract Transform Load",              color: "#14B8A6", angle: 192 },
+  9:  { label: "FSC",        full: "Financial Supply Chain",               color: "#F97316", angle: 216 },
+  10: { label: "CFF",        full: "Cash-Flow Forecasting",               color: "#A855F7", angle: 240 },
+  11: { label: "RegTech",    full: "Regulatory Technology",                color: "#0EA5E9", angle: 264 },
+  12: { label: "Banking",    full: "Banking Solutions",                    color: "#22C55E", angle: 288 },
+  13: { label: "Insurance",  full: "Insurance Solutions",                  color: "#E11D48", angle: 312 },
+  14: { label: "Other",      full: "Other Solutions",                      color: "#64748B", angle: 336 },
 };
 
-const CAT_NAMES: Record<number, { short: string; full: string }> = {
-  0:  { short: "FIDP",      full: "Financial Instrument Dealing Platform" },
-  1:  { short: "FDF",       full: "Financial Data Feeding" },
-  2:  { short: "CMA",       full: "Currency Management Automation" },
-  3:  { short: "Integrators", full: "Integrators & Consultants" },
-  4:  { short: "OTS",       full: "Other Treasury Solutions" },
-  5:  { short: "TMS",       full: "Treasury Management Systems" },
-  6:  { short: "BI",        full: "BI & Analytics" },
-  7:  { short: "ERP",       full: "Enterprise Resource Planning" },
-  8:  { short: "ETL",       full: "Extract Transform Load" },
-  9:  { short: "FSC",       full: "Financial Supply Chain" },
-  10: { short: "CFF",       full: "Cash-Flow Forecasting" },
-  11: { short: "RegTech",   full: "Regulatory Technology" },
-  12: { short: "Banking",   full: "Banking Solutions" },
-  13: { short: "Insurance", full: "Insurance Solutions" },
-  14: { short: "Other",     full: "Other Solutions" },
-};
+function polarToCartesian(cx: number, cy: number, r: number, angleDeg: number) {
+  const rad = (angleDeg - 90) * (Math.PI / 180);
+  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+}
 
 interface MapContainerProps {
   initialData?: MapCategory[];
@@ -51,7 +36,7 @@ interface MapContainerProps {
 export function MapContainer({ initialData }: MapContainerProps) {
   const [data, setData] = useState<MapCategory[]>(initialData || []);
   const [loading, setLoading] = useState(!initialData);
-  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [expandedCat, setExpandedCat] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [hqFilter, setHqFilter] = useState("");
   const [hoveredCompany, setHoveredCompany] = useState<string | null>(null);
@@ -72,8 +57,7 @@ export function MapContainer({ initialData }: MapContainerProps) {
         if (!logo.live) return false;
         if (searchQuery) {
           const q = searchQuery.toLowerCase();
-          const matchKeywords = logo.keywords?.some((k) => k.toLowerCase().includes(q));
-          if (!matchKeywords) return false;
+          if (!logo.keywords?.some((k) => k.toLowerCase().includes(q))) return false;
         }
         if (hqFilter) {
           if (!logo.headequarterLocation?.toLowerCase().includes(hqFilter.toLowerCase())) return false;
@@ -85,32 +69,44 @@ export function MapContainer({ initialData }: MapContainerProps) {
 
   const totalCompanies = filteredData.reduce((a, c) => a + c.logos.length, 0);
 
+  // Map dimensions
+  const W = 1200;
+  const H = 900;
+  const CX = W / 2;
+  const CY = H / 2;
+  const ORBIT_R = 300; // category orbit radius
+  const LOGO_R_BASE = 90; // logo orbit radius from category node
+
+  const handleCatClick = useCallback((id: number) => {
+    setExpandedCat((prev) => (prev === id ? null : id));
+  }, []);
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-[80vh] bg-[#0B1121]">
+      <div className="flex items-center justify-center h-[80vh] bg-[#060B18]">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-2 border-gray-700 border-t-blue-500 rounded-full animate-spin" />
-          <span className="text-sm text-gray-500">Loading treasury landscape...</span>
+          <div className="w-10 h-10 border-2 border-gray-800 border-t-cyan-500 rounded-full animate-spin" />
+          <span className="text-sm text-gray-600 tracking-wide">Mapping the treasury landscape...</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-[#0B1121] min-h-screen">
-      {/* Search bar */}
-      <div className="sticky top-16 z-30 bg-[#0B1121]/90 backdrop-blur-xl border-b border-white/5">
-        <div className="max-w-[1400px] mx-auto px-4 py-3 flex flex-wrap items-center gap-3">
-          <div className="relative flex-1 min-w-[200px] max-w-md">
-            <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+    <div className="bg-[#060B18] min-h-screen">
+      {/* Search */}
+      <div className="sticky top-16 z-30 bg-[#060B18]/80 backdrop-blur-2xl border-b border-white/[0.04]">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
+          <div className="relative flex-1 max-w-sm">
+            <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             <input
               type="text"
               placeholder="Search companies..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus:bg-white/8 transition-all"
+              className="w-full bg-white/[0.04] border border-white/[0.06] rounded-xl pl-10 pr-4 py-2.5 text-sm text-gray-300 placeholder-gray-600 focus:outline-none focus:border-cyan-500/30 focus:bg-white/[0.06] transition-all"
             />
           </div>
           <input
@@ -118,155 +114,261 @@ export function MapContainer({ initialData }: MapContainerProps) {
             placeholder="HQ location..."
             value={hqFilter}
             onChange={(e) => setHqFilter(e.target.value)}
-            className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 transition-all w-44"
+            className="bg-white/[0.04] border border-white/[0.06] rounded-xl px-4 py-2.5 text-sm text-gray-300 placeholder-gray-600 focus:outline-none focus:border-cyan-500/30 transition-all w-40"
           />
-          <span className="text-xs text-gray-500 ml-auto">{totalCompanies} companies</span>
-          {(searchQuery || hqFilter || selectedCategory !== null) && (
-            <button
-              onClick={() => { setSearchQuery(""); setHqFilter(""); setSelectedCategory(null); }}
-              className="text-xs text-gray-500 hover:text-white transition-colors"
-            >
-              Clear
-            </button>
+          <div className="hidden sm:flex items-center gap-1.5 ml-auto">
+            <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse" />
+            <span className="text-[11px] text-gray-500 tracking-wide">{totalCompanies} companies</span>
+          </div>
+          {(searchQuery || hqFilter) && (
+            <button onClick={() => { setSearchQuery(""); setHqFilter(""); }} className="text-xs text-gray-600 hover:text-gray-300">Clear</button>
           )}
         </div>
       </div>
 
-      {/* The Map */}
-      <div className="max-w-[1400px] mx-auto px-4 py-6">
-        {/* Title */}
-        <div className="text-center mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-white/90 tracking-tight">
-            The Treasury Technology Landscape
-          </h1>
-          <p className="mt-2 text-sm text-gray-500">{totalCompanies} solutions mapped</p>
-        </div>
+      {/* Constellation map */}
+      <div className="flex justify-center overflow-hidden px-4 py-4">
+        <svg
+          viewBox={`0 0 ${W} ${H}`}
+          className="w-full max-w-[1200px]"
+          style={{ maxHeight: "calc(100vh - 140px)" }}
+        >
+          <defs>
+            {/* Radial glow for center */}
+            <radialGradient id="centerGlow">
+              <stop offset="0%" stopColor="#06B6D4" stopOpacity="0.3" />
+              <stop offset="50%" stopColor="#06B6D4" stopOpacity="0.05" />
+              <stop offset="100%" stopColor="#06B6D4" stopOpacity="0" />
+            </radialGradient>
+            {/* Category node glows */}
+            {Object.entries(CAT_META).map(([id, meta]) => (
+              <radialGradient key={id} id={`glow-${id}`}>
+                <stop offset="0%" stopColor={meta.color} stopOpacity="0.4" />
+                <stop offset="100%" stopColor={meta.color} stopOpacity="0" />
+              </radialGradient>
+            ))}
+          </defs>
 
-        {/* Map canvas - the zones are positioned as a responsive grid of blobs */}
-        <div className="relative" style={{ aspectRatio: "16/10" }}>
-          {/* Grid lines / subtle background pattern */}
-          <div className="absolute inset-0 opacity-[0.03]"
-            style={{
-              backgroundImage: "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
-              backgroundSize: "60px 60px"
-            }}
-          />
+          {/* Subtle orbit rings */}
+          <circle cx={CX} cy={CY} r={ORBIT_R} fill="none" stroke="white" strokeOpacity="0.03" strokeWidth="1" />
+          <circle cx={CX} cy={CY} r={ORBIT_R * 0.5} fill="none" stroke="white" strokeOpacity="0.02" strokeWidth="1" strokeDasharray="4 8" />
 
-          {/* Category zones */}
-          {filteredData
-            .filter((cat) => selectedCategory === null || cat.id === selectedCategory)
-            .map((cat) => {
-              const zone = ZONES[cat.id];
-              const names = CAT_NAMES[cat.id] || { short: cat.categoryName, full: cat.categoryName };
-              if (!zone || cat.logos.length === 0) return null;
+          {/* Connection lines from center to categories */}
+          {filteredData.map((cat) => {
+            const meta = CAT_META[cat.id];
+            if (!meta || cat.logos.length === 0) return null;
+            const pos = polarToCartesian(CX, CY, ORBIT_R, meta.angle);
+            const isExpanded = expandedCat === cat.id;
+            return (
+              <line
+                key={`line-${cat.id}`}
+                x1={CX} y1={CY}
+                x2={pos.x} y2={pos.y}
+                stroke={meta.color}
+                strokeOpacity={isExpanded ? 0.3 : 0.08}
+                strokeWidth={isExpanded ? 1.5 : 0.5}
+                className="transition-all duration-700"
+              />
+            );
+          })}
 
-              const isSelected = selectedCategory === cat.id;
-              const opacity = selectedCategory === null || isSelected ? 1 : 0.2;
+          {/* Center glow */}
+          <circle cx={CX} cy={CY} r="120" fill="url(#centerGlow)" />
 
-              return (
-                <div
-                  key={cat.id}
-                  className="absolute rounded-2xl transition-all duration-500 overflow-hidden cursor-pointer"
-                  style={{
-                    left: `${zone.x}%`,
-                    top: `${zone.y}%`,
-                    width: `${zone.w}%`,
-                    height: `${zone.h}%`,
-                    backgroundColor: zone.glow,
-                    borderColor: `${zone.color}33`,
-                    borderWidth: 1,
-                    borderStyle: "solid",
-                    opacity,
-                    padding: "10px",
-                  }}
-                  onClick={() => setSelectedCategory(isSelected ? null : cat.id)}
-                >
-                  {/* Zone label */}
-                  <div className="flex items-center gap-1.5 mb-1.5">
-                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: zone.color }} />
-                    <span className="text-[11px] font-bold tracking-wide" style={{ color: zone.color }}>
-                      {names.short}
-                    </span>
-                    <span className="text-[9px] text-gray-500 hidden sm:inline">
-                      {names.full}
-                    </span>
-                    <span className="text-[9px] font-medium ml-auto" style={{ color: `${zone.color}99` }}>
-                      {cat.logos.length}
-                    </span>
-                  </div>
+          {/* Center node */}
+          <circle cx={CX} cy={CY} r="40" fill="#0C1425" stroke="#06B6D4" strokeWidth="1.5" strokeOpacity="0.5" />
+          <circle cx={CX} cy={CY} r="28" fill="#06B6D4" fillOpacity="0.1" />
+          <text x={CX} y={CY - 6} textAnchor="middle" className="fill-cyan-400 text-[10px] font-bold tracking-[0.15em]">TREASURY</text>
+          <text x={CX} y={CY + 8} textAnchor="middle" className="fill-cyan-400/60 text-[8px] tracking-[0.2em]">MAP</text>
 
-                  {/* Logos flowing inside the zone */}
-                  <div className="flex flex-wrap gap-[3px] content-start overflow-hidden" style={{ maxHeight: "calc(100% - 26px)" }}>
-                    {cat.logos.map((logo, i) => {
-                      const companyId = logo.url?.match(/companyPage\/(\d+)/)?.[1];
-                      const key = `${cat.id}-${i}`;
-                      return (
-                        <Link
-                          key={key}
-                          href={companyId ? `/company/${companyId}` : "#"}
-                          onClick={(e) => e.stopPropagation()}
-                          onMouseEnter={() => setHoveredCompany(key)}
-                          onMouseLeave={() => setHoveredCompany(null)}
-                          className="relative"
-                        >
-                          <div className={`w-[44px] h-[24px] bg-white rounded-[4px] flex items-center justify-center transition-all ${
-                            hoveredCompany === key ? "shadow-lg scale-125 z-20 ring-1" : "shadow-sm"
-                          }`}
-                            style={hoveredCompany === key ? { boxShadow: `0 0 0 2px ${zone.color}` } : {}}
+          {/* Category nodes + their company logos */}
+          {filteredData.map((cat) => {
+            const meta = CAT_META[cat.id];
+            if (!meta || cat.logos.length === 0) return null;
+
+            const catPos = polarToCartesian(CX, CY, ORBIT_R, meta.angle);
+            const isExpanded = expandedCat === cat.id;
+            const isOtherExpanded = expandedCat !== null && expandedCat !== cat.id;
+            const nodeR = isExpanded ? 36 : 26;
+            const logoOrbitR = isExpanded ? Math.min(140, 60 + cat.logos.length * 2.5) : LOGO_R_BASE;
+
+            // Position logos around the category node
+            const angleStep = cat.logos.length > 0 ? 360 / Math.min(cat.logos.length, 20) : 0;
+
+            return (
+              <g
+                key={`cat-${cat.id}`}
+                className="transition-all duration-700"
+                opacity={isOtherExpanded ? 0.15 : 1}
+              >
+                {/* Glow behind node */}
+                <circle cx={catPos.x} cy={catPos.y} r={isExpanded ? 100 : 50} fill={`url(#glow-${cat.id})`} className="transition-all duration-700" />
+
+                {/* Company logo connections (dashed lines from cat node to logos) */}
+                {(isExpanded || expandedCat === null) && cat.logos.slice(0, 20).map((logo, i) => {
+                  const angle = meta.angle + (i - cat.logos.length / 2) * (isExpanded ? angleStep * 0.9 : 8) + (isExpanded ? 0 : -cat.logos.length * 2);
+                  const logoPos = polarToCartesian(catPos.x, catPos.y, logoOrbitR, angle);
+                  return (
+                    <line
+                      key={`conn-${cat.id}-${i}`}
+                      x1={catPos.x} y1={catPos.y}
+                      x2={logoPos.x} y2={logoPos.y}
+                      stroke={meta.color}
+                      strokeOpacity={isExpanded ? 0.15 : 0.04}
+                      strokeWidth="0.5"
+                      strokeDasharray={isExpanded ? "none" : "2 4"}
+                      className="transition-all duration-700"
+                    />
+                  );
+                })}
+
+                {/* Company logos */}
+                {(isExpanded || expandedCat === null) && cat.logos.slice(0, isExpanded ? 40 : 12).map((logo, i) => {
+                  const angle = meta.angle + (i - Math.min(cat.logos.length, isExpanded ? 40 : 12) / 2) * (isExpanded ? angleStep * 0.85 : 10);
+                  const tier = isExpanded && i >= 20 ? 1 : 0;
+                  const r = logoOrbitR + tier * 50;
+                  const logoPos = polarToCartesian(catPos.x, catPos.y, r, angle);
+                  const companyId = logo.url?.match(/companyPage\/(\d+)/)?.[1];
+                  const key = `${cat.id}-${i}`;
+                  const isHovered = hoveredCompany === key;
+                  const size = isExpanded ? 40 : 30;
+
+                  // Don't render if outside viewport
+                  if (logoPos.x < -50 || logoPos.x > W + 50 || logoPos.y < -50 || logoPos.y > H + 50) return null;
+
+                  return (
+                    <g key={key}>
+                      <Link
+                        href={companyId ? `/company/${companyId}` : "#"}
+                        onMouseEnter={() => setHoveredCompany(key)}
+                        onMouseLeave={() => setHoveredCompany(null)}
+                      >
+                        {/* Logo container */}
+                        <rect
+                          x={logoPos.x - size / 2}
+                          y={logoPos.y - size * 0.3}
+                          width={size}
+                          height={size * 0.6}
+                          rx="4"
+                          fill="white"
+                          stroke={isHovered ? meta.color : "transparent"}
+                          strokeWidth={isHovered ? "1.5" : "0"}
+                          className="transition-all duration-300 drop-shadow-sm"
+                          style={isHovered ? { filter: `drop-shadow(0 0 8px ${meta.color}44)` } : {}}
+                        />
+                        {/* Company logo image */}
+                        <image
+                          href={logo.image || ""}
+                          x={logoPos.x - size / 2 + 3}
+                          y={logoPos.y - size * 0.3 + 3}
+                          width={size - 6}
+                          height={size * 0.6 - 6}
+                          preserveAspectRatio="xMidYMid meet"
+                        />
+                      </Link>
+                      {/* Tooltip */}
+                      {isHovered && (
+                        <g>
+                          <rect
+                            x={logoPos.x - 50}
+                            y={logoPos.y - size * 0.3 - 26}
+                            width="100"
+                            height="20"
+                            rx="6"
+                            fill={meta.color}
+                          />
+                          <text
+                            x={logoPos.x}
+                            y={logoPos.y - size * 0.3 - 13}
+                            textAnchor="middle"
+                            className="fill-white text-[9px] font-medium"
                           >
-                            {logo.image ? (
-                              <Image
-                                src={logo.image}
-                                alt={logo.keywords?.[0] || ""}
-                                width={38}
-                                height={18}
-                                className="object-contain max-h-[18px]"
-                                unoptimized
-                              />
-                            ) : (
-                              <span className="text-[6px] text-gray-300">?</span>
-                            )}
-                          </div>
-                          {/* Tooltip */}
-                          {hoveredCompany === key && (
-                            <div
-                              className="absolute z-50 -top-9 left-1/2 -translate-x-1/2 px-2.5 py-1 rounded-lg text-[10px] font-medium whitespace-nowrap pointer-events-none shadow-xl"
-                              style={{ backgroundColor: zone.color, color: "white" }}
-                            >
-                              {logo.keywords?.[0] || "View company"}
-                              <div
-                                className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[4px] border-r-[4px] border-t-[4px] border-transparent"
-                                style={{ borderTopColor: zone.color }}
-                              />
-                            </div>
-                          )}
-                        </Link>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
-        </div>
+                            {(logo.keywords?.[0] || "View").substring(0, 18)}
+                          </text>
+                        </g>
+                      )}
+                    </g>
+                  );
+                })}
 
-        {/* Legend */}
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
-          {filteredData.filter(c => c.logos.length > 0).map((cat) => {
-            const zone = ZONES[cat.id];
-            const names = CAT_NAMES[cat.id];
-            if (!zone || !names) return null;
+                {/* Category node */}
+                <g
+                  className="cursor-pointer"
+                  onClick={() => handleCatClick(cat.id)}
+                >
+                  <circle
+                    cx={catPos.x} cy={catPos.y} r={nodeR}
+                    fill="#0C1425"
+                    stroke={meta.color}
+                    strokeWidth={isExpanded ? 2 : 1}
+                    strokeOpacity={isExpanded ? 0.8 : 0.4}
+                    className="transition-all duration-500"
+                  />
+                  <circle
+                    cx={catPos.x} cy={catPos.y} r={nodeR - 4}
+                    fill={meta.color}
+                    fillOpacity={isExpanded ? 0.15 : 0.08}
+                    className="transition-all duration-500"
+                  />
+                  <text
+                    x={catPos.x} y={catPos.y - 2}
+                    textAnchor="middle"
+                    fill={meta.color}
+                    className={`font-bold tracking-wide ${isExpanded ? "text-[10px]" : "text-[8px]"}`}
+                  >
+                    {meta.label}
+                  </text>
+                  <text
+                    x={catPos.x} y={catPos.y + 10}
+                    textAnchor="middle"
+                    fill="white"
+                    fillOpacity="0.3"
+                    className="text-[7px]"
+                  >
+                    {cat.logos.length}
+                  </text>
+                </g>
+
+                {/* Overflow indicator */}
+                {!isExpanded && cat.logos.length > 12 && (
+                  <text
+                    x={catPos.x + nodeR + 8}
+                    y={catPos.y + 4}
+                    fill={meta.color}
+                    fillOpacity="0.4"
+                    className="text-[8px] cursor-pointer"
+                    onClick={() => handleCatClick(cat.id)}
+                  >
+                    +{cat.logos.length - 12}
+                  </text>
+                )}
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+
+      {/* Legend bar */}
+      <div className="max-w-7xl mx-auto px-6 pb-10">
+        <div className="flex flex-wrap justify-center gap-2">
+          {Object.entries(CAT_META).map(([id, meta]) => {
+            const cat = filteredData.find((c) => c.id === parseInt(id));
+            if (!cat || cat.logos.length === 0) return null;
+            const isActive = expandedCat === parseInt(id);
             return (
               <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(selectedCategory === cat.id ? null : cat.id)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium transition-all ${
-                  selectedCategory === cat.id
-                    ? "bg-white text-gray-900 shadow-lg"
-                    : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-gray-300"
+                key={id}
+                onClick={() => handleCatClick(parseInt(id))}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-medium transition-all duration-300 ${
+                  isActive
+                    ? "bg-white/10 text-white ring-1"
+                    : "text-gray-500 hover:text-gray-300 hover:bg-white/[0.03]"
                 }`}
+                style={isActive ? { boxShadow: `inset 0 0 0 1px ${meta.color}`, color: meta.color } : {}}
               >
-                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: zone.color }} />
-                {names.short}
+                <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: meta.color }} />
+                {meta.label}
+                <span className="opacity-50">{cat.logos.length}</span>
               </button>
             );
           })}
