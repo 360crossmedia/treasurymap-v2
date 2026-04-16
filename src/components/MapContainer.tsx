@@ -1,28 +1,47 @@
 // MAP CORE — do not refactor without explicit instruction
 "use client";
 
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { MapCategory } from "@/lib/api";
 
-// Category zone positions on the 1200x776 map background (approximate from original site)
-const ZONE_POSITIONS: Record<number, { x: number; y: number; w: number; h: number; label: string; fullName: string }> = {
-  0:  { x: 0,    y: 0,   w: 180, h: 200, label: "TR",   fullName: "TR (Treasury Reporting)" },
-  1:  { x: 140,  y: 0,   w: 200, h: 100, label: "eBAM", fullName: "eBAM (Electronic Bank Account Management)" },
-  2:  { x: 260,  y: 0,   w: 160, h: 100, label: "BSG",  fullName: "BSG (Bank Single Gateway)" },
-  3:  { x: 420,  y: 0,   w: 250, h: 200, label: "PSP",  fullName: "PSP (Payment Service Provider)" },
-  4:  { x: 670,  y: 0,   w: 200, h: 160, label: "FIDP", fullName: "FIDP (Financial Instrument Dealing Platform)" },
-  5:  { x: 870,  y: 0,   w: 170, h: 160, label: "FDF",  fullName: "FDF (Financial Data Feeding)" },
-  6:  { x: 1040, y: 0,   w: 160, h: 160, label: "ETL",  fullName: "ETL (Extract Transform Load)" },
-  7:  { x: 0,    y: 200, w: 300, h: 240, label: "CFF",  fullName: "CFF (Cash-Flow Forecasting)" },
-  8:  { x: 300,  y: 150, w: 600, h: 250, label: "",      fullName: "Integrators & Consultants" },
-  9:  { x: 900,  y: 160, w: 300, h: 200, label: "CMA",  fullName: "CMA (Currency Management Automation)" },
-  10: { x: 0,    y: 440, w: 300, h: 200, label: "ERP",  fullName: "ERP" },
-  11: { x: 300,  y: 440, w: 450, h: 200, label: "TMS",  fullName: "TMS / TRMS" },
-  12: { x: 750,  y: 440, w: 220, h: 200, label: "FSC",  fullName: "FSC (Financial Supply Chain)" },
-  13: { x: 970,  y: 440, w: 230, h: 200, label: "RegTech", fullName: "RegTech" },
-  14: { x: 0,    y: 640, w: 1200, h: 136, label: "",     fullName: "Other Solutions" },
+// Each zone is a blob/region on the map canvas
+// x,y are percentage-based positions on a 100x100 grid
+const ZONES: Record<number, { x: number; y: number; w: number; h: number; color: string; glow: string }> = {
+  0:  { x: 0,  y: 0,  w: 25, h: 20, color: "#3B82F6", glow: "rgba(59,130,246,0.12)" },   // FIDP - blue
+  1:  { x: 25, y: 0,  w: 20, h: 20, color: "#6366F1", glow: "rgba(99,102,241,0.12)" },   // FDF - indigo
+  2:  { x: 45, y: 0,  w: 20, h: 20, color: "#EC4899", glow: "rgba(236,72,153,0.12)" },   // CMA - pink
+  3:  { x: 65, y: 0,  w: 35, h: 22, color: "#10B981", glow: "rgba(16,185,129,0.12)" },   // Integrators - emerald
+  4:  { x: 0,  y: 20, w: 22, h: 22, color: "#F59E0B", glow: "rgba(245,158,11,0.12)" },   // OTS - amber
+  5:  { x: 22, y: 20, w: 30, h: 25, color: "#06B6D4", glow: "rgba(6,182,212,0.12)" },    // TMS - cyan (large)
+  6:  { x: 52, y: 22, w: 22, h: 20, color: "#8B5CF6", glow: "rgba(139,92,246,0.12)" },   // BI - violet
+  7:  { x: 74, y: 22, w: 26, h: 20, color: "#EF4444", glow: "rgba(239,68,68,0.12)" },    // ERP - red
+  8:  { x: 0,  y: 42, w: 20, h: 18, color: "#14B8A6", glow: "rgba(20,184,166,0.12)" },   // ETL - teal
+  9:  { x: 20, y: 45, w: 25, h: 20, color: "#F97316", glow: "rgba(249,115,22,0.12)" },   // FSC - orange
+  10: { x: 45, y: 42, w: 25, h: 20, color: "#A855F7", glow: "rgba(168,85,247,0.12)" },   // CFF - purple
+  11: { x: 70, y: 42, w: 30, h: 20, color: "#0EA5E9", glow: "rgba(14,165,233,0.12)" },   // RegTech - sky
+  12: { x: 0,  y: 62, w: 35, h: 20, color: "#22C55E", glow: "rgba(34,197,94,0.12)" },    // Banking - green
+  13: { x: 35, y: 65, w: 30, h: 18, color: "#E11D48", glow: "rgba(225,29,72,0.12)" },    // Insurance - rose
+  14: { x: 65, y: 62, w: 35, h: 20, color: "#64748B", glow: "rgba(100,116,139,0.12)" },  // Other - slate
+};
+
+const CAT_NAMES: Record<number, { short: string; full: string }> = {
+  0:  { short: "FIDP",      full: "Financial Instrument Dealing Platform" },
+  1:  { short: "FDF",       full: "Financial Data Feeding" },
+  2:  { short: "CMA",       full: "Currency Management Automation" },
+  3:  { short: "Integrators", full: "Integrators & Consultants" },
+  4:  { short: "OTS",       full: "Other Treasury Solutions" },
+  5:  { short: "TMS",       full: "Treasury Management Systems" },
+  6:  { short: "BI",        full: "BI & Analytics" },
+  7:  { short: "ERP",       full: "Enterprise Resource Planning" },
+  8:  { short: "ETL",       full: "Extract Transform Load" },
+  9:  { short: "FSC",       full: "Financial Supply Chain" },
+  10: { short: "CFF",       full: "Cash-Flow Forecasting" },
+  11: { short: "RegTech",   full: "Regulatory Technology" },
+  12: { short: "Banking",   full: "Banking Solutions" },
+  13: { short: "Insurance", full: "Insurance Solutions" },
+  14: { short: "Other",     full: "Other Solutions" },
 };
 
 interface MapContainerProps {
@@ -35,8 +54,7 @@ export function MapContainer({ initialData }: MapContainerProps) {
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [hqFilter, setHqFilter] = useState("");
-  const [hoveredLogo, setHoveredLogo] = useState<string | null>(null);
-  const mapRef = useRef<HTMLDivElement>(null);
+  const [hoveredCompany, setHoveredCompany] = useState<string | null>(null);
 
   useEffect(() => {
     if (!initialData) {
@@ -55,76 +73,58 @@ export function MapContainer({ initialData }: MapContainerProps) {
         if (searchQuery) {
           const q = searchQuery.toLowerCase();
           const matchKeywords = logo.keywords?.some((k) => k.toLowerCase().includes(q));
-          const matchUrl = logo.url?.toLowerCase().includes(q);
-          if (!matchKeywords && !matchUrl) return false;
+          if (!matchKeywords) return false;
         }
-        if (hqFilter && logo.headequarterLocation) {
-          if (!logo.headequarterLocation.toLowerCase().includes(hqFilter.toLowerCase())) return false;
+        if (hqFilter) {
+          if (!logo.headequarterLocation?.toLowerCase().includes(hqFilter.toLowerCase())) return false;
         }
-        if (selectedCategory !== null && cat.id !== selectedCategory) return false;
         return true;
       }),
     }));
-  }, [data, searchQuery, hqFilter, selectedCategory]);
+  }, [data, searchQuery, hqFilter]);
+
+  const totalCompanies = filteredData.reduce((a, c) => a + c.logos.length, 0);
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-96 bg-gray-50">
-        <div className="animate-pulse text-gray-400">Loading map...</div>
+      <div className="flex items-center justify-center h-[80vh] bg-[#0B1121]">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-2 border-gray-700 border-t-blue-500 rounded-full animate-spin" />
+          <span className="text-sm text-gray-500">Loading treasury landscape...</span>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="map-container">
-      {/* Filters bar */}
-      <div className="bg-white border-b px-4 sm:px-6 py-4">
-        <div className="max-w-[1400px] mx-auto flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-2 flex-1 min-w-[200px]">
-            <span className="text-sm font-semibold text-gray-700">Keywords</span>
-            <div className="relative flex-1">
-              <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              <input
-                type="text"
-                placeholder="Enter keyword..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-[#1B4B6B] focus:ring-1 focus:ring-[#1B4B6B]"
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold text-gray-700">Category</span>
-            <select
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1B4B6B]"
-              value={selectedCategory ?? ""}
-              onChange={(e) => setSelectedCategory(e.target.value ? parseInt(e.target.value) : null)}
-            >
-              <option value="">Select category</option>
-              {data.map((cat) => (
-                <option key={cat.id} value={cat.id}>{cat.categoryName}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold text-gray-700">HQ</span>
+    <div className="bg-[#0B1121] min-h-screen">
+      {/* Search bar */}
+      <div className="sticky top-16 z-30 bg-[#0B1121]/90 backdrop-blur-xl border-b border-white/5">
+        <div className="max-w-[1400px] mx-auto px-4 py-3 flex flex-wrap items-center gap-3">
+          <div className="relative flex-1 min-w-[200px] max-w-md">
+            <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
             <input
               type="text"
-              placeholder="Select headquarter location"
-              value={hqFilter}
-              onChange={(e) => setHqFilter(e.target.value)}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1B4B6B] min-w-[180px]"
+              placeholder="Search companies..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus:bg-white/8 transition-all"
             />
           </div>
-
+          <input
+            type="text"
+            placeholder="HQ location..."
+            value={hqFilter}
+            onChange={(e) => setHqFilter(e.target.value)}
+            className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 transition-all w-44"
+          />
+          <span className="text-xs text-gray-500 ml-auto">{totalCompanies} companies</span>
           {(searchQuery || hqFilter || selectedCategory !== null) && (
             <button
               onClick={() => { setSearchQuery(""); setHqFilter(""); setSelectedCategory(null); }}
-              className="px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-colors"
+              className="text-xs text-gray-500 hover:text-white transition-colors"
             >
               Clear
             </button>
@@ -132,94 +132,142 @@ export function MapContainer({ initialData }: MapContainerProps) {
         </div>
       </div>
 
-      {/* Map */}
-      <div className="relative overflow-auto bg-[#e8f4f8]">
-        <div
-          ref={mapRef}
-          className="relative mx-auto"
-          style={{
-            width: 1200,
-            height: 776,
-            backgroundImage: "url(/assets/map-bg.webp)",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        >
-          {/* Central text */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ top: "35%" }}>
-            <Image
-              src="/assets/central-text.png"
-              alt="The Treasury Technology Landscape"
-              width={700}
-              height={80}
-              className="opacity-80"
-              unoptimized
-            />
-          </div>
+      {/* The Map */}
+      <div className="max-w-[1400px] mx-auto px-4 py-6">
+        {/* Title */}
+        <div className="text-center mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white/90 tracking-tight">
+            The Treasury Technology Landscape
+          </h1>
+          <p className="mt-2 text-sm text-gray-500">{totalCompanies} solutions mapped</p>
+        </div>
 
-          {/* Category zones with logos */}
-          {filteredData.map((cat) => {
-            const zone = ZONE_POSITIONS[cat.id];
-            if (!zone) return null;
-            const liveLogos = cat.logos;
-            if (liveLogos.length === 0 && selectedCategory !== null) return null;
+        {/* Map canvas - the zones are positioned as a responsive grid of blobs */}
+        <div className="relative" style={{ aspectRatio: "16/10" }}>
+          {/* Grid lines / subtle background pattern */}
+          <div className="absolute inset-0 opacity-[0.03]"
+            style={{
+              backgroundImage: "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
+              backgroundSize: "60px 60px"
+            }}
+          />
 
-            return (
-              <div
-                key={cat.id}
-                className="absolute"
-                style={{ left: zone.x, top: zone.y, width: zone.w, height: zone.h }}
-              >
-                {/* Category title image */}
-                <div className="absolute -top-1 left-0 z-10">
-                  <Image
-                    src={cat.categoryImage || `/assets/cat-category-${cat.id + 1}.png`}
-                    alt={zone.fullName}
-                    width={zone.w}
-                    height={40}
-                    className="object-contain object-left max-h-[50px]"
-                    unoptimized
-                  />
-                </div>
+          {/* Category zones */}
+          {filteredData
+            .filter((cat) => selectedCategory === null || cat.id === selectedCategory)
+            .map((cat) => {
+              const zone = ZONES[cat.id];
+              const names = CAT_NAMES[cat.id] || { short: cat.categoryName, full: cat.categoryName };
+              if (!zone || cat.logos.length === 0) return null;
 
-                {/* Logos grid within the zone */}
-                <div className="absolute top-[45px] left-0 right-0 bottom-0 flex flex-wrap content-start gap-[2px] p-1">
-                  {liveLogos.map((logo, i) => {
-                    const companyId = logo.url?.match(/companyPage\/(\d+)/)?.[1];
-                    const logoKey = `${cat.id}-${i}`;
-                    return (
-                      <Link
-                        key={logoKey}
-                        href={companyId ? `/company/${companyId}` : "#"}
-                        className="relative group"
-                        onMouseEnter={() => setHoveredLogo(logoKey)}
-                        onMouseLeave={() => setHoveredLogo(null)}
-                      >
-                        <div className="w-[48px] h-[28px] bg-white rounded-[3px] flex items-center justify-center shadow-sm hover:shadow-md hover:scale-110 transition-all border border-white/50">
-                          {logo.image ? (
-                            <Image
-                              src={logo.image}
-                              alt=""
-                              width={44}
-                              height={24}
-                              className="object-contain max-h-[22px]"
-                              unoptimized
-                            />
-                          ) : (
-                            <span className="text-[6px] text-gray-400">N/A</span>
-                          )}
-                        </div>
-                        {/* Tooltip */}
-                        {hoveredLogo === logoKey && (
-                          <div className="absolute z-50 -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] px-2 py-1 rounded whitespace-nowrap pointer-events-none">
-                            {logo.keywords?.[0] || "Company"}
+              const isSelected = selectedCategory === cat.id;
+              const opacity = selectedCategory === null || isSelected ? 1 : 0.2;
+
+              return (
+                <div
+                  key={cat.id}
+                  className="absolute rounded-2xl transition-all duration-500 overflow-hidden cursor-pointer"
+                  style={{
+                    left: `${zone.x}%`,
+                    top: `${zone.y}%`,
+                    width: `${zone.w}%`,
+                    height: `${zone.h}%`,
+                    backgroundColor: zone.glow,
+                    borderColor: `${zone.color}33`,
+                    borderWidth: 1,
+                    borderStyle: "solid",
+                    opacity,
+                    padding: "10px",
+                  }}
+                  onClick={() => setSelectedCategory(isSelected ? null : cat.id)}
+                >
+                  {/* Zone label */}
+                  <div className="flex items-center gap-1.5 mb-1.5">
+                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: zone.color }} />
+                    <span className="text-[11px] font-bold tracking-wide" style={{ color: zone.color }}>
+                      {names.short}
+                    </span>
+                    <span className="text-[9px] text-gray-500 hidden sm:inline">
+                      {names.full}
+                    </span>
+                    <span className="text-[9px] font-medium ml-auto" style={{ color: `${zone.color}99` }}>
+                      {cat.logos.length}
+                    </span>
+                  </div>
+
+                  {/* Logos flowing inside the zone */}
+                  <div className="flex flex-wrap gap-[3px] content-start overflow-hidden" style={{ maxHeight: "calc(100% - 26px)" }}>
+                    {cat.logos.map((logo, i) => {
+                      const companyId = logo.url?.match(/companyPage\/(\d+)/)?.[1];
+                      const key = `${cat.id}-${i}`;
+                      return (
+                        <Link
+                          key={key}
+                          href={companyId ? `/company/${companyId}` : "#"}
+                          onClick={(e) => e.stopPropagation()}
+                          onMouseEnter={() => setHoveredCompany(key)}
+                          onMouseLeave={() => setHoveredCompany(null)}
+                          className="relative"
+                        >
+                          <div className={`w-[44px] h-[24px] bg-white rounded-[4px] flex items-center justify-center transition-all ${
+                            hoveredCompany === key ? "shadow-lg scale-125 z-20 ring-1" : "shadow-sm"
+                          }`}
+                            style={hoveredCompany === key ? { ringColor: zone.color } : {}}
+                          >
+                            {logo.image ? (
+                              <Image
+                                src={logo.image}
+                                alt={logo.keywords?.[0] || ""}
+                                width={38}
+                                height={18}
+                                className="object-contain max-h-[18px]"
+                                unoptimized
+                              />
+                            ) : (
+                              <span className="text-[6px] text-gray-300">?</span>
+                            )}
                           </div>
-                        )}
-                      </Link>
-                    );
-                  })}
+                          {/* Tooltip */}
+                          {hoveredCompany === key && (
+                            <div
+                              className="absolute z-50 -top-9 left-1/2 -translate-x-1/2 px-2.5 py-1 rounded-lg text-[10px] font-medium whitespace-nowrap pointer-events-none shadow-xl"
+                              style={{ backgroundColor: zone.color, color: "white" }}
+                            >
+                              {logo.keywords?.[0] || "View company"}
+                              <div
+                                className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[4px] border-r-[4px] border-t-[4px] border-transparent"
+                                style={{ borderTopColor: zone.color }}
+                              />
+                            </div>
+                          )}
+                        </Link>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
+              );
+            })}
+        </div>
+
+        {/* Legend */}
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          {filteredData.filter(c => c.logos.length > 0).map((cat) => {
+            const zone = ZONES[cat.id];
+            const names = CAT_NAMES[cat.id];
+            if (!zone || !names) return null;
+            return (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCategory(selectedCategory === cat.id ? null : cat.id)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium transition-all ${
+                  selectedCategory === cat.id
+                    ? "bg-white text-gray-900 shadow-lg"
+                    : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-gray-300"
+                }`}
+              >
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: zone.color }} />
+                {names.short}
+              </button>
             );
           })}
         </div>
