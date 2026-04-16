@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TreasuryMap — Treasury Solutions Directory",
+  title: "TreasuryMap — The Treasury Technology Landscape",
   description: "Explore and compare treasury technology solutions. The interactive map of treasury management systems, fintech platforms, and financial services.",
   metadataBase: new URL("https://treasurymap.com"),
 };
@@ -30,7 +30,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#0A0F1C] text-[#F1F5F9]">
+      <body className="min-h-full flex flex-col bg-white text-gray-900">
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
