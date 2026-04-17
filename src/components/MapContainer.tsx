@@ -1,7 +1,7 @@
 // MAP CORE — do not refactor without explicit instruction
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import Link from "next/link";
 import type { MapCategory } from "@/lib/api";
 
@@ -23,7 +23,10 @@ const CATS: Record<number, { label: string; color: string; glow: string }> = {
   14: { label: "Other",       color: "#94A3B8", glow: "148,163,184" },
 };
 
-// Positions — spread organically, avoid grid feel
+const SITE_COUNTS: Record<number, number> = {
+  0:4, 1:2, 2:7, 3:4, 4:15, 5:18, 6:3, 7:1, 8:4, 9:5, 10:15, 11:7, 12:10, 13:15, 14:3,
+};
+
 const POS: Record<number, [number, number]> = {
   5:  [50, 46],  3:  [48, 14], 0:  [15, 13], 1:  [83, 11],
   13: [28, 33],  12: [74, 28], 11: [7, 46],  2:  [91, 50],
@@ -39,6 +42,7 @@ export function MapContainer({ initialData }: Props) {
   const [search, setSearch] = useState("");
   const [focused, setFocused] = useState<number | null>(null);
   const [hovered, setHovered] = useState<string | null>(null);
+  const leaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (!initialData) {
@@ -57,48 +61,50 @@ export function MapContainer({ initialData }: Props) {
     }),
   })), [data, search]);
 
-  const total = filtered.reduce((a, c) => a + c.logos.length, 0);
+  const total = filtered.reduce((a, c) => a + Math.min(c.logos.length, SITE_COUNTS[c.id] || 10), 0);
 
-  // Organic layout — force-separated, no overlaps
+  // Debounced cluster focus — prevents flickering when moving between logos/clusters
+  const enterCluster = useCallback((id: number) => {
+    if (leaveTimer.current) { clearTimeout(leaveTimer.current); leaveTimer.current = null; }
+    setFocused(id);
+  }, []);
+
+  const leaveCluster = useCallback(() => {
+    leaveTimer.current = setTimeout(() => setFocused(null), 300);
+  }, []);
+
+  // Force-separated organic layout
   function organicLayout(n: number, minGap: number, seed: number): [number, number][] {
     if (n === 0) return [];
-    if (n === 1) return [[0, 0]]; // single logo goes on the center label
-
+    if (n === 1) return [[minGap * 1.2, 0]];
     const pts: [number, number][] = [];
     const ga = 137.508 * Math.PI / 180;
-
-    // Initial placement via golden spiral
     for (let i = 0; i < n; i++) {
-      const r = minGap * 0.9 * Math.sqrt(i + 1);
+      const r = minGap * 0.85 * Math.sqrt(i + 1);
       const theta = i * ga + seed * 0.7;
-      const jx = Math.sin(i * 7.3 + seed) * 4;
-      const jy = Math.cos(i * 5.7 + seed) * 4;
+      const jx = Math.sin(i * 7.3 + seed) * 5;
+      const jy = Math.cos(i * 5.7 + seed) * 5;
       pts.push([r * Math.cos(theta) + jx, r * Math.sin(theta) + jy]);
     }
-
-    // Push apart any overlapping pairs (3 iterations)
-    for (let iter = 0; iter < 3; iter++) {
+    // Push apart overlapping
+    for (let iter = 0; iter < 4; iter++) {
       for (let i = 0; i < pts.length; i++) {
         for (let j = i + 1; j < pts.length; j++) {
-          const dx = pts[j][0] - pts[i][0];
-          const dy = pts[j][1] - pts[i][1];
+          const dx = pts[j][0] - pts[i][0], dy = pts[j][1] - pts[i][1];
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < minGap && dist > 0) {
             const push = (minGap - dist) / 2 + 1;
             const nx = dx / dist, ny = dy / dist;
-            pts[i][0] -= nx * push;
-            pts[i][1] -= ny * push;
-            pts[j][0] += nx * push;
-            pts[j][1] += ny * push;
+            pts[i][0] -= nx * push; pts[i][1] -= ny * push;
+            pts[j][0] += nx * push; pts[j][1] += ny * push;
           }
         }
-        // Also push away from center (where the label is)
-        const cx = pts[i][0], cy = pts[i][1];
-        const cd = Math.sqrt(cx * cx + cy * cy);
-        if (cd < minGap * 0.8 && cd > 0) {
-          const push = (minGap * 0.8 - cd) + 2;
-          pts[i][0] += (cx / cd) * push;
-          pts[i][1] += (cy / cd) * push;
+        // Push away from center
+        const cd = Math.sqrt(pts[i][0] ** 2 + pts[i][1] ** 2);
+        if (cd < minGap * 0.9 && cd > 0) {
+          const push = minGap * 0.9 - cd + 2;
+          pts[i][0] += (pts[i][0] / cd) * push;
+          pts[i][1] += (pts[i][1] / cd) * push;
         }
       }
     }
@@ -111,39 +117,44 @@ export function MapContainer({ initialData }: Props) {
         <div className="absolute inset-0 rounded-full border border-cyan-500/10 animate-ping" />
         <div className="absolute inset-3 rounded-full border border-cyan-500/20 animate-spin" style={{ animationDuration: "3s" }} />
         <div className="absolute inset-6 rounded-full border border-cyan-500/30 animate-spin" style={{ animationDuration: "2s", animationDirection: "reverse" }} />
-        <div className="absolute inset-[26px] rounded-full bg-cyan-500/10" />
       </div>
     </div>
   );
 
   return (
     <div className="bg-[#040712] min-h-screen relative overflow-hidden">
-      {/* === AMBIENT LAYER === */}
+      {/* === AMBIENT === */}
       <div className="fixed inset-0 pointer-events-none z-0">
         {/* Mesh blobs */}
-        <div className="absolute top-[10%] left-[20%] w-[500px] h-[500px] rounded-full opacity-[0.02]" style={{ background: "radial-gradient(circle, #22D3EE, transparent 70%)", filter: "blur(100px)" }} />
+        <div className="absolute top-[10%] left-[20%] w-[600px] h-[600px] rounded-full opacity-[0.018]" style={{ background: "radial-gradient(circle, #22D3EE, transparent 70%)", filter: "blur(100px)" }} />
         <div className="absolute bottom-[20%] right-[15%] w-[600px] h-[600px] rounded-full opacity-[0.015]" style={{ background: "radial-gradient(circle, #A78BFA, transparent 70%)", filter: "blur(100px)" }} />
-        <div className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full opacity-[0.012]" style={{ background: "radial-gradient(circle, #3B82F6, transparent 60%)", filter: "blur(120px)" }} />
+        <div className="absolute top-[45%] left-[45%] w-[900px] h-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-[0.012]" style={{ background: "radial-gradient(circle, #3B82F6, transparent 60%)", filter: "blur(120px)" }} />
 
-        {/* Floating particles (CSS only) */}
-        {[...Array(12)].map((_, i) => (
-          <div key={i} className="absolute w-1 h-1 rounded-full bg-white/[0.04] animate-pulse"
+        {/* Particles */}
+        {[...Array(20)].map((_, i) => (
+          <div key={i} className="absolute rounded-full bg-white animate-pulse"
             style={{
-              left: `${10 + (i * 7.3) % 80}%`,
-              top: `${5 + (i * 11.7) % 85}%`,
-              animationDelay: `${i * 0.4}s`,
-              animationDuration: `${3 + i % 3}s`,
+              width: 1 + (i % 3), height: 1 + (i % 3),
+              opacity: 0.02 + (i % 4) * 0.01,
+              left: `${(i * 13.7) % 95}%`, top: `${(i * 17.3) % 92}%`,
+              animationDelay: `${i * 0.3}s`, animationDuration: `${3 + i % 4}s`,
             }} />
         ))}
 
-        {/* Hex grid pattern */}
+        {/* Hex grid */}
+        <svg className="absolute inset-0 w-full h-full opacity-[0.015]">
+          <defs><pattern id="hex" width="56" height="48.5" patternUnits="userSpaceOnUse" patternTransform="scale(2)">
+            <path d="M28 0L56 14V34.5L28 48.5 0 34.5V14Z" fill="none" stroke="white" strokeWidth="0.3" />
+          </pattern></defs>
+          <rect width="100%" height="100%" fill="url(#hex)" />
+        </svg>
+
+        {/* Concentric rings from center */}
         <svg className="absolute inset-0 w-full h-full opacity-[0.02]">
-          <defs>
-            <pattern id="hexgrid" width="56" height="48.5" patternUnits="userSpaceOnUse" patternTransform="scale(1.5)">
-              <path d="M28 0 L56 14 L56 34.5 L28 48.5 L0 34.5 L0 14 Z" fill="none" stroke="white" strokeWidth="0.5" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#hexgrid)" />
+          {[150, 280, 420].map((r, i) => (
+            <circle key={i} cx="50%" cy="48%" r={r} fill="none" stroke="cyan" strokeWidth="0.5"
+              strokeDasharray={i === 0 ? "none" : `${3 + i * 2} ${8 + i * 3}`} />
+          ))}
         </svg>
       </div>
 
@@ -164,24 +175,38 @@ export function MapContainer({ initialData }: Props) {
       {/* === MAP === */}
       <div className="relative z-10 w-full" style={{ height: "calc(100vh - 130px)", minHeight: 700 }}>
 
-        {/* SVG layer for inter-cluster connection lines */}
-        <svg className="absolute inset-0 w-full h-full pointer-events-none z-0 opacity-[0.04]">
-          {/* Lines connecting nearby clusters */}
-          {filtered.filter(c => c.logos.length > 0).map((cat, ci) => {
+        {/* CENTER TITLE — "Treasury MAP" */}
+        <div className="absolute left-1/2 top-[46%] -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none text-center">
+          <div className="relative">
+            {/* Glow behind text */}
+            <div className="absolute inset-0 blur-3xl opacity-10" style={{ background: "radial-gradient(circle, #22D3EE, transparent 70%)" }} />
+            <h2 className="text-[28px] sm:text-[36px] font-black tracking-[0.3em] uppercase text-white/[0.04]">
+              Treasury
+            </h2>
+            <h2 className="text-[20px] sm:text-[26px] font-black tracking-[0.5em] uppercase text-white/[0.03] -mt-1">
+              MAP
+            </h2>
+          </div>
+        </div>
+
+        {/* Inter-cluster connection lines */}
+        <svg className="absolute inset-0 w-full h-full pointer-events-none z-0 opacity-[0.03]">
+          {filtered.filter(c => c.logos.length > 0).map(cat => {
             const p1 = POS[cat.id];
             if (!p1) return null;
             return filtered.filter(c2 => c2.logos.length > 0 && c2.id > cat.id).map(cat2 => {
               const p2 = POS[cat2.id];
               if (!p2) return null;
               const dist = Math.sqrt((p1[0]-p2[0])**2 + (p1[1]-p2[1])**2);
-              if (dist > 40) return null; // Only connect nearby clusters
+              if (dist > 35) return null;
               return <line key={`${cat.id}-${cat2.id}`}
                 x1={`${p1[0]}%`} y1={`${p1[1]}%`} x2={`${p2[0]}%`} y2={`${p2[1]}%`}
-                stroke="white" strokeWidth="0.5" strokeDasharray="4 8" />;
+                stroke="white" strokeWidth="0.5" strokeDasharray="4 12" />;
             });
           })}
         </svg>
 
+        {/* Clusters */}
         {filtered.filter(c => c.logos.length > 0).map(cat => {
           const meta = CATS[cat.id];
           const pos = POS[cat.id];
@@ -189,75 +214,69 @@ export function MapContainer({ initialData }: Props) {
 
           const isFocused = focused === cat.id;
           const isDimmed = focused !== null && !isFocused;
-          const logos = cat.logos;
-          // Exact logo counts scraped from treasurymap.com (site cat 1-15 = API cat 0-14)
-          const SITE_COUNTS: Record<number, number> = {
-            0:4, 1:2, 2:7, 3:4, 4:15, 5:18, 6:3, 7:1, 8:4, 9:5, 10:15, 11:7, 12:10, 13:15, 14:3,
-          };
-          const showCount = SITE_COUNTS[cat.id] ?? Math.min(logos.length, 10);
-          const showLogos = logos.slice(0, showCount);
-          const logoSize = isFocused ? 48 : 38;
-          const minGap = logoSize + 6; // no overlaps
+          const showCount = Math.min(cat.logos.length, SITE_COUNTS[cat.id] ?? 10);
+          const showLogos = cat.logos.slice(0, showCount);
+          const sz = isFocused ? 48 : 38;
+          const minGap = sz + 8;
           const pts = organicLayout(showCount, minGap, cat.id * 2.3);
-          const scale = isFocused ? 1.2 : isDimmed ? 0.65 : 1;
+          const scale = isFocused ? 1.15 : isDimmed ? 0.7 : 1;
+
+          // Bounding box of cluster for hover zone
+          const maxR = pts.reduce((m, [x, y]) => Math.max(m, Math.sqrt(x*x + y*y)), 0) + sz;
 
           return (
             <div key={cat.id} className="absolute transition-all duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
               style={{
                 left: `${pos[0]}%`, top: `${pos[1]}%`,
                 transform: `translate(-50%,-50%) scale(${scale})`,
-                opacity: isDimmed ? 0.06 : 1,
+                opacity: isDimmed ? 0.08 : 1,
                 zIndex: isFocused ? 20 : 1,
               }}
-              onMouseEnter={() => setFocused(cat.id)}
-              onMouseLeave={() => setFocused(null)}
             >
-              {/* Nebula glow */}
+              {/* HOVER ZONE — invisible expanded hitbox for the whole cluster */}
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+                style={{ width: maxR * 2 + 60, height: maxR * 2 + 60 }}
+                onMouseEnter={() => enterCluster(cat.id)}
+                onMouseLeave={leaveCluster}
+              />
+
+              {/* Nebula */}
               <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none transition-all duration-[800ms]"
                 style={{
-                  width: minGap * showCount * 1.2, height: minGap * showCount * 1.2,
-                  background: `radial-gradient(ellipse, rgba(${meta.glow}, ${isFocused ? 0.12 : 0.04}) 0%, rgba(${meta.glow}, 0.01) 50%, transparent 70%)`,
-                  filter: "blur(4px)",
+                  width: maxR * 3, height: maxR * 3,
+                  background: `radial-gradient(ellipse, rgba(${meta.glow}, ${isFocused ? 0.1 : 0.03}) 0%, transparent 70%)`,
+                  filter: "blur(8px)",
                 }} />
 
-              {/* Orbital ring — elliptical for organic feel */}
+              {/* Orbital ring */}
               <svg className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none overflow-visible transition-all duration-700"
-                style={{ width: minGap * showCount * 0.8, height: minGap * showCount * 0.7 }}>
+                style={{ width: maxR * 2.2, height: maxR * 2 }}>
                 <ellipse cx="50%" cy="50%" rx="48%" ry="44%"
                   fill="none" stroke={meta.color}
-                  strokeOpacity={isFocused ? 0.12 : 0.04}
-                  strokeWidth="0.5" strokeDasharray={isFocused ? "none" : "2 6"} />
-                {/* Second ring */}
-                {isFocused && <ellipse cx="50%" cy="50%" rx="38%" ry="34%"
-                  fill="none" stroke={meta.color} strokeOpacity="0.06" strokeWidth="0.5" strokeDasharray="1 4" />}
+                  strokeOpacity={isFocused ? 0.1 : 0.03}
+                  strokeWidth="0.5" strokeDasharray={isFocused ? "2 4" : "1 8"} />
               </svg>
 
-              {/* Connection lines — organic curves */}
+              {/* Connection curves */}
               <svg className="absolute left-1/2 top-1/2 pointer-events-none overflow-visible" style={{ width: 1, height: 1 }}>
-                {pts.map(([dx, dy], i) => {
-                  const mx = dx * 0.4, my = dy * 0.4;
-                  return <path key={i} d={`M0,0 Q${mx + dy*0.15},${my - dx*0.15} ${dx},${dy}`}
+                {pts.map(([dx, dy], i) => (
+                  <path key={i} d={`M0,0 Q${dx*0.4+dy*0.1},${dy*0.4-dx*0.1} ${dx},${dy}`}
                     fill="none" stroke={meta.color}
-                    strokeOpacity={isFocused ? 0.1 : 0.03} strokeWidth="0.5" />;
-                })}
+                    strokeOpacity={isFocused ? 0.08 : 0.025} strokeWidth="0.5" />
+                ))}
               </svg>
 
               {/* Center node */}
               <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none">
-                {/* Pulsing ring */}
-                {isFocused && (
-                  <div className="absolute -inset-3 rounded-full animate-ping opacity-20"
-                    style={{ borderColor: meta.color, border: "1px solid" }} />
-                )}
+                {isFocused && <div className="absolute -inset-3 rounded-full animate-ping opacity-15" style={{ border: `1px solid ${meta.color}` }} />}
                 <div className="rounded-full flex items-center justify-center transition-all duration-500"
                   style={{
-                    width: isFocused ? 64 : 50,
-                    height: isFocused ? 64 : 50,
-                    background: `radial-gradient(circle, rgba(${meta.glow}, ${isFocused ? 0.2 : 0.1}) 0%, rgba(${meta.glow}, 0.02) 100%)`,
-                    border: `1px solid rgba(${meta.glow}, ${isFocused ? 0.35 : 0.15})`,
-                    boxShadow: isFocused ? `0 0 30px rgba(${meta.glow}, 0.15), inset 0 0 15px rgba(${meta.glow}, 0.05)` : "none",
+                    width: isFocused ? 60 : 48, height: isFocused ? 60 : 48,
+                    background: `radial-gradient(circle, rgba(${meta.glow}, ${isFocused ? 0.18 : 0.08}), rgba(${meta.glow}, 0.02))`,
+                    border: `1px solid rgba(${meta.glow}, ${isFocused ? 0.3 : 0.12})`,
+                    boxShadow: isFocused ? `0 0 40px rgba(${meta.glow}, 0.15), inset 0 0 20px rgba(${meta.glow}, 0.05)` : "none",
                   }}>
-                  <span className="text-[10px] font-black tracking-[0.12em] uppercase" style={{ color: meta.color }}>{meta.label}</span>
+                  <span className="text-[9px] font-black tracking-[0.12em] uppercase" style={{ color: meta.color }}>{meta.label}</span>
                 </div>
               </div>
 
@@ -268,7 +287,6 @@ export function MapContainer({ initialData }: Props) {
                 const cid = logo.url?.match(/companyPage\/(\d+)/)?.[1];
                 const k = `${cat.id}-${i}`;
                 const isH = hovered === k;
-                const sz = isFocused ? 48 : 38;
 
                 return (
                   <Link key={k} href={cid ? `/company/${cid}` : "#"}
@@ -278,21 +296,18 @@ export function MapContainer({ initialData }: Props) {
                     onMouseLeave={() => setHovered(null)}
                   >
                     <div className="relative transition-all duration-200"
-                      style={{ width: sz, height: sz, transform: isH ? "scale(1.8)" : "scale(1)" }}>
-                      {isH && (
-                        <div className="absolute -inset-3 rounded-full"
-                          style={{ background: `radial-gradient(circle, rgba(${meta.glow}, 0.25), transparent 70%)` }} />
-                      )}
+                      style={{ width: sz, height: sz, transform: isH ? "scale(1.5)" : "scale(1)" }}>
+                      {isH && <div className="absolute -inset-3 rounded-full" style={{ background: `radial-gradient(circle, rgba(${meta.glow}, 0.25), transparent 70%)` }} />}
                       <div className="w-full h-full rounded-full overflow-hidden transition-all duration-200"
                         style={{
                           background: isH ? "rgba(255,255,255,0.95)" : `rgba(${meta.glow}, 0.06)`,
                           backdropFilter: "blur(8px)",
                           border: `1px solid rgba(${meta.glow}, ${isH ? 0.5 : 0.12})`,
-                          boxShadow: isH ? `0 0 16px rgba(${meta.glow}, 0.35)` : "none",
+                          boxShadow: isH ? `0 0 20px rgba(${meta.glow}, 0.35)` : "none",
                         }}>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={logo.image || ""} alt="" loading="lazy"
-                          className="w-full h-full object-contain p-[4px] rounded-full transition-all duration-200"
+                          className="w-full h-full object-contain p-[5px] rounded-full transition-all duration-200"
                           style={{ filter: isH ? "none" : "brightness(2) contrast(0.5) saturate(0)" }}
                           onError={e => { (e.target as HTMLImageElement).style.opacity = "0"; }} />
                       </div>
@@ -328,8 +343,8 @@ export function MapContainer({ initialData }: Props) {
                 background: isA ? `rgba(${m.glow}, 0.08)` : "transparent",
                 border: `1px solid ${isA ? `rgba(${m.glow}, 0.2)` : "transparent"}`,
               }}
-              onMouseEnter={() => setFocused(parseInt(id))}
-              onMouseLeave={() => setFocused(null)}
+              onMouseEnter={() => enterCluster(parseInt(id))}
+              onMouseLeave={leaveCluster}
             >
               <div className="w-1.5 h-1.5 rounded-full transition-all" style={{ backgroundColor: m.color, boxShadow: isA ? `0 0 6px ${m.color}` : "none" }} />
               {m.label}
