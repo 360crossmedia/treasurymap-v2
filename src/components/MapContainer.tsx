@@ -165,7 +165,7 @@ export function MapContainer({ initialData }: Props) {
           };
           const showCount = SITE_COUNTS[cat.id] ?? Math.min(logos.length, 10);
           const showLogos = logos.slice(0, showCount);
-          const spread = Math.min(18, 6 + showCount * 0.22);
+          const spread = Math.min(28, 10 + showCount * 0.5);
           const pts = organicSpiral(showCount, spread, cat.id * 2.3);
           const scale = isFocused ? 1.2 : isDimmed ? 0.65 : 1;
 
@@ -219,13 +219,13 @@ export function MapContainer({ initialData }: Props) {
                 )}
                 <div className="rounded-full flex items-center justify-center transition-all duration-500"
                   style={{
-                    width: isFocused ? 52 : 40,
-                    height: isFocused ? 52 : 40,
+                    width: isFocused ? 64 : 50,
+                    height: isFocused ? 64 : 50,
                     background: `radial-gradient(circle, rgba(${meta.glow}, ${isFocused ? 0.2 : 0.1}) 0%, rgba(${meta.glow}, 0.02) 100%)`,
                     border: `1px solid rgba(${meta.glow}, ${isFocused ? 0.35 : 0.15})`,
                     boxShadow: isFocused ? `0 0 30px rgba(${meta.glow}, 0.15), inset 0 0 15px rgba(${meta.glow}, 0.05)` : "none",
                   }}>
-                  <span className="text-[8px] font-black tracking-[0.15em] uppercase" style={{ color: meta.color }}>{meta.label}</span>
+                  <span className="text-[10px] font-black tracking-[0.12em] uppercase" style={{ color: meta.color }}>{meta.label}</span>
                 </div>
               </div>
 
@@ -236,7 +236,7 @@ export function MapContainer({ initialData }: Props) {
                 const cid = logo.url?.match(/companyPage\/(\d+)/)?.[1];
                 const k = `${cat.id}-${i}`;
                 const isH = hovered === k;
-                const sz = isFocused ? 30 : 22;
+                const sz = isFocused ? 48 : 38;
 
                 return (
                   <Link key={k} href={cid ? `/company/${cid}` : "#"}
