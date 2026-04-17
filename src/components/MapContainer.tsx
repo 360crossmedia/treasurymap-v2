@@ -23,8 +23,9 @@ const CATS: Record<number, { label: string; color: string; glow: string }> = {
   14: { label: "Other",       color: "#94A3B8", glow: "148,163,184" },
 };
 
+// Show all live companies — no artificial limit
 const MAX_LOGOS: Record<number, number> = {
-  0: 4, 1: 2, 2: 7, 3: 4, 4: 15, 5: 18, 6: 3, 7: 1, 8: 4, 9: 5, 10: 15, 11: 7, 12: 10, 13: 15, 14: 3,
+  0: 24, 1: 11, 2: 19, 3: 28, 4: 48, 5: 35, 6: 12, 7: 11, 8: 11, 9: 21, 10: 37, 11: 14, 12: 31, 13: 39, 14: 16,
 };
 
 // Positions spread across full viewport — use all available space
