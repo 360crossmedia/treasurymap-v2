@@ -23,19 +23,17 @@ const CATS: Record<number, { label: string; color: string }> = {
   14: { label: "Other",       color: "#94A3B8" },
 };
 
-// Max logos per category — matches the current live site (113 total)
 const MAX_LOGOS: Record<number, number> = {
   0: 4, 1: 2, 2: 7, 3: 4, 4: 15, 5: 18, 6: 3, 7: 1, 8: 4, 9: 5, 10: 15, 11: 7, 12: 10, 13: 15, 14: 3,
 };
 
-// Cluster positions — percentage based, spread like a galaxy
 const POS: Record<number, [number, number]> = {
-  5:  [50, 45], // TMS center (largest)
-  0:  [18, 15], 1: [82, 12], 2: [85, 55],
-  3:  [50, 15], 4: [12, 48], 6: [32, 80],
-  7:  [68, 82], 8: [90, 82], 9: [50, 85],
-  10: [12, 80], 11: [12, 30], 12: [78, 35],
-  13: [35, 38], 14: [90, 30],
+  5:  [50, 46],
+  0:  [18, 14], 1: [82, 12], 2: [84, 54],
+  3:  [50, 14], 4: [13, 50], 6: [30, 82],
+  7:  [68, 84], 8: [90, 84], 9: [50, 86],
+  10: [10, 82], 11: [13, 30], 12: [80, 34],
+  13: [36, 36], 14: [92, 30],
 };
 
 interface Props { initialData?: MapCategory[] }
@@ -64,16 +62,14 @@ export function MapContainer({ initialData }: Props) {
     }),
   })), [data, search]);
 
-  const total = filtered.reduce((a, c) => a + c.logos.length, 0);
+  const shownTotal = filtered.reduce((a, c) => a + Math.min(c.logos.length, MAX_LOGOS[c.id] || 5), 0);
 
-  // Spiral positions for logos in a cluster
-  function spiral(n: number, spread: number) {
+  // Circular layout around center — more spread, no overlap
+  function circleLayout(n: number, radius: number) {
     const pts: [number, number][] = [];
-    const ga = 137.508 * Math.PI / 180;
     for (let i = 0; i < n; i++) {
-      const r = spread * Math.sqrt(i + 0.5);
-      const t = i * ga;
-      pts.push([r * Math.cos(t), r * Math.sin(t)]);
+      const angle = (i / n) * Math.PI * 2 - Math.PI / 2;
+      pts.push([radius * Math.cos(angle), radius * Math.sin(angle)]);
     }
     return pts;
   }
@@ -96,14 +92,13 @@ export function MapContainer({ initialData }: Props) {
             <input type="text" placeholder="Search..." value={search} onChange={e => setSearch(e.target.value)}
               className="w-full bg-white/[0.04] border border-white/[0.06] rounded-lg pl-9 pr-3 py-2 text-sm text-gray-200 placeholder-gray-600 focus:outline-none focus:border-white/10" />
           </div>
-          <span className="text-[11px] text-gray-600 ml-auto">{total} companies</span>
+          <span className="text-[11px] text-gray-600 ml-auto">{shownTotal} companies</span>
         </div>
       </div>
 
       {/* Map */}
       <div className="relative w-full overflow-hidden" style={{ height: "max(78vh, 650px)" }}>
-        {/* Subtle center glow */}
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 45%, rgba(6,182,212,0.04) 0%, transparent 50%)" }} />
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 45%, rgba(6,182,212,0.03) 0%, transparent 50%)" }} />
 
         {filtered.filter(c => c.logos.length > 0).map(cat => {
           const meta = CATS[cat.id];
@@ -113,45 +108,44 @@ export function MapContainer({ initialData }: Props) {
           const isFocused = focused === cat.id;
           const isDimmed = focused !== null && !isFocused;
           const maxShow = MAX_LOGOS[cat.id] || 5;
-          const showCount = isFocused ? Math.min(cat.logos.length, maxShow * 2) : Math.min(cat.logos.length, maxShow);
-          const spread = Math.min(14, 5 + showCount * 0.25);
-          const pts = spiral(showCount, spread);
-          const scale = isFocused ? 1.6 : isDimmed ? 0.7 : 1;
+          const showLogos = cat.logos.slice(0, isFocused ? maxShow * 2 : maxShow);
+          const radius = isFocused ? Math.max(60, showLogos.length * 5) : Math.max(40, showLogos.length * 4);
+          const pts = circleLayout(showLogos.length, radius);
+          const scale = isFocused ? 1.3 : isDimmed ? 0.75 : 1;
 
           return (
             <div key={cat.id} className="absolute transition-all duration-700 ease-out"
               style={{
                 left: `${pos[0]}%`, top: `${pos[1]}%`,
                 transform: `translate(-50%,-50%) scale(${scale})`,
-                opacity: isDimmed ? 0.15 : 1,
+                opacity: isDimmed ? 0.12 : 1,
                 zIndex: isFocused ? 20 : 1,
               }}
               onMouseEnter={() => setFocused(cat.id)}
               onMouseLeave={() => setFocused(null)}
             >
               {/* Glow */}
-              <div className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none transition-all duration-700"
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none transition-all duration-700"
                 style={{
-                  left: 0, top: 0,
-                  width: isFocused ? 350 : 200, height: isFocused ? 350 : 200,
-                  marginLeft: isFocused ? -175 : -100, marginTop: isFocused ? -175 : -100,
-                  background: `radial-gradient(circle, ${meta.color}${isFocused ? "15" : "08"} 0%, transparent 70%)`,
+                  width: radius * 4, height: radius * 4,
+                  background: `radial-gradient(circle, ${meta.color}${isFocused ? "12" : "06"} 0%, transparent 70%)`,
                 }} />
 
-              {/* Label */}
-              <div className="absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none z-10">
-                <div className="text-[10px] font-semibold tracking-widest uppercase" style={{ color: meta.color }}>{meta.label}</div>
-                <div className="text-[8px] text-gray-600 mt-0.5">{cat.logos.length}</div>
+              {/* Category label — CENTERED, above logos */}
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none z-10">
+                <div className="text-[12px] font-bold tracking-wider uppercase whitespace-nowrap" style={{ color: meta.color }}>
+                  {meta.label}
+                </div>
               </div>
 
-              {/* Logos */}
+              {/* Logos in circle around label */}
               {pts.map(([dx, dy], i) => {
-                const logo = cat.logos[i];
+                const logo = showLogos[i];
                 if (!logo) return null;
                 const cid = logo.url?.match(/companyPage\/(\d+)/)?.[1];
                 const k = `${cat.id}-${i}`;
                 const isH = hovered === k;
-                const sz = isFocused ? 32 : 24;
+                const sz = isFocused ? 36 : 28;
 
                 return (
                   <Link key={k} href={cid ? `/company/${cid}` : "#"}
@@ -160,21 +154,22 @@ export function MapContainer({ initialData }: Props) {
                     onMouseEnter={() => setHovered(k)}
                     onMouseLeave={() => setHovered(null)}
                   >
-                    <div className="rounded-md overflow-hidden transition-all duration-200"
+                    <div className="rounded-full overflow-hidden transition-all duration-200 border-2"
                       style={{
                         width: sz, height: sz,
-                        background: "#fff",
-                        boxShadow: isH ? `0 0 0 1.5px ${meta.color}, 0 4px 16px rgba(0,0,0,0.6)` : "0 1px 3px rgba(0,0,0,0.4)",
+                        background: "rgba(255,255,255,0.95)",
+                        borderColor: isH ? meta.color : "rgba(255,255,255,0.15)",
+                        boxShadow: isH ? `0 0 12px ${meta.color}60` : "0 2px 8px rgba(0,0,0,0.4)",
                         transform: isH ? "scale(1.5)" : "scale(1)",
                       }}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={logo.image || ""} alt="" loading="lazy"
-                        className="w-full h-full object-contain p-[3px]"
-                        onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                        className="w-full h-full object-contain p-[4px] rounded-full"
+                        onError={e => { (e.target as HTMLImageElement).style.opacity = "0"; }} />
                     </div>
                     {isH && (
-                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 pointer-events-none z-50">
-                        <div className="px-2 py-1 rounded text-[9px] font-medium text-white whitespace-nowrap"
+                      <div className="absolute -top-9 left-1/2 -translate-x-1/2 pointer-events-none z-50">
+                        <div className="px-2.5 py-1 rounded-full text-[9px] font-medium text-white whitespace-nowrap shadow-lg"
                           style={{ backgroundColor: meta.color }}>
                           {(logo.keywords?.[0] || "View").substring(0, 22)}
                         </div>
@@ -183,13 +178,6 @@ export function MapContainer({ initialData }: Props) {
                   </Link>
                 );
               })}
-
-              {/* Overflow */}
-              {!isFocused && cat.logos.length > 16 && (
-                <div className="absolute text-[9px] font-medium cursor-pointer" style={{ color: `${meta.color}80`, left: spread * 4.5, top: 0 }}>
-                  +{cat.logos.length - 16}
-                </div>
-              )}
             </div>
           );
         })}
