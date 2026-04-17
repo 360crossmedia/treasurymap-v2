@@ -59,17 +59,48 @@ export function MapContainer({ initialData }: Props) {
 
   const total = filtered.reduce((a, c) => a + c.logos.length, 0);
 
-  // Organic spiral — golden angle with jitter for natural feel
-  function organicSpiral(n: number, baseR: number, seed: number): [number, number][] {
+  // Organic layout — force-separated, no overlaps
+  function organicLayout(n: number, minGap: number, seed: number): [number, number][] {
+    if (n === 0) return [];
+    if (n === 1) return [[0, 0]]; // single logo goes on the center label
+
     const pts: [number, number][] = [];
     const ga = 137.508 * Math.PI / 180;
+
+    // Initial placement via golden spiral
     for (let i = 0; i < n; i++) {
-      const r = baseR * Math.sqrt(i + 1) * 0.7;
-      const theta = i * ga + (seed * 0.5);
-      // Add slight jitter based on index for organic feel
-      const jx = Math.sin(i * 7.3 + seed) * 3;
-      const jy = Math.cos(i * 5.7 + seed) * 3;
+      const r = minGap * 0.9 * Math.sqrt(i + 1);
+      const theta = i * ga + seed * 0.7;
+      const jx = Math.sin(i * 7.3 + seed) * 4;
+      const jy = Math.cos(i * 5.7 + seed) * 4;
       pts.push([r * Math.cos(theta) + jx, r * Math.sin(theta) + jy]);
+    }
+
+    // Push apart any overlapping pairs (3 iterations)
+    for (let iter = 0; iter < 3; iter++) {
+      for (let i = 0; i < pts.length; i++) {
+        for (let j = i + 1; j < pts.length; j++) {
+          const dx = pts[j][0] - pts[i][0];
+          const dy = pts[j][1] - pts[i][1];
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < minGap && dist > 0) {
+            const push = (minGap - dist) / 2 + 1;
+            const nx = dx / dist, ny = dy / dist;
+            pts[i][0] -= nx * push;
+            pts[i][1] -= ny * push;
+            pts[j][0] += nx * push;
+            pts[j][1] += ny * push;
+          }
+        }
+        // Also push away from center (where the label is)
+        const cx = pts[i][0], cy = pts[i][1];
+        const cd = Math.sqrt(cx * cx + cy * cy);
+        if (cd < minGap * 0.8 && cd > 0) {
+          const push = (minGap * 0.8 - cd) + 2;
+          pts[i][0] += (cx / cd) * push;
+          pts[i][1] += (cy / cd) * push;
+        }
+      }
     }
     return pts;
   }
@@ -165,8 +196,9 @@ export function MapContainer({ initialData }: Props) {
           };
           const showCount = SITE_COUNTS[cat.id] ?? Math.min(logos.length, 10);
           const showLogos = logos.slice(0, showCount);
-          const spread = Math.min(28, 10 + showCount * 0.5);
-          const pts = organicSpiral(showCount, spread, cat.id * 2.3);
+          const logoSize = isFocused ? 48 : 38;
+          const minGap = logoSize + 6; // no overlaps
+          const pts = organicLayout(showCount, minGap, cat.id * 2.3);
           const scale = isFocused ? 1.2 : isDimmed ? 0.65 : 1;
 
           return (
@@ -183,14 +215,14 @@ export function MapContainer({ initialData }: Props) {
               {/* Nebula glow */}
               <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none transition-all duration-[800ms]"
                 style={{
-                  width: spread * 12, height: spread * 12,
+                  width: minGap * showCount * 1.2, height: minGap * showCount * 1.2,
                   background: `radial-gradient(ellipse, rgba(${meta.glow}, ${isFocused ? 0.12 : 0.04}) 0%, rgba(${meta.glow}, 0.01) 50%, transparent 70%)`,
                   filter: "blur(4px)",
                 }} />
 
               {/* Orbital ring — elliptical for organic feel */}
               <svg className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none overflow-visible transition-all duration-700"
-                style={{ width: spread * 8, height: spread * 7 }}>
+                style={{ width: minGap * showCount * 0.8, height: minGap * showCount * 0.7 }}>
                 <ellipse cx="50%" cy="50%" rx="48%" ry="44%"
                   fill="none" stroke={meta.color}
                   strokeOpacity={isFocused ? 0.12 : 0.04}
