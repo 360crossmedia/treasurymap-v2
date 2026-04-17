@@ -1,7 +1,7 @@
 // MAP CORE — solar system architecture
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import Link from "next/link";
 import type { MapCategory } from "@/lib/api";
 
