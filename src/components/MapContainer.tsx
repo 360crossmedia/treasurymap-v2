@@ -27,23 +27,23 @@ const SITE_COUNTS: Record<number, number> = {
   0:4, 1:2, 2:7, 3:4, 4:15, 5:18, 6:3, 7:1, 8:4, 9:5, 10:15, 11:7, 12:10, 13:15, 14:3,
 };
 
-// Positions — center is CLEAR for title, clusters spread to edges
+// Positions — safe zone 15-85%, center (50,50) kept clear for title
 const POS: Record<number, [number, number]> = {
-  5:  [50, 25],  // TMS — top center (away from title)
-  3:  [25, 12],  // Integrators
-  0:  [8, 25],   // FIDP
-  1:  [92, 12],  // FDF
-  13: [75, 18],  // Insurance
-  12: [50, 68],  // Banking — bottom center
-  11: [8, 55],   // RegTech
-  2:  [92, 45],  // CMA
-  4:  [25, 45],  // OTS
-  6:  [75, 55],  // BI
-  9:  [38, 82],  // FSC
-  7:  [62, 82],  // ERP
-  10: [8, 82],   // CFF
-  8:  [92, 78],  // ETL
-  14: [85, 82],  // Other
+  5:  [50, 18],  // TMS — top center
+  3:  [20, 15],  // Integrators — top left
+  0:  [80, 15],  // FIDP — top right
+  1:  [35, 30],  // FDF
+  13: [65, 30],  // Insurance
+  4:  [18, 42],  // OTS — left
+  11: [82, 42],  // RegTech — right
+  2:  [20, 62],  // CMA — left-bottom
+  6:  [80, 62],  // BI — right-bottom
+  12: [38, 72],  // Banking
+  7:  [62, 72],  // ERP
+  9:  [50, 84],  // FSC — bottom center
+  10: [20, 84],  // CFF
+  8:  [80, 84],  // ETL
+  14: [50, 6],   // Other — very top
 };
 
 interface Props { initialData?: MapCategory[] }
@@ -188,18 +188,21 @@ export function MapContainer({ initialData }: Props) {
       <div className="relative z-10 w-full" style={{ height: "max(calc(100vh - 100px), 850px)" }}>
 
         {/* CENTER TITLE — "Treasury MAP" */}
-        <div className="absolute left-1/2 top-[50%] -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none text-center">
+        <div className="absolute left-1/2 top-[50%] -translate-x-1/2 -translate-y-1/2 z-[5] pointer-events-none text-center">
           <div className="relative">
-            {/* Large glow */}
-            <div className="absolute -inset-20 blur-[80px] opacity-[0.08]" style={{ background: "radial-gradient(circle, #22D3EE, transparent 60%)" }} />
-            <h2 className="text-[48px] sm:text-[72px] font-black tracking-[0.25em] uppercase text-white/[0.06] leading-none">
+            <div className="absolute -inset-32 blur-[100px] opacity-[0.12]" style={{ background: "radial-gradient(circle, #06B6D4, transparent 60%)" }} />
+            <h2 className="text-[60px] sm:text-[90px] font-black tracking-[0.2em] uppercase leading-none" style={{ color: "rgba(255,255,255,0.07)" }}>
               Treasury
             </h2>
-            <h2 className="text-[36px] sm:text-[54px] font-black tracking-[0.5em] uppercase text-white/[0.04] -mt-2">
+            <h2 className="text-[44px] sm:text-[66px] font-black tracking-[0.4em] uppercase -mt-1" style={{ color: "rgba(6,182,212,0.08)" }}>
               MAP
             </h2>
-            <div className="mt-3 text-[11px] tracking-[0.4em] uppercase text-cyan-400/[0.12] font-medium">
-              The Technology Landscape
+            <div className="mt-4 flex items-center justify-center gap-3">
+              <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-cyan-500/20" />
+              <span className="text-[10px] tracking-[0.5em] uppercase text-cyan-400/20 font-semibold">
+                Technology Landscape
+              </span>
+              <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-cyan-500/20" />
             </div>
           </div>
         </div>
