@@ -27,11 +27,23 @@ const SITE_COUNTS: Record<number, number> = {
   0:4, 1:2, 2:7, 3:4, 4:15, 5:18, 6:3, 7:1, 8:4, 9:5, 10:15, 11:7, 12:10, 13:15, 14:3,
 };
 
+// Positions — center is CLEAR for title, clusters spread to edges
 const POS: Record<number, [number, number]> = {
-  5:  [50, 46],  3:  [48, 14], 0:  [15, 13], 1:  [83, 11],
-  13: [28, 33],  12: [74, 28], 11: [7, 46],  2:  [91, 50],
-  4:  [16, 68],  6:  [38, 74], 9:  [56, 80], 7:  [74, 76],
-  10: [6, 86],   8:  [90, 82], 14: [93, 18],
+  5:  [50, 25],  // TMS — top center (away from title)
+  3:  [25, 12],  // Integrators
+  0:  [8, 25],   // FIDP
+  1:  [92, 12],  // FDF
+  13: [75, 18],  // Insurance
+  12: [50, 68],  // Banking — bottom center
+  11: [8, 55],   // RegTech
+  2:  [92, 45],  // CMA
+  4:  [25, 45],  // OTS
+  6:  [75, 55],  // BI
+  9:  [38, 82],  // FSC
+  7:  [62, 82],  // ERP
+  10: [8, 82],   // CFF
+  8:  [92, 78],  // ETL
+  14: [85, 82],  // Other
 };
 
 interface Props { initialData?: MapCategory[] }
@@ -173,19 +185,22 @@ export function MapContainer({ initialData }: Props) {
       </div>
 
       {/* === MAP === */}
-      <div className="relative z-10 w-full" style={{ height: "calc(100vh - 130px)", minHeight: 700 }}>
+      <div className="relative z-10 w-full" style={{ height: "max(calc(100vh - 100px), 850px)" }}>
 
         {/* CENTER TITLE — "Treasury MAP" */}
-        <div className="absolute left-1/2 top-[46%] -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none text-center">
+        <div className="absolute left-1/2 top-[50%] -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none text-center">
           <div className="relative">
-            {/* Glow behind text */}
-            <div className="absolute inset-0 blur-3xl opacity-10" style={{ background: "radial-gradient(circle, #22D3EE, transparent 70%)" }} />
-            <h2 className="text-[28px] sm:text-[36px] font-black tracking-[0.3em] uppercase text-white/[0.04]">
+            {/* Large glow */}
+            <div className="absolute -inset-20 blur-[80px] opacity-[0.08]" style={{ background: "radial-gradient(circle, #22D3EE, transparent 60%)" }} />
+            <h2 className="text-[48px] sm:text-[72px] font-black tracking-[0.25em] uppercase text-white/[0.06] leading-none">
               Treasury
             </h2>
-            <h2 className="text-[20px] sm:text-[26px] font-black tracking-[0.5em] uppercase text-white/[0.03] -mt-1">
+            <h2 className="text-[36px] sm:text-[54px] font-black tracking-[0.5em] uppercase text-white/[0.04] -mt-2">
               MAP
             </h2>
+            <div className="mt-3 text-[11px] tracking-[0.4em] uppercase text-cyan-400/[0.12] font-medium">
+              The Technology Landscape
+            </div>
           </div>
         </div>
 
@@ -216,8 +231,8 @@ export function MapContainer({ initialData }: Props) {
           const isDimmed = focused !== null && !isFocused;
           const showCount = Math.min(cat.logos.length, SITE_COUNTS[cat.id] ?? 10);
           const showLogos = cat.logos.slice(0, showCount);
-          const sz = isFocused ? 48 : 38;
-          const minGap = sz + 8;
+          const sz = isFocused ? 54 : 44;
+          const minGap = sz + 10;
           const pts = organicLayout(showCount, minGap, cat.id * 2.3);
           const scale = isFocused ? 1.15 : isDimmed ? 0.7 : 1;
 
@@ -271,12 +286,12 @@ export function MapContainer({ initialData }: Props) {
                 {isFocused && <div className="absolute -inset-3 rounded-full animate-ping opacity-15" style={{ border: `1px solid ${meta.color}` }} />}
                 <div className="rounded-full flex items-center justify-center transition-all duration-500"
                   style={{
-                    width: isFocused ? 60 : 48, height: isFocused ? 60 : 48,
+                    width: isFocused ? 68 : 56, height: isFocused ? 68 : 56,
                     background: `radial-gradient(circle, rgba(${meta.glow}, ${isFocused ? 0.18 : 0.08}), rgba(${meta.glow}, 0.02))`,
                     border: `1px solid rgba(${meta.glow}, ${isFocused ? 0.3 : 0.12})`,
                     boxShadow: isFocused ? `0 0 40px rgba(${meta.glow}, 0.15), inset 0 0 20px rgba(${meta.glow}, 0.05)` : "none",
                   }}>
-                  <span className="text-[9px] font-black tracking-[0.12em] uppercase" style={{ color: meta.color }}>{meta.label}</span>
+                  <span className="text-[11px] font-black tracking-[0.1em] uppercase" style={{ color: meta.color }}>{meta.label}</span>
                 </div>
               </div>
 
