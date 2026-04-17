@@ -73,6 +73,7 @@ export function MapContainer({ initialData }: Props) {
   const [search, setSearch] = useState("");
   const [focused, setFocused] = useState<number | null>(null);
   const [hovered, setHovered] = useState<string | null>(null);
+  const [panelCat, setPanelCat] = useState<number | null>(null);
 
   useEffect(() => {
     if (!initialData) {
@@ -156,8 +157,8 @@ export function MapContainer({ initialData }: Props) {
         </div>
       </div>
 
-      {/* Solar system */}
-      <div className="relative w-full" style={{ height: "calc(100vh - 9rem)", minHeight: 720 }}>
+      {/* Solar system — desktop only */}
+      <div className="hidden md:block relative w-full" style={{ height: "calc(100vh - 9rem)", minHeight: 720 }}>
         {/* Ambient center glow */}
         <div className="absolute inset-0 pointer-events-none" style={{
           background: "radial-gradient(ellipse at 50% 50%, rgba(251,191,36,0.06) 0%, rgba(14,26,52,0.3) 35%, transparent 70%)",
@@ -218,6 +219,9 @@ export function MapContainer({ initialData }: Props) {
             const maxVisible = isFocused ? Math.min(count, 40) : Math.min(count, 12);
             const pts = spiral(maxVisible, clusterR * 0.55);
             const scale = isFocused ? 1.45 : isDim ? 0.8 : 1;
+            // Label goes below the cluster when cluster sits in the top quarter
+            // of the canvas (otherwise it gets eaten by the sticky search bar)
+            const labelBelow = pos.y < 22;
 
             return (
               <div key={catId}
@@ -240,7 +244,7 @@ export function MapContainer({ initialData }: Props) {
 
                 {/* Category label */}
                 <div className="absolute left-1/2 -translate-x-1/2 text-center pointer-events-none z-10"
-                  style={{ top: -(clusterR * 2 + 22) }}>
+                  style={{ top: labelBelow ? (clusterR * 2 + 10) : -(clusterR * 2 + 22) }}>
                   <div className="text-[11px] font-bold tracking-[0.18em] uppercase"
                     style={{ color: meta.color, textShadow: "0 0 10px rgba(0,0,0,0.95), 0 0 4px rgba(0,0,0,0.9)" }}>
                     {meta.label}
@@ -298,16 +302,18 @@ export function MapContainer({ initialData }: Props) {
                   );
                 })}
 
-                {/* Overflow indicator */}
-                {!isFocused && count > 12 && (
-                  <div className="absolute left-1/2 top-1/2 text-[10px] font-semibold pointer-events-none"
+                {/* Overflow indicator — click to open full list */}
+                {count > (isFocused ? 40 : 12) && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setPanelCat(catId); }}
+                    className="absolute left-1/2 top-1/2 text-[11px] font-bold cursor-pointer hover:scale-125 transition-transform z-20"
                     style={{
                       color: meta.color,
-                      transform: `translate(${clusterR * 0.7}px, ${clusterR * 0.7}px)`,
-                      textShadow: "0 0 8px rgba(0,0,0,0.95)",
+                      transform: `translate(${clusterR * 0.85}px, ${clusterR * 0.85}px)`,
+                      textShadow: "0 0 10px rgba(0,0,0,1), 0 0 4px rgba(0,0,0,1)",
                     }}>
-                    +{count - 12}
-                  </div>
+                    +{count - (isFocused ? 40 : 12)}
+                  </button>
                 )}
               </div>
             );
@@ -341,6 +347,19 @@ export function MapContainer({ initialData }: Props) {
                       </div>
                     </div>
                   )}
+                  {(() => {
+                    const cat = data.find(c => c.id === focused);
+                    const total = cat?.logos.filter(l => l.live).length || 0;
+                    if (total === 0) return null;
+                    return (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setPanelCat(focused); }}
+                        className="mt-2.5 w-full text-[10px] font-medium py-1.5 rounded border pointer-events-auto hover:bg-white/5 transition"
+                        style={{ color: focusedMeta.color, borderColor: `${focusedMeta.color}40` }}>
+                        See all {total} →
+                      </button>
+                    );
+                  })()}
                 </div>
               </div>
             );
@@ -348,8 +367,116 @@ export function MapContainer({ initialData }: Props) {
         </div>
       </div>
 
-      {/* Legend */}
-      <div className="max-w-5xl mx-auto px-6 py-5 flex flex-wrap justify-center gap-1.5 relative z-10">
+      {/* Side panel — full list of a category */}
+      {panelCat !== null && (() => {
+        const pMeta = CATS[panelCat];
+        const pCat = data.find(c => c.id === panelCat);
+        const logos = pCat?.logos.filter(l => l.live) || [];
+        return (
+          <div className="fixed inset-0 z-50">
+            <button
+              onClick={() => setPanelCat(null)}
+              aria-label="Close panel"
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+            <div className="absolute right-0 top-0 h-full w-full max-w-md bg-[#0a1426] border-l border-white/10 shadow-2xl flex flex-col animate-in slide-in-from-right">
+              <header className="px-6 py-5 border-b border-white/10 flex items-start justify-between gap-4">
+                <div>
+                  <div className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: pMeta.color }}>
+                    {pMeta.label}
+                  </div>
+                  <div className="text-sm text-gray-300 mt-1.5 leading-snug">{pMeta.blurb}</div>
+                  <div className="text-[11px] text-gray-500 mt-2 tabular-nums">{logos.length} companies</div>
+                </div>
+                <button
+                  onClick={() => setPanelCat(null)}
+                  className="text-gray-500 hover:text-white transition p-1 -m-1"
+                  aria-label="Close">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </header>
+              <div className="flex-1 overflow-y-auto px-6 py-5">
+                <div className="grid grid-cols-3 gap-3">
+                  {logos.map((logo, i) => {
+                    const cid = logo.url?.match(/companyPage\/(\d+)/)?.[1];
+                    return (
+                      <Link key={i} href={cid ? `/company/${cid}` : "#"}
+                        className="group flex flex-col items-center gap-2 p-2 rounded-lg hover:bg-white/5 transition"
+                        onClick={() => setPanelCat(null)}>
+                        <div className="w-full aspect-square rounded-md bg-white overflow-hidden flex items-center justify-center">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={logo.image || ""} alt=""
+                            className="w-full h-full object-contain p-1.5"
+                            onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                        </div>
+                        <div className="text-[10px] text-gray-400 group-hover:text-white text-center line-clamp-2 leading-tight">
+                          {logo.keywords?.[0] || "View company"}
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* Mobile list — stacked category sections */}
+      <div className="md:hidden relative z-10 px-4 pb-10 pt-6 space-y-8">
+        {(Object.keys(CATS) as unknown as string[]).map(k => parseInt(k)).map(catId => {
+          const meta = CATS[catId];
+          const cat = data.find(c => c.id === catId);
+          if (!cat) return null;
+          const liveLogos = cat.logos.filter(l => l.live);
+          if (liveLogos.length === 0) return null;
+          const visible = liveLogos.slice(0, 8);
+          return (
+            <section key={catId}>
+              <div className="flex items-baseline justify-between gap-3 mb-3">
+                <div className="min-w-0">
+                  <div className="text-xs font-bold tracking-[0.15em] uppercase" style={{ color: meta.color }}>
+                    {meta.label}
+                  </div>
+                  <div className="text-[11px] text-gray-400 mt-1 leading-snug">{meta.blurb}</div>
+                </div>
+                <div className="text-[10px] text-gray-500 tabular-nums whitespace-nowrap">{liveLogos.length}</div>
+              </div>
+              <div className="grid grid-cols-4 gap-2">
+                {visible.map((logo, i) => {
+                  const cid = logo.url?.match(/companyPage\/(\d+)/)?.[1];
+                  const k2 = `m-${catId}-${i}`;
+                  const isMatch = matchKeys ? matchKeys.has(`${catId}-${i}`) : true;
+                  return (
+                    <Link key={k2} href={cid ? `/company/${cid}` : "#"}
+                      className="aspect-square rounded-md bg-white overflow-hidden flex items-center justify-center transition"
+                      style={{
+                        boxShadow: (matchKeys && isMatch) ? `0 0 0 1.5px ${meta.color}` : undefined,
+                        opacity: (matchKeys && !isMatch) ? 0.3 : 1,
+                      }}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={logo.image || ""} alt="" loading="lazy"
+                        className="w-full h-full object-contain p-1.5"
+                        onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                    </Link>
+                  );
+                })}
+                {liveLogos.length > 8 && (
+                  <button onClick={() => setPanelCat(catId)}
+                    className="aspect-square rounded-md bg-white/5 border border-white/10 flex items-center justify-center text-xs font-semibold hover:bg-white/10 transition"
+                    style={{ color: meta.color }}>
+                    +{liveLogos.length - 8}
+                  </button>
+                )}
+              </div>
+            </section>
+          );
+        })}
+      </div>
+
+      {/* Legend — desktop only */}
+      <div className="hidden md:flex max-w-5xl mx-auto px-6 py-5 flex-wrap justify-center gap-1.5 relative z-10">
         {Object.entries(CATS).map(([id, m]) => (
           <button key={id}
             className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] text-gray-400 hover:text-white hover:bg-white/[0.06] transition-all"
