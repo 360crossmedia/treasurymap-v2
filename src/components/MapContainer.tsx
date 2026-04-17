@@ -27,23 +27,23 @@ const SITE_COUNTS: Record<number, number> = {
   0:4, 1:2, 2:7, 3:4, 4:15, 5:18, 6:3, 7:1, 8:4, 9:5, 10:15, 11:7, 12:10, 13:15, 14:3,
 };
 
-// Positions — safe zone 15-85%, center (50,50) kept clear for title
+// Positions — all between 20-80% to keep logos inside viewport
 const POS: Record<number, [number, number]> = {
-  5:  [50, 18],  // TMS — top center
-  3:  [20, 15],  // Integrators — top left
-  0:  [80, 15],  // FIDP — top right
-  1:  [35, 30],  // FDF
-  13: [65, 30],  // Insurance
-  4:  [18, 42],  // OTS — left
-  11: [82, 42],  // RegTech — right
-  2:  [20, 62],  // CMA — left-bottom
-  6:  [80, 62],  // BI — right-bottom
-  12: [38, 72],  // Banking
-  7:  [62, 72],  // ERP
-  9:  [50, 84],  // FSC — bottom center
-  10: [20, 84],  // CFF
-  8:  [80, 84],  // ETL
-  14: [50, 6],   // Other — very top
+  14: [50, 10],  // Other — top center (small, 3 logos)
+  3:  [25, 18],  // Integrators
+  0:  [75, 18],  // FIDP
+  5:  [50, 25],  // TMS
+  1:  [20, 35],  // FDF (small)
+  13: [80, 35],  // Insurance
+  4:  [35, 42],  // OTS
+  11: [65, 42],  // RegTech
+  2:  [20, 58],  // CMA
+  6:  [80, 58],  // BI
+  12: [35, 70],  // Banking
+  7:  [65, 70],  // ERP
+  10: [20, 82],  // CFF
+  9:  [50, 82],  // FSC
+  8:  [80, 82],  // ETL
 };
 
 interface Props { initialData?: MapCategory[] }
@@ -98,8 +98,9 @@ export function MapContainer({ initialData }: Props) {
       const jy = Math.cos(i * 5.7 + seed) * 5;
       pts.push([r * Math.cos(theta) + jx, r * Math.sin(theta) + jy]);
     }
-    // Push apart overlapping
-    for (let iter = 0; iter < 4; iter++) {
+    // Push apart overlapping + constrain to max radius
+    const maxRadius = minGap * Math.sqrt(n) * 0.95;
+    for (let iter = 0; iter < 5; iter++) {
       for (let i = 0; i < pts.length; i++) {
         for (let j = i + 1; j < pts.length; j++) {
           const dx = pts[j][0] - pts[i][0], dy = pts[j][1] - pts[i][1];
@@ -111,12 +112,18 @@ export function MapContainer({ initialData }: Props) {
             pts[j][0] += nx * push; pts[j][1] += ny * push;
           }
         }
-        // Push away from center
+        // Push away from center label
         const cd = Math.sqrt(pts[i][0] ** 2 + pts[i][1] ** 2);
         if (cd < minGap * 0.9 && cd > 0) {
           const push = minGap * 0.9 - cd + 2;
           pts[i][0] += (pts[i][0] / cd) * push;
           pts[i][1] += (pts[i][1] / cd) * push;
+        }
+        // Constrain to max radius — no overflow
+        const d = Math.sqrt(pts[i][0] ** 2 + pts[i][1] ** 2);
+        if (d > maxRadius) {
+          pts[i][0] = (pts[i][0] / d) * maxRadius;
+          pts[i][1] = (pts[i][1] / d) * maxRadius;
         }
       }
     }
@@ -234,8 +241,9 @@ export function MapContainer({ initialData }: Props) {
           const isDimmed = focused !== null && !isFocused;
           const showCount = Math.min(cat.logos.length, SITE_COUNTS[cat.id] ?? 10);
           const showLogos = cat.logos.slice(0, showCount);
-          const sz = isFocused ? 54 : 44;
-          const minGap = sz + 10;
+          const baseSz = showCount > 12 ? 36 : showCount > 6 ? 40 : 44;
+          const sz = isFocused ? baseSz + 10 : baseSz;
+          const minGap = sz + 6;
           const pts = organicLayout(showCount, minGap, cat.id * 2.3);
           const scale = isFocused ? 1.15 : isDimmed ? 0.7 : 1;
 
