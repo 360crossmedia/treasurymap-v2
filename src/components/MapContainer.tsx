@@ -1,50 +1,69 @@
-// MAP CORE — do not refactor without explicit instruction
+// MAP CORE — solar system architecture
 "use client";
 
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import Link from "next/link";
 import type { MapCategory } from "@/lib/api";
 
-const CATS: Record<number, { label: string; color: string; glow: string }> = {
-  0:  { label: "FIDP",        color: "#3B82F6", glow: "59,130,246" },
-  1:  { label: "FDF",         color: "#818CF8", glow: "129,140,248" },
-  2:  { label: "CMA",         color: "#F472B6", glow: "244,114,182" },
-  3:  { label: "Integrators", color: "#34D399", glow: "52,211,153" },
-  4:  { label: "OTS",         color: "#FBBF24", glow: "251,191,36" },
-  5:  { label: "TMS",         color: "#22D3EE", glow: "34,211,238" },
-  6:  { label: "BI",          color: "#A78BFA", glow: "167,139,250" },
-  7:  { label: "ERP",         color: "#F87171", glow: "248,113,113" },
-  8:  { label: "ETL",         color: "#2DD4BF", glow: "45,212,191" },
-  9:  { label: "FSC",         color: "#FB923C", glow: "251,146,60" },
-  10: { label: "CFF",         color: "#C084FC", glow: "192,132,252" },
-  11: { label: "RegTech",     color: "#38BDF8", glow: "56,189,248" },
-  12: { label: "Banking",     color: "#4ADE80", glow: "74,222,128" },
-  13: { label: "Insurance",   color: "#FB7185", glow: "251,113,133" },
-  14: { label: "Other",       color: "#94A3B8", glow: "148,163,184" },
+type CatMeta = { label: string; color: string; blurb: string };
+
+const CATS: Record<number, CatMeta> = {
+  0:  { label: "FIDP",        color: "#60A5FA", blurb: "Financial instrument data providers — market & reference data." },
+  1:  { label: "FDF",         color: "#A78BFA", blurb: "Financial data feeds — real-time price & rate streams." },
+  2:  { label: "CMA",         color: "#F472B6", blurb: "Capital Markets Applications — trading & portfolio tooling." },
+  3:  { label: "Integrators", color: "#34D399", blurb: "System integrators connecting treasury stacks." },
+  4:  { label: "OTS",         color: "#FBBF24", blurb: "Order & Trade Systems for FX, MM, securities." },
+  5:  { label: "TMS",         color: "#22D3EE", blurb: "Treasury Management Systems — the operational core." },
+  6:  { label: "BI",          color: "#E879F9", blurb: "Business Intelligence & treasury analytics." },
+  7:  { label: "ERP",         color: "#F87171", blurb: "Enterprise Resource Planning — the financial source of truth." },
+  8:  { label: "ETL",         color: "#2DD4BF", blurb: "Data pipelines feeding the treasury stack." },
+  9:  { label: "FSC",         color: "#FB923C", blurb: "Financial Supply Chain — payables, receivables, financing." },
+  10: { label: "CFF",         color: "#C084FC", blurb: "Cash Flow Forecasting specialists." },
+  11: { label: "RegTech",     color: "#38BDF8", blurb: "Regulatory, compliance & reporting technology." },
+  12: { label: "Banking",     color: "#4ADE80", blurb: "Bank connectivity & portals." },
+  13: { label: "Insurance",   color: "#FB7185", blurb: "Insurance & hedging for treasury risk." },
+  14: { label: "Other",       color: "#94A3B8", blurb: "Adjacent & emerging treasury tools." },
 };
 
-const SITE_COUNTS: Record<number, number> = {
-  0:4, 1:2, 2:7, 3:4, 4:15, 5:18, 6:3, 7:1, 8:4, 9:5, 10:15, 11:7, 12:10, 13:15, 14:3,
+// 3 orbital rings — radius in % of the square canvas side, from center (50,50)
+const ORBITS: { r: number; cats: number[] }[] = [
+  { r: 24, cats: [5, 7, 12, 1, 10] },   // inner: TMS, ERP, Banking, FDF, CFF
+  { r: 33, cats: [6, 8, 11, 3, 0] },    // middle: BI, ETL, RegTech, Integrators, FIDP
+  { r: 41, cats: [4, 2, 9, 13, 14] },   // outer: OTS, CMA, FSC, Insurance, Other
+];
+
+function r2(n: number) { return Math.round(n * 100) / 100; }
+
+// Category-to-category business connections (undirected; only listed one-way)
+const LINKS: Record<number, number[]> = {
+  5:  [7, 12, 1, 10, 6, 3, 4],
+  7:  [5, 8, 3, 12],
+  12: [5, 7, 11, 9, 13],
+  1:  [5, 10, 0, 2],
+  10: [5, 1, 12, 9],
+  6:  [5, 8, 7],
+  8:  [6, 7, 3],
+  11: [12, 13, 2],
+  3:  [7, 8, 5],
+  0:  [1, 2, 5],
+  4:  [5, 9, 2],
+  2:  [1, 0, 4, 11],
+  9:  [12, 10, 4, 5],
+  13: [12, 11],
+  14: [],
 };
 
-// Positions — all between 20-80% to keep logos inside viewport
-const POS: Record<number, [number, number]> = {
-  14: [50, 10],  // Other — top center (small, 3 logos)
-  3:  [25, 18],  // Integrators
-  0:  [75, 18],  // FIDP
-  5:  [50, 25],  // TMS
-  1:  [20, 35],  // FDF (small)
-  13: [80, 35],  // Insurance
-  4:  [35, 42],  // OTS
-  11: [65, 42],  // RegTech
-  2:  [20, 58],  // CMA
-  6:  [80, 58],  // BI
-  12: [35, 70],  // Banking
-  7:  [65, 70],  // ERP
-  10: [20, 82],  // CFF
-  9:  [50, 82],  // FSC
-  8:  [80, 82],  // ETL
-};
+function catPosition(catId: number): { x: number; y: number } | null {
+  for (let i = 0; i < ORBITS.length; i++) {
+    const o = ORBITS[i];
+    const idx = o.cats.indexOf(catId);
+    if (idx === -1) continue;
+    const offset = i * 0.45;
+    const angle = (idx / o.cats.length) * 2 * Math.PI + offset - Math.PI / 2;
+    return { x: r2(50 + o.r * Math.cos(angle)), y: r2(50 + o.r * Math.sin(angle)) };
+  }
+  return null;
+}
 
 interface Props { initialData?: MapCategory[] }
 
@@ -54,7 +73,7 @@ export function MapContainer({ initialData }: Props) {
   const [search, setSearch] = useState("");
   const [focused, setFocused] = useState<number | null>(null);
   const [hovered, setHovered] = useState<string | null>(null);
-  const leaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [panelCat, setPanelCat] = useState<number | null>(null);
 
   useEffect(() => {
     if (!initialData) {
@@ -64,319 +83,409 @@ export function MapContainer({ initialData }: Props) {
     }
   }, [initialData]);
 
-  const filtered = useMemo(() => data.map(cat => ({
-    ...cat,
-    logos: cat.logos.filter(l => {
-      if (!l.live) return false;
-      if (search && !l.keywords?.some(k => k.toLowerCase().includes(search.toLowerCase()))) return false;
-      return true;
-    }),
-  })), [data, search]);
+  const matchKeys = useMemo(() => {
+    if (!search.trim()) return null;
+    const s = search.toLowerCase();
+    const set = new Set<string>();
+    data.forEach(cat => {
+      cat.logos.forEach((l, i) => {
+        if (!l.live) return;
+        if (l.keywords?.some(k => k.toLowerCase().includes(s))) set.add(`${cat.id}-${i}`);
+      });
+    });
+    return set;
+  }, [data, search]);
 
-  const total = filtered.reduce((a, c) => a + Math.min(c.logos.length, SITE_COUNTS[c.id] || 10), 0);
+  const totalCompanies = useMemo(() =>
+    data.reduce((a, c) => a + c.logos.filter(l => l.live).length, 0), [data]);
 
-  // Debounced cluster focus — prevents flickering when moving between logos/clusters
-  const enterCluster = useCallback((id: number) => {
-    if (leaveTimer.current) { clearTimeout(leaveTimer.current); leaveTimer.current = null; }
-    setFocused(id);
-  }, []);
-
-  const leaveCluster = useCallback(() => {
-    leaveTimer.current = setTimeout(() => setFocused(null), 300);
-  }, []);
-
-  // Force-separated organic layout
-  function organicLayout(n: number, minGap: number, seed: number): [number, number][] {
-    if (n === 0) return [];
-    if (n === 1) return [[minGap * 1.2, 0]];
+  function spiral(n: number, spread: number): [number, number][] {
     const pts: [number, number][] = [];
     const ga = 137.508 * Math.PI / 180;
     for (let i = 0; i < n; i++) {
-      const r = minGap * 0.85 * Math.sqrt(i + 1);
-      const theta = i * ga + seed * 0.7;
-      const jx = Math.sin(i * 7.3 + seed) * 5;
-      const jy = Math.cos(i * 5.7 + seed) * 5;
-      pts.push([r * Math.cos(theta) + jx, r * Math.sin(theta) + jy]);
-    }
-    // Push apart overlapping + constrain to max radius
-    const maxRadius = minGap * Math.sqrt(n) * 0.95;
-    for (let iter = 0; iter < 5; iter++) {
-      for (let i = 0; i < pts.length; i++) {
-        for (let j = i + 1; j < pts.length; j++) {
-          const dx = pts[j][0] - pts[i][0], dy = pts[j][1] - pts[i][1];
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < minGap && dist > 0) {
-            const push = (minGap - dist) / 2 + 1;
-            const nx = dx / dist, ny = dy / dist;
-            pts[i][0] -= nx * push; pts[i][1] -= ny * push;
-            pts[j][0] += nx * push; pts[j][1] += ny * push;
-          }
-        }
-        // Push away from center label
-        const cd = Math.sqrt(pts[i][0] ** 2 + pts[i][1] ** 2);
-        if (cd < minGap * 0.9 && cd > 0) {
-          const push = minGap * 0.9 - cd + 2;
-          pts[i][0] += (pts[i][0] / cd) * push;
-          pts[i][1] += (pts[i][1] / cd) * push;
-        }
-        // Constrain to max radius — no overflow
-        const d = Math.sqrt(pts[i][0] ** 2 + pts[i][1] ** 2);
-        if (d > maxRadius) {
-          pts[i][0] = (pts[i][0] / d) * maxRadius;
-          pts[i][1] = (pts[i][1] / d) * maxRadius;
-        }
-      }
+      const r = spread * Math.sqrt(i + 0.5);
+      const t = i * ga;
+      pts.push([r2(r * Math.cos(t)), r2(r * Math.sin(t))]);
     }
     return pts;
   }
 
+  // Deterministic starfield (rounded to avoid SSR/client FP drift)
+  const stars = useMemo(() => {
+    const out: { x: number; y: number; s: number; o: number }[] = [];
+    let seed = 17;
+    const rand = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
+    for (let i = 0; i < 160; i++) {
+      out.push({ x: r2(rand() * 100), y: r2(rand() * 100), s: r2(rand() * 1.4 + 0.3), o: r2(rand() * 0.55 + 0.12) });
+    }
+    return out;
+  }, []);
+
   if (loading) return (
-    <div className="flex items-center justify-center h-[85vh] bg-[#040712]">
-      <div className="relative w-20 h-20">
-        <div className="absolute inset-0 rounded-full border border-cyan-500/10 animate-ping" />
-        <div className="absolute inset-3 rounded-full border border-cyan-500/20 animate-spin" style={{ animationDuration: "3s" }} />
-        <div className="absolute inset-6 rounded-full border border-cyan-500/30 animate-spin" style={{ animationDuration: "2s", animationDirection: "reverse" }} />
-      </div>
+    <div className="flex items-center justify-center h-[80vh] bg-[#050a18]">
+      <div className="w-10 h-10 border-2 border-white/10 border-t-amber-400 rounded-full animate-spin" />
     </div>
   );
 
+  const focusedPos = focused !== null ? catPosition(focused) : null;
+  const focusedMeta = focused !== null ? CATS[focused] : null;
+  const focusedLinks = focused !== null ? (LINKS[focused] || []).map(id => ({ id, pos: catPosition(id) })).filter(l => l.pos) : [];
+
   return (
-    <div className="bg-[#040712] min-h-screen relative overflow-hidden">
-      {/* === AMBIENT === */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        {/* Mesh blobs */}
-        <div className="absolute top-[10%] left-[20%] w-[600px] h-[600px] rounded-full opacity-[0.018]" style={{ background: "radial-gradient(circle, #22D3EE, transparent 70%)", filter: "blur(100px)" }} />
-        <div className="absolute bottom-[20%] right-[15%] w-[600px] h-[600px] rounded-full opacity-[0.015]" style={{ background: "radial-gradient(circle, #A78BFA, transparent 70%)", filter: "blur(100px)" }} />
-        <div className="absolute top-[45%] left-[45%] w-[900px] h-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-[0.012]" style={{ background: "radial-gradient(circle, #3B82F6, transparent 60%)", filter: "blur(120px)" }} />
-
-        {/* Particles */}
-        {[...Array(20)].map((_, i) => (
-          <div key={i} className="absolute rounded-full bg-white animate-pulse"
-            style={{
-              width: 1 + (i % 3), height: 1 + (i % 3),
-              opacity: 0.02 + (i % 4) * 0.01,
-              left: `${(i * 13.7) % 95}%`, top: `${(i * 17.3) % 92}%`,
-              animationDelay: `${i * 0.3}s`, animationDuration: `${3 + i % 4}s`,
-            }} />
+    <div className="bg-[#050a18] relative overflow-hidden">
+      {/* Starfield */}
+      <div className="absolute inset-0 pointer-events-none">
+        {stars.map((s, i) => (
+          <div key={i} className="absolute rounded-full bg-white"
+            style={{ left: `${s.x}%`, top: `${s.y}%`, width: s.s, height: s.s, opacity: s.o }} />
         ))}
-
-        {/* Hex grid */}
-        <svg className="absolute inset-0 w-full h-full opacity-[0.015]">
-          <defs><pattern id="hex" width="56" height="48.5" patternUnits="userSpaceOnUse" patternTransform="scale(2)">
-            <path d="M28 0L56 14V34.5L28 48.5 0 34.5V14Z" fill="none" stroke="white" strokeWidth="0.3" />
-          </pattern></defs>
-          <rect width="100%" height="100%" fill="url(#hex)" />
-        </svg>
-
-        {/* Concentric rings from center */}
-        <svg className="absolute inset-0 w-full h-full opacity-[0.02]">
-          {[150, 280, 420].map((r, i) => (
-            <circle key={i} cx="50%" cy="48%" r={r} fill="none" stroke="cyan" strokeWidth="0.5"
-              strokeDasharray={i === 0 ? "none" : `${3 + i * 2} ${8 + i * 3}`} />
-          ))}
-        </svg>
       </div>
 
-      {/* Search */}
-      <div className="sticky top-16 z-40 bg-[#040712]/80 backdrop-blur-2xl border-b border-white/[0.03]">
+      {/* Search bar */}
+      <div className="sticky top-16 z-40 bg-[#050a18]/90 backdrop-blur-xl border-b border-white/[0.05]">
         <div className="max-w-7xl mx-auto px-5 py-3 flex items-center gap-3">
-          <div className="relative flex-1 max-w-xs">
-            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="relative flex-1 max-w-md">
+            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
-            <input type="text" placeholder="Search..." value={search} onChange={e => setSearch(e.target.value)}
-              className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl pl-9 pr-3 py-2 text-sm text-gray-200 placeholder-gray-600 focus:outline-none focus:border-white/10 transition-all" />
+            <input type="text" placeholder="Search vendors, keywords…" value={search} onChange={e => setSearch(e.target.value)}
+              className="w-full bg-white/[0.05] border border-white/[0.08] rounded-lg pl-9 pr-3 py-2 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-amber-400/40 focus:bg-white/[0.08] transition" />
           </div>
-          <span className="text-[11px] text-gray-600 ml-auto">{total} companies</span>
+          <span className="text-[11px] text-gray-500 ml-auto tabular-nums">
+            {totalCompanies} companies · 15 categories
+          </span>
         </div>
       </div>
 
-      {/* === MAP === */}
-      <div className="relative z-10 w-full" style={{ height: "max(calc(100vh - 100px), 850px)" }}>
+      {/* Solar system — desktop only */}
+      <div className="hidden md:block relative w-full" style={{ height: "calc(100vh - 9rem)", minHeight: 720 }}>
+        {/* Ambient center glow */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          background: "radial-gradient(ellipse at 50% 50%, rgba(251,191,36,0.06) 0%, rgba(14,26,52,0.3) 35%, transparent 70%)",
+        }} />
 
-        {/* CENTER TITLE — "Treasury MAP" */}
-        <div className="absolute left-1/2 top-[50%] -translate-x-1/2 -translate-y-1/2 z-[5] pointer-events-none text-center">
-          <div className="relative">
-            <div className="absolute -inset-32 blur-[100px] opacity-[0.12]" style={{ background: "radial-gradient(circle, #06B6D4, transparent 60%)" }} />
-            <h2 className="text-[60px] sm:text-[90px] font-black tracking-[0.2em] uppercase leading-none" style={{ color: "rgba(255,255,255,0.07)" }}>
-              Treasury
-            </h2>
-            <h2 className="text-[44px] sm:text-[66px] font-black tracking-[0.4em] uppercase -mt-1" style={{ color: "rgba(6,182,212,0.08)" }}>
-              MAP
-            </h2>
-            <div className="mt-4 flex items-center justify-center gap-3">
-              <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-cyan-500/20" />
-              <span className="text-[10px] tracking-[0.5em] uppercase text-cyan-400/20 font-semibold">
-                Technology Landscape
-              </span>
-              <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-cyan-500/20" />
+        {/* Centered square canvas */}
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 aspect-square"
+          style={{ width: "min(94vw, calc(100vh - 11rem), 980px)" }}>
+
+          {/* Orbit rings + connection lines (SVG) */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100">
+            {ORBITS.map((o, i) => (
+              <circle key={i} cx="50" cy="50" r={o.r}
+                fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="0.1" />
+            ))}
+            {focusedPos && focusedLinks.map(({ id, pos }) => pos && (
+              <line key={id}
+                x1={focusedPos.x} y1={focusedPos.y} x2={pos.x} y2={pos.y}
+                stroke={CATS[focused!].color} strokeOpacity="0.45"
+                strokeWidth="0.15" strokeDasharray="0.6 0.4" />
+            ))}
+          </svg>
+
+          {/* Sun = brand center */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none">
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+              style={{
+                width: 340, height: 340,
+                background: "radial-gradient(circle, rgba(251,191,36,0.32) 0%, rgba(251,191,36,0.12) 22%, rgba(251,191,36,0.03) 50%, transparent 72%)",
+              }} />
+            <div className="relative text-center">
+              <div className="text-[9px] tracking-[0.35em] text-amber-200/60 font-medium mb-1.5">THE TREASURY ECOSYSTEM</div>
+              <div className="text-2xl md:text-3xl font-bold text-white tracking-tight leading-none">
+                Treasury<span className="text-amber-300"> </span>Map
+              </div>
+              <div className="text-[10px] tracking-wider text-gray-500 mt-2 tabular-nums">
+                {totalCompanies} vendors · 15 categories
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Inter-cluster connection lines */}
-        <svg className="absolute inset-0 w-full h-full pointer-events-none z-0 opacity-[0.03]">
-          {filtered.filter(c => c.logos.length > 0).map(cat => {
-            const p1 = POS[cat.id];
-            if (!p1) return null;
-            return filtered.filter(c2 => c2.logos.length > 0 && c2.id > cat.id).map(cat2 => {
-              const p2 = POS[cat2.id];
-              if (!p2) return null;
-              const dist = Math.sqrt((p1[0]-p2[0])**2 + (p1[1]-p2[1])**2);
-              if (dist > 35) return null;
-              return <line key={`${cat.id}-${cat2.id}`}
-                x1={`${p1[0]}%`} y1={`${p1[1]}%`} x2={`${p2[0]}%`} y2={`${p2[1]}%`}
-                stroke="white" strokeWidth="0.5" strokeDasharray="4 12" />;
-            });
-          })}
-        </svg>
+          {/* Planets */}
+          {(Object.keys(CATS) as unknown as string[]).map(k => parseInt(k)).map(catId => {
+            const meta = CATS[catId];
+            const pos = catPosition(catId);
+            const cat = data.find(c => c.id === catId);
+            if (!pos || !cat) return null;
 
-        {/* Clusters */}
-        {filtered.filter(c => c.logos.length > 0).map(cat => {
-          const meta = CATS[cat.id];
-          const pos = POS[cat.id];
-          if (!meta || !pos) return null;
+            const liveLogos = cat.logos.filter(l => l.live);
+            const count = liveLogos.length;
+            if (count === 0) return null;
 
-          const isFocused = focused === cat.id;
-          const isDimmed = focused !== null && !isFocused;
-          const showCount = Math.min(cat.logos.length, SITE_COUNTS[cat.id] ?? 10);
-          const showLogos = cat.logos.slice(0, showCount);
-          const baseSz = showCount > 12 ? 36 : showCount > 6 ? 40 : 44;
-          const sz = isFocused ? baseSz + 10 : baseSz;
-          const minGap = sz + 6;
-          const pts = organicLayout(showCount, minGap, cat.id * 2.3);
-          const scale = isFocused ? 1.15 : isDimmed ? 0.7 : 1;
+            const isFocused = focused === catId;
+            const isLinked = focused !== null && !isFocused && (LINKS[focused] || []).includes(catId);
+            const isDim = focused !== null && !isFocused && !isLinked;
 
-          // Bounding box of cluster for hover zone
-          const maxR = pts.reduce((m, [x, y]) => Math.max(m, Math.sqrt(x*x + y*y)), 0) + sz;
+            const clusterR = r2(Math.max(13, Math.min(26, 9 + Math.log2(count + 1) * 2.6)));
+            const maxVisible = isFocused ? Math.min(count, 40) : Math.min(count, 12);
+            const pts = spiral(maxVisible, clusterR * 0.55);
+            const scale = isFocused ? 1.45 : isDim ? 0.8 : 1;
+            // Label goes below the cluster when cluster sits in the top quarter
+            // of the canvas (otherwise it gets eaten by the sticky search bar)
+            const labelBelow = pos.y < 22;
 
-          return (
-            <div key={cat.id} className="absolute transition-all duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
-              style={{
-                left: `${pos[0]}%`, top: `${pos[1]}%`,
-                transform: `translate(-50%,-50%) scale(${scale})`,
-                opacity: isDimmed ? 0.08 : 1,
-                zIndex: isFocused ? 20 : 1,
-              }}
-            >
-              {/* HOVER ZONE — invisible expanded hitbox for the whole cluster */}
-              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
-                style={{ width: maxR * 2 + 60, height: maxR * 2 + 60 }}
-                onMouseEnter={() => enterCluster(cat.id)}
-                onMouseLeave={leaveCluster}
-              />
-
-              {/* Nebula */}
-              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none transition-all duration-[800ms]"
+            return (
+              <div key={catId}
+                className="absolute transition-all duration-500 ease-out"
                 style={{
-                  width: maxR * 3, height: maxR * 3,
-                  background: `radial-gradient(ellipse, rgba(${meta.glow}, ${isFocused ? 0.1 : 0.03}) 0%, transparent 70%)`,
-                  filter: "blur(8px)",
-                }} />
-
-              {/* Orbital ring */}
-              <svg className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none overflow-visible transition-all duration-700"
-                style={{ width: maxR * 2.2, height: maxR * 2 }}>
-                <ellipse cx="50%" cy="50%" rx="48%" ry="44%"
-                  fill="none" stroke={meta.color}
-                  strokeOpacity={isFocused ? 0.1 : 0.03}
-                  strokeWidth="0.5" strokeDasharray={isFocused ? "2 4" : "1 8"} />
-              </svg>
-
-              {/* Connection curves */}
-              <svg className="absolute left-1/2 top-1/2 pointer-events-none overflow-visible" style={{ width: 1, height: 1 }}>
-                {pts.map(([dx, dy], i) => (
-                  <path key={i} d={`M0,0 Q${dx*0.4+dy*0.1},${dy*0.4-dx*0.1} ${dx},${dy}`}
-                    fill="none" stroke={meta.color}
-                    strokeOpacity={isFocused ? 0.08 : 0.025} strokeWidth="0.5" />
-                ))}
-              </svg>
-
-              {/* Center node */}
-              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none">
-                {isFocused && <div className="absolute -inset-3 rounded-full animate-ping opacity-15" style={{ border: `1px solid ${meta.color}` }} />}
-                <div className="rounded-full flex items-center justify-center transition-all duration-500"
+                  left: `${pos.x}%`, top: `${pos.y}%`,
+                  transform: `translate(-50%,-50%) scale(${scale})`,
+                  opacity: isDim ? 0.28 : 1,
+                  zIndex: isFocused ? 30 : isLinked ? 15 : 5,
+                }}
+                onMouseEnter={() => setFocused(catId)}
+                onMouseLeave={() => setFocused(null)}
+              >
+                {/* Planet ambient */}
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none transition-all duration-500"
                   style={{
-                    width: isFocused ? 68 : 56, height: isFocused ? 68 : 56,
-                    background: `radial-gradient(circle, rgba(${meta.glow}, ${isFocused ? 0.18 : 0.08}), rgba(${meta.glow}, 0.02))`,
-                    border: `1px solid rgba(${meta.glow}, ${isFocused ? 0.3 : 0.12})`,
-                    boxShadow: isFocused ? `0 0 40px rgba(${meta.glow}, 0.15), inset 0 0 20px rgba(${meta.glow}, 0.05)` : "none",
-                  }}>
-                  <span className="text-[11px] font-black tracking-[0.1em] uppercase" style={{ color: meta.color }}>{meta.label}</span>
+                    width: isFocused ? 280 : 170, height: isFocused ? 280 : 170,
+                    background: `radial-gradient(circle, ${meta.color}${isFocused ? "24" : "10"} 0%, transparent 65%)`,
+                  }} />
+
+                {/* Category label */}
+                <div className="absolute left-1/2 -translate-x-1/2 text-center pointer-events-none z-10"
+                  style={{ top: labelBelow ? (clusterR * 2 + 10) : -(clusterR * 2 + 22) }}>
+                  <div className="text-[11px] font-bold tracking-[0.18em] uppercase"
+                    style={{ color: meta.color, textShadow: "0 0 10px rgba(0,0,0,0.95), 0 0 4px rgba(0,0,0,0.9)" }}>
+                    {meta.label}
+                  </div>
+                  <div className="text-[9px] text-gray-400 mt-0.5 tabular-nums" style={{ textShadow: "0 0 6px rgba(0,0,0,0.9)" }}>
+                    {count} {count > 1 ? "companies" : "company"}
+                  </div>
                 </div>
-              </div>
 
-              {/* Logos */}
-              {pts.map(([dx, dy], i) => {
-                const logo = showLogos[i];
-                if (!logo) return null;
-                const cid = logo.url?.match(/companyPage\/(\d+)/)?.[1];
-                const k = `${cat.id}-${i}`;
-                const isH = hovered === k;
+                {/* Logos */}
+                {pts.map(([dx, dy], i) => {
+                  const logo = liveLogos[i];
+                  if (!logo) return null;
+                  const cid = logo.url?.match(/companyPage\/(\d+)/)?.[1];
+                  const k = `${catId}-${i}`;
+                  const isH = hovered === k;
+                  const isMatch = matchKeys ? matchKeys.has(k) : true;
+                  const sz = isFocused ? 38 : 28;
 
-                return (
-                  <Link key={k} href={cid ? `/company/${cid}` : "#"}
-                    className="absolute transition-all duration-500 ease-out"
-                    style={{ left: dx - sz/2, top: dy - sz/2, zIndex: isH ? 30 : 2 }}
-                    onMouseEnter={() => setHovered(k)}
-                    onMouseLeave={() => setHovered(null)}
-                  >
-                    <div className="relative transition-all duration-200"
-                      style={{ width: sz, height: sz, transform: isH ? "scale(1.5)" : "scale(1)" }}>
-                      {isH && <div className="absolute -inset-3 rounded-full" style={{ background: `radial-gradient(circle, rgba(${meta.glow}, 0.25), transparent 70%)` }} />}
-                      <div className="w-full h-full rounded-full overflow-hidden transition-all duration-200"
+                  return (
+                    <Link key={k} href={cid ? `/company/${cid}` : "#"}
+                      className="absolute transition-all duration-300"
+                      style={{
+                        left: `calc(50% + ${dx}px)`, top: `calc(50% + ${dy}px)`,
+                        transform: `translate(-50%,-50%) scale(${isH ? 1.3 : 1})`,
+                        zIndex: isH ? 40 : 3,
+                        opacity: matchKeys && !isMatch ? 0.2 : 1,
+                      }}
+                      onMouseEnter={() => setHovered(k)}
+                      onMouseLeave={() => setHovered(null)}
+                    >
+                      <div className="rounded-lg overflow-hidden bg-white"
                         style={{
-                          background: isH ? "rgba(255,255,255,0.95)" : `rgba(${meta.glow}, 0.06)`,
-                          backdropFilter: "blur(8px)",
-                          border: `1px solid rgba(${meta.glow}, ${isH ? 0.5 : 0.12})`,
-                          boxShadow: isH ? `0 0 20px rgba(${meta.glow}, 0.35)` : "none",
+                          width: sz, height: sz,
+                          boxShadow: isH
+                            ? `0 0 0 2px ${meta.color}, 0 10px 28px rgba(0,0,0,0.85)`
+                            : (matchKeys && isMatch)
+                              ? `0 0 0 1.5px ${meta.color}, 0 2px 10px rgba(0,0,0,0.6)`
+                              : "0 2px 8px rgba(0,0,0,0.5)",
                         }}>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={logo.image || ""} alt="" loading="lazy"
-                          className="w-full h-full object-contain p-[5px] rounded-full transition-all duration-200"
-                          style={{ filter: isH ? "none" : "brightness(2) contrast(0.5) saturate(0)" }}
-                          onError={e => { (e.target as HTMLImageElement).style.opacity = "0"; }} />
+                          className="w-full h-full object-contain p-1"
+                          onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                      </div>
+                      {isH && (
+                        <div className="absolute left-1/2 -top-9 -translate-x-1/2 pointer-events-none z-50">
+                          <div className="px-2 py-1 rounded text-[10px] font-medium text-white whitespace-nowrap shadow-lg"
+                            style={{ backgroundColor: meta.color }}>
+                            {(logo.keywords?.[0] || "View").substring(0, 30)}
+                          </div>
+                        </div>
+                      )}
+                    </Link>
+                  );
+                })}
+
+                {/* Overflow indicator — click to open full list */}
+                {count > (isFocused ? 40 : 12) && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setPanelCat(catId); }}
+                    className="absolute left-1/2 top-1/2 text-[11px] font-bold cursor-pointer hover:scale-125 transition-transform z-20"
+                    style={{
+                      color: meta.color,
+                      transform: `translate(${clusterR * 0.85}px, ${clusterR * 0.85}px)`,
+                      textShadow: "0 0 10px rgba(0,0,0,1), 0 0 4px rgba(0,0,0,1)",
+                    }}>
+                    +{count - (isFocused ? 40 : 12)}
+                  </button>
+                )}
+              </div>
+            );
+          })}
+
+          {/* Focused tooltip — rendered at top level, unscaled */}
+          {focusedPos && focusedMeta && focused !== null && (() => {
+            const isBelow = focusedPos.y < 50;
+            return (
+              <div className="absolute pointer-events-none z-40 transition-all duration-300"
+                style={{
+                  left: `${focusedPos.x}%`,
+                  top: `${focusedPos.y}%`,
+                  transform: `translate(-50%, ${isBelow ? "70px" : "-160%"})`,
+                }}>
+                <div className="bg-[#0a1426]/95 backdrop-blur border border-white/10 rounded-lg px-3 py-2.5 w-60 shadow-2xl">
+                  <div className="text-[11px] font-bold uppercase tracking-[0.15em]" style={{ color: focusedMeta.color }}>
+                    {focusedMeta.label}
+                  </div>
+                  <div className="text-[11px] text-gray-300 mt-1.5 leading-snug">{focusedMeta.blurb}</div>
+                  {(LINKS[focused] || []).length > 0 && (
+                    <div className="mt-2.5 pt-2 border-t border-white/10">
+                      <div className="text-[8px] uppercase tracking-[0.15em] text-gray-500 mb-1.5">Connects to</div>
+                      <div className="flex flex-wrap gap-1">
+                        {(LINKS[focused] || []).map(id => (
+                          <span key={id} className="text-[9px] px-1.5 py-0.5 rounded"
+                            style={{ color: CATS[id].color, backgroundColor: `${CATS[id].color}18` }}>
+                            {CATS[id].label}
+                          </span>
+                        ))}
                       </div>
                     </div>
-                    {isH && (
-                      <div className="absolute -top-10 left-1/2 -translate-x-1/2 pointer-events-none z-50">
-                        <div className="px-3 py-1.5 rounded-lg text-[9px] font-semibold text-white whitespace-nowrap backdrop-blur-md"
-                          style={{ background: `rgba(${meta.glow}, 0.85)`, boxShadow: `0 4px 20px rgba(${meta.glow}, 0.25)` }}>
-                          {(logo.keywords?.[0] || "View").substring(0, 24)}
+                  )}
+                  {(() => {
+                    const cat = data.find(c => c.id === focused);
+                    const total = cat?.logos.filter(l => l.live).length || 0;
+                    if (total === 0) return null;
+                    return (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setPanelCat(focused); }}
+                        className="mt-2.5 w-full text-[10px] font-medium py-1.5 rounded border pointer-events-auto hover:bg-white/5 transition"
+                        style={{ color: focusedMeta.color, borderColor: `${focusedMeta.color}40` }}>
+                        See all {total} →
+                      </button>
+                    );
+                  })()}
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+      </div>
+
+      {/* Side panel — full list of a category */}
+      {panelCat !== null && (() => {
+        const pMeta = CATS[panelCat];
+        const pCat = data.find(c => c.id === panelCat);
+        const logos = pCat?.logos.filter(l => l.live) || [];
+        return (
+          <div className="fixed inset-0 z-50">
+            <button
+              onClick={() => setPanelCat(null)}
+              aria-label="Close panel"
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+            <div className="absolute right-0 top-0 h-full w-full max-w-md bg-[#0a1426] border-l border-white/10 shadow-2xl flex flex-col animate-in slide-in-from-right">
+              <header className="px-6 py-5 border-b border-white/10 flex items-start justify-between gap-4">
+                <div>
+                  <div className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: pMeta.color }}>
+                    {pMeta.label}
+                  </div>
+                  <div className="text-sm text-gray-300 mt-1.5 leading-snug">{pMeta.blurb}</div>
+                  <div className="text-[11px] text-gray-500 mt-2 tabular-nums">{logos.length} companies</div>
+                </div>
+                <button
+                  onClick={() => setPanelCat(null)}
+                  className="text-gray-500 hover:text-white transition p-1 -m-1"
+                  aria-label="Close">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </header>
+              <div className="flex-1 overflow-y-auto px-6 py-5">
+                <div className="grid grid-cols-3 gap-3">
+                  {logos.map((logo, i) => {
+                    const cid = logo.url?.match(/companyPage\/(\d+)/)?.[1];
+                    return (
+                      <Link key={i} href={cid ? `/company/${cid}` : "#"}
+                        className="group flex flex-col items-center gap-2 p-2 rounded-lg hover:bg-white/5 transition"
+                        onClick={() => setPanelCat(null)}>
+                        <div className="w-full aspect-square rounded-md bg-white overflow-hidden flex items-center justify-center">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={logo.image || ""} alt=""
+                            className="w-full h-full object-contain p-1.5"
+                            onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
                         </div>
-                        <div className="w-2 h-2 rotate-45 mx-auto -mt-1" style={{ background: `rgba(${meta.glow}, 0.85)` }} />
-                      </div>
-                    )}
-                  </Link>
-                );
-              })}
+                        <div className="text-[10px] text-gray-400 group-hover:text-white text-center line-clamp-2 leading-tight">
+                          {logo.keywords?.[0] || "View company"}
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
+          </div>
+        );
+      })()}
+
+      {/* Mobile list — stacked category sections */}
+      <div className="md:hidden relative z-10 px-4 pb-10 pt-6 space-y-8">
+        {(Object.keys(CATS) as unknown as string[]).map(k => parseInt(k)).map(catId => {
+          const meta = CATS[catId];
+          const cat = data.find(c => c.id === catId);
+          if (!cat) return null;
+          const liveLogos = cat.logos.filter(l => l.live);
+          if (liveLogos.length === 0) return null;
+          const visible = liveLogos.slice(0, 8);
+          return (
+            <section key={catId}>
+              <div className="flex items-baseline justify-between gap-3 mb-3">
+                <div className="min-w-0">
+                  <div className="text-xs font-bold tracking-[0.15em] uppercase" style={{ color: meta.color }}>
+                    {meta.label}
+                  </div>
+                  <div className="text-[11px] text-gray-400 mt-1 leading-snug">{meta.blurb}</div>
+                </div>
+                <div className="text-[10px] text-gray-500 tabular-nums whitespace-nowrap">{liveLogos.length}</div>
+              </div>
+              <div className="grid grid-cols-4 gap-2">
+                {visible.map((logo, i) => {
+                  const cid = logo.url?.match(/companyPage\/(\d+)/)?.[1];
+                  const k2 = `m-${catId}-${i}`;
+                  const isMatch = matchKeys ? matchKeys.has(`${catId}-${i}`) : true;
+                  return (
+                    <Link key={k2} href={cid ? `/company/${cid}` : "#"}
+                      className="aspect-square rounded-md bg-white overflow-hidden flex items-center justify-center transition"
+                      style={{
+                        boxShadow: (matchKeys && isMatch) ? `0 0 0 1.5px ${meta.color}` : undefined,
+                        opacity: (matchKeys && !isMatch) ? 0.3 : 1,
+                      }}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={logo.image || ""} alt="" loading="lazy"
+                        className="w-full h-full object-contain p-1.5"
+                        onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                    </Link>
+                  );
+                })}
+                {liveLogos.length > 8 && (
+                  <button onClick={() => setPanelCat(catId)}
+                    className="aspect-square rounded-md bg-white/5 border border-white/10 flex items-center justify-center text-xs font-semibold hover:bg-white/10 transition"
+                    style={{ color: meta.color }}>
+                    +{liveLogos.length - 8}
+                  </button>
+                )}
+              </div>
+            </section>
           );
         })}
       </div>
 
-      {/* Legend */}
-      <div className="relative z-10 max-w-5xl mx-auto px-6 py-6 flex flex-wrap justify-center gap-1.5">
-        {Object.entries(CATS).map(([id, m]) => {
-          const c = filtered.find(c => c.id === parseInt(id));
-          if (!c || c.logos.length === 0) return null;
-          const isA = focused === parseInt(id);
-          return (
-            <button key={id}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-medium transition-all duration-300"
-              style={{
-                color: isA ? m.color : "rgb(100,116,139)",
-                background: isA ? `rgba(${m.glow}, 0.08)` : "transparent",
-                border: `1px solid ${isA ? `rgba(${m.glow}, 0.2)` : "transparent"}`,
-              }}
-              onMouseEnter={() => enterCluster(parseInt(id))}
-              onMouseLeave={leaveCluster}
-            >
-              <div className="w-1.5 h-1.5 rounded-full transition-all" style={{ backgroundColor: m.color, boxShadow: isA ? `0 0 6px ${m.color}` : "none" }} />
-              {m.label}
-            </button>
-          );
-        })}
+      {/* Legend — desktop only */}
+      <div className="hidden md:flex max-w-5xl mx-auto px-6 py-5 flex-wrap justify-center gap-1.5 relative z-10">
+        {Object.entries(CATS).map(([id, m]) => (
+          <button key={id}
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] text-gray-400 hover:text-white hover:bg-white/[0.06] transition-all"
+            onMouseEnter={() => setFocused(parseInt(id))}
+            onMouseLeave={() => setFocused(null)}>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: m.color }} />
+            {m.label}
+          </button>
+        ))}
       </div>
     </div>
   );
