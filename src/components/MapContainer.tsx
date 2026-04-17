@@ -23,9 +23,14 @@ const CATS: Record<number, { label: string; color: string }> = {
   14: { label: "Other",       color: "#94A3B8" },
 };
 
+// Max logos per category — matches the current live site (113 total)
+const MAX_LOGOS: Record<number, number> = {
+  0: 4, 1: 2, 2: 7, 3: 4, 4: 15, 5: 18, 6: 3, 7: 1, 8: 4, 9: 5, 10: 15, 11: 7, 12: 10, 13: 15, 14: 3,
+};
+
 // Cluster positions — percentage based, spread like a galaxy
 const POS: Record<number, [number, number]> = {
-  5:  [50, 45], // TMS center
+  5:  [50, 45], // TMS center (largest)
   0:  [18, 15], 1: [82, 12], 2: [85, 55],
   3:  [50, 15], 4: [12, 48], 6: [32, 80],
   7:  [68, 82], 8: [90, 82], 9: [50, 85],
@@ -107,8 +112,10 @@ export function MapContainer({ initialData }: Props) {
 
           const isFocused = focused === cat.id;
           const isDimmed = focused !== null && !isFocused;
-          const spread = Math.min(12, 5 + cat.logos.length * 0.15);
-          const pts = spiral(Math.min(cat.logos.length, isFocused ? 50 : 16), spread);
+          const maxShow = MAX_LOGOS[cat.id] || 5;
+          const showCount = isFocused ? Math.min(cat.logos.length, maxShow * 2) : Math.min(cat.logos.length, maxShow);
+          const spread = Math.min(14, 5 + showCount * 0.25);
+          const pts = spiral(showCount, spread);
           const scale = isFocused ? 1.6 : isDimmed ? 0.7 : 1;
 
           return (
