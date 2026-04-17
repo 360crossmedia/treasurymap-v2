@@ -1,7 +1,7 @@
 // MAP CORE — solar system architecture
 "use client";
 
-import { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import type { MapCategory } from "@/lib/api";
 
@@ -141,8 +141,8 @@ export function MapContainer({ initialData }: Props) {
         ))}
       </div>
 
-      {/* Search bar */}
-      <div className="sticky top-16 z-40 bg-[#050a18]/90 backdrop-blur-xl border-b border-white/[0.05]">
+      {/* Search bar (non-sticky so it doesn't occlude map labels) */}
+      <div className="relative z-40 bg-[#050a18] border-b border-white/[0.05]">
         <div className="max-w-7xl mx-auto px-5 py-3 flex items-center gap-3">
           <div className="relative flex-1 max-w-md">
             <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -215,13 +215,10 @@ export function MapContainer({ initialData }: Props) {
             const isLinked = focused !== null && !isFocused && (LINKS[focused] || []).includes(catId);
             const isDim = focused !== null && !isFocused && !isLinked;
 
-            const clusterR = r2(Math.max(13, Math.min(26, 9 + Math.log2(count + 1) * 2.6)));
+            const clusterR = r2(Math.max(12, Math.min(22, 8 + Math.log2(count + 1) * 2.1)));
             const maxVisible = isFocused ? Math.min(count, 40) : Math.min(count, 12);
             const pts = spiral(maxVisible, clusterR * 0.55);
             const scale = isFocused ? 1.45 : isDim ? 0.8 : 1;
-            // Label goes below the cluster when cluster sits in the top quarter
-            // of the canvas (otherwise it gets eaten by the sticky search bar)
-            const labelBelow = pos.y < 22;
 
             return (
               <div key={catId}
@@ -244,7 +241,7 @@ export function MapContainer({ initialData }: Props) {
 
                 {/* Category label */}
                 <div className="absolute left-1/2 -translate-x-1/2 text-center pointer-events-none z-10"
-                  style={{ top: labelBelow ? (clusterR * 2 + 10) : -(clusterR * 2 + 22) }}>
+                  style={{ top: -(clusterR * 2 + 22) }}>
                   <div className="text-[11px] font-bold tracking-[0.18em] uppercase"
                     style={{ color: meta.color, textShadow: "0 0 10px rgba(0,0,0,0.95), 0 0 4px rgba(0,0,0,0.9)" }}>
                     {meta.label}
