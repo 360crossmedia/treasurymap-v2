@@ -1,5 +1,6 @@
-// MAP CORE — galaxy architecture
-// Clusters scattered across starfield, logo counts match treasurymap.com exactly
+// MAP CORE — constellation map
+// Each logo individually placed on a shared canvas, grouped by spatial clustering + category halo
+// Matches treasurymap.com's math approach (scattered logos, no rigid cluster grids)
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
@@ -12,34 +13,33 @@ type CatMeta = {
   color: string;
   blurb: string;
   zone: Zone;
-  // Galaxy position (center of cluster), % of canvas
-  pos: { x: number; y: number };
-  // Logo count to display — mirrors treasurymap.com live
-  count: number;
+  pos: { x: number; y: number };  // cluster center in % of canvas
+  labelOffset: { x: number; y: number }; // label position relative to center, %
+  count: number; // vendors to show (matches treasurymap.com)
 };
 
-// Positions crafted so clusters don't collide and read as galaxy (dense center, sparser periphery)
-// Counts taken from treasurymap.com live reference (113 total)
+// Canvas mental model: 100×100 units. Desktop renders at min(1500px, 100vw) × min(1000px, 100vh - header)
+// Positions hand-tuned to spread clusters across canvas without overlap
 const CATS: Record<number, CatMeta> = {
-  0:  { label: "FIDP",        color: "#60A5FA", zone: "sources",   pos: { x: 10, y: 24 }, count: 4,  blurb: "Financial instrument data providers — market & reference data." },
-  1:  { label: "FDF",         color: "#A78BFA", zone: "sources",   pos: { x: 8,  y: 50 }, count: 2,  blurb: "Financial data feeds — real-time price & rate streams." },
-  8:  { label: "ETL",         color: "#2DD4BF", zone: "sources",   pos: { x: 14, y: 74 }, count: 4,  blurb: "Data pipelines feeding the treasury stack." },
+  0:  { label: "FIDP",        color: "#60A5FA", zone: "sources",   pos: { x: 10, y: 22 }, labelOffset: { x: 0,  y: -10 }, count: 4,  blurb: "Financial instrument data providers — market & reference data." },
+  1:  { label: "FDF",         color: "#A78BFA", zone: "sources",   pos: { x: 7,  y: 50 }, labelOffset: { x: 0,  y: -8 },  count: 2,  blurb: "Financial data feeds — real-time price & rate streams." },
+  8:  { label: "ETL",         color: "#2DD4BF", zone: "sources",   pos: { x: 13, y: 76 }, labelOffset: { x: 0,  y: -10 }, count: 4,  blurb: "Data pipelines feeding the treasury stack." },
 
-  7:  { label: "ERP",         color: "#F87171", zone: "core",      pos: { x: 32, y: 20 }, count: 1,  blurb: "Enterprise Resource Planning — financial source of truth." },
-  5:  { label: "TMS",         color: "#22D3EE", zone: "core",      pos: { x: 50, y: 48 }, count: 18, blurb: "Treasury Management Systems — the operational core." },
-  12: { label: "Banking",     color: "#4ADE80", zone: "core",      pos: { x: 34, y: 78 }, count: 10, blurb: "Bank connectivity & portals." },
+  7:  { label: "ERP",         color: "#F87171", zone: "core",      pos: { x: 30, y: 18 }, labelOffset: { x: 0,  y: -7 },  count: 1,  blurb: "Enterprise Resource Planning — financial source of truth." },
+  5:  { label: "TMS",         color: "#22D3EE", zone: "core",      pos: { x: 48, y: 48 }, labelOffset: { x: 0,  y: -17 }, count: 18, blurb: "Treasury Management Systems — the operational core." },
+  12: { label: "Banking",     color: "#4ADE80", zone: "core",      pos: { x: 32, y: 80 }, labelOffset: { x: 0,  y: -12 }, count: 10, blurb: "Bank connectivity & portals." },
 
-  6:  { label: "BI",          color: "#E879F9", zone: "analytics", pos: { x: 68, y: 14 }, count: 3,  blurb: "Business Intelligence & treasury analytics." },
-  10: { label: "CFF",         color: "#C084FC", zone: "analytics", pos: { x: 88, y: 38 }, count: 15, blurb: "Cash Flow Forecasting specialists." },
+  6:  { label: "BI",          color: "#E879F9", zone: "analytics", pos: { x: 68, y: 14 }, labelOffset: { x: 0,  y: -8 },  count: 3,  blurb: "Business Intelligence & treasury analytics." },
+  10: { label: "CFF",         color: "#C084FC", zone: "analytics", pos: { x: 88, y: 40 }, labelOffset: { x: 0,  y: -14 }, count: 15, blurb: "Cash Flow Forecasting specialists." },
 
-  4:  { label: "OTS",         color: "#FBBF24", zone: "execution", pos: { x: 72, y: 34 }, count: 15, blurb: "Order & Trade Systems for FX, MM, securities." },
-  2:  { label: "CMA",         color: "#F472B6", zone: "execution", pos: { x: 78, y: 60 }, count: 7,  blurb: "Capital Markets Applications — trading & portfolio tooling." },
-  9:  { label: "FSC",         color: "#FB923C", zone: "execution", pos: { x: 90, y: 74 }, count: 5,  blurb: "Financial Supply Chain — payables, receivables, financing." },
+  4:  { label: "OTS",         color: "#FBBF24", zone: "execution", pos: { x: 68, y: 36 }, labelOffset: { x: 0,  y: -14 }, count: 15, blurb: "Order & Trade Systems for FX, MM, securities." },
+  2:  { label: "CMA",         color: "#F472B6", zone: "execution", pos: { x: 80, y: 62 }, labelOffset: { x: 0,  y: -12 }, count: 7,  blurb: "Capital Markets Applications — trading & portfolio tooling." },
+  9:  { label: "FSC",         color: "#FB923C", zone: "execution", pos: { x: 92, y: 78 }, labelOffset: { x: 0,  y: -10 }, count: 5,  blurb: "Financial Supply Chain — payables, receivables, financing." },
 
-  11: { label: "RegTech",     color: "#38BDF8", zone: "adjacent",  pos: { x: 52, y: 8  }, count: 7,  blurb: "Regulatory, compliance & reporting technology." },
-  13: { label: "Insurance",   color: "#FB7185", zone: "adjacent",  pos: { x: 66, y: 82 }, count: 15, blurb: "Insurance & hedging for treasury risk." },
-  3:  { label: "Integrators", color: "#34D399", zone: "adjacent",  pos: { x: 26, y: 92 }, count: 4,  blurb: "System integrators connecting treasury stacks." },
-  14: { label: "Other",       color: "#94A3B8", zone: "adjacent",  pos: { x: 10, y: 78 }, count: 3,  blurb: "Adjacent & emerging treasury tools." },
+  11: { label: "RegTech",     color: "#38BDF8", zone: "adjacent",  pos: { x: 50, y: 8  }, labelOffset: { x: 0,  y: -6 },  count: 7,  blurb: "Regulatory, compliance & reporting technology." },
+  13: { label: "Insurance",   color: "#FB7185", zone: "adjacent",  pos: { x: 62, y: 82 }, labelOffset: { x: 0,  y: -14 }, count: 15, blurb: "Insurance & hedging for treasury risk." },
+  3:  { label: "Integrators", color: "#34D399", zone: "adjacent",  pos: { x: 26, y: 92 }, labelOffset: { x: 0,  y: -10 }, count: 4,  blurb: "System integrators connecting treasury stacks." },
+  14: { label: "Other",       color: "#94A3B8", zone: "adjacent",  pos: { x: 8,  y: 92 }, labelOffset: { x: 0,  y: -10 }, count: 3,  blurb: "Adjacent & emerging treasury tools." },
 };
 
 const LINKS: Record<number, number[]> = {
@@ -60,7 +60,6 @@ const LINKS: Record<number, number[]> = {
   14: [],
 };
 
-// Pairs of linked categories (undirected, deduped) — for permanent connection lines
 const LINE_PAIRS: [number, number][] = (() => {
   const seen = new Set<string>();
   const pairs: [number, number][] = [];
@@ -73,6 +72,33 @@ const LINE_PAIRS: [number, number][] = (() => {
   });
   return pairs;
 })();
+
+// Compute individual logo positions via Fibonacci spiral per cluster
+// Returns canvas-% coordinates so every logo is absolute-positioned on the shared canvas
+function computeLogoPositions(catId: number, count: number): Array<{ x: number; y: number; scale: number }> {
+  const center = CATS[catId].pos;
+  const GA = 137.508 * Math.PI / 180;
+  // Spread radius in % — tuned so clusters don't crash into each other
+  const spread = count <= 1 ? 0 : Math.max(3.5, 2.2 + Math.sqrt(count) * 1.9);
+  const out: Array<{ x: number; y: number; scale: number }> = [];
+  for (let i = 0; i < count; i++) {
+    if (count === 1) {
+      out.push({ x: center.x, y: center.y, scale: 1 });
+      continue;
+    }
+    // Normalized distance 0..1 (avoid zero at center)
+    const rN = Math.sqrt((i + 0.9) / count);
+    const r = spread * rN;
+    const theta = i * GA + catId * 0.7; // slight per-cat rotation to avoid identical patterns
+    // % is roughly isotropic on square canvas; compensate for aspect (canvas ~1500×900 ≈ 1.66 ratio)
+    const dx = r * Math.cos(theta) * 0.78;
+    const dy = r * Math.sin(theta) * 1.3;
+    // Individual scale variation 0.88..1.12 — deterministic by index
+    const scale = 0.88 + ((i * 31 + catId * 17) % 13) * 0.02;
+    out.push({ x: center.x + dx, y: center.y + dy, scale });
+  }
+  return out;
+}
 
 interface Props { initialData?: MapCategory[] }
 
@@ -92,7 +118,6 @@ export function MapContainer({ initialData }: Props) {
     }
   }, [initialData]);
 
-  // Returns the exact subset of logos for a category (live + sliced to reference count)
   function catLogos(catId: number) {
     const cat = data.find(c => c.id === catId);
     if (!cat) return [];
@@ -100,32 +125,55 @@ export function MapContainer({ initialData }: Props) {
     return live.slice(0, CATS[catId]?.count ?? live.length);
   }
 
+  // Flatten: every logo with its absolute canvas position
+  const allPlacements = useMemo(() => {
+    const out: Array<{
+      catId: number; logoIdx: number;
+      logo: MapCategory["logos"][number];
+      x: number; y: number; scale: number;
+      color: string;
+    }> = [];
+    Object.keys(CATS).forEach(k => {
+      const catId = parseInt(k);
+      const logos = catLogos(catId);
+      const positions = computeLogoPositions(catId, logos.length);
+      logos.forEach((logo, i) => {
+        out.push({
+          catId,
+          logoIdx: i,
+          logo,
+          x: positions[i].x,
+          y: positions[i].y,
+          scale: positions[i].scale,
+          color: CATS[catId].color,
+        });
+      });
+    });
+    return out;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
+
   const matchKeys = useMemo(() => {
     if (!search.trim()) return null;
     const s = search.toLowerCase();
     const set = new Set<string>();
-    Object.keys(CATS).forEach(k => {
-      const catId = parseInt(k);
-      catLogos(catId).forEach((l, i) => {
-        if (l.keywords?.some(kw => kw.toLowerCase().includes(s))) set.add(`${catId}-${i}`);
-      });
+    allPlacements.forEach(p => {
+      if (p.logo.keywords?.some(kw => kw.toLowerCase().includes(s))) {
+        set.add(`${p.catId}-${p.logoIdx}`);
+      }
     });
     return set;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, search]);
+  }, [allPlacements, search]);
 
-  const totalCompanies = useMemo(() =>
-    Object.keys(CATS).reduce((a, k) => a + catLogos(parseInt(k)).length, 0),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [data]);
+  const totalCompanies = allPlacements.length;
 
-  // Deterministic starfield — dense
+  // Starfield — very dense
   const stars = useMemo(() => {
     const out: { x: number; y: number; s: number; o: number }[] = [];
     let seed = 17;
     const rand = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
     const r2 = (n: number) => Math.round(n * 100) / 100;
-    for (let i = 0; i < 240; i++) {
+    for (let i = 0; i < 300; i++) {
       out.push({ x: r2(rand() * 100), y: r2(rand() * 100), s: r2(rand() * 1.6 + 0.3), o: r2(rand() * 0.6 + 0.12) });
     }
     return out;
@@ -138,17 +186,6 @@ export function MapContainer({ initialData }: Props) {
   );
 
   const allCatIds = (Object.keys(CATS) as unknown as string[]).map(k => parseInt(k));
-
-  // Cluster box dims per logo count (visible max 8 + overflow button)
-  function clusterLayout(count: number) {
-    if (count <= 1)  return { cols: 1, visible: 1, w: 96,  h: 96 };
-    if (count <= 3)  return { cols: count, visible: count, w: count * 68, h: 68 };
-    if (count <= 4)  return { cols: 2, visible: 4, w: 2 * 68, h: 2 * 68 };
-    if (count <= 6)  return { cols: 3, visible: 6, w: 3 * 68, h: 2 * 68 };
-    if (count <= 8)  return { cols: 4, visible: 8, w: 4 * 68, h: 2 * 68 };
-    // overflow case: show 7 + "+N"
-    return { cols: 4, visible: 7, w: 4 * 68, h: 2 * 68 };
-  }
 
   return (
     <div className="bg-[#050a18] relative overflow-hidden min-h-screen">
@@ -180,25 +217,51 @@ export function MapContainer({ initialData }: Props) {
         </div>
       </div>
 
-      {/* Galaxy canvas — desktop */}
+      {/* Constellation canvas — desktop */}
       <div className="hidden md:block relative z-10">
         <div
           className="relative mx-auto"
           style={{
             width: "min(100vw, 1500px)",
             height: "min(calc(100vh - 90px), 1000px)",
-            minHeight: 860,
-            paddingBottom: 40,
+            minHeight: 880,
           }}
         >
-          {/* Central ambient glow */}
+          {/* Cluster halos — each cat gets a big soft nebula */}
+          {allCatIds.map(catId => {
+            const meta = CATS[catId];
+            const count = catLogos(catId).length;
+            if (count === 0) return null;
+            const isFocused = focused === catId;
+            const isLinked = focused !== null && !isFocused && (LINKS[focused] || []).includes(catId);
+            const isDim = focused !== null && !isFocused && !isLinked;
+            const size = Math.max(260, 180 + Math.sqrt(count) * 80);
+            return (
+              <div
+                key={`halo-${catId}`}
+                className="absolute pointer-events-none rounded-full transition-all duration-500"
+                style={{
+                  left: `${meta.pos.x}%`,
+                  top: `${meta.pos.y}%`,
+                  width: size,
+                  height: size,
+                  transform: "translate(-50%,-50%)",
+                  background: `radial-gradient(circle, ${meta.color}${isFocused ? "30" : "18"} 0%, ${meta.color}08 40%, transparent 72%)`,
+                  opacity: isDim ? 0.25 : 1,
+                  filter: "blur(6px)",
+                }}
+              />
+            );
+          })}
+
+          {/* Central ambient sun */}
           <div
             className="absolute pointer-events-none"
             style={{
               left: "50%", top: "50%",
               transform: "translate(-50%,-50%)",
-              width: "60%", height: "60%",
-              background: "radial-gradient(ellipse at center, rgba(251,191,36,0.06) 0%, rgba(14,26,52,0.15) 35%, transparent 70%)",
+              width: 600, height: 600,
+              background: "radial-gradient(circle, rgba(251,191,36,0.08) 0%, rgba(251,191,36,0.02) 40%, transparent 70%)",
             }}
           />
 
@@ -208,12 +271,12 @@ export function MapContainer({ initialData }: Props) {
               const A = CATS[a].pos, B = CATS[b].pos;
               const isActive = focused === a || focused === b;
               const stroke = isActive ? CATS[focused!].color : "#ffffff";
-              const opacity = isActive ? 0.55 : 0.08;
+              const opacity = isActive ? 0.55 : 0.06;
               return (
                 <line key={`${a}-${b}`}
                   x1={A.x} y1={A.y} x2={B.x} y2={B.y}
                   stroke={stroke} strokeOpacity={opacity}
-                  strokeWidth={isActive ? 0.2 : 0.12}
+                  strokeWidth={isActive ? 0.18 : 0.1}
                   strokeDasharray={isActive ? "0.8 0.4" : "0.3 0.6"}
                   style={{ transition: "stroke-opacity 300ms, stroke-width 300ms" }}
                 />
@@ -221,161 +284,115 @@ export function MapContainer({ initialData }: Props) {
             })}
           </svg>
 
-          {/* Central brand sun — non-interactive label */}
-          <div
-            className="absolute pointer-events-none z-20"
-            style={{ left: "50%", top: "50%", transform: "translate(-50%, -50%)" }}
-          >
-            <div className="relative">
-              {/* Sun halo — sits BEHIND TMS cluster; subtle */}
-              <div
-                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
-                style={{
-                  width: 420, height: 420,
-                  background: "radial-gradient(circle, rgba(251,191,36,0.10) 0%, rgba(251,191,36,0.03) 40%, transparent 70%)",
-                }}
-              />
-            </div>
-          </div>
-
-          {/* Clusters */}
+          {/* Category labels — floating above each cluster center */}
           {allCatIds.map(catId => {
             const meta = CATS[catId];
-            const logos = catLogos(catId);
-            const total = logos.length;
-            if (total === 0) return null;
-
-            const { cols, visible, w, h } = clusterLayout(total);
-            const overflow = total - visible;
-
+            const count = catLogos(catId).length;
+            if (count === 0) return null;
             const isFocused = focused === catId;
             const isLinked = focused !== null && !isFocused && (LINKS[focused] || []).includes(catId);
             const isDim = focused !== null && !isFocused && !isLinked;
-
-            const shown = logos.slice(0, visible);
-
+            const labelX = meta.pos.x + meta.labelOffset.x;
+            const labelY = meta.pos.y + meta.labelOffset.y;
             return (
               <div
-                key={catId}
+                key={`label-${catId}`}
+                className="absolute text-center transition-all duration-300"
+                style={{
+                  left: `${labelX}%`,
+                  top: `${labelY}%`,
+                  transform: "translate(-50%, -50%)",
+                  pointerEvents: "auto",
+                  zIndex: isFocused ? 25 : 6,
+                  opacity: isDim ? 0.35 : 1,
+                  cursor: "pointer",
+                }}
                 onMouseEnter={() => setFocused(catId)}
                 onMouseLeave={() => setFocused(null)}
-                className="absolute transition-all duration-300"
-                style={{
-                  left: `${meta.pos.x}%`,
-                  top: `${meta.pos.y}%`,
-                  transform: `translate(-50%, -50%) scale(${isFocused ? 1.06 : 1})`,
-                  opacity: isDim ? 0.35 : 1,
-                  zIndex: isFocused ? 30 : 5,
-                }}
+                onClick={() => setPanelCat(catId)}
               >
-                {/* Nebula halo */}
                 <div
-                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none rounded-full transition-all duration-500"
+                  className="text-[12px] font-bold tracking-[0.2em] uppercase transition-all"
                   style={{
-                    width: w + 140,
-                    height: h + 140,
-                    background: `radial-gradient(ellipse at center, ${meta.color}${isFocused ? "2e" : "1c"} 0%, ${meta.color}10 35%, transparent 68%)`,
-                    filter: isFocused ? "blur(2px)" : "blur(1px)",
+                    color: meta.color,
+                    textShadow: "0 0 16px rgba(0,0,0,1), 0 0 6px rgba(0,0,0,0.9), 0 1px 0 rgba(0,0,0,0.6)",
+                    letterSpacing: isFocused ? "0.25em" : "0.2em",
                   }}
-                />
-
-                {/* Label above cluster */}
-                <div
-                  className="absolute left-1/2 -translate-x-1/2 text-center pointer-events-none whitespace-nowrap"
-                  style={{ top: -34 }}
                 >
-                  <div
-                    className="text-[11px] font-bold tracking-[0.2em] uppercase"
-                    style={{
-                      color: meta.color,
-                      textShadow: "0 0 12px rgba(0,0,0,0.95), 0 0 4px rgba(0,0,0,0.9)",
-                    }}
-                  >
-                    {meta.label}
-                  </div>
-                  <div
-                    className="text-[9px] text-gray-300 tabular-nums mt-0.5"
-                    style={{ textShadow: "0 0 8px rgba(0,0,0,0.95)" }}
-                  >
-                    {total} {total > 1 ? "vendors" : "vendor"}
-                  </div>
+                  {meta.label}
                 </div>
-
-                {/* Logo grid */}
                 <div
-                  className="grid gap-2 relative"
-                  style={{
-                    width: w,
-                    gridTemplateColumns: `repeat(${cols}, 60px)`,
-                  }}
+                  className="text-[9px] text-gray-300 tabular-nums mt-0.5 font-medium"
+                  style={{ textShadow: "0 0 10px rgba(0,0,0,1), 0 0 4px rgba(0,0,0,0.9)" }}
                 >
-                  {shown.map((logo, i) => {
-                    const cid = logo.url?.match(/companyPage\/(\d+)/)?.[1];
-                    const k = `${catId}-${i}`;
-                    const isH = hovered === k;
-                    const isMatch = matchKeys ? matchKeys.has(k) : true;
-
-                    return (
-                      <Link
-                        key={k}
-                        href={cid ? `/company/${cid}` : "#"}
-                        className="relative rounded-xl transition-all duration-200"
-                        style={{
-                          width: 60, height: 60,
-                          background: "rgba(255,255,255,0.035)",
-                          border: `1px solid ${isH ? meta.color : "rgba(255,255,255,0.1)"}`,
-                          transform: isH ? "translateY(-3px)" : "none",
-                          boxShadow: isH
-                            ? `0 10px 24px rgba(0,0,0,0.7), 0 0 0 1px ${meta.color}, 0 0 20px ${meta.color}66`
-                            : "0 2px 8px rgba(0,0,0,0.4)",
-                          opacity: matchKeys && !isMatch ? 0.18 : 1,
-                          zIndex: isH ? 50 : 1,
-                        }}
-                        onMouseEnter={() => setHovered(k)}
-                        onMouseLeave={() => setHovered(null)}
-                      >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={logo.image || ""}
-                          alt=""
-                          loading="lazy"
-                          className="w-full h-full object-contain p-1.5"
-                          style={{ filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.5))" }}
-                          onError={e => { (e.target as HTMLImageElement).style.display = "none"; }}
-                        />
-                        {isH && (
-                          <div className="absolute left-1/2 -top-8 -translate-x-1/2 pointer-events-none z-50">
-                            <div className="px-2 py-1 rounded text-[10px] font-medium text-white whitespace-nowrap shadow-lg"
-                              style={{ backgroundColor: meta.color }}>
-                              {(logo.keywords?.[0] || "View").substring(0, 32)}
-                            </div>
-                          </div>
-                        )}
-                      </Link>
-                    );
-                  })}
-
-                  {overflow > 0 && (
-                    <button
-                      onClick={(e) => { e.stopPropagation(); setPanelCat(catId); }}
-                      className="rounded-xl text-[11px] font-bold flex items-center justify-center hover:scale-110 transition"
-                      style={{
-                        width: 60, height: 60,
-                        background: `${meta.color}1a`,
-                        border: `1px dashed ${meta.color}88`,
-                        color: meta.color,
-                      }}
-                    >
-                      +{overflow}
-                    </button>
-                  )}
+                  {count} {count > 1 ? "vendors" : "vendor"}
                 </div>
               </div>
             );
           })}
 
+          {/* All 113 logos placed individually */}
+          {allPlacements.map(p => {
+            const k = `${p.catId}-${p.logoIdx}`;
+            const isH = hovered === k;
+            const isMatch = matchKeys ? matchKeys.has(k) : true;
+            const isFocusedCat = focused === p.catId;
+            const isLinkedCat = focused !== null && focused !== p.catId && (LINKS[focused] || []).includes(p.catId);
+            const isDimCat = focused !== null && !isFocusedCat && !isLinkedCat;
+            const cid = p.logo.url?.match(/companyPage\/(\d+)/)?.[1];
+            const baseSize = 56;
+            const size = baseSize * p.scale;
+
+            return (
+              <Link
+                key={k}
+                href={cid ? `/company/${cid}` : "#"}
+                className="absolute transition-all duration-200"
+                style={{
+                  left: `${p.x}%`,
+                  top: `${p.y}%`,
+                  width: size,
+                  height: size,
+                  transform: `translate(-50%,-50%) ${isH ? "translateY(-4px) scale(1.18)" : ""}`,
+                  transformOrigin: "center",
+                  borderRadius: 14,
+                  background: "rgba(255,255,255,0.04)",
+                  border: `1px solid ${isH ? p.color : "rgba(255,255,255,0.09)"}`,
+                  boxShadow: isH
+                    ? `0 14px 32px rgba(0,0,0,0.75), 0 0 0 1px ${p.color}, 0 0 28px ${p.color}88`
+                    : `0 4px 14px rgba(0,0,0,0.5), 0 0 16px ${p.color}18`,
+                  opacity: matchKeys && !isMatch ? 0.12 : (isDimCat ? 0.32 : 1),
+                  zIndex: isH ? 60 : (isFocusedCat ? 20 : (isLinkedCat ? 12 : 8)),
+                }}
+                onMouseEnter={() => { setHovered(k); setFocused(p.catId); }}
+                onMouseLeave={() => { setHovered(null); setFocused(null); }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={p.logo.image || ""}
+                  alt=""
+                  loading="lazy"
+                  className="w-full h-full object-contain"
+                  style={{
+                    padding: size * 0.15,
+                    filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.6))",
+                  }}
+                  onError={e => { (e.target as HTMLImageElement).style.display = "none"; }}
+                />
+                {isH && (
+                  <div className="absolute left-1/2 -top-9 -translate-x-1/2 pointer-events-none z-50">
+                    <div className="px-2 py-1 rounded text-[10px] font-medium text-white whitespace-nowrap shadow-lg"
+                      style={{ backgroundColor: p.color }}>
+                      {(p.logo.keywords?.[0] || "View").substring(0, 32)}
+                    </div>
+                  </div>
+                )}
+              </Link>
+            );
+          })}
+
           {/* Focus tooltip */}
-          {focused !== null && (() => {
+          {focused !== null && hovered === null && (() => {
             const meta = CATS[focused];
             const links = LINKS[focused] || [];
             const pos = meta.pos;
@@ -386,7 +403,7 @@ export function MapContainer({ initialData }: Props) {
                 style={{
                   left: `${pos.x}%`,
                   top: `${pos.y}%`,
-                  transform: `translate(-50%, ${isBelow ? "150px" : "-180px"})`,
+                  transform: `translate(-50%, ${isBelow ? "180px" : "-200px"})`,
                 }}
               >
                 <div className="bg-[#0a1426]/95 backdrop-blur border border-white/10 rounded-lg px-3 py-2.5 w-60 shadow-2xl">
