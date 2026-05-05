@@ -97,6 +97,8 @@ export default function GetMyListPage() {
   const [categories, setCategories] = useState([]);
   const [selectedCatIds, setSelectedCatIds] = useState([]);
 
+  const [website, setWebsite] = useState(""); // honeypot — ne JAMAIS afficher visuellement
+  const [gdprAccepted, setGdprAccepted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
@@ -122,7 +124,8 @@ export default function GetMyListPage() {
     itStrategy &&
     implementation &&
     nbBanks &&
-    selectedCatIds.length > 0;
+    selectedCatIds.length > 0 &&
+    gdprAccepted;
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -153,6 +156,7 @@ export default function GetMyListPage() {
           companyName: companyName.trim() || null,
           answers,
           categoryIds: selectedCatIds,
+          website, // honeypot — humain = "" toujours
         }),
       });
       const data = await res.json();
@@ -432,6 +436,49 @@ export default function GetMyListPage() {
                   })}
                 </div>
               )}
+            </div>
+
+            {/* Honeypot anti-bot — invisible aux humains, leurré pour les bots qui remplissent tout */}
+            <div
+              aria-hidden="true"
+              style={{
+                position: "absolute",
+                left: "-10000px",
+                top: "auto",
+                width: "1px",
+                height: "1px",
+                overflow: "hidden",
+              }}
+            >
+              <label>
+                Website (do not fill this field)
+                <input
+                  type="text"
+                  name="website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={website}
+                  onChange={(e) => setWebsite(e.target.value)}
+                />
+              </label>
+            </div>
+
+            <div className={styles.gdprBox}>
+              <label className={styles.gdprLabel}>
+                <input
+                  type="checkbox"
+                  checked={gdprAccepted}
+                  onChange={(e) => setGdprAccepted(e.target.checked)}
+                />
+                <span>
+                  I consent to TreasuryMap processing my email and the information I provided to
+                  generate this report. See our{" "}
+                  <a href="/gdpr" target="_blank" rel="noopener noreferrer">
+                    Privacy Policy
+                  </a>
+                  .<span className={styles.required}>*</span>
+                </span>
+              </label>
             </div>
 
             <div className={styles.submitRow}>
