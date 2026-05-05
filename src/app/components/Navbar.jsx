@@ -86,6 +86,9 @@ const Navbar = ({ buttonLabel, multiplayerMap, set, rotate }) => {
             <a className={styles.navbarA} href="/insights">
               Insights
             </a>
+            <a className={styles.navbarA} href="/get-my-list">
+              Get my Long List
+            </a>
           </div>
         </div>
         <div className={styles.navbarRight}>
