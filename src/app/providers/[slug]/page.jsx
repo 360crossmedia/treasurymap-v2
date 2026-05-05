@@ -1,11 +1,10 @@
 import { url } from "../../service/url";
-import CompanyPageClient from "./CompanyPageClient";
-import { redirect } from "next/navigation";
-import { slugify } from "../../utils/slugify";
+import CompanyPageClient from "../../companyPage/[companyId]/CompanyPageClient";
+import { notFound } from "next/navigation";
 
-async function fetchCompany(companyId) {
+async function fetchCompanyBySlug(slug) {
   try {
-    const res = await fetch(`${url}/api/v1/companies/${companyId}`, {
+    const res = await fetch(`${url}/api/v1/companies/by-slug/${slug}`, {
       next: { revalidate: 60 },
     });
     if (!res.ok) return null;
@@ -16,8 +15,8 @@ async function fetchCompany(companyId) {
 }
 
 export async function generateMetadata({ params }) {
-  const { companyId } = await params;
-  const company = await fetchCompany(companyId);
+  const { slug } = await params;
+  const company = await fetchCompanyBySlug(slug);
   if (!company) return { title: "Treasurymap" };
   const title = `${company.name} | TreasuryMap`;
   const description =
@@ -45,15 +44,12 @@ export async function generateMetadata({ params }) {
 }
 
 const Layout = async ({ params }) => {
-  const { companyId } = await params;
-  const initialCompany = await fetchCompany(companyId);
-  if (initialCompany?.name) {
-    const slug = slugify(initialCompany.name);
-    if (slug) redirect(`/providers/${slug}`);
-  }
+  const { slug } = await params;
+  const initialCompany = await fetchCompanyBySlug(slug);
+  if (!initialCompany) notFound();
   return (
     <CompanyPageClient
-      companyId={companyId}
+      companyId={initialCompany.id}
       initialCompany={initialCompany}
     />
   );

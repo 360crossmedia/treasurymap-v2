@@ -13,8 +13,28 @@ import Script from 'next/script';
 
 const inter = Inter({ subsets: ["latin"] });
 
+const SITE_NAME = "TreasuryMap";
+const DEFAULT_DESCRIPTION =
+  "The Treasury Technology Landscape — discover treasury solutions, providers and integrators in one interactive map.";
+const DEFAULT_OG_IMAGE =
+  "https://res.cloudinary.com/dq7aof6vb/image/upload/f_auto,q_auto,w_1200/v1739685416/MultiplayerMapBg_z1htg0.png";
+
 export const metadata = {
-  title: "Treasurymap",
+  title: { default: SITE_NAME, template: `%s | ${SITE_NAME}` },
+  description: DEFAULT_DESCRIPTION,
+  openGraph: {
+    title: SITE_NAME,
+    description: DEFAULT_DESCRIPTION,
+    type: "website",
+    siteName: SITE_NAME,
+    images: [DEFAULT_OG_IMAGE],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_NAME,
+    description: DEFAULT_DESCRIPTION,
+    images: [DEFAULT_OG_IMAGE],
+  },
 };
 
 export default function RootLayout({ children }) {

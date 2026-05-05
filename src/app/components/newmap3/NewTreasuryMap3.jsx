@@ -5,6 +5,7 @@ import { url } from "../../service/url.js";
 import realdata from "./realdata.json";
 import "./NewTreasuryMap3.css";
 import { cld } from "../../utils/cloudinary";
+import { providerHref } from "../../utils/slugify";
 
 const TreasuryMap = () => {
   const mapCenterTitle = cld(
@@ -475,7 +476,7 @@ const TreasuryMap = () => {
           if (companyElement.live) {
             return (
               <div key={index} id={`div-static-${companyElement.id}`}>
-                <a href={`/companyPage/${companyElement.id}`}>
+                <a href={providerHref(companyElement)}>
                   <div className="category-logo-wrapper">
                     <img
                       src={cld(companyElement.logo, { w: 140 })}
@@ -1305,7 +1306,7 @@ const TreasuryMap = () => {
                       if (c.live) {
                         entries.push({
                           key: `static-${c.id}`,
-                          href: `/companyPage/${c.id}`,
+                          href: providerHref(c),
                           image: c.logo,
                         });
                       }

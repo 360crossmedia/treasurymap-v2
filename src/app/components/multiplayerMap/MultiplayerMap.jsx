@@ -5,6 +5,7 @@ import { apiGetMultiplayerMapData } from "@/app/service/apiGetMultiplayerMapData
 import styles from "./multiplayerMap.module.css";
 import { MultiplayerMapCategories } from "./staticdata.jsx";
 import { cld } from "../../utils/cloudinary";
+import { providerHref } from "../../utils/slugify";
 
 const TreasuryMap = () => {
   const mapCenterTitle = cld(
@@ -398,7 +399,7 @@ const TreasuryMap = () => {
           if (companyElement.live) {
             return (
               <div key={index} id={`div-static-${companyElement.id}`}>
-                <a href={`/companyPage/${companyElement.id}`}>
+                <a href={providerHref(companyElement)}>
                   <div className="category-logo-wrapper">
                     <img
                       src={cld(companyElement.logo, { w: 140 })}
@@ -1128,7 +1129,7 @@ const TreasuryMap = () => {
                       if (c.live) {
                         entries.push({
                           key: `static-${c.id}`,
-                          href: `/companyPage/${c.id}`,
+                          href: providerHref(c),
                           image: c.logo,
                         });
                       }

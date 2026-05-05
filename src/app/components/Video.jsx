@@ -1,6 +1,7 @@
 "use client";
 import styles from "../styles/Article.module.css";
 import { useEffect, useState } from "react";
+import { providerHref } from "../utils/slugify";
 import { apiGetCategoryById } from "../service/apiGetCategoryById";
 import { apiGetCompanyData } from "../service/apiGetCompanyData";
 import { setIsLoading } from "../store/slices/isLoading.slice";
@@ -61,7 +62,7 @@ const Video = ({ videoId }) => {
               <p className={styles.author}>
                 {company ? "by " : ""}
                 <a
-                  href={`/companyPage/${company?.id}`}
+                  href={providerHref(company)}
                   className={styles.authorLink}
                 >
                   {company?.name}

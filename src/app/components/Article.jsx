@@ -1,6 +1,7 @@
 "use client";
 import styles from "../styles/Article.module.css";
 import { useEffect, useState } from "react";
+import { providerHref } from "../utils/slugify";
 import { apiGetArticleById } from "../service/apiGetArticleById";
 import { apiGetCategoryById } from "../service/apiGetCategoryById";
 import { apiGetCompanyData } from "../service/apiGetCompanyData";
@@ -55,7 +56,7 @@ const Article = ({ articleId }) => {
               <p className={styles.author}>
                 {company ? "by " : ""}
                 <a
-                  href={`/companyPage/${company?.id}`}
+                  href={providerHref(company)}
                   className={styles.authorLink}
                 >
                   {company?.name}
