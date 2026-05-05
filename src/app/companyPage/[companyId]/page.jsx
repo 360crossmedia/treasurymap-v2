@@ -1,29 +1,55 @@
-"use client";
-import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
-import styles from "../../styles/layout.module.css";
-import Overview from "../../components/Overview";
-import HeaderCompanyPage from "../../components/HeaderCompanyPage";
-import MediaZone from "../../components/MediaZone";
-import { useSelector } from "react-redux";
-import { use } from "react";
+import { url } from "../../service/url";
+import CompanyPageClient from "./CompanyPageClient";
 
-const Layout = ({ params }) => {
-  const isOverview = useSelector((state) => state.isOverview);
-  const { companyId } = use(params);
+async function fetchCompany(companyId) {
+  try {
+    const res = await fetch(`${url}/api/v1/companies/${companyId}`, {
+      next: { revalidate: 60 },
+    });
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
+}
+
+export async function generateMetadata({ params }) {
+  const { companyId } = await params;
+  const company = await fetchCompany(companyId);
+  if (!company) return { title: "Treasurymap" };
+  const title = `${company.name} | TreasuryMap`;
+  const description =
+    (company.description || "")
+      .replace(/<[^>]*>/g, "")
+      .slice(0, 200)
+      .trim() || `${company.name} on the Treasury Technology Landscape.`;
+  const image = company.logo;
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      images: image ? [image] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: image ? [image] : undefined,
+    },
+  };
+}
+
+const Layout = async ({ params }) => {
+  const { companyId } = await params;
+  const initialCompany = await fetchCompany(companyId);
   return (
-    <>
-      <div
-        className={styles.mainContainer}
-        style={{ backgroundPosition: "bottom" }}
-      >
-        <Navbar buttonLabel={"Login"} />
-        <HeaderCompanyPage companyId={companyId} />
-      </div>
-      {isOverview && <Overview companyId={companyId} />}
-      {!isOverview && <MediaZone companyId={companyId} />}
-      <Footer />
-    </>
+    <CompanyPageClient
+      companyId={companyId}
+      initialCompany={initialCompany}
+    />
   );
 };
 

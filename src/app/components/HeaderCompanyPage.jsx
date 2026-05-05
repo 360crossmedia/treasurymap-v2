@@ -16,10 +16,10 @@ import Modal from "react-bootstrap/Modal";
 import { apiGetSubOptionsByCompany } from "../service/apiGetSubOptionsByCompany";
 import { apiGetAllSubOptions } from "../service/apiGetAllSubOptions";
 
-const HeaderCompanyPage = ({ companyId }) => {
+const HeaderCompanyPage = ({ companyId, initialCompany }) => {
   const isOverview = useSelector((state) => state.isOverview);
   const dispatch = useDispatch();
-  const [company, setCompany] = useState();
+  const [company, setCompany] = useState(initialCompany ?? undefined);
   const [categories, setCategories] = useState();
   const [subCategories, setSubCategories] = useState();
   const [companyOffices, setCompanyOffices] = useState();
@@ -27,29 +27,34 @@ const HeaderCompanyPage = ({ companyId }) => {
 
   const getCompanyData = async () => {
     dispatch(setIsLoading(true));
-    const companyData = await apiGetCompanyData(companyId);
+    const companyData = initialCompany ?? (await apiGetCompanyData(companyId));
+
+    const [resolvedCategories, companySubCategories, companyOffices] =
+      await Promise.all([
+        Promise.all(
+          (companyData?.companyCategories ?? []).map((id) =>
+            apiGetCategoryById(id)
+          )
+        ),
+        Promise.all(
+          (companyData?.companySubcategories ?? []).map((id) =>
+            apiGetSubCategoryById(id)
+          )
+        ),
+        Promise.all(
+          (companyData?.companyOffices ?? []).map((id) =>
+            apiGetCountryById(id)
+          )
+        ),
+      ]);
+
     const companyCategories = [];
-    const companySubCategories = [];
-    const companyOffices = [];
-    for (let i = 0; i < companyData?.companyCategories.length; i++) {
-      const result = await apiGetCategoryById(
-        companyData?.companyCategories[i]
-      );
+    for (const result of resolvedCategories) {
       if (result.sub_options.length > 0) {
         await thisCompanyHasSubOptions(result, companyCategories);
       } else companyCategories.push(result);
     }
-    for (let i = 0; i < companyData?.companySubcategories.length; i++) {
-      const result = await apiGetSubCategoryById(
-        companyData?.companySubcategories[i]
-      );
-      companyData?.companyCategories[i];
-      companySubCategories.push(result);
-    }
-    for (let i = 0; i < companyData?.companyOffices.length; i++) {
-      const result = await apiGetCountryById(companyData?.companyOffices[i]);
-      companyOffices.push(result);
-    }
+
     setCompany(companyData);
 
     const stringCategories = companyCategories

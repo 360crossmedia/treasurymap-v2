@@ -11,9 +11,9 @@ import { setIsLoading } from "../store/slices/isLoading.slice";
 import { formatTurnover } from "../utils";
 import { sanitizeRich } from "../utils/sanitize";
 
-const Overview = ({ companyId }) => {
+const Overview = ({ companyId, initialCompany }) => {
   const dispatch = useDispatch();
-  const [company, setCompany] = useState();
+  const [company, setCompany] = useState(initialCompany ?? undefined);
   const [questions, setQuestions] = useState();
   const [answers, setAnswers] = useState();
   const [countries, setCountries] = useState();
@@ -21,19 +21,21 @@ const Overview = ({ companyId }) => {
 
   const getCompanyData = async () => {
     dispatch(setIsLoading(true));
-    const result = await apiGetCompanyData(companyId);
-    const questions = await apiGetAllQuestions();
-    const answers = await apiGetCompanyAnswers(companyId);
-    const companyOffices = [];
+    const [result, questions, answers] = await Promise.all([
+      initialCompany
+        ? Promise.resolve(initialCompany)
+        : apiGetCompanyData(companyId),
+      apiGetAllQuestions(),
+      apiGetCompanyAnswers(companyId),
+    ]);
 
     setCompany(result);
     setQuestions(questions?.data);
     setAnswers(answers);
 
-    for (let i = 0; i < result?.companyOffices.length; i++) {
-      const countries = await apiGetCountryById(result?.companyOffices[i]);
-      companyOffices.push(countries);
-    }
+    const companyOffices = await Promise.all(
+      (result?.companyOffices ?? []).map((id) => apiGetCountryById(id))
+    );
 
     setCountries(companyOffices);
     dispatch(setIsLoading(false));
