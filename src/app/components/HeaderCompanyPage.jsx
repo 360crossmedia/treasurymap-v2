@@ -12,6 +12,7 @@ import { apiGetCountryById } from "../service/apiGetCountryById";
 import { setIsLoading } from "../store/slices/isLoading.slice";
 import { apiGetSubCategoryById } from "../service/apiGetSubCategoryById";
 import { formatTurnover } from "../utils";
+import { cld } from "../utils/cloudinary";
 import Modal from "react-bootstrap/Modal";
 import { apiGetSubOptionsByCompany } from "../service/apiGetSubOptionsByCompany";
 import { apiGetAllSubOptions } from "../service/apiGetAllSubOptions";
@@ -93,7 +94,7 @@ const HeaderCompanyPage = ({ companyId, initialCompany }) => {
         <div className={styles.imgContainer}>
           <Image
             alt=""
-            src={!company?.logo ? companyImg : company?.logo}
+            src={!company?.logo ? companyImg : cld(company?.logo, { w: 600 })}
             width={0}
             height={0}
             sizes="100vw"

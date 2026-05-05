@@ -4,13 +4,16 @@ import { url } from "../../service/url.js";
 import { apiGetMultiplayerMapData } from "@/app/service/apiGetMultiplayerMapData";
 import styles from "./multiplayerMap.module.css";
 import { MultiplayerMapCategories } from "./staticdata.jsx";
+import { cld } from "../../utils/cloudinary";
 
 const TreasuryMap = () => {
-  const mapCenterTitle =
-    "https://res.cloudinary.com/dq7aof6vb/image/upload/v1739685416/MultiplayerMapBg_z1htg0.png";
+  const mapCenterTitle = cld(
+    "https://res.cloudinary.com/dq7aof6vb/image/upload/v1739685416/MultiplayerMapBg_z1htg0.png"
+  );
 
-  const mapBackgroundImage =
-    "https://res.cloudinary.com/dq7aof6vb/image/upload/v1739563300/bgmultiplayer_bdasc3.png";
+  const mapBackgroundImage = cld(
+    "https://res.cloudinary.com/dq7aof6vb/image/upload/v1739563300/bgmultiplayer_bdasc3.png"
+  );
 
   const categories = {
     "category-1": "FIDP (Financial Instrument Dealing Platform)",
@@ -398,10 +401,12 @@ const TreasuryMap = () => {
                 <a href={`/companyPage/${companyElement.id}`}>
                   <div className="category-logo-wrapper">
                     <img
-                      src={companyElement.logo}
+                      src={cld(companyElement.logo, { w: 140 })}
                       id={`image-${companyElement.id}`}
                       alt="Logo"
                       className={`imagen`}
+                      loading="lazy"
+                      decoding="async"
                     />
                   </div>
                 </a>
@@ -1006,10 +1011,13 @@ const TreasuryMap = () => {
               <div className="interfacedLogo">
                 <div>
                   <img
-                    src={
-                      "https://res.cloudinary.com/dq7aof6vb/image/upload/v1704650633/category-7-logo-8_kpxhtq.png"
-                    }
+                    src={cld(
+                      "https://res.cloudinary.com/dq7aof6vb/image/upload/v1704650633/category-7-logo-8_kpxhtq.png",
+                      { w: 200 }
+                    )}
                     alt=""
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
               </div>
@@ -1057,7 +1065,9 @@ const TreasuryMap = () => {
                     <div className="category-title-image">
                       <img
                         className={styles.categoryImage}
-                        src={category.categoryImage}
+                        src={cld(category.categoryImage, { w: 220 })}
+                        loading="lazy"
+                        decoding="async"
                         onClick={() =>
                           selectCategory(`category-${category.id + 1}`)
                         }
@@ -1075,7 +1085,13 @@ const TreasuryMap = () => {
                             acc.count++; // Increment the count
                             acc.elements.push(
                               <div key={i}>
-                                <img src={item.logo} id={item.id} alt="logo" />
+                                <img
+                                  src={cld(item.logo, { w: 160 })}
+                                  id={item.id}
+                                  alt="logo"
+                                  loading="lazy"
+                                  decoding="async"
+                                />
                               </div>
                             );
                           }
@@ -1141,7 +1157,7 @@ const TreasuryMap = () => {
                               <a href={e.href}>
                                 <div
                                   style={{
-                                    backgroundImage: `url(${e.image})`,
+                                    backgroundImage: `url(${cld(e.image, { w: 220 })})`,
                                   }}
                                 ></div>
                               </a>
@@ -1159,7 +1175,7 @@ const TreasuryMap = () => {
                                   <a href={e.href}>
                                     <div
                                       style={{
-                                        backgroundImage: `url(${e.image})`,
+                                        backgroundImage: `url(${cld(e.image, { w: 220 })})`,
                                       }}
                                     ></div>
                                   </a>

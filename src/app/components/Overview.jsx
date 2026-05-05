@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux";
 import { setIsLoading } from "../store/slices/isLoading.slice";
 import { formatTurnover } from "../utils";
 import { sanitizeRich } from "../utils/sanitize";
+import { cld } from "../utils/cloudinary";
 
 const Overview = ({ companyId, initialCompany }) => {
   const dispatch = useDispatch();
@@ -104,7 +105,7 @@ const Overview = ({ companyId, initialCompany }) => {
           // width={337.611}
           // height={181.946}
           // className={styles.companyImg}
-          src={!company?.logo ? companyImg : company?.logo}
+          src={!company?.logo ? companyImg : cld(company?.logo, { w: 600 })}
           alt=""
           width={0}
           height={0}

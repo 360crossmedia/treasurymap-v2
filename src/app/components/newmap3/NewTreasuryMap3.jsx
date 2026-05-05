@@ -4,13 +4,16 @@ import staticdata from "./staticdata.json";
 import { url } from "../../service/url.js";
 import realdata from "./realdata.json";
 import "./NewTreasuryMap3.css";
+import { cld } from "../../utils/cloudinary";
 
 const TreasuryMap = () => {
-  const mapCenterTitle =
-    "https://res.cloudinary.com/dq7aof6vb/image/upload/v1712693505/CENTRAL_TEXT_my9777.png";
+  const mapCenterTitle = cld(
+    "https://res.cloudinary.com/dq7aof6vb/image/upload/v1712693505/CENTRAL_TEXT_my9777.png"
+  );
 
-  const mapBackgroundImage =
-    "https://res.cloudinary.com/dq7aof6vb/image/upload/v1704675763/background_gs0j76.webp";
+  const mapBackgroundImage = cld(
+    "https://res.cloudinary.com/dq7aof6vb/image/upload/v1704675763/background_gs0j76.webp"
+  );
 
   const categories = {
     "category-1": "FIDP (Financial Instrument Dealing Platform)",
@@ -475,10 +478,12 @@ const TreasuryMap = () => {
                 <a href={`/companyPage/${companyElement.id}`}>
                   <div className="category-logo-wrapper">
                     <img
-                      src={companyElement.logo}
+                      src={cld(companyElement.logo, { w: 140 })}
                       id={`image-${companyElement.id}`}
                       alt="Logo"
                       className={`imagen`}
+                      loading="lazy"
+                      decoding="async"
                     />
                   </div>
                 </a>
@@ -1175,10 +1180,13 @@ const TreasuryMap = () => {
               <div className="interfacedLogo">
                 <div>
                   <img
-                    src={
-                      "https://res.cloudinary.com/dq7aof6vb/image/upload/v1704650633/category-7-logo-8_kpxhtq.png"
-                    }
+                    src={cld(
+                      "https://res.cloudinary.com/dq7aof6vb/image/upload/v1704650633/category-7-logo-8_kpxhtq.png",
+                      { w: 200 }
+                    )}
                     alt=""
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
               </div>
@@ -1237,7 +1245,9 @@ const TreasuryMap = () => {
                   <div className="category-title-inner">
                     <div className="category-title-image">
                       <img
-                        src={category.categoryImage}
+                        src={cld(category.categoryImage, { w: 220 })}
+                        loading="lazy"
+                        decoding="async"
                         onClick={() => selectCategory(`category-${i + 1}`)}
                       />
                     </div>
@@ -1252,7 +1262,13 @@ const TreasuryMap = () => {
                             acc.count++; // Increment the count
                             acc.elements.push(
                               <div key={i}>
-                                <img src={item.logo} id={item.id} alt="logo" />
+                                <img
+                                  src={cld(item.logo, { w: 160 })}
+                                  id={item.id}
+                                  alt="logo"
+                                  loading="lazy"
+                                  decoding="async"
+                                />
                               </div>
                             );
                           }
@@ -1318,7 +1334,7 @@ const TreasuryMap = () => {
                               <a href={e.href}>
                                 <div
                                   style={{
-                                    backgroundImage: `url(${e.image})`,
+                                    backgroundImage: `url(${cld(e.image, { w: 220 })})`,
                                   }}
                                 ></div>
                               </a>
@@ -1336,7 +1352,7 @@ const TreasuryMap = () => {
                                   <a href={e.href}>
                                     <div
                                       style={{
-                                        backgroundImage: `url(${e.image})`,
+                                        backgroundImage: `url(${cld(e.image, { w: 220 })})`,
                                       }}
                                     ></div>
                                   </a>
