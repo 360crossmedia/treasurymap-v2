@@ -18,8 +18,8 @@ async function fetchCompany(companyId) {
 export async function generateMetadata({ params }) {
   const { companyId } = await params;
   const company = await fetchCompany(companyId);
-  if (!company) return { title: "Treasurymap" };
-  const title = `${company.name} | TreasuryMap`;
+  if (!company) return {};
+  const title = company.name;
   const description =
     (company.description || "")
       .replace(/<[^>]*>/g, "")
