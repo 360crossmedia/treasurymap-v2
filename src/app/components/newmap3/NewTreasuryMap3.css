@@ -3957,11 +3957,90 @@ div.category-title.selected:hover {
   transition-delay: 2.7s;
 }
 
-.front-open
-  .category-logos-inner
-  .category-logo:nth-child(n + 32)
+/* Logos beyond the 31 hand-tuned positions: rendered in a fallback grid
+   wrapper (.category-logos-overflow) instead of being hidden. */
+.category-logos-overflow {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  margin-top: 16px;
+  transform: translateX(-50%);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: 10px;
+  width: min(720px, 92%);
+  padding: 12px 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease 0.4s;
+  z-index: 6;
+}
+
+/* MultiplayerMap's .category-logos-inner is not positioned by default;
+   make it a positioning context so the overflow wrapper anchors correctly. */
+.category-logos.open .category-logos-inner {
+  position: relative;
+}
+
+.front-open .category-logos-overflow {
+  opacity: 1;
+  pointer-events: initial;
+}
+
+.category-logos-overflow .category-logo--overflow {
+  position: relative;
+  height: 70px;
+  width: 70px;
+  margin: 0;
+}
+
+.category-logos-overflow
+  .category-logo--overflow
   .category-logo-inner {
-  display: none;
+  position: relative !important;
+  inset: auto !important;
+  margin: 0 !important;
+  height: 70px !important;
+  width: 70px !important;
+  transform: none !important;
+  transition-delay: 0s !important;
+  opacity: 1;
+}
+
+.category-logos-overflow
+  .category-logo--overflow
+  .category-logo-inner
+  div {
+  position: absolute;
+  inset: 0;
+  background-size: 70%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.category-logos-overflow
+  .category-logo--overflow
+  .category-logo-inner:hover
+  a {
+  transform: scale(1.3);
+}
+
+@media (max-width: 768px) {
+  .category-logos-overflow {
+    grid-template-columns: repeat(4, 1fr);
+    margin-top: 8px;
+    padding: 8px 12px;
+    gap: 8px;
+    width: 96%;
+  }
+
+  .category-logos-overflow .category-logo--overflow,
+  .category-logos-overflow
+    .category-logo--overflow
+    .category-logo-inner {
+    height: 56px !important;
+    width: 56px !important;
+  }
 }
 
 .front-open .front-category-logos .category-logo div {

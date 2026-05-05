@@ -1281,53 +1281,73 @@ const TreasuryMap = () => {
                     filteredLogos.length > 10 ? "more-than-10" : ""
                   }`}
                 >
-                  {
-                    // AQUI VA EL NUEVO BLOQUE DE CODIGO QUE FILTRA LOS LOGOS DEL MAPA FRONTAL QUE YA FILTA LOS LOGOS CORRECTAMENTE
-                  }
+                  {(() => {
+                    const POSITIONED_SLOTS = 31;
+                    const entries = [];
 
-                  {dataByCategories[selectedCategory]?.map(
-                    (companyElement, index) => {
-                      console.log("selectedCategory ", selectedCategory);
-
-                      if (companyElement.live) {
-                        return (
-                          <div key={index} className="category-logo">
-                            <div className="category-logo-inner">
-                              <a href={`/companyPage/${companyElement.id}`}>
-                                <div
-                                  style={{
-                                    backgroundImage: `url(${companyElement.logo})`,
-                                  }}
-                                ></div>
-                              </a>
-                            </div>
-                          </div>
-                        );
+                    dataByCategories?.[selectedCategory]?.forEach((c) => {
+                      if (c.live) {
+                        entries.push({
+                          key: `static-${c.id}`,
+                          href: `/companyPage/${c.id}`,
+                          image: c.logo,
+                        });
                       }
+                    });
+
+                    if (frontMapOpen > 0) {
+                      filteredLogos.forEach((c, i) => {
+                        if (c.live) {
+                          entries.push({
+                            key: `filtered-${i}`,
+                            href: c.url,
+                            image: c.image,
+                          });
+                        }
+                      });
                     }
-                  )}
-                  {frontMapOpen > 0 &&
-                    filteredLogos.map((company, index) => {
-                      // console.log(`frontMapOpen > 0 :${frontMapOpen > 0}`);
-                      // console.log(company);
-                      // console.log(company.live);
-                      if (company.live) {
-                        //console.log("entró al true");
-                        return (
-                          <div key={index} className="category-logo">
+
+                    const positioned = entries.slice(0, POSITIONED_SLOTS);
+                    const overflow = entries.slice(POSITIONED_SLOTS);
+
+                    return (
+                      <>
+                        {positioned.map((e) => (
+                          <div key={e.key} className="category-logo">
                             <div className="category-logo-inner">
-                              <a href={company.url}>
+                              <a href={e.href}>
                                 <div
                                   style={{
-                                    backgroundImage: `url(${company.image})`,
+                                    backgroundImage: `url(${e.image})`,
                                   }}
                                 ></div>
                               </a>
                             </div>
                           </div>
-                        );
-                      }
-                    })}
+                        ))}
+                        {overflow.length > 0 && (
+                          <div className="category-logos-overflow">
+                            {overflow.map((e) => (
+                              <div
+                                key={e.key}
+                                className="category-logo category-logo--overflow"
+                              >
+                                <div className="category-logo-inner">
+                                  <a href={e.href}>
+                                    <div
+                                      style={{
+                                        backgroundImage: `url(${e.image})`,
+                                      }}
+                                    ></div>
+                                  </a>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()}
                 </div>
               </div>
             </div>
