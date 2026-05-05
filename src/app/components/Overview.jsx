@@ -9,6 +9,7 @@ import { apiGetCountryById } from "../service/apiGetCountryById";
 import { useDispatch } from "react-redux";
 import { setIsLoading } from "../store/slices/isLoading.slice";
 import { formatTurnover } from "../utils";
+import { sanitizeRich } from "../utils/sanitize";
 
 const Overview = ({ companyId }) => {
   const dispatch = useDispatch();
@@ -47,7 +48,12 @@ const Overview = ({ companyId }) => {
       <div className={styles.left}>
         <div>
           <p className={styles.mainTitle}>About</p>
-          <p className={styles.mainDescription}>{company?.description}</p>
+          <div
+            className={styles.mainDescription}
+            dangerouslySetInnerHTML={{
+              __html: sanitizeRich(company?.description),
+            }}
+          />
         </div>
         <div>
           <p className={styles.title}>Website</p>
@@ -76,7 +82,12 @@ const Overview = ({ companyId }) => {
         {company?.productVersion && (
           <div>
             <p className={styles.title}>Product description</p>
-            <p className={styles.description}>{company?.productVersion}</p>
+            <div
+              className={styles.description}
+              dangerouslySetInnerHTML={{
+                __html: sanitizeRich(company?.productVersion),
+              }}
+            />
           </div>
         )}
         {answers?.map((answer, index) => (
