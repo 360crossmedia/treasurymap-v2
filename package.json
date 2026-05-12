@@ -17,7 +17,7 @@
     "dotenv": "^17.2.1",
     "isomorphic-dompurify": "^3.12.0",
     "jsonwebtoken": "8.5.1",
-    "next": "^15.5.0",
+    "next": "^15.5.18",
     "primereact": "^10.9.7",
     "quill": "^2.0.3",
     "react": "^19.1.1",
