@@ -10,9 +10,13 @@ export function cld(url, opts = {}) {
   const tail = url.slice(i + marker.length);
   if (/^[a-z]_[^/]+\//.test(tail)) return url;
   const tx = ["f_auto", "q_auto"];
-  if (opts.w) tx.push(`w_${opts.w}`);
-  if (opts.h) tx.push(`h_${opts.h}`);
-  if (opts.c) tx.push(`c_${opts.c}`);
+  if (opts.w || opts.h) {
+    tx.push(`c_${opts.c || "limit"}`);
+    if (opts.w) tx.push(`w_${opts.w}`);
+    if (opts.h) tx.push(`h_${opts.h}`);
+  } else if (opts.c) {
+    tx.push(`c_${opts.c}`);
+  }
   if (opts.dpr !== false) tx.push("dpr_auto");
   return `${head}${tx.join(",")}/${tail}`;
 }

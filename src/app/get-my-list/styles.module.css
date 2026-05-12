@@ -78,6 +78,19 @@
   margin-left: 2px;
 }
 
+.optional {
+  font-size: 0.65em;
+  font-weight: 500;
+  color: #888;
+  background: #f0f2f5;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  vertical-align: middle;
+}
+
 .input,
 .textarea {
   width: 100%;

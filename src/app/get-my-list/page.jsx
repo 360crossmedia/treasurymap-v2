@@ -92,6 +92,7 @@ export default function GetMyListPage() {
   const [implementation, setImplementation] = useState("");
   const [nbBanks, setNbBanks] = useState("");
   const [retainedTools, setRetainedTools] = useState("");
+  const [otherSpecs, setOtherSpecs] = useState("");
 
   // Catégories (cases à cocher pour la question 10) — fetched depuis le back
   const [categories, setCategories] = useState([]);
@@ -146,6 +147,7 @@ export default function GetMyListPage() {
     };
     if (treasuryHQ.trim()) answers["Treasury HQ"] = treasuryHQ.trim();
     if (retainedTools.trim()) answers["Retained tools"] = retainedTools.trim();
+    if (otherSpecs.trim()) answers["Other specifications"] = otherSpecs.trim();
 
     try {
       const res = await fetch(`${url}/api/v1/longlist/generate`, {
@@ -438,6 +440,32 @@ export default function GetMyListPage() {
               )}
             </div>
 
+            {/* Bloc 6 — Specs libres */}
+            <div className={styles.card}>
+              <h2 className={styles.sectionTitle}>
+                Other specifications to be mentioned
+                <span className={styles.optional}>optional</span>
+              </h2>
+              <p className={styles.sectionSubtitle}>
+                Refine your request, add specific needs, name vendors you want compared,
+                ask for a particular angle. The more context you give, the more tailored
+                your Long List will be.
+              </p>
+              <div className={styles.field}>
+                <textarea
+                  className={styles.textarea}
+                  value={otherSpecs}
+                  onChange={(e) => setOtherSpecs(e.target.value)}
+                  placeholder="e.g. Compare TIS, COBASE and Bottomline on BSG side with a +/- chart. Also need a commodity hedging solution. Please provide 2-3 client references per vendor."
+                  rows={6}
+                />
+                <p className={styles.fieldHint}>
+                  Free text — up to a couple of paragraphs. This will be fed verbatim
+                  to the analyst alongside your answers above.
+                </p>
+              </div>
+            </div>
+
             {/* Honeypot anti-bot — invisible aux humains, leurré pour les bots qui remplissent tout */}
             <div
               aria-hidden="true"
@@ -488,7 +516,7 @@ export default function GetMyListPage() {
                 disabled={!isValid || submitting}
               >
                 {submitting && <span className={styles.spinner} />}
-                {submitting ? "Sending..." : "Get my Long List"}
+                {submitting ? "Generating..." : "Make Your Selection"}
               </button>
               <p className={styles.submitNote}>
                 You'll receive your personalised report by email in a few minutes.
