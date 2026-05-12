@@ -89,6 +89,9 @@ const Navbar = ({ buttonLabel, multiplayerMap, set, rotate }) => {
             <a className={styles.navbarA} href="/get-my-list">
               Get my Long List
             </a>
+            <a className={styles.navbarA} href="/compare-tools">
+              Compare Tools
+            </a>
           </div>
         </div>
         <div className={styles.navbarRight}>

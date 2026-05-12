@@ -460,8 +460,10 @@ export default function GetMyListPage() {
                   rows={6}
                 />
                 <p className={styles.fieldHint}>
-                  Free text — up to a couple of paragraphs. This will be fed verbatim
-                  to the analyst alongside your answers above.
+                  <strong>The more you detail this field with your specifications,
+                  requirements or demands, the better the outcome.</strong> Up to a
+                  couple of paragraphs. This will be fed verbatim to the analyst
+                  alongside your answers above.
                 </p>
               </div>
             </div>

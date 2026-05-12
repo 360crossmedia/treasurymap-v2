@@ -42,6 +42,7 @@ const Footer = () => {
 
         <div className={styles.leftInnerTwo}>
           <a className={styles.gdprText} href="/get-my-list">Get my Long List</a>
+          <a className={styles.gdprText} href="/compare-tools">Compare Tools</a>
           <a className={styles.gdprText} href="/gdpr" >GDPR</a>
         </div>
 
