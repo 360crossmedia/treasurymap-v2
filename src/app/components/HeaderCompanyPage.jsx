@@ -2,9 +2,8 @@
 import Image from "next/image";
 import styles from "../styles/HeaderCompanyPage.module.css";
 import companyImg from "../assets/placeholderimg.jpg";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setIsOverview } from "../store/slices/isOverview.slice";
-import { useSelector } from "react-redux";
 import { apiGetCompanyData } from "../service/apiGetCompanyData";
 import { apiGetCategoryById } from "../service/apiGetCategoryById";
 import { useEffect, useState } from "react";
@@ -19,118 +18,77 @@ import { apiGetAllSubOptions } from "../service/apiGetAllSubOptions";
 
 const HeaderCompanyPage = ({ companyId, initialCompany }) => {
   const isOverview = useSelector((state) => state.isOverview);
-  const dispatch = useDispatch();
-  const [company, setCompany] = useState(initialCompany ?? undefined);
-  const [categories, setCategories] = useState();
-  const [subCategories, setSubCategories] = useState();
+  const dispatch   = useDispatch();
+  const [company,        setCompany]        = useState(initialCompany ?? undefined);
+  const [categories,     setCategories]     = useState();
+  const [subCategories,  setSubCategories]  = useState();
   const [companyOffices, setCompanyOffices] = useState();
-  const [show, setShow] = useState(false);
+  const [show,           setShow]           = useState(false);
 
   const getCompanyData = async () => {
     dispatch(setIsLoading(true));
     const companyData = initialCompany ?? (await apiGetCompanyData(companyId));
 
-    const [resolvedCategories, companySubCategories, companyOffices] =
+    // Parallel fetch — categories, subcategories, offices, sub-options all at once
+    const [resolvedCategories, companySubCategories, companyOfficesData, subOptionsByCompany, allSubOptions] =
       await Promise.all([
-        Promise.all(
-          (companyData?.companyCategories ?? []).map((id) =>
-            apiGetCategoryById(id)
-          )
-        ),
-        Promise.all(
-          (companyData?.companySubcategories ?? []).map((id) =>
-            apiGetSubCategoryById(id)
-          )
-        ),
-        Promise.all(
-          (companyData?.companyOffices ?? []).map((id) =>
-            apiGetCountryById(id)
-          )
-        ),
+        Promise.all((companyData?.companyCategories ?? []).map((id) => apiGetCategoryById(id))),
+        Promise.all((companyData?.companySubcategories ?? []).map((id) => apiGetSubCategoryById(id))),
+        Promise.all((companyData?.companyOffices ?? []).map((id) => apiGetCountryById(id))),
+        // Fetch sub-options once upfront instead of per-category (fixes N+1)
+        apiGetSubOptionsByCompany(companyId),
+        apiGetAllSubOptions(),
       ]);
 
-    const companyCategories = [];
-    for (const result of resolvedCategories) {
-      if (result.sub_options.length > 0) {
-        await thisCompanyHasSubOptions(result, companyCategories);
-      } else companyCategories.push(result);
-    }
+    // Enrich category names with sub-option suffixes
+    const companyCategories = resolvedCategories.map((cat) => {
+      if (cat.sub_options?.length > 0 && subOptionsByCompany?.length > 0) {
+        const match = allSubOptions.find((so) => so.id === subOptionsByCompany[0]?.subOptionId);
+        if (match) return { ...cat, name: `${cat.name}: ${match.name}` };
+      }
+      return cat;
+    });
 
     setCompany(companyData);
-
-    const stringCategories = companyCategories
-      .map((item) => item.name)
-      .join(", ");
-    setCategories(stringCategories);
-
-    const stringSubCat = companySubCategories
-      .map((item) => item.name)
-      .join(", ");
-    setSubCategories(stringSubCat);
-
-    setCompanyOffices(companyOffices);
+    setCategories(companyCategories.map((c) => c.name).join(", "));
+    setSubCategories(companySubCategories.map((c) => c.name).join(", "));
+    setCompanyOffices(companyOfficesData);
     dispatch(setIsLoading(false));
-  };
-
-  const thisCompanyHasSubOptions = async (result2, companyCategories) => {
-    const result = await apiGetSubOptionsByCompany(companyId);
-    if (result.length > 0) {
-      const finalResult = await apiGetAllSubOptions();
-      const match = finalResult.find(
-        (subOption) => subOption.id == result[0]?.subOptionId
-      );
-      result2.name = result2.name + ": " + match?.name;
-      companyCategories.push(result2);
-    }
   };
 
   useEffect(() => {
     getCompanyData();
-  }, []);
+  }, [companyId]); // re-run if companyId changes
 
   return (
     <>
       <div className={styles.mainContainer}>
+        {/* Company logo */}
         <div className={styles.imgContainer}>
           <Image
-            alt=""
+            alt={company?.name ? `${company.name} logo` : "Company logo"}
             src={!company?.logo ? companyImg : cld(company?.logo, { w: 600 })}
             width={0}
             height={0}
             sizes="100vw"
-            style={{ width: "80%", height: "auto", maxHeight: "95%" }} // optional
+            priority
+            style={{ width: "80%", height: "auto", maxHeight: "95%" }}
           />
         </div>
 
+        {/* Company name + metadata */}
         <div className={styles.categoryCardsContainer}>
-          <p className={styles.title}>{company?.name}</p>
+          {/* SEO: company name as h1 */}
+          <h1 className={styles.title}>{company?.name}</h1>
 
-          {/* {categories?.map((category, index) => (
-            <div key={index} className={styles.categoryCard}>
-              <p className={styles.categoryP}>
-                Category:
-                <span className={styles.span}> {category?.name}</span>
-              </p>
-            </div>
-          ))} */}
-
-          <div key={"category"} className={styles.categoryCard}>
+          <div className={styles.categoryCard}>
             <p className={styles.categoryP}>
               Categories:
               <span className={styles.span}> {categories}</span>
             </p>
           </div>
 
-          {/* {subCategories?.map((subCategory, index) => (
-            <div key={index} className={styles.categoryCard}>
-              <p className={styles.categoryP}>
-                Sub-Category:
-                <span className={styles.span}> {subCategory?.name}</span>
-              </p>
-            </div>
-          ))} */}
-
-          <div key={"subcategory"} className={styles.categoryCard}>
+          <div className={styles.categoryCard}>
             <p className={styles.categoryP}>
               Sub-Categories:
               <span className={styles.span}> {subCategories}</span>
@@ -143,19 +101,15 @@ const HeaderCompanyPage = ({ companyId, initialCompany }) => {
               <p className={styles.cardBigP}>{company?.creationDate}</p>
             </div>
             <div className={`${styles.card} ${styles.cardRight}`}>
-              <p className={styles.cardP}>Number Of employes</p>
+              <p className={styles.cardP}>Number of employees</p>
               <p className={styles.cardBigP}>{company?.employees}</p>
             </div>
-
             {!(company?.turnover == 0) && company?.showTurnover && (
               <div className={`${styles.card} ${styles.cardLeft}`}>
                 <p className={styles.cardP}>Turnover</p>
-                <p className={styles.cardBigP}>
-                  {formatTurnover(company?.turnover)}
-                </p>
+                <p className={styles.cardBigP}>{formatTurnover(company?.turnover)}</p>
               </div>
             )}
-
             <div className={`${styles.card} ${styles.cardRight}`}>
               <p className={styles.cardP}>Headquarters</p>
               <p className={styles.cardBigP}>{company?.location}</p>
@@ -163,50 +117,53 @@ const HeaderCompanyPage = ({ companyId, initialCompany }) => {
           </div>
         </div>
       </div>
-      <div className={styles.headerCardDown}>
+
+      {/* Tab navigation — buttons for accessibility */}
+      <nav className={styles.headerCardDown} aria-label="Company sections">
         <div className={styles.headerLinks}>
-          <p
-            className={`${styles.customP} ${
-              isOverview ? styles.active : styles.disabled
-            }`}
+          <button
+            className={`${styles.customP} ${isOverview ? styles.active : styles.disabled}`}
             onClick={() => dispatch(setIsOverview(true))}
+            aria-pressed={isOverview}
           >
             Overview
-          </p>
-          <p
-            className={`${styles.customP2} ${
-              isOverview ? styles.disabled : styles.active
-            }`}
+          </button>
+          <button
+            className={`${styles.customP2} ${isOverview ? styles.disabled : styles.active}`}
             onClick={() => dispatch(setIsOverview(false))}
+            aria-pressed={!isOverview}
           >
             Media Zone
-          </p>
+          </button>
         </div>
+
+        {/* Active In */}
         <div className={styles.countriesContainer}>
           <p className={styles.boldP}>Active In</p>
-          {!show &&
-            companyOffices?.slice(0, 3).map((office, index) => (
-              <div key={index} className={styles.blueCard}>
-                <p className={styles.blueCardP}>{office?.name}</p>
-              </div>
-            ))}
+          {!show && companyOffices?.slice(0, 3).map((office, index) => (
+            <div key={index} className={styles.blueCard}>
+              <p className={styles.blueCardP}>{office?.name}</p>
+            </div>
+          ))}
           {companyOffices?.length >= 4 && (
-            <div
+            <button
               onClick={() => setShow(true)}
               className={`${styles.blueCard} ${styles.color}`}
+              style={{ background: "none", border: "none", cursor: "pointer" }}
             >
               <p className={styles.blueCardP}>See more</p>
-            </div>
+            </button>
           )}
+
           {show && (
             <Modal
-              aria-labelledby="contained-modal-title-vcenter"
+              aria-labelledby="active-in-modal-title"
               centered
               show={show}
               onHide={() => setShow(false)}
             >
               <Modal.Header closeButton>
-                <Modal.Title>Active In</Modal.Title>
+                <Modal.Title id="active-in-modal-title">Active In</Modal.Title>
               </Modal.Header>
               <Modal.Body className={styles.moreCountriesContainer}>
                 {companyOffices?.map((office, index) => (
@@ -218,7 +175,7 @@ const HeaderCompanyPage = ({ companyId, initialCompany }) => {
             </Modal>
           )}
         </div>
-      </div>
+      </nav>
     </>
   );
 };

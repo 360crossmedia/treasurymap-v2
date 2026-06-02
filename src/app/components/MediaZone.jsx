@@ -7,77 +7,89 @@ import { apiGetAllVideosByCompanyId } from "../service/apiGetAllVideosByCompanyI
 import { apiGetAllArticlesByCompanyId } from "../service/apiGetAllArticlesByCompanyId";
 import { setIsLoading } from "../store/slices/isLoading.slice";
 import { useDispatch } from "react-redux";
-import { haveMediaContentToShow } from "../utils";
 import InsightsCard from "./InsightsCard";
 
 const MediaZone = ({ companyId }) => {
   const dispatch = useDispatch();
-  const [countries, setCountries] = useState();
-  const [videos, setVideos] = useState([]);
-  const [articles, setArticles] = useState([]);
+  const [countries,     setCountries]     = useState();
+  const [videos,        setVideos]        = useState([]);
+  const [articles,      setArticles]      = useState([]);
   const [seeMoreActive, setSeeMoreActive] = useState(false);
 
   const getCompanyData = async () => {
     dispatch(setIsLoading(true));
-    const companyData = await apiGetCompanyData(companyId);
-    const videosArray = await apiGetAllVideosByCompanyId(companyId);
-    const articlesArray = await apiGetAllArticlesByCompanyId(companyId);
-    const companyOffices = [];
+    try {
+      // Parallel fetch — company data, videos, articles all at once
+      const [companyData, videosArray, articlesArray] = await Promise.all([
+        apiGetCompanyData(companyId),
+        apiGetAllVideosByCompanyId(companyId),
+        apiGetAllArticlesByCompanyId(companyId),
+      ]);
 
-    for (let i = 0; i < companyData?.companyOffices.length; i++) {
-      const countries = await apiGetCountryById(companyData?.companyOffices[i]);
-      companyOffices.push(countries);
+      setVideos(videosArray ?? []);
+      setArticles(articlesArray ?? []);
+
+      // Parallel fetch for office countries (was sequential — now fixed)
+      const officeCountries = await Promise.all(
+        (companyData?.companyOffices ?? []).map((id) => apiGetCountryById(id))
+      );
+      setCountries(officeCountries);
+    } catch (err) {
+      console.error("MediaZone: failed to load company data", err);
+    } finally {
+      dispatch(setIsLoading(false));
     }
-
-    setVideos(videosArray);
-    setCountries(companyOffices);
-    setArticles(articlesArray);
-    dispatch(setIsLoading(false));
   };
 
   useEffect(() => {
     getCompanyData();
-  }, []);
+  }, [companyId]); // re-run if companyId changes
+
+  const hasMedia = articles?.length > 0 || videos?.length > 0;
 
   return (
-    <div className={styles.mainContainer}>
-      <div className={styles.countriesContainer}>
-        <div>
+    <section className={styles.mainContainer} aria-label="Media Zone">
+
+      {/* Active In */}
+      {countries?.length > 0 && (
+        <div className={styles.countriesContainer}>
           <p className={styles.boldP}>Active In</p>
-        </div>
-        <div className={styles.blueCardsContainer}>
-          {seeMoreActive &&
-            countries?.map((country, index) => (
+          <div className={styles.blueCardsContainer}>
+            {(seeMoreActive ? countries : countries.slice(0, 4)).map((country, index) => (
               <div key={index} className={styles.blueCard}>
                 <p className={styles.blueCardP}>{country?.name}</p>
               </div>
             ))}
-          {!seeMoreActive &&
-            countries?.slice(0, 4).map((country, index) => (
-              <div key={index} className={styles.blueCard}>
-                <p className={styles.blueCardP}>{country?.name}</p>
-              </div>
-            ))}
+          </div>
+          {countries.length > 4 && (
+            <button
+              onClick={() => setSeeMoreActive(!seeMoreActive)}
+              className={styles.seeMoreBlueCards}
+              style={{ background: "none", border: "none", cursor: "pointer" }}
+            >
+              {seeMoreActive ? "See less" : "See more"}
+            </button>
+          )}
         </div>
-        {countries?.length > 4 && (
-          <p
-            onClick={() => setSeeMoreActive(!seeMoreActive)}
-            className={styles.seeMoreBlueCards}
-          >
-            {!seeMoreActive ? "See more" : "See less"}
-          </p>
-        )}
-      </div>
-      {/* {!haveMediaContentToShow(videos, articles) && (
-        <h2 className={styles.title}>No media content uploaded yet.</h2>
-      )} */}
-      {articles?.map((article, index) => (
-        <InsightsCard key={index} publication={article} />
-      ))}
-      {videos?.map((video, index) => (
-        <InsightsCard key={index} publication={video} />
-      ))}
-    </div>
+      )}
+
+      {/* Media content */}
+      {hasMedia ? (
+        <>
+          {articles.map((article, index) => (
+            <InsightsCard key={`article-${index}`} publication={article} />
+          ))}
+          {videos.map((video, index) => (
+            <InsightsCard key={`video-${index}`} publication={video} />
+          ))}
+        </>
+      ) : (
+        <p className={styles.title} style={{ color: "#9aa3b5", padding: "32px 0", textAlign: "center" }}>
+          No media content available for this vendor yet.
+        </p>
+      )}
+
+    </section>
   );
 };
 

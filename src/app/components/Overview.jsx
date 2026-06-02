@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useState } from "react";
 import styles from "../styles/Overview.module.css";
 import Image from "next/image";
@@ -14,133 +15,142 @@ import { cld } from "../utils/cloudinary";
 
 const Overview = ({ companyId, initialCompany }) => {
   const dispatch = useDispatch();
-  const [company, setCompany] = useState(initialCompany ?? undefined);
-  const [questions, setQuestions] = useState();
-  const [answers, setAnswers] = useState();
-  const [countries, setCountries] = useState();
-  const [seeMoreActive, setSeeMoreActive] = useState(false);
+  const [company,        setCompany]        = useState(initialCompany ?? undefined);
+  const [questions,      setQuestions]      = useState();
+  const [answers,        setAnswers]        = useState();
+  const [countries,      setCountries]      = useState();
+  const [seeMoreActive,  setSeeMoreActive]  = useState(false);
 
   const getCompanyData = async () => {
     dispatch(setIsLoading(true));
-    const [result, questions, answers] = await Promise.all([
-      initialCompany
-        ? Promise.resolve(initialCompany)
-        : apiGetCompanyData(companyId),
+    const [result, questionsRes, answersRes] = await Promise.all([
+      initialCompany ? Promise.resolve(initialCompany) : apiGetCompanyData(companyId),
       apiGetAllQuestions(),
       apiGetCompanyAnswers(companyId),
     ]);
 
     setCompany(result);
-    setQuestions(questions?.data);
-    setAnswers(answers);
+    setQuestions(questionsRes?.data);
+    setAnswers(answersRes);
 
-    const companyOffices = await Promise.all(
+    // Parallel fetch for office countries
+    const officeCountries = await Promise.all(
       (result?.companyOffices ?? []).map((id) => apiGetCountryById(id))
     );
-
-    setCountries(companyOffices);
+    setCountries(officeCountries);
     dispatch(setIsLoading(false));
   };
 
   useEffect(() => {
     getCompanyData();
-  }, []);
+  }, [companyId]); // re-run if companyId changes
 
   return (
-    <div className={styles.mainContainer}>
+    <article className={styles.mainContainer}>
+      {/* Left — company details */}
       <div className={styles.left}>
-        <div>
-          <p className={styles.mainTitle}>About</p>
+
+        {/* About section */}
+        <section aria-labelledby="about-heading">
+          <h2 id="about-heading" className={styles.mainTitle}>About</h2>
           <div
             className={styles.mainDescription}
-            dangerouslySetInnerHTML={{
-              __html: sanitizeRich(company?.description),
-            }}
+            dangerouslySetInnerHTML={{ __html: sanitizeRich(company?.description) }}
           />
-        </div>
-        <div>
-          <p className={styles.title}>Website</p>
-          <a
-            className={styles.link}
-            target="_blank"
-            href={company?.companyWebsite}
-          >
-            {company?.companyWebsite}
-          </a>
-        </div>
+        </section>
+
+        {/* Website */}
+        {company?.companyWebsite && company.companyWebsite !== "N/A" && (
+          <section aria-labelledby="website-heading">
+            <h3 id="website-heading" className={styles.title}>Website</h3>
+            <a
+              className={styles.link}
+              href={company.companyWebsite}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {company.companyWebsite}
+            </a>
+          </section>
+        )}
+
+        {/* Turnover */}
         {company?.showTurnover && (
-          <div>
-            <p className={styles.title}>Turnover</p>
-            <p className={styles.description}>
-              {formatTurnover(company?.turnover)}
-            </p>
-          </div>
+          <section>
+            <h3 className={styles.title}>Turnover</h3>
+            <p className={styles.description}>{formatTurnover(company.turnover)}</p>
+          </section>
         )}
+
+        {/* Product */}
         {company?.productName && (
-          <div>
-            <p className={styles.title}>Name of Product</p>
-            <p className={styles.description}>{company?.productName}</p>
-          </div>
+          <section>
+            <h3 className={styles.title}>Product</h3>
+            <p className={styles.description}>{company.productName}</p>
+          </section>
         )}
+
         {company?.productVersion && (
-          <div>
-            <p className={styles.title}>Product description</p>
+          <section>
+            <h3 className={styles.title}>Product description</h3>
             <div
               className={styles.description}
-              dangerouslySetInnerHTML={{
-                __html: sanitizeRich(company?.productVersion),
-              }}
+              dangerouslySetInnerHTML={{ __html: sanitizeRich(company.productVersion) }}
             />
-          </div>
+          </section>
         )}
-        {answers?.map((answer, index) => (
-          <div key={index}>
-            <p className={styles.title}>{questions?.[index]?.body}</p>
-            <p className={styles.description}>{answer}</p>
-          </div>
-        ))}
+
+        {/* Q&A */}
+        {answers?.length > 0 && (
+          <section aria-labelledby="qa-heading">
+            <h3 id="qa-heading" className={styles.title}>More details</h3>
+            {answers.map((answer, index) => (
+              answer ? (
+                <div key={index}>
+                  <p className={styles.title}>{questions?.[index]?.body}</p>
+                  <p className={styles.description}>{answer}</p>
+                </div>
+              ) : null
+            ))}
+          </section>
+        )}
       </div>
-      <div className={styles.right}>
+
+      {/* Right — logo */}
+      <aside className={styles.right}>
         <Image
-          // width={337.611}
-          // height={181.946}
-          // className={styles.companyImg}
           src={!company?.logo ? companyImg : cld(company?.logo, { w: 600 })}
-          alt=""
+          alt={company?.name ? `${company.name} logo` : "Company logo"}
           width={0}
           height={0}
           sizes="100vw"
-          style={{ width: "80%", height: "auto", maxHeight: "95%" }} // optional
+          style={{ width: "80%", height: "auto", maxHeight: "95%" }}
         />
-      </div>
-      <div className={styles.countriesContainer}>
-        <div>
-          <p className={styles.boldP}>Active In</p>
-        </div>
-        <div className={styles.blueCardsContainer}>
-          {seeMoreActive &&
-            countries?.map((country, index) => (
+      </aside>
+
+      {/* Active In */}
+      {countries?.length > 0 && (
+        <section className={styles.countriesContainer} aria-labelledby="activein-heading">
+          <h3 id="activein-heading" className={styles.boldP}>Active In</h3>
+          <div className={styles.blueCardsContainer}>
+            {(seeMoreActive ? countries : countries.slice(0, 4)).map((country, index) => (
               <div key={index} className={styles.blueCard}>
                 <p className={styles.blueCardP}>{country?.name}</p>
               </div>
             ))}
-          {!seeMoreActive &&
-            countries?.slice(0, 4).map((country, index) => (
-              <div key={index} className={styles.blueCard}>
-                <p className={styles.blueCardP}>{country?.name}</p>
-              </div>
-            ))}
-        </div>
-        {countries?.length > 4 && (
-          <p
-            onClick={() => setSeeMoreActive(!seeMoreActive)}
-            className={styles.seeMoreBlueCards}
-          >
-            {!seeMoreActive ? "See more" : "See less"}
-          </p>
-        )}
-      </div>
-    </div>
+          </div>
+          {countries.length > 4 && (
+            <button
+              onClick={() => setSeeMoreActive(!seeMoreActive)}
+              className={styles.seeMoreBlueCards}
+              style={{ background: "none", border: "none", cursor: "pointer" }}
+            >
+              {seeMoreActive ? "See less" : "See more"}
+            </button>
+          )}
+        </section>
+      )}
+    </article>
   );
 };
 
