@@ -88,32 +88,41 @@ const HeaderCompanyPage = ({ companyId, initialCompany }) => {
             </p>
           </div>
 
-          <div className={styles.categoryCard}>
-            <p className={styles.categoryP}>
-              Sub-Categories:
-              <span className={styles.span}> {subCategories}</span>
-            </p>
-          </div>
+          {subCategories && (
+            <div className={styles.categoryCard}>
+              <p className={styles.categoryP}>
+                Sub-Categories:
+                <span className={styles.span}> {subCategories}</span>
+              </p>
+            </div>
+          )}
 
           <div className={styles.cardsContainer}>
-            <div className={`${styles.card} ${styles.cardLeft}`}>
-              <p className={styles.cardP}>Creation</p>
-              <p className={styles.cardBigP}>{company?.creationDate}</p>
-            </div>
-            <div className={`${styles.card} ${styles.cardRight}`}>
-              <p className={styles.cardP}>Number of employees</p>
-              <p className={styles.cardBigP}>{company?.employees}</p>
-            </div>
-            {!(company?.turnover == 0) && company?.showTurnover && (
+            {company?.creationDate && (
               <div className={`${styles.card} ${styles.cardLeft}`}>
-                <p className={styles.cardP}>Turnover</p>
-                <p className={styles.cardBigP}>{formatTurnover(company?.turnover)}</p>
+                <p className={styles.cardP}>Creation</p>
+                <p className={styles.cardBigP}>{company.creationDate}</p>
               </div>
             )}
-            <div className={`${styles.card} ${styles.cardRight}`}>
-              <p className={styles.cardP}>Headquarters</p>
-              <p className={styles.cardBigP}>{company?.location}</p>
-            </div>
+            {company?.employees && (
+              <div className={`${styles.card} ${styles.cardRight}`}>
+                <p className={styles.cardP}>Number of employees</p>
+                <p className={styles.cardBigP}>{company.employees}</p>
+              </div>
+            )}
+            {/* Hide turnover if 0, null, or "0" (string comparison) */}
+            {company?.showTurnover && company?.turnover && Number(company.turnover) !== 0 && (
+              <div className={`${styles.card} ${styles.cardLeft}`}>
+                <p className={styles.cardP}>Turnover</p>
+                <p className={styles.cardBigP}>{formatTurnover(company.turnover)}</p>
+              </div>
+            )}
+            {company?.location && (
+              <div className={`${styles.card} ${styles.cardRight}`}>
+                <p className={styles.cardP}>Headquarters</p>
+                <p className={styles.cardBigP}>{company.location}</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -11,7 +11,7 @@ const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://treasurymap-v2-product
 const fetchCompanyBySlug = cache(async (slug) => {
   try {
     const res = await fetch(`${url}/api/v1/companies/by-slug/${slug}`, {
-      next: { revalidate: 3600 }, // ISR: revalidate every hour (company data rarely changes)
+      next: { revalidate: 300 }, // ISR: revalidate every 5 min
     });
     if (!res.ok) return null;
     return res.json();
