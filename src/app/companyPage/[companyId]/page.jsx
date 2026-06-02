@@ -1,6 +1,6 @@
 import { url } from "../../service/url";
 import CompanyPageClient from "./CompanyPageClient";
-import { redirect } from "next/navigation";
+import { permanentRedirect } from "next/navigation";
 import { slugify } from "../../utils/slugify";
 
 async function fetchCompany(companyId) {
@@ -49,7 +49,7 @@ const Layout = async ({ params }) => {
   const initialCompany = await fetchCompany(companyId);
   if (initialCompany?.name) {
     const slug = slugify(initialCompany.name);
-    if (slug) redirect(`/providers/${slug}`);
+    if (slug) permanentRedirect(`/providers/${slug}`);
   }
   return (
     <CompanyPageClient
