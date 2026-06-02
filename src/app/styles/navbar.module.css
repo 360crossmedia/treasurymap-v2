@@ -1,209 +1,306 @@
-.navbar {
-  border-radius: 100px;
-  border: 1px solid #eaeaea;
-  background: #eef6fc;
-  display: flex;
-  align-items: center;
-  padding: 24px 20px;
-  margin: 0 56px;
-  text-align: center;
+/* ─── HEADER WRAPPER ─────────────────────────────────────────────────────── */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.90);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 1px 0 #E1E7F1, 0 8px 32px -20px rgba(10, 26, 51, 0.22);
 }
 
-.navbarA {
-  color: #626b80;
+/* ─── NAVBAR ──────────────────────────────────────────────────────────────── */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 38px;
+  max-width: 1560px;
+  margin: 0 auto;
+  gap: 16px;
+}
+
+/* ─── LOGO ────────────────────────────────────────────────────────────────── */
+.logoMark {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  flex-shrink: 0;
   text-decoration: none;
 }
 
-.navbarButton,
-.insightsButton {
-  border-radius: 48px;
-  background: linear-gradient(277deg, #4ab2c4 -0.01%, #094895 94.83%);
-  padding: 10px 37px;
-  color: #fff;
-  border: none;
-  cursor: pointer;
+.logoTreasury {
+  font-size: 22px;
+  font-weight: 400;
+  color: #0A1A33;
+  letter-spacing: -.01em;
+  line-height: 1;
 }
 
-.navbarButtonLogOut {
-  border-radius: 48px;
-  background: #626b80;
-  padding: 10px 37px;
-  color: #fff;
-  border: none;
-  cursor: pointer;
+.logoMap {
+  font-size: 22px;
+  font-weight: 800;
+  color: #0A1A33;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  line-height: 1;
 }
 
+.logoPin {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, #4D8DFF, #2f6fe0);
+  border-radius: 50%;
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(47, 111, 224, .45);
+  flex-shrink: 0;
+}
+
+/* ─── LEFT SIDE ───────────────────────────────────────────────────────────── */
 .navbarLeft {
-  width: 70%;
   display: flex;
   align-items: center;
-  gap: 48px;
-}
-
-.navbarRight {
-  width: 30%;
-  display: flex;
-  justify-content: flex-end;
-  gap: 5%;
+  gap: 28px;
+  flex: 1;
+  min-width: 0;
 }
 
 .navbarLinks {
   display: flex;
-  gap: 62px;
+  align-items: center;
+  gap: 4px;
 }
 
-.navbarLogo {
-  cursor: pointer;
+/* ─── LINK SEPARATOR ─────────────────────────────────────────────────────── */
+.linkSep {
+  display: inline-block;
+  width: 1px;
+  height: 18px;
+  background: #E1E7F1;
+  margin: 0 8px;
+  flex-shrink: 0;
 }
 
-.MobileMenuNavbar {
-  display: none;
+/* ─── NAV LINKS ───────────────────────────────────────────────────────────── */
+.navbarA {
+  position: relative;
+  color: #3a4a66;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 6px 10px;
+  border-radius: 7px;
+  white-space: nowrap;
+  transition: color .2s, background .2s;
 }
 
-.insightsButton {
-  display: none;
+.navbarA:hover {
+  color: #0e2c5c;
+  background: rgba(47, 111, 224, .06);
 }
 
+/* underline on hover */
+.navbarA::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 2px;
+  height: 2px;
+  background: #2f6fe0;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .25s ease;
+}
+.navbarA:hover::after { transform: scaleX(1); }
+
+/* Feature links — slightly bolder */
+.navbarAFeature {
+  font-weight: 600;
+  color: #1e3a6e;
+}
+.navbarAFeature:hover { color: #2f6fe0; }
+
+/* ─── RIGHT SIDE ──────────────────────────────────────────────────────────── */
+.navbarRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* Separator before CTA buttons */
+.ctaSep {
+  display: inline-block;
+  width: 1px;
+  height: 22px;
+  background: #E1E7F1;
+  margin-right: 4px;
+}
+
+/* Make my selection — primary CTA */
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: linear-gradient(135deg, #4D8DFF, #2f6fe0);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 100px;
+  font-weight: 600;
+  font-size: 13.5px;
+  text-decoration: none;
+  box-shadow: 0 6px 18px -6px rgba(47, 111, 224, .65);
+  transition: transform .2s, box-shadow .2s;
+  white-space: nowrap;
+}
+.ctaButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px -6px rgba(47, 111, 224, .75);
+  color: #fff;
+}
+
+/* Multiplayer Map toggle */
 .redButton {
   background: #b30000;
   color: #fff;
-  font-size: 16px;
-  font-weight: bold;
-  padding: 7px 18px;
+  font-size: 13.5px;
+  font-weight: 500;
+  padding: 10px 18px;
   border: none;
-  border-radius: 30px;
+  border-radius: 100px;
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  white-space: nowrap;
+  transition: background .2s, transform .15s;
 }
-
 .redButton::before {
   content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background: url("https://res.cloudinary.com/dq7aof6vb/image/upload/v1736461984/dark-red-background-with-spots-vector_dcuwnn.jpg");
   background-size: cover;
-  opacity: 0.4;
-  z-index: 1;
+  opacity: .35;
   mix-blend-mode: multiply;
 }
+.redButton:hover { background: #cc0000; transform: translateY(-1px); }
+.redButton:active { transform: scale(.96); }
 
-.redButton:hover {
-  background: #cc0000;
-}
-
-.redButton:active {
-  transform: scale(0.95);
-}
-
-.redButton span {
+.spanButton {
   position: relative;
   z-index: 2;
-  color: #ffffff;
-  mix-blend-mode: normal;
-  font-weight: 400;
+  color: #fff;
+  font-weight: 500;
 }
 
+/* Log In */
+.navbarButton {
+  background: #fff;
+  border: 1.5px solid #cdd8ea;
+  color: #1f63b8;
+  padding: 9px 18px;
+  border-radius: 100px;
+  font-weight: 600;
+  font-size: 13.5px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color .2s, color .2s, background .2s;
+}
+.navbarButton:hover {
+  border-color: #2f6fe0;
+  color: #2f6fe0;
+  background: #f4f8ff;
+}
+
+/* Log Out */
+.navbarButtonLogOut {
+  background: #fff;
+  border: 1.5px solid #cdd8ea;
+  color: #626b80;
+  padding: 9px 18px;
+  border-radius: 100px;
+  font-weight: 600;
+  font-size: 13.5px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color .2s, color .2s;
+}
+.navbarButtonLogOut:hover { border-color: #626b80; }
+
+/* ─── MOBILE ──────────────────────────────────────────────────────────────── */
+.logoNavbar  { display: none; }
+.MobileMenuNavbar { display: none; }
+.navbarLogo  { cursor: pointer; }
+
 @media screen and (max-width: 1090px) {
-  .navbarLinks {
-    gap: 1rem;
-    margin-right: 1rem;
-  }
-  .navbarLeft {
-    gap: 1rem;
-  }
-  .navbarRight {
-    width: 25%;
-  }
+  .navbarLinks { gap: 2px; }
+  .navbar { padding: 14px 24px; }
+  .linkSep { margin: 0 4px; }
 }
 
 @media screen and (max-width: 925px) {
+  .logoNavbar {
+    display: flex;
+    align-items: center;
+  }
   .MobileMenuNavbar {
-    display: inherit;
+    display: block;
     cursor: pointer;
   }
-
-  .navbarA {
-    display: none;
-  }
-
-  .navbarLeft {
-    width: inherit;
-    display: inline;
-  }
-
+  .navbarLinks { display: none; }
   .navbar {
     justify-content: space-between;
-    margin: 0 17px;
-    height: 44px;
-    padding: 0px 16px;
+    padding: 0 16px;
+    height: 54px;
   }
-
-  .navbarButton,
-  .insightsButton {
-    padding: 6.583px 24.358px;
-    gap: 5.267px;
-    border-radius: 31.6px;
-    font-size: 10.533px;
-    font-weight: 500;
-  }
-
-  .insightsButton {
-    display: inherit;
-    margin: 0 auto;
-    margin-top: 10px;
-  }
-
-  .navbarButtonLogOut {
-    padding: 6.583px 24.358px;
-    gap: 5.267px;
-    border-radius: 31.6px;
-    font-size: 10.533px;
-    font-weight: 500;
-  }
-
-  .navbarLogo {
-    width: 114px;
-    gap: 30.643px;
-  }
-
-  .navbarRight,
-  .navbarLeft,
-  .logoNavbar {
-    width: 33%;
-  }
+  .navbarLeft  { gap: 12px; flex: unset; }
+  .navbarRight { gap: 8px; }
+  .ctaButton   { display: none; }
+  .ctaSep      { display: none; }
 
   .navbarLinksMobile {
-    transition: all 0.5s ease-out;
-    position: absolute;
+    display: flex;
     flex-direction: column;
-    background: #eef6fc;
-    left: 35px;
-    gap: 5px;
-    border-radius: 12px;
+    position: absolute;
+    top: 54px;
+    left: 16px;
+    right: 16px;
+    background: rgba(255, 255, 255, .97);
+    backdrop-filter: blur(12px);
+    border: 1px solid #E1E7F1;
+    border-radius: 14px;
+    box-shadow: 0 12px 40px -8px rgba(10, 26, 51, .18);
+    padding: 6px 0;
     z-index: 100;
-    .navbarA {
-      display: inherit;
-      border-bottom: 1px solid #c1c1c1;
-      padding: 8px 16px;
-    }
+    gap: 0;
   }
+  .navbarLinksMobile .navbarA {
+    display: block;
+    padding: 11px 20px;
+    border-bottom: 1px solid #f0f3f8;
+    border-radius: 0;
+    font-size: 15px;
+  }
+  .navbarLinksMobile .navbarA:last-child { border-bottom: none; }
+  .navbarLinksMobile .linkSep { display: none; }
+
+  .navbarButton, .navbarButtonLogOut {
+    padding: 7px 14px;
+    font-size: 13px;
+  }
+  .redButton { padding: 7px 14px; font-size: 13px; }
 }
 
 @media screen and (max-width: 520px) {
-  .navbarButton,
-  .redButton,
-  .navbarButtonLogOut {
-    padding: 4px 11px;
-    font-size: 0.6rem;
-  }
-  .navbar {
-    padding: 0 7px;
-  }
-  .navbarLogo {
-    width: 95px;
+  .navbar { padding: 0 12px; }
+  .logoTreasury, .logoMap { font-size: 18px; }
+  .logoPin { width: 20px; height: 20px; }
+  .navbarButton, .redButton, .navbarButtonLogOut {
+    padding: 6px 11px;
+    font-size: 12px;
   }
 }

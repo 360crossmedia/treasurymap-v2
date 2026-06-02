@@ -1,5 +1,8 @@
+/* ─── VARIABLES ─────────────────────────────────────────────────────────── */
+/* Primary: aligned with the new navbar (#2f6fe0 blue) */
+
 .page {
-  background: #eef6fc;
+  background: #f0f4fa;
   min-height: 100vh;
   padding-top: 32px;
   padding-bottom: 64px;
@@ -11,14 +14,15 @@
   padding: 0 16px;
 }
 
+/* ─── HERO ───────────────────────────────────────────────────────────────── */
 .hero {
   text-align: center;
   margin-bottom: 32px;
-  padding: 24px 16px;
+  padding: 32px 16px 24px;
 }
 
 .heroTitle {
-  color: #094895;
+  color: #0e2c5c;
   font-size: 2.2rem;
   font-weight: 700;
   margin-bottom: 12px;
@@ -26,34 +30,43 @@
 }
 
 .heroSubtitle {
-  color: #626b80;
+  color: #5a6a85;
   font-size: 1.05rem;
   max-width: 620px;
   margin: 0 auto;
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
+/* ─── CARDS ──────────────────────────────────────────────────────────────── */
 .card {
   background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(9, 72, 149, 0.08);
-  padding: 28px 28px 24px 28px;
+  border-radius: 14px;
+  border: 1px solid #e8edf5;
+  box-shadow: 0 2px 16px rgba(47, 111, 224, 0.07);
+  padding: 28px 28px 24px;
   margin-bottom: 20px;
+  transition: box-shadow .2s;
+}
+
+.card:focus-within {
+  box-shadow: 0 4px 24px rgba(47, 111, 224, 0.12);
 }
 
 .sectionTitle {
-  color: #094895;
-  font-size: 1.15rem;
+  color: #0e2c5c;
+  font-size: 1.1rem;
   font-weight: 700;
-  margin: 0 0 4px 0;
+  margin: 0 0 4px;
 }
 
 .sectionSubtitle {
-  color: #626b80;
+  color: #5a6a85;
   font-size: 0.9rem;
   margin-bottom: 18px;
+  line-height: 1.5;
 }
 
+/* ─── FIELDS ─────────────────────────────────────────────────────────────── */
 .field {
   margin-bottom: 20px;
 }
@@ -61,28 +74,28 @@
 .fieldLabel {
   display: block;
   font-weight: 600;
-  color: #2b2b2b;
+  color: #1e3a5f;
   margin-bottom: 8px;
-  font-size: 0.97rem;
+  font-size: 0.95rem;
 }
 
 .fieldHint {
   font-size: 0.82rem;
-  color: #888;
+  color: #9aa3b5;
   margin-top: 4px;
   font-style: italic;
 }
 
 .required {
-  color: #cc0000;
+  color: #e53935;
   margin-left: 2px;
 }
 
 .optional {
   font-size: 0.65em;
   font-weight: 500;
-  color: #888;
-  background: #f0f2f5;
+  color: #9aa3b5;
+  background: #f0f4f9;
   padding: 2px 8px;
   border-radius: 10px;
   margin-left: 10px;
@@ -91,140 +104,70 @@
   vertical-align: middle;
 }
 
-/* Compare Tools — vendor picker grid */
-.vendorPickerGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 12px;
-  margin-top: 8px;
-}
-
-.vendorPickerCard {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 8px;
-  border: 1px solid #d4dae5;
-  border-radius: 8px;
-  background: #fff;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  font: inherit;
-  text-align: center;
-}
-
-.vendorPickerCard:hover:not(:disabled) {
-  border-color: #06B6D4;
-  box-shadow: 0 2px 8px rgba(6,182,212,0.15);
-  transform: translateY(-1px);
-}
-
-.vendorPickerCard:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.vendorPickerCardSelected {
-  border-color: #06B6D4;
-  border-width: 2px;
-  background: #ECFEFF;
-  box-shadow: 0 0 0 1px #06B6D4, 0 4px 12px rgba(6,182,212,0.2);
-}
-
-.vendorPickerLogo {
-  max-width: 70%;
-  max-height: 36px;
-  object-fit: contain;
-}
-
-.vendorPickerLogoPlaceholder {
-  width: 36px;
-  height: 36px;
-  background: #ECFEFF;
-  color: #0E7490;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 11px;
-}
-
-.vendorPickerName {
-  font-size: 13px;
-  font-weight: 600;
-  color: #1f2937;
-  line-height: 1.25;
-}
-
-.vendorPickerCheck {
-  position: absolute;
-  top: 6px;
-  right: 8px;
-  color: #06B6D4;
-  font-weight: 700;
-  font-size: 14px;
-}
-
+/* ─── INPUTS ─────────────────────────────────────────────────────────────── */
 .input,
 .textarea {
   width: 100%;
-  border: 1px solid #d4dae5;
-  border-radius: 6px;
-  padding: 10px 12px;
+  border: 1.5px solid #dce3ef;
+  border-radius: 8px;
+  padding: 10px 14px;
   font-size: 0.95rem;
   background: #fff;
-  transition: border-color 0.15s;
+  color: #1e3a5f;
+  transition: border-color .18s, box-shadow .18s;
+  font-family: inherit;
 }
 
 .input:focus,
 .textarea:focus {
   outline: none;
-  border-color: #094895;
-  box-shadow: 0 0 0 3px rgba(9, 72, 149, 0.1);
+  border-color: #2f6fe0;
+  box-shadow: 0 0 0 3px rgba(47, 111, 224, 0.12);
 }
 
 .textarea {
   min-height: 80px;
   resize: vertical;
-  font-family: inherit;
 }
 
+/* ─── PILLS (radio / checkbox options) ───────────────────────────────────── */
 .radioGroup,
 .checkGroup {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
 }
 
 .radioOption,
 .checkOption {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 14px;
-  border: 1px solid #d4dae5;
+  gap: 7px;
+  padding: 8px 16px;
+  border: 1.5px solid #dce3ef;
   border-radius: 999px;
   cursor: pointer;
   background: #fff;
-  font-size: 0.92rem;
-  transition: all 0.15s;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #3a4a66;
+  transition: all .15s;
   user-select: none;
 }
 
 .radioOption:hover,
 .checkOption:hover {
-  border-color: #094895;
-  background: #f0f6fb;
+  border-color: #2f6fe0;
+  background: #f0f5ff;
+  color: #2f6fe0;
 }
 
 .radioOptionActive,
 .checkOptionActive {
-  background: #094895 !important;
+  background: linear-gradient(135deg, #4D8DFF, #2f6fe0) !important;
   color: #fff !important;
-  border-color: #094895 !important;
+  border-color: #2f6fe0 !important;
+  box-shadow: 0 3px 10px -3px rgba(47,111,224,.45) !important;
 }
 
 .checkGroup input,
@@ -236,6 +179,7 @@
   border-radius: 4px;
   position: relative;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .radioGroup input {
@@ -263,6 +207,7 @@
   background: currentColor;
 }
 
+/* ─── CATEGORY GRID ──────────────────────────────────────────────────────── */
 .categoryGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -274,35 +219,307 @@
   align-items: flex-start;
   gap: 10px;
   padding: 12px 14px;
-  border: 1px solid #d4dae5;
-  border-radius: 8px;
+  border: 1.5px solid #dce3ef;
+  border-radius: 10px;
   cursor: pointer;
   background: #fff;
   font-size: 0.9rem;
-  transition: all 0.15s;
+  font-weight: 500;
+  color: #3a4a66;
+  transition: all .15s;
+  line-height: 1.4;
 }
 
 .catLabel:hover {
-  border-color: #094895;
-  background: #f0f6fb;
+  border-color: #2f6fe0;
+  background: #f0f5ff;
+  color: #2f6fe0;
 }
 
 .catLabelActive {
-  background: #f0f6fb !important;
-  border-color: #094895 !important;
-  border-width: 2px;
-  padding: 11px 13px;
+  background: #eff5ff !important;
+  border-color: #2f6fe0 !important;
+  border-width: 2px !important;
+  color: #2f6fe0 !important;
+  padding: 11px 13px !important;
 }
 
 .catLabel input {
-  margin-top: 3px;
+  margin-top: 2px;
   flex-shrink: 0;
+  accent-color: #2f6fe0;
 }
 
+/* ─── VENDOR PICKER ──────────────────────────────────────────────────────── */
+.vendorPickerGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.vendorPickerCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 8px 12px;
+  border: 1.5px solid #dce3ef;
+  border-radius: 12px;
+  background: #fff;
+  cursor: pointer;
+  transition: all .18s ease;
+  font: inherit;
+  text-align: center;
+}
+
+.vendorPickerCard:hover:not(:disabled) {
+  border-color: #2f6fe0;
+  box-shadow: 0 4px 16px rgba(47,111,224,.14);
+  transform: translateY(-2px);
+}
+
+.vendorPickerCard:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.vendorPickerCardSelected {
+  border-color: #2f6fe0 !important;
+  border-width: 2px !important;
+  background: #eff5ff !important;
+  box-shadow: 0 0 0 2px rgba(47,111,224,.18), 0 6px 18px rgba(47,111,224,.16) !important;
+  transform: translateY(-2px) !important;
+}
+
+.vendorPickerLogo {
+  max-width: 70%;
+  max-height: 38px;
+  object-fit: contain;
+}
+
+.vendorPickerLogoPlaceholder {
+  width: 38px;
+  height: 38px;
+  background: #eff5ff;
+  color: #2f6fe0;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 11px;
+}
+
+.vendorPickerName {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #1e3a5f;
+  line-height: 1.25;
+}
+
+.vendorPickerCheck {
+  position: absolute;
+  top: 7px;
+  right: 9px;
+  width: 18px;
+  height: 18px;
+  background: #2f6fe0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* ─── VENDOR COUNTER BADGE ───────────────────────────────────────────────── */
+.vendorCounter {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #4D8DFF, #2f6fe0);
+  color: #fff;
+  border-radius: 100px;
+  padding: 5px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px -4px rgba(47,111,224,.5);
+}
+
+.vendorCounterEmpty {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f0f4f9;
+  color: #9aa3b5;
+  border-radius: 100px;
+  padding: 5px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid #e1e7f1;
+}
+
+/* ─── PROGRESS BAR ───────────────────────────────────────────────────────── */
+.progressWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 28px;
+  padding: 0 16px;
+  overflow-x: auto;
+}
+
+.progressStep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  flex: 1;
+  min-width: 60px;
+}
+
+.progressDot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #dce3ef;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #9aa3b5;
+  z-index: 1;
+  transition: all .3s;
+}
+
+.progressDotActive {
+  border-color: #2f6fe0;
+  background: #2f6fe0;
+  color: #fff;
+  box-shadow: 0 0 0 4px rgba(47,111,224,.15);
+}
+
+.progressDotDone {
+  border-color: #2f6fe0;
+  background: #eff5ff;
+  color: #2f6fe0;
+}
+
+.progressLabel {
+  font-size: 11px;
+  color: #9aa3b5;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.progressLabelActive {
+  color: #2f6fe0;
+  font-weight: 700;
+}
+
+.progressLine {
+  position: absolute;
+  top: 13px;
+  left: calc(50% + 14px);
+  width: calc(100% - 28px);
+  height: 2px;
+  background: #dce3ef;
+  z-index: 0;
+}
+
+.progressLineDone {
+  background: #2f6fe0;
+}
+
+/* ─── CATEGORY SELECTOR (Compare Tools — custom styled select) ───────────── */
+.catSelectWrap {
+  position: relative;
+}
+
+.catSelectTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid #dce3ef;
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #3a4a66;
+  transition: border-color .18s, box-shadow .18s;
+  user-select: none;
+}
+
+.catSelectTrigger:hover,
+.catSelectTriggerOpen {
+  border-color: #2f6fe0;
+  box-shadow: 0 0 0 3px rgba(47,111,224,.1);
+}
+
+.catSelectTriggerSelected {
+  color: #0e2c5c;
+  font-weight: 600;
+}
+
+.catSelectDropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1.5px solid #dce3ef;
+  border-radius: 12px;
+  box-shadow: 0 12px 40px -8px rgba(47,111,224,.18);
+  z-index: 100;
+  max-height: 280px;
+  overflow-y: auto;
+  animation: dropIn .16s ease;
+}
+
+@keyframes dropIn {
+  from { transform: translateY(-6px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.catSelectOption {
+  padding: 10px 16px;
+  font-size: 0.92rem;
+  color: #3a4a66;
+  cursor: pointer;
+  border-bottom: 1px solid #f3f5f9;
+  transition: background .1s;
+  font-weight: 500;
+}
+
+.catSelectOption:last-child {
+  border-bottom: none;
+}
+
+.catSelectOption:hover {
+  background: #f0f5ff;
+  color: #2f6fe0;
+}
+
+.catSelectOptionActive {
+  background: #eff5ff;
+  color: #2f6fe0;
+  font-weight: 700;
+}
+
+/* ─── GDPR ───────────────────────────────────────────────────────────────── */
 .gdprBox {
   background: #fff;
-  border: 1px solid #d4dae5;
-  border-radius: 8px;
+  border: 1.5px solid #dce3ef;
+  border-radius: 10px;
   padding: 14px 16px;
   margin-top: 8px;
   margin-bottom: 8px;
@@ -314,8 +531,8 @@
   gap: 10px;
   cursor: pointer;
   font-size: 0.88rem;
-  color: #2b2b2b;
-  line-height: 1.5;
+  color: #3a4a66;
+  line-height: 1.55;
 }
 
 .gdprLabel input[type="checkbox"] {
@@ -324,21 +541,26 @@
   width: 16px;
   height: 16px;
   cursor: pointer;
-  accent-color: #094895;
+  accent-color: #2f6fe0;
 }
 
 .gdprLabel a {
-  color: #094895;
+  color: #2f6fe0;
   text-decoration: underline;
 }
 
+/* ─── SUBMIT ─────────────────────────────────────────────────────────────── */
 .submitRow {
   text-align: center;
   margin-top: 28px;
 }
 
 .submitBtn {
-  background: #cc0000;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #4D8DFF, #2f6fe0);
   color: #fff;
   border: none;
   padding: 14px 48px;
@@ -346,13 +568,14 @@
   font-weight: 700;
   border-radius: 999px;
   cursor: pointer;
-  transition: background 0.15s, transform 0.05s;
+  transition: transform .2s, box-shadow .2s;
+  box-shadow: 0 6px 20px -6px rgba(47,111,224,.65);
   letter-spacing: 0.3px;
-  text-transform: uppercase;
 }
 
 .submitBtn:hover:not(:disabled) {
-  background: #b30000;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px -6px rgba(47,111,224,.7);
 }
 
 .submitBtn:active:not(:disabled) {
@@ -360,26 +583,29 @@
 }
 
 .submitBtn:disabled {
-  background: #c8c8c8;
+  background: #c8d0dc;
+  box-shadow: none;
   cursor: not-allowed;
 }
 
 .submitNote {
-  color: #626b80;
+  color: #9aa3b5;
   font-size: 0.85rem;
   margin-top: 12px;
 }
 
+/* ─── ERRORS ─────────────────────────────────────────────────────────────── */
 .errorBox {
-  background: #fff0f0;
-  border: 1px solid #cc0000;
-  color: #cc0000;
+  background: #fff5f5;
+  border: 1.5px solid #fca5a5;
+  color: #b91c1c;
   padding: 12px 16px;
-  border-radius: 8px;
+  border-radius: 10px;
   margin-bottom: 16px;
   font-size: 0.92rem;
 }
 
+/* ─── SPINNER ────────────────────────────────────────────────────────────── */
 .spinner {
   display: inline-block;
   width: 14px;
@@ -393,64 +619,56 @@
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
 
+/* ─── RESPONSIVE ─────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .heroTitle {
-    font-size: 1.6rem;
-  }
-  .card {
-    padding: 20px 18px;
-  }
-  .submitBtn {
-    width: 100%;
-    padding: 14px 24px;
-  }
-  .categoryGrid {
-    grid-template-columns: 1fr;
-  }
+  .heroTitle { font-size: 1.7rem; }
+  .card { padding: 20px 18px; }
+  .submitBtn { width: 100%; padding: 14px 24px; }
+  .categoryGrid { grid-template-columns: 1fr; }
+  .vendorPickerGrid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
 }
 
-/* Confirmation page */
+/* ─── CONFIRMATION PAGE ──────────────────────────────────────────────────── */
 .confirmCard {
   background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(9, 72, 149, 0.08);
+  border-radius: 16px;
+  border: 1px solid #e8edf5;
+  box-shadow: 0 4px 24px rgba(47, 111, 224, 0.1);
   padding: 48px 32px;
   text-align: center;
-  margin: 60px auto;
-  max-width: 620px;
+  margin: 48px auto;
+  max-width: 600px;
 }
 
 .confirmIcon {
   font-size: 3.5rem;
-  color: #4ab2c4;
+  color: #2f6fe0;
   margin-bottom: 18px;
 }
 
 .confirmTitle {
-  color: #094895;
+  color: #0e2c5c;
   font-size: 1.6rem;
   font-weight: 700;
   margin-bottom: 12px;
 }
 
 .confirmEmail {
-  color: #094895;
+  color: #2f6fe0;
   font-weight: 700;
 }
 
 .confirmText {
-  color: #2b2b2b;
+  color: #3a4a66;
   line-height: 1.55;
   margin-bottom: 8px;
 }
 
 .confirmHint {
-  color: #888;
+  color: #9aa3b5;
   font-size: 0.88rem;
   margin-top: 24px;
   font-style: italic;
@@ -459,13 +677,13 @@
 .confirmHomeLink {
   display: inline-block;
   margin-top: 24px;
-  color: #094895;
+  color: #2f6fe0;
   text-decoration: none;
   font-weight: 600;
-  border-bottom: 1px solid #094895;
+  border-bottom: 1px solid transparent;
+  transition: border-color .2s;
 }
 
 .confirmHomeLink:hover {
-  color: #cc0000;
-  border-bottom-color: #cc0000;
+  border-bottom-color: #2f6fe0;
 }

@@ -26,11 +26,22 @@ export async function generateMetadata({ params }) {
   const company = await fetchCompanyBySlug(slug);
   if (!company) return {};
 
-  const name        = company.name || slug;
-  const rawDesc     = (company.description || "").replace(/<[^>]*>/g, "").trim();
-  const description = rawDesc.length > 10
-    ? rawDesc.slice(0, 200)
-    : `${name} is listed on the TreasuryMap Treasury Technology Landscape.`;
+  const name    = company.name || slug;
+  const rawDesc = (company.description || "")
+    .replace(/<[^>]*>/g, "")
+    .replace(/\s+/g, " ")
+    .replace(/^N\/A.*/i, "")
+    .trim();
+  // Prefer the first sentence; fall back to a generated description
+  let description;
+  if (rawDesc.length > 20) {
+    const firstSentence = rawDesc.split(/(?<=[.!?])\s/)[0];
+    description = (firstSentence.length > 60 && firstSentence.length < 180
+      ? firstSentence
+      : rawDesc.slice(0, 160)).trim();
+  } else {
+    description = `${name} on the TreasuryMap Treasury Technology Landscape — categories, profile, and insights.`;
+  }
 
   const canonical = `${SITE}/providers/${slugify(name)}`;
   const image     = company.logo || undefined;

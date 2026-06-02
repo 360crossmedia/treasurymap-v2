@@ -1,8 +1,7 @@
 "use client";
 import styles from "../styles/navbar.module.css";
-import navbarlogo from "../assets/navbarlogo.svg";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import MobileMenuNavbar from "../assets/MobileMenuNavbar.svg";
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -10,116 +9,105 @@ import { setCompanyId } from "../store/slices/companyToUpdate.slice";
 import { setUser } from "../store/slices/user.slice";
 import { usePathname } from "next/navigation";
 
+const PinIcon = () => (
+  <span className={styles.logoPin}>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 22s7-6.2 7-12A7 7 0 0 0 5 10c0 5.8 7 12 7 12Z"/>
+      <circle cx="12" cy="10" r="2.3" fill="#fff"/>
+    </svg>
+  </span>
+);
+
 const Navbar = ({ buttonLabel, multiplayerMap, set, rotate }) => {
   const pathname = usePathname();
-  const router = useRouter();
+  const router   = useRouter();
   const dispatch = useDispatch();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(undefined);
-  const [isDesktop, setIsDesktop] = useState();
+  const [loggedIn,   setLoggedIn]   = useState(undefined);
+  const [isDesktop,  setIsDesktop]  = useState();
 
   useEffect(() => {
-    let userFound = localStorage.getItem("userId");
-    if (userFound) {
-      setLoggedIn(true);
-    } else {
-      setLoggedIn(false);
-    }
+    setLoggedIn(!!localStorage.getItem("userId"));
   }, []);
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsDesktop(window.innerWidth >= 1140);
-    };
-    handleResize();
+    const fn = () => setIsDesktop(window.innerWidth >= 1140);
+    fn();
+    window.addEventListener("resize", fn);
+    return () => window.removeEventListener("resize", fn);
   }, []);
 
-  const redButtonLabel = (isDesktop, multiplayerMap) => {
-    if (isDesktop) {
-      if (!multiplayerMap) return "Treasury Map";
-      else return "Multiplayer Map";
-    } else {
-      if (!multiplayerMap) return "TM";
-      else return "MP";
-    }
+  const redLabel = () => {
+    if (isDesktop) return !multiplayerMap ? "Treasury Map" : "Multiplayer Map";
+    return !multiplayerMap ? "TM" : "MP";
   };
 
   return (
-    <>
+    <header className={styles.header}>
       <nav className={styles.navbar}>
+
+        {/* ── Mobile hamburger ── */}
         <div className={styles.logoNavbar}>
           <Image
             className={styles.MobileMenuNavbar}
-            src={MobileMenuNavbar}
-            alt="logo"
-            onClick={() => {
-              setIsMenuOpen(!isMenuOpen);
-              console.log(isMenuOpen);
-            }}
+            src={MobileMenuNavbar} alt="menu"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
           />
         </div>
-        <div className={styles.navbarLeft}>
-          <Image
-            className={styles.navbarLogo}
-            onClick={() => router.push("/")}
-            src={navbarlogo}
-            alt="logo"
-          />
-          <div
-            className={`${styles.navbarLinks} ${
-              isMenuOpen ? styles.navbarLinksMobile : ""
-            }`}
-          >
-            {loggedIn ? (
-              <a className={styles.navbarA} href="/dashboard">
-                Admin Dashboard
-              </a>
-            ) : (
-              <a className={styles.navbarA} href="/signup">
-                Be on the map
-              </a>
-            )}
 
-            <a className={styles.navbarA} href="/contactUs">
-              Contact us
-            </a>
-            <a className={styles.navbarA} href="/insights">
-              Insights
-            </a>
-            <a className={styles.navbarA} href="/get-my-list">
-              Get my Long List
-            </a>
-            <a className={styles.navbarA} href="/compare-tools">
-              Compare Tools
-            </a>
+        {/* ── Logo ── */}
+        <div className={styles.navbarLeft}>
+          <div className={styles.logoMark} onClick={() => router.push("/")}>
+            <span className={styles.logoTreasury}>Treasury</span>
+            <span className={styles.logoMap}>MAP</span>
+            <PinIcon />
+          </div>
+
+          {/* ── Nav links ── */}
+          <div className={`${styles.navbarLinks} ${isMenuOpen ? styles.navbarLinksMobile : ""}`}>
+            {/* Informational links */}
+            {loggedIn && (
+              <a className={styles.navbarA} href="/dashboard">Admin Dashboard</a>
+            )}
+            <a className={styles.navbarA} href="/contactUs">Contact us</a>
+            {/* Separator */}
+            <span className={styles.linkSep} />
+
+            {/* Feature links */}
+            <a className={`${styles.navbarA} ${styles.navbarAFeature}`} href="/insights">Insights</a>
+            <a className={`${styles.navbarA} ${styles.navbarAFeature}`} href="/get-my-list">Get my Long List</a>
+            <a className={`${styles.navbarA} ${styles.navbarAFeature}`} href="/compare-tools">Compare Tools</a>
           </div>
         </div>
+
+        {/* ── Right CTAs ── */}
         <div className={styles.navbarRight}>
+          <span className={styles.ctaSep} />
+
+          <a className={styles.ctaButton} href="/make-my-selection">
+            Make my selection
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M13 6l6 6-6 6"/>
+            </svg>
+          </a>
+
           <button
-            onClick={() => {
-              if (set) rotate();
-              else router.push("/");
-            }}
+            onClick={() => { if (set) rotate(); else router.push("/"); }}
             className={styles.redButton}
           >
-            <span className={styles.spanButton}>
-              {redButtonLabel(isDesktop, multiplayerMap)}
-            </span>
+            <span className={styles.spanButton}>{redLabel()}</span>
           </button>
-          {loggedIn !== undefined &&
-            (loggedIn ? (
+
+          {loggedIn !== undefined && (
+            loggedIn ? (
               <button
                 onClick={() => {
                   dispatch(setCompanyId(false));
                   dispatch(setUser(0));
                   localStorage.removeItem("userId");
                   localStorage.removeItem("companyId");
-
-                  if (pathname === "/") {
-                    window.location.reload();
-                  } else {
-                    router.push("/");
-                  }
+                  pathname === "/" ? window.location.reload() : router.push("/");
                 }}
                 className={styles.navbarButtonLogOut}
               >
@@ -127,25 +115,17 @@ const Navbar = ({ buttonLabel, multiplayerMap, set, rotate }) => {
               </button>
             ) : (
               <button
-                onClick={() =>
-                  buttonLabel == "Sign up"
-                    ? router.push("/signup")
-                    : router.push("/login")
-                }
+                onClick={() => buttonLabel === "Sign up" ? router.push("/signup") : router.push("/login")}
                 className={styles.navbarButton}
               >
                 {buttonLabel}
               </button>
-            ))}
+            )
+          )}
         </div>
+
       </nav>
-      <button
-        onClick={() => router.push("/insights")}
-        className={styles.insightsButton}
-      >
-        Go to Insights Page
-      </button>
-    </>
+    </header>
   );
 };
 
