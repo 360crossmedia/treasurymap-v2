@@ -4,24 +4,27 @@ import axios from "axios";
 import styles from "../styles/Insights.module.css";
 import InsightsCard from "./InsightsCard";
 import { truncateHtmlString } from "../utils";
+import { publicationHref } from "../utils/slugify";
 import { url } from "../service/url";
 import { apiGetFullMainPublications } from "../service/apiGetFullMainPublications";
 
 const Insights = () => {
   const [pubs, setPubs]   = useState(null); // null = loading
   const [error, setError] = useState(false);
+  const [companyById, setCompanyById] = useState({}); // companyId -> name (for SEO URLs)
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
-        // Combine featured + all publications, dedupe, sort newest-first so the
-        // most recent articles are always at the top of the page.
-        const [featured, all] = await Promise.all([
+        const [featured, all, companies] = await Promise.all([
           apiGetFullMainPublications(),
           axios.get(`${url}/api/v1/publications`).then((r) => r.data).catch(() => []),
+          axios.get(`${url}/api/v1/companies`).then((r) => r.data).catch(() => []),
         ]);
         if (cancelled) return;
+        setCompanyById(Object.fromEntries((companies || []).map((c) => [c.id, c.name])));
+        // Combine featured + all, dedupe, sort newest-first.
         const merged = new Map();
         [...(featured || []), ...(all || [])].forEach((p) => {
           if (!p || !p.coverImage) return;
@@ -72,7 +75,7 @@ const Insights = () => {
   const hero = pubs[0];
   const rest = pubs.slice(1);
   const heroVideo = !!hero.url;
-  const heroHref = heroVideo ? `/publication/video/${hero.id}` : `/publication/article/${hero.id}`;
+  const heroHref = publicationHref(hero, companyById[hero.companyId]);
 
   return (
     <div className={styles.container}>
@@ -93,7 +96,13 @@ const Insights = () => {
         <>
           <h3 className={styles.sectionTitle}>Latest insights</h3>
           <div className={styles.grid}>
-            {rest.map((p) => <InsightsCard key={`${p.url ? "v" : "a"}-${p.id}`} publication={p} />)}
+            {rest.map((p) => (
+              <InsightsCard
+                key={`${p.url ? "v" : "a"}-${p.id}`}
+                publication={p}
+                companyName={companyById[p.companyId]}
+              />
+            ))}
           </div>
         </>
       )}

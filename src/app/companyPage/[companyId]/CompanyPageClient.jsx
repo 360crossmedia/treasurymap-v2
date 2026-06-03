@@ -199,7 +199,7 @@ export default function CompanyPageClient({ companyId, initialCompany, subcatego
           <div className={styles.main}>
             {isOverview
               ? <Overview companyId={companyId} initialCompany={company} qa={qa} />
-              : <MediaZone companyId={companyId} />}
+              : <MediaZone companyId={companyId} companyName={company?.name} />}
           </div>
 
           {/* Side: website + subcategories + active in (key facts removed —

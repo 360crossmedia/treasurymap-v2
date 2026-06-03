@@ -1,11 +1,12 @@
 "use client";
 import styles from "../styles/Insights.module.css";
 import { truncateHtmlString } from "../utils";
+import { publicationHref } from "../utils/slugify";
 
-const InsightsCard = ({ publication }) => {
+const InsightsCard = ({ publication, companyName }) => {
   const p = publication || {};
   const isVideo = !!p.url;
-  const href = isVideo ? `/publication/video/${p.id}` : `/publication/article/${p.id}`;
+  const href = publicationHref(p, companyName);
   const excerpt = isVideo
     ? truncateHtmlString(p.introduction || "", 130)
     : truncateHtmlString(p.body || p.introduction || "", 130);

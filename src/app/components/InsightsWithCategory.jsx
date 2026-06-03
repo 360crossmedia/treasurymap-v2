@@ -1,7 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
+import axios from "axios";
 import styles from "../styles/Insights.module.css";
 import InsightsCard from "./InsightsCard";
+import { url } from "../service/url";
 import { apiGetCategoryById } from "../service/apiGetCategoryById";
 import { apiGetPublicationsByCategoryId } from "../service/apiGetPublicationsByCategoryId";
 import { formatCategoryName } from "../utils";
@@ -9,16 +11,19 @@ import { formatCategoryName } from "../utils";
 const InsightsWithCategory = ({ categoryId }) => {
   const [category, setCategory] = useState(null);
   const [pubs, setPubs]         = useState(null); // null = loading
+  const [companyById, setCompanyById] = useState({});
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const [cat, list] = await Promise.all([
+      const [cat, list, companies] = await Promise.all([
         apiGetCategoryById(categoryId),
         apiGetPublicationsByCategoryId(categoryId),
+        axios.get(`${url}/api/v1/companies`).then((r) => r.data).catch(() => []),
       ]);
       if (cancelled) return;
       setCategory(cat);
+      setCompanyById(Object.fromEntries((companies || []).map((c) => [c.id, c.name])));
       setPubs(Array.isArray(list) ? list.filter((p) => p?.live && p?.coverImage) : []);
     })();
     return () => { cancelled = true; };
@@ -48,7 +53,9 @@ const InsightsWithCategory = ({ categoryId }) => {
         </div>
       ) : (
         <div className={styles.grid}>
-          {pubs.map((p) => <InsightsCard key={`${p.url ? "v" : "a"}-${p.id}`} publication={p} />)}
+          {pubs.map((p) => (
+            <InsightsCard key={`${p.url ? "v" : "a"}-${p.id}`} publication={p} companyName={companyById[p.companyId]} />
+          ))}
         </div>
       )}
     </div>

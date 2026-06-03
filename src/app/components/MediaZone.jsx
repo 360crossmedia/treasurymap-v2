@@ -5,7 +5,7 @@ import { apiGetAllVideosByCompanyId } from "../service/apiGetAllVideosByCompanyI
 import { apiGetAllArticlesByCompanyId } from "../service/apiGetAllArticlesByCompanyId";
 import InsightsCard from "./InsightsCard";
 
-const MediaZone = ({ companyId }) => {
+const MediaZone = ({ companyId, companyName }) => {
   const [videos,   setVideos]   = useState([]);
   const [articles, setArticles] = useState([]);
 
@@ -34,8 +34,8 @@ const MediaZone = ({ companyId }) => {
       <h2 className={styles.sectionH2}>Insights &amp; media</h2>
       {hasMedia ? (
         <div className={styles.mediaGrid}>
-          {articles.map((article, i) => <InsightsCard key={`a-${i}`} publication={article} />)}
-          {videos.map((video, i) => <InsightsCard key={`v-${i}`} publication={video} />)}
+          {articles.map((article, i) => <InsightsCard key={`a-${i}`} publication={article} companyName={companyName} />)}
+          {videos.map((video, i) => <InsightsCard key={`v-${i}`} publication={video} companyName={companyName} />)}
         </div>
       ) : (
         <div className={styles.emptyState}>
