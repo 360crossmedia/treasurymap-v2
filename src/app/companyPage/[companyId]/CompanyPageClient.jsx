@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
@@ -10,8 +10,6 @@ import { CAT_META } from "../../components/proceduralMap/catMeta";
 import { cld } from "../../utils/cloudinary";
 import { formatTurnover } from "../../utils";
 import { setIsOverview } from "../../store/slices/isOverview.slice";
-import { apiGetSubCategoryById } from "../../service/apiGetSubCategoryById";
-import { apiGetCountryById } from "../../service/apiGetCountryById";
 import placeholder from "../../assets/placeholderimg.jpg";
 
 const CODE_TO_ID = Object.fromEntries(
@@ -20,9 +18,18 @@ const CODE_TO_ID = Object.fromEntries(
 
 const metaByCatId = (id) => CAT_META[`category-${id}`];
 
-function normalizeUrl(u) {
-  if (!u || u === "N/A" || u.startsWith("N/A")) return null;
-  return u.startsWith("http") ? u : `https://${u}`;
+// A vendor may list several websites (comma/space separated). Return clean,
+// labelled links so each one is valid and clickable.
+function parseWebsites(raw) {
+  if (!raw || raw === "N/A" || String(raw).startsWith("N/A")) return [];
+  return String(raw)
+    .split(/[,\s]+/)
+    .map((s) => s.trim())
+    .filter((s) => s && !s.startsWith("N/A"))
+    .map((s) => ({
+      href: s.startsWith("http") ? s : `https://${s}`,
+      label: s.replace(/^https?:\/\//, "").replace(/\/$/, ""),
+    }));
 }
 
 // ── Icons ──
@@ -36,14 +43,15 @@ const I = {
   external:  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>,
 };
 
-export default function CompanyPageClient({ companyId, initialCompany }) {
+export default function CompanyPageClient({ companyId, initialCompany, subcategoryNames = [], countryNames = [] }) {
   const isOverview = useSelector((s) => s.isOverview);
   const dispatch   = useDispatch();
   const company    = initialCompany;
+  const [seeAll,   setSeeAll] = useState(false);
 
-  const [subcategories, setSubcategories] = useState([]);
-  const [countries,     setCountries]     = useState([]);
-  const [seeAll,        setSeeAll]         = useState(false);
+  // Names resolved server-side (SSR'd) — no client fetch, good for SEO
+  const subcategories = subcategoryNames;
+  const countries     = countryNames;
 
   // Categories from CAT_META (no API call) → badges
   const categories = (company?.companyCategories ?? [])
@@ -52,23 +60,8 @@ export default function CompanyPageClient({ companyId, initialCompany }) {
     .filter(Boolean);
 
   const mainMeta = company?.maincategory?.[0] ? metaByCatId(company.maincategory[0]) : null;
-  const website  = normalizeUrl(company?.companyWebsite);
+  const websites = parseWebsites(company?.companyWebsite);
   const offices  = company?.companyOffices ?? [];
-
-  // Fetch subcategory + country NAMES in parallel
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      const [subs, ctrs] = await Promise.all([
-        Promise.all((company?.companySubcategories ?? []).map((id) => apiGetSubCategoryById(id))),
-        Promise.all(offices.map((id) => apiGetCountryById(id))),
-      ]);
-      if (cancelled) return;
-      setSubcategories(subs.filter(Boolean));
-      setCountries(ctrs.filter(Boolean));
-    })();
-    return () => { cancelled = true; };
-  }, [companyId]);
 
   const compareHref = () => {
     if (mainMeta) sessionStorage.setItem("comparePreCategoryId", CODE_TO_ID[mainMeta.code]);
@@ -146,8 +139,8 @@ export default function CompanyPageClient({ companyId, initialCompany }) {
             )}
 
             <div className={styles.heroCtas}>
-              {website && (
-                <a href={website} target="_blank" rel="noopener noreferrer" className={styles.btnPrimary}>
+              {websites[0] && (
+                <a href={websites[0].href} target="_blank" rel="noopener noreferrer" className={styles.btnPrimary}>
                   Visit website {I.external}
                 </a>
               )}
@@ -200,18 +193,19 @@ export default function CompanyPageClient({ companyId, initialCompany }) {
                 <div className={styles.kfRow}><span className={styles.kfLabel}>Turnover</span><span className={styles.kfValue}>{formatTurnover(company.turnover)}</span></div>}
               {company?.location     && <div className={styles.kfRow}><span className={styles.kfLabel}>Headquarters</span><span className={styles.kfValue}>{company.location}</span></div>}
               {company?.productName  && <div className={styles.kfRow}><span className={styles.kfLabel}>Product</span><span className={styles.kfValue}>{company.productName}</span></div>}
-              {website && (
-                <a href={website} target="_blank" rel="noopener noreferrer" className={styles.websiteBtn} style={{ marginTop: 14, width: "100%", justifyContent: "center" }}>
-                  {website.replace(/^https?:\/\//, "")} {I.external}
+              {websites.map((w, i) => (
+                <a key={i} href={w.href} target="_blank" rel="noopener noreferrer" className={styles.websiteBtn}
+                   style={{ marginTop: i === 0 ? 14 : 8, width: "100%", justifyContent: "center" }}>
+                  {w.label} {I.external}
                 </a>
-              )}
+              ))}
             </div>
 
             {subcategories.length > 0 && (
               <div className={styles.card}>
                 <h2 className={styles.cardTitle}>Sub-categories</h2>
                 <div className={styles.chips}>
-                  {subcategories.map((s, i) => <span key={i} className={styles.chip}>{s.name}</span>)}
+                  {subcategories.map((s, i) => <span key={i} className={styles.chip}>{s}</span>)}
                 </div>
               </div>
             )}
@@ -221,7 +215,7 @@ export default function CompanyPageClient({ companyId, initialCompany }) {
                 <h2 className={styles.cardTitle}>Active in</h2>
                 <div className={styles.countries}>
                   {(seeAll ? countries : countries.slice(0, 8)).map((c, i) => (
-                    <span key={i} className={styles.countryChip}>{c.name}</span>
+                    <span key={i} className={styles.countryChip}>{c}</span>
                   ))}
                 </div>
                 {countries.length > 8 && (

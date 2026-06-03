@@ -20,6 +20,26 @@ const fetchCompanyBySlug = cache(async (slug) => {
   }
 });
 
+// Reference lists fetched once (cached, long ISR) and mapped server-side so
+// sub-category & country NAMES land in the SSR HTML (good for SEO + reliable).
+const fetchRefList = cache(async (path) => {
+  try {
+    const res = await fetch(`${url}/api/v1/${path}`, { next: { revalidate: 86400 } });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
+});
+
+async function resolveNames(ids, path) {
+  if (!Array.isArray(ids) || !ids.length) return [];
+  const list = await fetchRefList(path);
+  const byId = new Map(list.map((x) => [x.id, x.name]));
+  return ids.map((id) => byId.get(id)).filter(Boolean);
+}
+
 // ── Metadata ──────────────────────────────────────────────────────────────────
 export async function generateMetadata({ params }) {
   const { slug } = await params;
@@ -117,10 +137,21 @@ export default async function ProviderPage({ params }) {
   const company  = await fetchCompanyBySlug(slug);
   if (!company) notFound();
 
+  // Resolve sub-category & country names server-side (SSR'd → SEO + reliable)
+  const [subcategoryNames, countryNames] = await Promise.all([
+    resolveNames(company.companySubcategories, "subCategories"),
+    resolveNames(company.companyOffices, "countries"),
+  ]);
+
   return (
     <>
       <JsonLd company={company} slug={slug} />
-      <CompanyPageClient companyId={company.id} initialCompany={company} />
+      <CompanyPageClient
+        companyId={company.id}
+        initialCompany={company}
+        subcategoryNames={subcategoryNames}
+        countryNames={countryNames}
+      />
     </>
   );
 }
