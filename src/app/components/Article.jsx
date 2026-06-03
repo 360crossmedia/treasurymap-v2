@@ -8,6 +8,7 @@ import { apiGetCompanyData } from "../service/apiGetCompanyData";
 import { setIsLoading } from "../store/slices/isLoading.slice";
 import { useDispatch } from "react-redux";
 import { formatDate } from "../utils";
+import { sanitizeRich } from "../utils/sanitize";
 
 const Article = ({ articleId }) => {
   const dispatch = useDispatch();
@@ -49,7 +50,12 @@ const Article = ({ articleId }) => {
             <div className={styles.line}></div>
           </div>
         </div>
-        <img src={article?.coverImage} className={styles.coverImage} />
+        <img
+          src={article?.coverImage}
+          className={styles.coverImage}
+          alt={article?.title || "Article cover"}
+          style={{ objectFit: "cover", objectPosition: "center 22%" }}
+        />
         <div className={styles.bodyArticleContainer}>
           <div className={styles.bodyArticle}>
             <div className={styles.authorContainer}>
@@ -68,7 +74,7 @@ const Article = ({ articleId }) => {
             </div>
             <div
               className={styles.htmlContainer}
-              dangerouslySetInnerHTML={{ __html: article?.body }}
+              dangerouslySetInnerHTML={{ __html: sanitizeRich(article?.body) }}
             />
           </div>
         </div>

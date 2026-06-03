@@ -1,21 +1,36 @@
 "use client";
 import { useEffect, useState } from "react";
+import axios from "axios";
 import styles from "../styles/Insights.module.css";
 import InsightsCard from "./InsightsCard";
 import { truncateHtmlString } from "../utils";
+import { url } from "../service/url";
 import { apiGetFullMainPublications } from "../service/apiGetFullMainPublications";
 
 const Insights = () => {
-  const [pubs, setPubs]       = useState(null); // null = loading
-  const [error, setError]     = useState(false);
+  const [pubs, setPubs]   = useState(null); // null = loading
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
-        const data = await apiGetFullMainPublications();
+        // Combine featured + all publications, dedupe, sort newest-first so the
+        // most recent articles are always at the top of the page.
+        const [featured, all] = await Promise.all([
+          apiGetFullMainPublications(),
+          axios.get(`${url}/api/v1/publications`).then((r) => r.data).catch(() => []),
+        ]);
         if (cancelled) return;
-        setPubs(Array.isArray(data) ? data.filter((p) => p && p.coverImage) : []);
+        const merged = new Map();
+        [...(featured || []), ...(all || [])].forEach((p) => {
+          if (!p || !p.coverImage) return;
+          merged.set(`${p.url ? "v" : "a"}-${p.id}`, p);
+        });
+        const sorted = [...merged.values()].sort(
+          (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+        );
+        setPubs(sorted);
       } catch {
         if (!cancelled) setError(true);
       }
