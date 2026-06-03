@@ -53,13 +53,15 @@ export default function CompanyPageClient({ companyId, initialCompany, subcatego
   const subcategories = subcategoryNames;
   const countries     = countryNames;
 
-  // Categories from CAT_META (no API call) → badges
-  const categories = (company?.companyCategories ?? [])
+  const mainMeta = company?.maincategory?.[0] ? metaByCatId(company.maincategory[0]) : null;
+
+  // Categories from CAT_META (no API call) → badges. Main category first,
+  // then the others (deduped).
+  const otherCategories = (company?.companyCategories ?? [])
     .filter((id, i, arr) => arr.indexOf(id) === i)
     .map(metaByCatId)
-    .filter(Boolean);
-
-  const mainMeta = company?.maincategory?.[0] ? metaByCatId(company.maincategory[0]) : null;
+    .filter(Boolean)
+    .filter((c) => !mainMeta || c.code !== mainMeta.code);
   const websites = parseWebsites(company?.companyWebsite);
   const offices  = company?.companyOffices ?? [];
 
@@ -103,9 +105,26 @@ export default function CompanyPageClient({ companyId, initialCompany, subcatego
           <div className={styles.heroBody}>
             <h1 className={styles.heroName}>{company?.name}</h1>
 
-            {categories.length > 0 && (
+            {(mainMeta || otherCategories.length > 0) && (
               <div className={styles.badges}>
-                {categories.map((c) => (
+                {/* Main category — highlighted (solid) */}
+                {mainMeta && (
+                  <a
+                    href={`/?category=${mainMeta.code}`}
+                    className={`${styles.badge} ${styles.badgeMain}`}
+                    style={{
+                      background: `linear-gradient(135deg, hsl(${mainMeta.hue},75%,52%), hsl(${mainMeta.hue},65%,42%))`,
+                      color: "#fff",
+                      borderColor: `hsl(${mainMeta.hue},60%,46%)`,
+                    }}
+                    title={`Main category — ${mainMeta.full}`}
+                  >
+                    <span className={styles.badgeStar}>★</span>
+                    {mainMeta.code}
+                  </a>
+                )}
+                {/* Other categories — light */}
+                {otherCategories.map((c) => (
                   <a
                     key={c.code}
                     href={`/?category=${c.code}`}
@@ -183,23 +202,23 @@ export default function CompanyPageClient({ companyId, initialCompany, subcatego
               : <MediaZone companyId={companyId} />}
           </div>
 
-          {/* Side: key facts + subcategories + active in */}
+          {/* Side: website + subcategories + active in (key facts removed —
+              redundant with the hero icons) */}
           <aside className={styles.side}>
-            <div className={styles.card}>
-              <h2 className={styles.cardTitle}>Key facts</h2>
-              {company?.creationDate && <div className={styles.kfRow}><span className={styles.kfLabel}>Founded</span><span className={styles.kfValue}>{company.creationDate}</span></div>}
-              {company?.employees    && <div className={styles.kfRow}><span className={styles.kfLabel}>Employees</span><span className={styles.kfValue}>{company.employees}</span></div>}
-              {company?.showTurnover && company?.turnover && Number(company.turnover) !== 0 &&
-                <div className={styles.kfRow}><span className={styles.kfLabel}>Turnover</span><span className={styles.kfValue}>{formatTurnover(company.turnover)}</span></div>}
-              {company?.location     && <div className={styles.kfRow}><span className={styles.kfLabel}>Headquarters</span><span className={styles.kfValue}>{company.location}</span></div>}
-              {company?.productName  && <div className={styles.kfRow}><span className={styles.kfLabel}>Product</span><span className={styles.kfValue}>{company.productName}</span></div>}
-              {websites.map((w, i) => (
-                <a key={i} href={w.href} target="_blank" rel="noopener noreferrer" className={styles.websiteBtn}
-                   style={{ marginTop: i === 0 ? 14 : 8, width: "100%", justifyContent: "center" }}>
-                  {w.label} {I.external}
-                </a>
-              ))}
-            </div>
+            {(websites.length > 0 || (company?.showTurnover && Number(company?.turnover) !== 0)) && (
+              <div className={styles.card}>
+                <h2 className={styles.cardTitle}>{websites.length > 1 ? "Websites" : "Website"}</h2>
+                {company?.showTurnover && company?.turnover && Number(company.turnover) !== 0 && (
+                  <div className={styles.kfRow}><span className={styles.kfLabel}>Turnover</span><span className={styles.kfValue}>{formatTurnover(company.turnover)}</span></div>
+                )}
+                {websites.map((w, i) => (
+                  <a key={i} href={w.href} target="_blank" rel="noopener noreferrer" className={styles.websiteBtn}
+                     style={{ marginTop: i === 0 ? 0 : 8, width: "100%", justifyContent: "center" }}>
+                    {w.label} {I.external}
+                  </a>
+                ))}
+              </div>
+            )}
 
             {subcategories.length > 0 && (
               <div className={styles.card}>
