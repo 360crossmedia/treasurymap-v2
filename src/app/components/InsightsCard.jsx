@@ -2,6 +2,7 @@
 import styles from "../styles/Insights.module.css";
 import { truncateHtmlString } from "../utils";
 import { publicationHref } from "../utils/slugify";
+import { coverImg } from "../utils/cloudinary";
 
 const InsightsCard = ({ publication, companyName }) => {
   const p = publication || {};
@@ -13,7 +14,7 @@ const InsightsCard = ({ publication, companyName }) => {
 
   return (
     <a className={styles.card} href={href}>
-      <div className={styles.cardCover} style={{ backgroundImage: `url(${p.coverImage})` }}>
+      <div className={styles.cardCover} style={{ backgroundImage: `url(${coverImg(p.coverImage, 600, 375)})` }}>
         <span className={styles.typeBadge}>{isVideo ? "▶ Video" : "Article"}</span>
       </div>
       <div className={styles.cardBody}>

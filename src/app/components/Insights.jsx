@@ -5,6 +5,7 @@ import styles from "../styles/Insights.module.css";
 import InsightsCard from "./InsightsCard";
 import { truncateHtmlString } from "../utils";
 import { publicationHref } from "../utils/slugify";
+import { coverImg } from "../utils/cloudinary";
 import { url } from "../service/url";
 import { apiGetFullMainPublications } from "../service/apiGetFullMainPublications";
 
@@ -81,7 +82,7 @@ const Insights = () => {
     <div className={styles.container}>
       {/* Hero — featured publication */}
       <a className={styles.hero} href={heroHref}>
-        <div className={styles.heroCover} style={{ backgroundImage: `url(${hero.coverImage})` }} />
+        <div className={styles.heroCover} style={{ backgroundImage: `url(${coverImg(hero.coverImage, 760, 520)})` }} />
         <div className={styles.heroBody}>
           <span className={styles.heroType}>{heroVideo ? "▶ Featured video" : "Featured article"}</span>
           <h2 className={styles.heroTitle}>{hero.title}</h2>

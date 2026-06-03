@@ -4,6 +4,7 @@ import styles from "../styles/ArticlePage.module.css";
 import InsightsCard from "./InsightsCard";
 import { providerHref, publicationHref } from "../utils/slugify";
 import { sanitizeRich } from "../utils/sanitize";
+import { coverImg } from "../utils/cloudinary";
 import { formatDate } from "../utils";
 
 const LinkedinIcon = () => (
@@ -103,7 +104,7 @@ const PublicationView = ({ publication, company, category, related = [], company
             </div>
           )
         ) : (
-          p.coverImage && <img className={styles.cover} src={p.coverImage} alt={p.title || "Cover"} />
+          p.coverImage && <img className={styles.cover} src={coverImg(p.coverImage, 1200, 675)} alt={p.title || "Cover"} />
         )}
 
         {/* Body (article only) */}
