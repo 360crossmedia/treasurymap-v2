@@ -1,28 +1,24 @@
 import { cache } from "react";
 import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
-import InsightsNavbar from "../../../components/InsightsNavbar";
-import Article from "../../../components/Article";
+import PublicationView from "../../../components/PublicationView";
 import { url } from "../../../service/url";
 import { slugify, idFromPublicationSlug } from "../../../utils/slugify";
-import styles from "../../../styles/Insights.module.css";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://treasurymap-v2-production.up.railway.app";
 
-const fetchArticle = cache(async (id) => {
+const getJson = async (path, revalidate) => {
   try {
-    const r = await fetch(`${url}/api/v1/articles/${id}`, { next: { revalidate: 300 } });
+    const r = await fetch(`${url}/api/v1/${path}`, { next: { revalidate } });
     return r.ok ? r.json() : null;
   } catch { return null; }
-});
+};
 
-const fetchCompany = cache(async (id) => {
-  if (!id) return null;
-  try {
-    const r = await fetch(`${url}/api/v1/companies/${id}`, { next: { revalidate: 3600 } });
-    return r.ok ? r.json() : null;
-  } catch { return null; }
-});
+const fetchArticle  = cache((id) => getJson(`articles/${id}`, 300));
+const fetchCompany  = cache((id) => (id ? getJson(`companies/${id}`, 3600) : null));
+const fetchCategory = cache((id) => (id ? getJson(`categories/${id}`, 86400) : null));
+const fetchByCat    = cache((id) => (id ? getJson(`publications/${id}`, 300) : null));
+const fetchCompanies = cache(() => getJson(`companies`, 3600));
 
 export async function generateMetadata({ params }) {
   const { articleId } = await params;
@@ -69,15 +65,31 @@ export default async function ArticlePage({ params }) {
   const id = idFromPublicationSlug(articleId);
   const article = await fetchArticle(id);
   const company = article ? await fetchCompany(article.companyId) : null;
+  const catId   = company?.maincategory?.[0];
+
+  const [category, related, companies] = await Promise.all([
+    fetchCategory(catId),
+    fetchByCat(catId),
+    fetchCompanies(),
+  ]);
+
+  const companyNameById = Object.fromEntries((companies || []).map((c) => [c.id, c.name]));
+  const relatedList = (related || [])
+    .filter((r) => r && r.coverImage && String(r.id) !== String(id))
+    .slice(0, 4);
 
   return (
     <>
       {article && <JsonLd article={article} company={company} id={id} />}
       <Navbar buttonLabel="Log In" />
-      <div className={styles.page}>
-        <InsightsNavbar />
-        <Article articleId={id} />
-      </div>
+      <PublicationView
+        publication={article}
+        company={company}
+        category={category}
+        related={relatedList}
+        companyNameById={companyNameById}
+        isVideo={false}
+      />
       <Footer />
     </>
   );
