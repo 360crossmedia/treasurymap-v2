@@ -54,7 +54,7 @@ const Article = ({ articleId }) => {
           src={article?.coverImage}
           className={styles.coverImage}
           alt={article?.title || "Article cover"}
-          style={{ objectFit: "cover", objectPosition: "center 22%" }}
+          style={{ objectFit: "cover", objectPosition: "center top" }}
         />
         <div className={styles.bodyArticleContainer}>
           <div className={styles.bodyArticle}>
