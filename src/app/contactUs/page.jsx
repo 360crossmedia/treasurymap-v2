@@ -1,17 +1,14 @@
 "use client";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import styles from "../styles/layout.module.css";
 import ContactUs from "../components/ContactUs";
 
-const Layout = () => {
+export default function ContactUsPage() {
   return (
-    <div className={styles.mainContainer}>
-      <Navbar buttonLabel={"Login"} />
+    <>
+      <Navbar buttonLabel="Log In" />
       <ContactUs />
       <Footer />
-    </div>
+    </>
   );
-};
-
-export default Layout;
+}
