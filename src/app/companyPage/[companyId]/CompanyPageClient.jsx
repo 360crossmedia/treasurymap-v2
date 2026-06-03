@@ -43,7 +43,7 @@ const I = {
   external:  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>,
 };
 
-export default function CompanyPageClient({ companyId, initialCompany, subcategoryNames = [], countryNames = [] }) {
+export default function CompanyPageClient({ companyId, initialCompany, subcategoryNames = [], countryNames = [], qa = [] }) {
   const isOverview = useSelector((s) => s.isOverview);
   const dispatch   = useDispatch();
   const company    = initialCompany;
@@ -179,7 +179,7 @@ export default function CompanyPageClient({ companyId, initialCompany, subcatego
         <div className={styles.content}>
           <div className={styles.main}>
             {isOverview
-              ? <Overview companyId={companyId} initialCompany={company} />
+              ? <Overview companyId={companyId} initialCompany={company} qa={qa} />
               : <MediaZone companyId={companyId} />}
           </div>
 

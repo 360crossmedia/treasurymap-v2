@@ -40,6 +40,33 @@ async function resolveNames(ids, path) {
   return ids.map((id) => byId.get(id)).filter(Boolean);
 }
 
+// Q&A: question bodies (cached) + this company's answers (array, index→question).
+const fetchQuestions = cache(async () => {
+  try {
+    const res = await fetch(`${url}/api/v1/questions`, { next: { revalidate: 86400 } });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return Array.isArray(data) ? data : data?.data || [];
+  } catch {
+    return [];
+  }
+});
+
+async function fetchQa(companyId) {
+  try {
+    const [questions, ansRes] = await Promise.all([
+      fetchQuestions(),
+      fetch(`${url}/api/v1/answers/${companyId}`, { next: { revalidate: 300 } }).then((r) => (r.ok ? r.json() : [])),
+    ]);
+    const answers = Array.isArray(ansRes) ? ansRes : [];
+    return questions
+      .map((q, i) => ({ question: q.body, answer: answers[i] }))
+      .filter((qa) => qa.answer && String(qa.answer).trim());
+  } catch {
+    return [];
+  }
+}
+
 // ── Metadata ──────────────────────────────────────────────────────────────────
 export async function generateMetadata({ params }) {
   const { slug } = await params;
@@ -137,10 +164,11 @@ export default async function ProviderPage({ params }) {
   const company  = await fetchCompanyBySlug(slug);
   if (!company) notFound();
 
-  // Resolve sub-category & country names server-side (SSR'd → SEO + reliable)
-  const [subcategoryNames, countryNames] = await Promise.all([
+  // Resolve sub-category & country names + Q&A server-side (SSR'd → SEO + reliable)
+  const [subcategoryNames, countryNames, qa] = await Promise.all([
     resolveNames(company.companySubcategories, "subCategories"),
     resolveNames(company.companyOffices, "countries"),
+    fetchQa(company.id),
   ]);
 
   return (
@@ -151,6 +179,7 @@ export default async function ProviderPage({ params }) {
         initialCompany={company}
         subcategoryNames={subcategoryNames}
         countryNames={countryNames}
+        qa={qa}
       />
     </>
   );
