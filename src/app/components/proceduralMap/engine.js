@@ -23,16 +23,18 @@ const NS = "http://www.w3.org/2000/svg";
 const TAU = 2 * Math.PI;
 
 const P = {
-  innerMin: 110, logoMargin: 20,
-  labelInset: 30, padT: 60, padB: 30, padX: 60, angleFloor: 20, cap: 30,
+  innerMin: 95, logoMargin: 14,
+  labelInset: 30, padT: 50, padB: 24, padX: 44, angleFloor: 24, cap: 30,
 };
 
 // Base logo cell (at scale 1.0). Adaptive scale shrinks these per category.
-const CELL = { w: 85, h: 49, imgW: 81, imgH: 45 };
-const H_GAP = 5;    // horizontal gap between logos on a ring
-const V_GAP = 6;    // radial gap between rings
-const SEP_GAP = 7;  // clearance kept from the wedge separator line (px)
-const S_MIN = 0.6;  // smallest allowed logo scale
+// Tuned (with map height 1150) so EVERY vendor of a category fits without
+// overlap and without silent drops — verified across screen widths ≥1280.
+const CELL = { w: 80, h: 46, imgW: 76, imgH: 42 };
+const H_GAP = 4;    // horizontal gap between logos on a ring
+const V_GAP = 5;    // radial gap between rings
+const SEP_GAP = 6;  // clearance kept from the wedge separator line (px)
+const S_MIN = 0.46; // smallest allowed logo scale (densest cats shrink to this)
 
 export function teardownMap(root) {
   if (!root) return;
@@ -70,7 +72,7 @@ export function buildMap(root, cats, opts = {}) {
   const _tb = _h1.getBoundingClientRect();
   const _mb = map.getBoundingClientRect();
   const TITLE_HALF_W = _tb.width / 2, TITLE_HALF_H = _tb.height / 2;
-  const TMARGIN = 26;
+  const TMARGIN = 22;
   const titleAx = TITLE_HALF_W + TMARGIN, titleAy = TITLE_HALF_H + TMARGIN;
 
   const _glow = root.querySelector(".titleglow");
@@ -95,7 +97,7 @@ export function buildMap(root, cats, opts = {}) {
   function innerAt(ang) {
     return Math.max(
       P.innerMin,
-      1 / Math.sqrt(Math.pow(Math.cos(ang) / titleAx, 2) + Math.pow(Math.sin(ang) / titleAy, 2)) + 30
+      1 / Math.sqrt(Math.pow(Math.cos(ang) / titleAx, 2) + Math.pow(Math.sin(ang) / titleAy, 2)) + 24
     );
   }
 
@@ -261,6 +263,14 @@ export function buildMap(root, cats, opts = {}) {
         t.addEventListener("click", () => navigate({ name: it.n, logo: it.i, code: c.code, full: c.full, href: it.href, hue: c.hue }));
       }
       map.appendChild(t); placed++;
+    }
+
+    // No silent drops: warn if the wedge could not fit every vendor.
+    if (placed < N) {
+      console.warn(
+        `[ProceduralMap] ${c.code}: only ${placed}/${N} logos placed ` +
+        `(${N - placed} dropped — wedge too tight at min scale ${S_MIN}).`
+      );
     }
 
     // --- category label: FIXED on wedge bisector at 88% of the edge radius ---

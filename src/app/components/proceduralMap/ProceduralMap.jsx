@@ -288,7 +288,7 @@ export default function ProceduralMap({ activeFilter, onCategoryClick, onClear, 
 
         /* ── Map root ── */
         .pmap-root {
-          position: relative; height: 980px; overflow: hidden;
+          position: relative; height: 1150px; overflow: hidden;
           background: radial-gradient(ellipse 80% 76% at 50% 50%, #fbfdff 0%, #e7eef8 50%, #d2ddec 100%);
           font-family: 'Chivo', sans-serif; color: #0a1a33;
         }
