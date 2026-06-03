@@ -1,57 +1,25 @@
 "use client";
-import styles from "../styles/InsightsWithCategory.module.css";
-import { usePathname } from "next/navigation";
+import styles from "../styles/Insights.module.css";
 import { truncateHtmlString } from "../utils";
 
 const InsightsCard = ({ publication }) => {
-  const pathname = usePathname();
+  const p = publication || {};
+  const isVideo = !!p.url;
+  const href = isVideo ? `/publication/video/${p.id}` : `/publication/article/${p.id}`;
+  const excerpt = isVideo
+    ? truncateHtmlString(p.introduction || "", 130)
+    : truncateHtmlString(p.body || p.introduction || "", 130);
 
-  const handleHref = (publication) => {
-    if (publication?.url) {
-      return `/publication/video/${publication?.id}`;
-    } else {
-      return `/publication/article/${publication?.id}`;
-    }
-  };
   return (
-    <div
-      className={styles.card}
-      style={
-        pathname == "/insights"
-          ? { flexDirection: "row-reverse", gap: "20px" }
-          : {}
-      }
-    >
-      <div className={styles.cardData}>
-        <a className={styles.link} href={handleHref(publication)}>
-          <h5 className={styles.title}>{publication?.title}</h5>
-        </a>
-        <p className={styles.description}>
-          {pathname != "/insights"
-            ? publication.url
-              ? publication?.introduction
-              : truncateHtmlString(publication?.body, 300)
-            : ""}
-          {pathname == "/insights"
-            ? publication?.url
-              ? truncateHtmlString(publication?.introduction, 100)
-              : truncateHtmlString(publication?.body, 100)
-            : ""}
-        </p>
-        <p className={styles.metadata}>
-          By 360Crossmedia | April 26, 2024 | Business / Finance |
-          {publication?.url ? " Video" : " Article"}
-        </p>
+    <a className={styles.card} href={href}>
+      <div className={styles.cardCover} style={{ backgroundImage: `url(${p.coverImage})` }}>
+        <span className={styles.typeBadge}>{isVideo ? "▶ Video" : "Article"}</span>
       </div>
-      <a className={styles.link} href={handleHref(publication)}>
-        <div
-          className={styles.cardImageContainer}
-          style={{
-            backgroundImage: `url(${publication?.coverImage})`,
-          }}
-        ></div>
-      </a>
-    </div>
+      <div className={styles.cardBody}>
+        <h3 className={styles.cardTitle}>{p.title}</h3>
+        {excerpt && <p className={styles.cardExcerpt}>{excerpt}</p>}
+      </div>
+    </a>
   );
 };
 

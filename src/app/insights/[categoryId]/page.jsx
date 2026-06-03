@@ -1,26 +1,25 @@
 "use client";
+import { use } from "react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
-import styles from "../../styles/layout.module.css";
-import InsightsNavbar from "@/app/components/InsightsNavbar";
-import InsightsWithCategory from "@/app/components/InsightsWithCategory";
-import { use } from "react";
+import InsightsNavbar from "../../components/InsightsNavbar";
+import InsightsWithCategory from "../../components/InsightsWithCategory";
+import styles from "../../styles/Insights.module.css";
 
-const Layout = ({ params }) => {
+export default function InsightsCategoryPage({ params }) {
   const { categoryId } = use(params);
   return (
     <>
-      <div
-        className={styles.mainContainer}
-        style={{ backgroundPosition: "bottom", paddingBottom: "1.65%" }}
-      >
-        <Navbar buttonLabel={"Login"} />
+      <Navbar buttonLabel="Log In" />
+      <div className={styles.page}>
+        <header className={styles.header}>
+          <span className={styles.eyebrow}>// Insights</span>
+          <h1 className={styles.heading}>Treasury technology insights</h1>
+        </header>
         <InsightsNavbar categoryId={categoryId} />
         <InsightsWithCategory categoryId={categoryId} />
       </div>
       <Footer />
     </>
   );
-};
-
-export default Layout;
+}

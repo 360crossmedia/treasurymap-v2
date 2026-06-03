@@ -1,37 +1,58 @@
 "use client";
 import { useEffect, useState } from "react";
-import styles from "../styles/InsightsWithCategory.module.css";
-import { apiGetCategoryById } from "../service/apiGetCategoryById";
+import styles from "../styles/Insights.module.css";
 import InsightsCard from "./InsightsCard";
+import { apiGetCategoryById } from "../service/apiGetCategoryById";
 import { apiGetPublicationsByCategoryId } from "../service/apiGetPublicationsByCategoryId";
+import { formatCategoryName } from "../utils";
 
 const InsightsWithCategory = ({ categoryId }) => {
-  const [category, setCategory] = useState();
-  const [publications, setPublications] = useState();
+  const [category, setCategory] = useState(null);
+  const [pubs, setPubs]         = useState(null); // null = loading
 
   useEffect(() => {
-    getAllInfo();
-  }, []);
+    let cancelled = false;
+    (async () => {
+      const [cat, list] = await Promise.all([
+        apiGetCategoryById(categoryId),
+        apiGetPublicationsByCategoryId(categoryId),
+      ]);
+      if (cancelled) return;
+      setCategory(cat);
+      setPubs(Array.isArray(list) ? list.filter((p) => p?.live && p?.coverImage) : []);
+    })();
+    return () => { cancelled = true; };
+  }, [categoryId]);
 
-  const getAllInfo = async () => {
-    const category = await apiGetCategoryById(categoryId);
-    const publications = await apiGetPublicationsByCategoryId(categoryId);
-    setCategory(category);
-    setPublications(publications);
-  };
+  return (
+    <div className={styles.container}>
+      {category && (
+        <h2 className={styles.sectionTitle} style={{ fontSize: "1.5rem", margin: "8px 0 22px" }}>
+          {formatCategoryName(category.name)}
+        </h2>
+      )}
 
-  if (category)
-    return (
-      <div className={styles.mainContainer}>
-        <h4 className={styles.categoryName}>{category?.name}</h4>
-        {publications?.map(
-          (publication, index) =>
-            publication.live && (
-              <InsightsCard key={index} publication={publication} />
-            )
-        )}
-      </div>
-    );
+      {pubs === null ? (
+        <div className={styles.skeletonGrid}>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className={styles.skel}>
+              <div className={styles.skelCover} />
+              <div className={styles.skelLine} />
+              <div className={`${styles.skelLine} ${styles.skelLineShort}`} />
+            </div>
+          ))}
+        </div>
+      ) : pubs.length === 0 ? (
+        <div className={styles.empty}>
+          <p>No insights in this category yet.</p>
+        </div>
+      ) : (
+        <div className={styles.grid}>
+          {pubs.map((p) => <InsightsCard key={`${p.url ? "v" : "a"}-${p.id}`} publication={p} />)}
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default InsightsWithCategory;
