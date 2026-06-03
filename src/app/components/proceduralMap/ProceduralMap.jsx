@@ -28,7 +28,7 @@ function toCats(companies) {
     });
 }
 
-export default function ProceduralMap({ activeFilter, onCategoryClick, onClear, vendorCount }) {
+export default function ProceduralMap({ activeFilter, onCategoryClick, onClear, vendorCount, onVendors }) {
   const rootRef             = useRef(null);
   const router              = useRouter();
   // Use a ref for onCategoryClick so it never triggers a map rebuild
@@ -58,6 +58,14 @@ export default function ProceduralMap({ activeFilter, onCategoryClick, onClear, 
       try {
         const res = await axios.get(`${url}/api/v1/companies`);
         cats = toCats(res.data);
+        // Expose the full vendor list (for data-backed search autocomplete)
+        if (onVendors) {
+          onVendors(
+            cats.flatMap((c) =>
+              c.items.map((it) => ({ name: it.n, href: it.href, code: c.code, hue: c.hue }))
+            )
+          );
+        }
       } catch (e) {
         console.error("ProceduralMap: failed to load /api/v1/companies", e);
         setLoading(false);
@@ -134,15 +142,15 @@ export default function ProceduralMap({ activeFilter, onCategoryClick, onClear, 
         return;
       }
       root.classList.add("focusing");
-      let matchCount = 0;
       toks.forEach(t => {
         const name  = (t.querySelector("img")?.alt || "").toLowerCase();
-        const match = name.includes(kw);
-        if (match) { show(t); matchCount++; } else hide(t);
+        if (name.includes(kw)) show(t); else hide(t);
       });
       labels.forEach(hide);
       auras.forEach(hide);
-      setNoResults(matchCount === 0);
+      // Don't show a map-level "not found" — the search dropdown (data-backed)
+      // is the authoritative source. A vendor may exist without its logo drawn.
+      setNoResults(false);
     }
   }, [activeFilter]);
 

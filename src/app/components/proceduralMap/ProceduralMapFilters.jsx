@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { CAT_META } from "./catMeta";
 
 const CATEGORIES = Object.entries(CAT_META)
@@ -27,22 +27,52 @@ const IconChevron = ({ open, color }) => (
   </svg>
 );
 
-export default function ProceduralMapFilters({ onFilter, onClear, activeFilter, vendorCount, catCount }) {
+export default function ProceduralMapFilters({ onFilter, onClear, activeFilter, vendorCount, catCount, vendors = [] }) {
   const [keyword, setKeyword] = useState("");
   const [catOpen, setCatOpen] = useState(false);
+  const [acOpen,  setAcOpen]  = useState(false); // autocomplete open
   const debounceRef = useRef(null);
+  const kwRef = useRef(null);
 
   const activeCat = activeFilter?.type === "category"
     ? CATEGORIES.find(c => c.code === activeFilter.code)
     : null;
 
-  // B3: debounced keyword
+  // Data-backed autocomplete: match the FULL vendor list (not just drawn logos)
+  const matches = keyword.trim().length >= 1
+    ? vendors
+        .filter(v => v.name.toLowerCase().includes(keyword.toLowerCase().trim()))
+        .sort((a, b) => {
+          const k = keyword.toLowerCase().trim();
+          // names that START with the query come first
+          const as = a.name.toLowerCase().startsWith(k) ? 0 : 1;
+          const bs = b.name.toLowerCase().startsWith(k) ? 0 : 1;
+          return as - bs || a.name.localeCompare(b.name);
+        })
+        .slice(0, 8)
+    : [];
+
+  // B3: debounced keyword (drives map dimming)
   const handleKeyword = useCallback((e) => {
     const val = e.target.value;
     setKeyword(val);
+    setAcOpen(true);
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => onFilter({ type: "keyword", value: val }), 250);
   }, [onFilter]);
+
+  // Click a result → go to the vendor's profile page
+  const pickVendor = (v) => {
+    setAcOpen(false);
+    if (v?.href) window.location.href = v.href;
+  };
+
+  // Close autocomplete on outside click
+  useEffect(() => {
+    const h = (e) => { if (kwRef.current && !kwRef.current.contains(e.target)) setAcOpen(false); };
+    document.addEventListener("mousedown", h);
+    return () => document.removeEventListener("mousedown", h);
+  }, []);
 
   const handleCategory = (cat) => {
     setCatOpen(false);
@@ -61,20 +91,39 @@ export default function ProceduralMapFilters({ onFilter, onClear, activeFilter, 
 
   return (
     <div className="pmf-bar">
-      {/* Keywords pill */}
-      <div className="pmf-pill-wrap">
+      {/* Keywords pill + autocomplete */}
+      <div className="pmf-pill-wrap" style={{ position: "relative" }} ref={kwRef}>
         <div className="pmf-pill">
           <span className="pmf-icon"><IconSearch /></span>
           <input
             className="pmf-input"
-            placeholder="Enter keyword…"
+            placeholder="Search a vendor…"
             value={keyword}
             onChange={handleKeyword}
+            onFocus={() => keyword && setAcOpen(true)}
           />
           {keyword && (
-            <button className="pmf-pill-clear" onClick={() => { setKeyword(""); onFilter({ type: "keyword", value: "" }); }}>✕</button>
+            <button className="pmf-pill-clear" onClick={() => { setKeyword(""); setAcOpen(false); onFilter({ type: "keyword", value: "" }); }}>✕</button>
           )}
         </div>
+
+        {acOpen && keyword.trim() && (
+          <div className="pmf-dropdown">
+            {matches.length > 0 ? (
+              matches.map((v, i) => (
+                <div key={i} className="pmf-option" onClick={() => pickVendor(v)} style={{ cursor: "pointer" }}>
+                  <span className="pmf-dot" style={{ background: `hsl(${v.hue},72%,50%)` }} />
+                  <span className="pmf-option-code" style={{ minWidth: 0, fontFamily: "inherit", fontWeight: 600 }}>{v.name}</span>
+                  <span className="pmf-option-full" style={{ marginLeft: "auto" }}>{v.code}</span>
+                </div>
+              ))
+            ) : (
+              <div className="pmf-option" style={{ color: "#9aa3b5", cursor: "default" }}>
+                No vendor matches “{keyword.trim()}”
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Category pill + dropdown */}

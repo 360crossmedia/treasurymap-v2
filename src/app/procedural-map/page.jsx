@@ -18,6 +18,7 @@ export default function ProceduralMapPreviewPage() {
   const [activeFilter, setActiveFilter] = useState(null);
   const [vendorCount,  setVendorCount]  = useState(TOTAL_VENDORS);
   const [catCount,     setCatCount]     = useState(TOTAL_CATS);
+  const [vendors,      setVendors]      = useState([]);
 
   // D1: read URL params on mount WITHOUT useSearchParams (avoids Suspense requirement)
   useEffect(() => {
@@ -83,6 +84,7 @@ export default function ProceduralMapPreviewPage() {
         activeFilter={activeFilter}
         vendorCount={vendorCount}
         catCount={catCount}
+        vendors={vendors}
       />
       <div style={{ position: "relative" }}>
         <ProceduralMap
@@ -90,6 +92,7 @@ export default function ProceduralMapPreviewPage() {
           onCategoryClick={handleCategoryClick}
           onClear={handleClear}
           vendorCount={vendorCount}
+          onVendors={setVendors}
         />
 
         {/* Option D — Compare bar */}
