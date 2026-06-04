@@ -491,12 +491,16 @@ export default function ProceduralMap({ multiplayer = false, filters, catSels = 
         }
         .pmap-root .tok:hover { transform: translate(-50%,-50%) scale(1.75); z-index: 40; }
         .pmap-root .tok:hover img { filter: drop-shadow(0 5px 16px var(--tglow)); }
-        .pmap-root.focusing .clabel.dim { opacity: .2; }
-        .pmap-root.focusing .tok.dim { opacity: .1; }
+        /* !important needed: the tokIn reveal animation (fill-mode:both) otherwise
+           locks token opacity and overrides class-based dimming on hover. */
+        .pmap-root.focusing .clabel.dim { opacity: .2 !important; }
+        /* :not(.filtered-out) so this never overrides a filter-hidden token (which
+           carries both .dim and .filtered-out); filtered-out must stay opacity 0. */
+        .pmap-root.focusing .tok.dim:not(.filtered-out) { opacity: .1 !important; transition: opacity .18s ease; }
         /* Filtered-out tokens fully hidden — !important beats the tokIn reveal animation */
         .pmap-root .tok.filtered-out { opacity: 0 !important; pointer-events: none !important; }
-        .pmap-root.focusing .aura.dim { opacity: .03; }
-        .pmap-root.focusing .aura.on  { opacity: .4; }
+        .pmap-root.focusing .aura.dim { opacity: .03 !important; }
+        .pmap-root.focusing .aura.on  { opacity: .4 !important; }
         .pmap-root .tip {
           position: fixed; z-index: 100; background: #0e1f3a;
           border: 1px solid rgba(120,160,220,.3); border-radius: 9px;
