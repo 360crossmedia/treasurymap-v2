@@ -69,7 +69,7 @@ function Dropdown({ label, placeholder, options, activeId, onPick, multi = false
 }
 
 export default function ProceduralMapFilters({
-  filters = {}, subs = [], onAddFilter, onRemoveFilter, onToggleSub, onRemoveSub, onClear,
+  filters = {}, catSels = [], subs = [], onAddFilter, onRemoveFilter, onToggleCat, onRemoveCat, onToggleSub, onRemoveSub, onClear,
   vendors = [], subCategories = [], countries = [],
   matchCount, totalVendors = 0, totalCats = 14,
 }) {
@@ -80,8 +80,8 @@ export default function ProceduralMapFilters({
   const kwRef = useRef(null);
   const catRef = useRef(null);
 
-  const catFilter = filters.category;
-  // Single-value chips (category / keyword / active) + multi sub-category chips
+  const catCodeSet = new Set(catSels.map((c) => c.code));
+  // Single-value chips (keyword / active) + multi category & sub-category chips
   const singleChips = Object.values(filters).filter((f) => f && !(f.type === "keyword" && !String(f.value || "").trim()));
 
   const matches = keyword.trim().length >= 1
@@ -105,11 +105,8 @@ export default function ProceduralMapFilters({
 
   const pickVendor = (v) => { setAcOpen(false); if (v?.href) window.location.href = v.href; };
 
-  const pickCategory = (c) => {
-    setCatOpen(false);
-    if (catFilter?.code === c.code) { onRemoveFilter("category"); return; }
-    onAddFilter({ type: "category", code: c.code, label: c.code, hue: c.hue });
-  };
+  // Multi-select: toggle category, keep the dropdown open to add several
+  const pickCategory = (c) => { onToggleCat({ code: c.code, label: c.code, hue: c.hue }); };
 
   const clearAll = () => { setKeyword(""); clearTimeout(debounceRef.current); onClear(); };
 
@@ -122,7 +119,7 @@ export default function ProceduralMapFilters({
     return () => document.removeEventListener("mousedown", h);
   }, []);
 
-  const filtersActive = singleChips.length > 0 || subs.length > 0;
+  const filtersActive = singleChips.length > 0 || catSels.length > 0 || subs.length > 0;
 
   const chipText = (f) => {
     if (f.type === "keyword") return f.label;
@@ -155,18 +152,20 @@ export default function ProceduralMapFilters({
           )}
         </div>
 
-        {/* Category */}
+        {/* Category — multi-select (OR within facet) */}
         <div className="pf-col" style={{ position: "relative" }} ref={catRef}>
           <label className="pf-label">Category</label>
-          <div className={`pf-ctl pf-select ${catFilter ? "pf-active" : ""}`} onClick={() => setCatOpen(!catOpen)}>
-            <span className={catFilter ? "pf-val" : "pf-ph"}>{catFilter ? catFilter.code : "Select category"}</span>
+          <div className={`pf-ctl pf-select ${catSels.length ? "pf-active" : ""}`} onClick={() => setCatOpen(!catOpen)}>
+            <span className={catSels.length ? "pf-val" : "pf-ph"}>
+              {catSels.length === 0 ? "Select category" : catSels.length === 1 ? catSels[0].code : `${catSels.length} selected`}
+            </span>
             <IconChevron open={catOpen} />
           </div>
           {catOpen && (
             <div className="pf-dropdown">
-              <div className="pf-option pf-all" onClick={() => onRemoveFilter("category")}>All</div>
+              <div className="pf-option pf-all" onClick={() => catSels.forEach((c) => onRemoveCat(c.code))}>Clear categories</div>
               {CATEGORIES.map((c) => {
-                const sel = catFilter?.code === c.code;
+                const sel = catCodeSet.has(c.code);
                 return (
                   <div key={c.key} className={`pf-option ${sel ? "pf-option-active" : ""}`} onClick={() => pickCategory(c)}>
                     <span className="pf-dot" style={{ background: `hsl(${c.hue},72%,50%)` }} />
@@ -195,10 +194,16 @@ export default function ProceduralMapFilters({
       {/* Active filter chips */}
       {filtersActive && (
         <div className="pmf-chips">
+          {catSels.map((c, i) => (
+            <span key={`cat${i}`} className="pf-chip"
+              style={{ background: `hsl(${c.hue},70%,94%)`, color: `hsl(${c.hue},55%,30%)`, borderColor: `hsl(${c.hue},50%,82%)` }}>
+              <span className="pf-chip-dot" style={{ background: `hsl(${c.hue},72%,50%)` }} />
+              {c.code}
+              <button className="pf-chip-x" onClick={() => onRemoveCat(c.code)}>✕</button>
+            </span>
+          ))}
           {singleChips.map((f, i) => (
-            <span key={`s${i}`} className="pf-chip"
-              style={f.type === "category" ? { background: `hsl(${f.hue},70%,94%)`, color: `hsl(${f.hue},55%,30%)`, borderColor: `hsl(${f.hue},50%,82%)` } : {}}>
-              {f.type === "category" && <span className="pf-chip-dot" style={{ background: `hsl(${f.hue},72%,50%)` }} />}
+            <span key={`s${i}`} className="pf-chip">
               {chipText(f)}
               <button className="pf-chip-x" onClick={() => removeChip(f)}>✕</button>
             </span>

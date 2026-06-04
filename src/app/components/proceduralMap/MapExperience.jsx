@@ -15,7 +15,8 @@ const CODE_TO_ID = Object.fromEntries(
 // Shared map page body, used by both the homepage ("Treasury Map", 1 logo/vendor)
 // and /multiplayer-map ("Multiplayer Map", vendor repeated across every category).
 export default function MapExperience({ multiplayer = false }) {
-  const [filters, setFilters] = useState({});         // single-value facets: category / keyword / active
+  const [filters, setFilters] = useState({});         // single-value facets: keyword / active
+  const [catSels, setCatSels] = useState([]);         // multi-select categories [{code,hue,label}]
   const [subs, setSubs] = useState([]);               // multi-select sub-categories [{value,label}]
   const [vendors, setVendors] = useState([]);
   const [cats, setCats] = useState([]);               // full per-category vendor lists
@@ -28,7 +29,7 @@ export default function MapExperience({ multiplayer = false }) {
     const code = new URLSearchParams(window.location.search).get("category");
     if (code && Object.values(CAT_META).some((v) => v.code === code)) {
       const meta = Object.values(CAT_META).find((v) => v.code === code);
-      setFilters({ category: { type: "category", code, label: code, hue: meta?.hue } });
+      setCatSels([{ code, label: code, hue: meta?.hue }]);
     }
   }, []);
 
@@ -38,6 +39,16 @@ export default function MapExperience({ multiplayer = false }) {
 
   const removeFilter = useCallback((type) => {
     setFilters((f) => { const n = { ...f }; delete n[type]; return n; });
+  }, []);
+
+  // Multi-select categories (OR within the facet)
+  const toggleCat = useCallback((cat) => {
+    setCatSels((s) => (s.some((x) => x.code === cat.code)
+      ? s.filter((x) => x.code !== cat.code)
+      : [...s, cat]));
+  }, []);
+  const removeCat = useCallback((code) => {
+    setCatSels((s) => s.filter((x) => x.code !== code));
   }, []);
 
   // Multi-select sub-categories (OR within the facet)
@@ -50,7 +61,7 @@ export default function MapExperience({ multiplayer = false }) {
     setSubs((s) => s.filter((x) => String(x.value) !== String(value)));
   }, []);
 
-  const handleClear = useCallback(() => { setFilters({}); setSubs([]); }, []);
+  const handleClear = useCallback(() => { setFilters({}); setCatSels([]); setSubs([]); }, []);
 
   // Clicking a category LABEL on the map opens the full drill-down panel
   // (shows every vendor of that category). The filter dropdown is separate
@@ -62,8 +73,9 @@ export default function MapExperience({ multiplayer = false }) {
   // Live total of unique vendors currently on this map (varies by mode).
   const totalVendors = vendors.length || 0;
 
-  const catFilter = filters.category;
-  const activeMeta = catFilter ? Object.values(CAT_META).find((v) => v.code === catFilter.code) : null;
+  // Compare bar only makes sense for a single category (the Compare tool is per-category)
+  const soloCat = catSels.length === 1 ? catSels[0] : null;
+  const activeMeta = soloCat ? Object.values(CAT_META).find((v) => v.code === soloCat.code) : null;
 
   // Drill-down panel (full category grid) — from clicking a category label.
   const drillCat = drillCode ? cats.find((c) => c.code === drillCode) : null;
@@ -78,9 +90,12 @@ export default function MapExperience({ multiplayer = false }) {
       <Navbar buttonLabel="Log In" />
       <ProceduralMapFilters
         filters={filters}
+        catSels={catSels}
         subs={subs}
         onAddFilter={addFilter}
         onRemoveFilter={removeFilter}
+        onToggleCat={toggleCat}
+        onRemoveCat={removeCat}
         onToggleSub={toggleSub}
         onRemoveSub={removeSub}
         onClear={handleClear}
@@ -95,6 +110,7 @@ export default function MapExperience({ multiplayer = false }) {
         <ProceduralMap
           multiplayer={multiplayer}
           filters={filters}
+          catSels={catSels}
           subs={subs}
           onCategoryClick={handleCategoryClick}
           onClear={handleClear}
@@ -123,10 +139,10 @@ export default function MapExperience({ multiplayer = false }) {
               width: 10, height: 10, borderRadius: "50%", flexShrink: 0,
               background: `hsl(${activeMeta.hue},72%,50%)`, boxShadow: `0 0 8px hsl(${activeMeta.hue},72%,60%)`, display: "inline-block",
             }} />
-            <span style={{ fontSize: 14, fontWeight: 700, color: "#0e2c5c" }}>{catFilter.code}</span>
+            <span style={{ fontSize: 14, fontWeight: 700, color: "#0e2c5c" }}>{soloCat.code}</span>
             <span style={{ fontSize: 13, color: "#5a6a85" }}>· Compare vendors in this category</span>
             <a href="/compare-tools"
-              onClick={() => sessionStorage.setItem("comparePreCategoryId", CODE_TO_ID[catFilter.code])}
+              onClick={() => sessionStorage.setItem("comparePreCategoryId", CODE_TO_ID[soloCat.code])}
               style={{
                 display: "inline-flex", alignItems: "center", gap: 7,
                 background: `linear-gradient(135deg,hsl(${activeMeta.hue},80%,55%),hsl(${activeMeta.hue},65%,38%))`,

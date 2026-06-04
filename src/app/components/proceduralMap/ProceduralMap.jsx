@@ -101,7 +101,7 @@ function toCatsMultiplayer(mp, companies = [], countries = []) {
   return groups.sort((a, b) => a.catId - b.catId);
 }
 
-export default function ProceduralMap({ multiplayer = false, filters, subs = [], onCategoryClick, onClear, onVendors, onCats, onFilterOptions, onMatchCount }) {
+export default function ProceduralMap({ multiplayer = false, filters, catSels = [], subs = [], onCategoryClick, onClear, onVendors, onCats, onFilterOptions, onMatchCount }) {
   const rootRef             = useRef(null);
   const router              = useRouter();
   // Use a ref for onCategoryClick so it never triggers a map rebuild
@@ -210,13 +210,18 @@ export default function ProceduralMap({ multiplayer = false, filters, subs = [],
     const dimCtx  = (e) => { e.style.opacity = "0.16"; e.classList.add("dim"); e.classList.remove("on"); };
     const reset   = (e) => { e.style.opacity = ""; e.style.pointerEvents = ""; e.classList.remove("dim", "on", "filtered-out"); };
 
+    // code → cat index (from labels)
+    const codeToCat = {};
+    labels.forEach((l) => { codeToCat[l.dataset.code] = l.dataset.cat; });
+
     // Build active conditions
-    const fcat = filters?.category;
+    const catCodes = (catSels || []).map((c) => c.code);
+    const catIdxSet = new Set(catCodes.map((code) => codeToCat[code]));
     const fkw  = filters?.keyword && String(filters.keyword.value || "").trim()
       ? String(filters.keyword.value).toLowerCase().trim() : null;
     const fac  = filters?.active;
     const subVals = (subs || []).map((s) => String(s.value));
-    const anyActive = !!(fcat || fkw || fac || subVals.length);
+    const anyActive = !!(catCodes.length || fkw || fac || subVals.length);
 
     if (!anyActive) {
       root.classList.remove("focusing");
@@ -226,12 +231,8 @@ export default function ProceduralMap({ multiplayer = false, filters, subs = [],
       return;
     }
 
-    // code → cat index (from labels)
-    const codeToCat = {};
-    labels.forEach((l) => { codeToCat[l.dataset.code] = l.dataset.cat; });
-
     const tokMatches = (t) => {
-      if (fcat && t.dataset.cat !== codeToCat[fcat.code]) return false;
+      if (catIdxSet.size && !catIdxSet.has(t.dataset.cat)) return false;
       if (fkw && !(t.querySelector("img")?.alt || "").toLowerCase().includes(fkw)) return false;
       if (fac && !(t.dataset.active || "").includes("," + fac.value + ",")) return false;
       if (subVals.length && !subVals.some((v) => (t.dataset.sub || "").includes("," + v + ","))) return false;
@@ -242,13 +243,14 @@ export default function ProceduralMap({ multiplayer = false, filters, subs = [],
     let count = 0;
     toks.forEach((t) => { if (tokMatches(t)) { showTok(t); count++; } else hideTok(t); });
 
-    // Labels/auras stay for context: highlight the filtered category if any, else dim
-    labels.forEach((l) => { if (fcat && l.dataset.code === fcat.code) showTok(l); else dimCtx(l); });
-    auras.forEach((a)  => { if (fcat && a.dataset.cat === codeToCat[fcat.code]) showTok(a); else dimCtx(a); });
+    // Labels/auras stay for context: highlight selected categories, else dim
+    const catCodeSet = new Set(catCodes);
+    labels.forEach((l) => { if (catCodeSet.size && catCodeSet.has(l.dataset.code)) showTok(l); else dimCtx(l); });
+    auras.forEach((a)  => { if (catIdxSet.size && catIdxSet.has(a.dataset.cat)) showTok(a); else dimCtx(a); });
 
     onMatchCount?.(count);
     setNoResults(count === 0);
-  }, [filters, subs]);
+  }, [filters, catSels, subs]);
 
   // C3: Escape key clears filters
   useEffect(() => {
