@@ -12,10 +12,6 @@ import { formatTurnover } from "../../utils";
 import { setIsOverview } from "../../store/slices/isOverview.slice";
 import placeholder from "../../assets/placeholderimg.jpg";
 
-const CODE_TO_ID = Object.fromEntries(
-  Object.entries(CAT_META).map(([k, v]) => [v.code, parseInt(k.split("-")[1])])
-);
-
 const metaByCatId = (id) => CAT_META[`category-${id}`];
 
 // A vendor may list several websites (comma/space separated). Return clean,
@@ -64,10 +60,6 @@ export default function CompanyPageClient({ companyId, initialCompany, subcatego
     .filter((c) => !mainMeta || c.code !== mainMeta.code);
   const websites = parseWebsites(company?.companyWebsite);
   const offices  = company?.companyOffices ?? [];
-
-  const compareHref = () => {
-    if (mainMeta) sessionStorage.setItem("comparePreCategoryId", CODE_TO_ID[mainMeta.code]);
-  };
 
   const facts = [
     company?.creationDate && { icon: I.founded, label: "Founded", value: company.creationDate },
@@ -163,11 +155,9 @@ export default function CompanyPageClient({ companyId, initialCompany, subcatego
                   Visit website {I.external}
                 </a>
               )}
-              {mainMeta && (
-                <a href="/compare-tools" onClick={compareHref} className={styles.btnSecondary}>
-                  Compare in {mainMeta.code} {I.arrow}
-                </a>
-              )}
+              <a href="/get-my-list" className={styles.btnSecondary}>
+                Make my Selection {I.arrow}
+              </a>
             </div>
           </div>
         </header>
@@ -250,14 +240,9 @@ export default function CompanyPageClient({ companyId, initialCompany, subcatego
         {/* Treasurer CTA */}
         <div className={styles.ctaTreasurer}>
           <h3>Building your shortlist?</h3>
-          <p>Get an AI-curated Long List matched to your treasury profile, or compare vendors side-by-side.</p>
+          <p>Get an AI-curated Long List matched to your treasury profile.</p>
           <div className={styles.ctaTreasurerBtns}>
-            <a href="/get-my-list" className={styles.ctaWhiteBtn}>Get my Long List {I.arrow}</a>
-            {mainMeta && (
-              <a href="/compare-tools" onClick={compareHref} className={styles.ctaGhostBtn}>
-                Compare in {mainMeta.code} {I.arrow}
-              </a>
-            )}
+            <a href="/get-my-list" className={styles.ctaWhiteBtn}>Make my Selection {I.arrow}</a>
           </div>
         </div>
 

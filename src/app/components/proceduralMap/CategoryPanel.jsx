@@ -36,13 +36,10 @@ export default function CategoryPanel({ cat, categoryId, onClose }) {
           ))}
         </div>
 
-        {categoryId != null && (
-          <a className="catpanel-compare" href="/compare-tools"
-            onClick={() => sessionStorage.setItem("comparePreCategoryId", categoryId)}
-            style={{ background: `linear-gradient(135deg,hsl(${hue},80%,55%),hsl(${hue},65%,38%))` }}>
-            Compare vendors in {cat.code} →
-          </a>
-        )}
+        <a className="catpanel-compare" href="/get-my-list"
+          style={{ background: `linear-gradient(135deg,hsl(${hue},80%,55%),hsl(${hue},65%,38%))` }}>
+          Make my Selection →
+        </a>
       </div>
 
       <style jsx>{`

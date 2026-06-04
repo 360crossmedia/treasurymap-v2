@@ -73,10 +73,6 @@ export default function MapExperience({ multiplayer = false }) {
   // Live total of unique vendors currently on this map (varies by mode).
   const totalVendors = vendors.length || 0;
 
-  // Compare bar only makes sense for a single category (the Compare tool is per-category)
-  const soloCat = catSels.length === 1 ? catSels[0] : null;
-  const activeMeta = soloCat ? Object.values(CAT_META).find((v) => v.code === soloCat.code) : null;
-
   // Drill-down panel (full category grid) — from clicking a category label.
   const drillCat = drillCode ? cats.find((c) => c.code === drillCode) : null;
   const drillId = drillCode ? CODE_TO_ID[drillCode] : null;
@@ -123,35 +119,6 @@ export default function MapExperience({ multiplayer = false }) {
         {/* Category drill-down — full grid of every vendor in the clicked category */}
         {drillCat && (
           <CategoryPanel cat={drillCat} categoryId={drillId} onClose={() => setDrillCode(null)} />
-        )}
-
-        {/* Compare bar — when a category filter is active */}
-        {activeMeta && (
-          <div style={{
-            position: "fixed", bottom: 28, left: "50%", transform: "translateX(-50%)",
-            display: "flex", alignItems: "center", gap: 14,
-            background: "rgba(255,255,255,0.97)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)",
-            border: `1.5px solid hsl(${activeMeta.hue},55%,80%)`, borderRadius: 100, padding: "12px 20px 12px 18px",
-            boxShadow: `0 8px 32px -8px rgba(10,26,51,.25), 0 0 0 4px hsl(${activeMeta.hue},70%,93%)`,
-            zIndex: 200, whiteSpace: "nowrap",
-          }}>
-            <span style={{
-              width: 10, height: 10, borderRadius: "50%", flexShrink: 0,
-              background: `hsl(${activeMeta.hue},72%,50%)`, boxShadow: `0 0 8px hsl(${activeMeta.hue},72%,60%)`, display: "inline-block",
-            }} />
-            <span style={{ fontSize: 14, fontWeight: 700, color: "#0e2c5c" }}>{soloCat.code}</span>
-            <span style={{ fontSize: 13, color: "#5a6a85" }}>· Compare vendors in this category</span>
-            <a href="/compare-tools"
-              onClick={() => sessionStorage.setItem("comparePreCategoryId", CODE_TO_ID[soloCat.code])}
-              style={{
-                display: "inline-flex", alignItems: "center", gap: 7,
-                background: `linear-gradient(135deg,hsl(${activeMeta.hue},80%,55%),hsl(${activeMeta.hue},65%,38%))`,
-                color: "#fff", padding: "9px 18px", borderRadius: 100, fontWeight: 600, fontSize: 13.5,
-                textDecoration: "none", boxShadow: `0 4px 14px -4px hsl(${activeMeta.hue},65%,40%)`,
-              }}>
-              Compare →
-            </a>
-          </div>
         )}
       </div>
       <Footer />
