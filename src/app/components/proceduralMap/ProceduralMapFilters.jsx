@@ -14,13 +14,18 @@ const IconChevron = ({ open }) => (
     style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .2s", flexShrink: 0 }}><path d="M6 9l6 6 6-6" /></svg>
 );
 
-// Generic dropdown for sub-category / country / active-in
+// Generic dropdown (searchable when the option list is long)
 function Dropdown({ label, placeholder, options, activeId, onPick }) {
   const [open, setOpen] = useState(false);
+  const [q, setQ] = useState("");
   const ref = useRef(null);
   const active = options.find((o) => String(o.id) === String(activeId));
+  const searchable = options.length > 12;
+  const shown = q.trim()
+    ? options.filter((o) => o.name.toLowerCase().includes(q.toLowerCase().trim()))
+    : options;
   useEffect(() => {
-    const h = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    const h = (e) => { if (ref.current && !ref.current.contains(e.target)) { setOpen(false); setQ(""); } };
     document.addEventListener("mousedown", h);
     return () => document.removeEventListener("mousedown", h);
   }, []);
@@ -35,13 +40,18 @@ function Dropdown({ label, placeholder, options, activeId, onPick }) {
       </div>
       {open && (
         <div className="pf-dropdown">
-          <div className="pf-option" style={{ color: "#9aa3b5" }} onClick={() => { onPick(null); setOpen(false); }}>All</div>
-          {options.map((o) => (
+          {searchable && (
+            <input className="pf-search" autoFocus placeholder="Search…" value={q}
+              onChange={(e) => setQ(e.target.value)} onClick={(e) => e.stopPropagation()} />
+          )}
+          <div className="pf-option" style={{ color: "#9aa3b5" }} onClick={() => { onPick(null); setOpen(false); setQ(""); }}>All</div>
+          {shown.map((o) => (
             <div key={o.id} className={`pf-option ${String(o.id) === String(activeId) ? "pf-option-active" : ""}`}
-              onClick={() => { onPick(o); setOpen(false); }}>
+              onClick={() => { onPick(o); setOpen(false); setQ(""); }}>
               {o.name}
             </div>
           ))}
+          {!shown.length && <div className="pf-option" style={{ color: "#9aa3b5" }}>No match</div>}
         </div>
       )}
     </div>
@@ -150,14 +160,8 @@ export default function ProceduralMapFilters({ onFilter, onClear, activeFilter, 
         activeId={activeFilter?.type === "sub" ? activeFilter.value : null}
         onPick={(o) => o ? onFilter({ type: "sub", value: o.id }) : handleClear()} />
 
-      {/* Country (HQ) */}
+      {/* Country — based on the countries a vendor is active in (normalized) */}
       <Dropdown label="Country" placeholder="Select country"
-        options={countries}
-        activeId={activeFilter?.type === "hq" ? activeFilter.value : null}
-        onPick={(o) => o ? onFilter({ type: "hq", value: o.id }) : handleClear()} />
-
-      {/* Active in */}
-      <Dropdown label="Active in" placeholder="Select country"
         options={countries}
         activeId={activeFilter?.type === "active" ? activeFilter.value : null}
         onPick={(o) => o ? onFilter({ type: "active", value: o.id }) : handleClear()} />
@@ -180,11 +184,17 @@ export default function ProceduralMapFilters({ onFilter, onClear, activeFilter, 
 
       <style jsx>{`
         .pmf-bar {
-          display: flex; align-items: flex-end; gap: 14px;
-          padding: 12px 38px; background: rgba(255,255,255,0.92);
+          display: flex; align-items: flex-end; gap: 28px;
+          padding: 14px 38px; background: rgba(255,255,255,0.92);
           backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
           border-bottom: 1px solid #E1E7F1; flex-wrap: wrap; position: relative; z-index: 40;
         }
+        .pf-search {
+          width: calc(100% - 16px); margin: 8px 8px 6px; padding: 8px 12px;
+          border: 1.5px solid #E1E7F1; border-radius: 8px; font-size: 13px;
+          outline: none; color: #0A1A33; box-sizing: border-box;
+        }
+        .pf-search:focus { border-color: #2f6fe0; }
         .pf-col { display: flex; flex-direction: column; gap: 6px; position: relative; }
         .pf-label {
           font-family: 'JetBrains Mono', monospace; font-size: 10px;
