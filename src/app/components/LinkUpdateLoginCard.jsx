@@ -5,6 +5,7 @@ import inputEmailIcon from "../assets/inputEmailIcon.svg";
 import inputPasswordIcon from "../assets/inputPasswordIcon.svg";
 import { useState } from "react";
 import { apiLogin } from "../service/apiLogin";
+import { setAuthToken } from "../service/authToken";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { setUser } from "../store/slices/user.slice";
@@ -29,6 +30,7 @@ const LinkUpdateLoginCard = ({emailkey}) => {
       dispatch(setUser(data.data.id));
       localStorage.clear();
       localStorage.setItem("userId", data.data.id);
+      setAuthToken(data.data.token);
       dispatch(setIsLoading(false));
       router.push("/dashboard");
     } else {

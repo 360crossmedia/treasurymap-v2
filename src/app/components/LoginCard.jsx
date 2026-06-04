@@ -2,6 +2,7 @@
 import { useState } from "react";
 import styles from "../styles/auth.module.css";
 import { apiLogin } from "../service/apiLogin";
+import { setAuthToken } from "../service/authToken";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { setUser } from "../store/slices/user.slice";
@@ -44,6 +45,7 @@ const LoginCard = () => {
         dispatch(setUser(data.data.id));
         localStorage.clear();
         localStorage.setItem("userId", data.data.id);
+        setAuthToken(data.data.token);
         router.push("/dashboard");
       } else {
         setBanner("Incorrect email or password. Please try again.");

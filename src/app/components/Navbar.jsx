@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { setCompanyId } from "../store/slices/companyToUpdate.slice";
 import { setUser } from "../store/slices/user.slice";
+import { clearAuth } from "../service/authToken";
 import { usePathname } from "next/navigation";
 
 // TreasuryMap brand pin — crisp vector recreation of the official mark
@@ -121,8 +122,7 @@ const Navbar = ({ buttonLabel, multiplayerMap, set, rotate }) => {
                 onClick={() => {
                   dispatch(setCompanyId(false));
                   dispatch(setUser(0));
-                  localStorage.removeItem("userId");
-                  localStorage.removeItem("companyId");
+                  clearAuth();
                   pathname === "/" ? window.location.reload() : router.push("/");
                 }}
                 className={styles.navbarButtonLogOut}
