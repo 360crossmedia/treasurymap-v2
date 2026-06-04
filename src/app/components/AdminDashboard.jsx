@@ -23,6 +23,19 @@ const catHue = (c) => {
 const arr = (v) => (Array.isArray(v) ? v : []);
 const needsAttention = (c) => c.live && c.logo && arr(c.companySubcategories).length === 0;
 
+function timeAgo(d) {
+  if (!d) return "—";
+  const t = new Date(d).getTime();
+  if (Number.isNaN(t)) return "—";
+  const s = Math.max(0, Math.floor((Date.now() - t) / 1000));
+  if (s < 60) return "just now";
+  const m = Math.floor(s / 60); if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60); if (h < 24) return `${h}h ago`;
+  const dd = Math.floor(h / 24); if (dd < 31) return `${dd}d ago`;
+  const mo = Math.floor(dd / 30); if (mo < 12) return `${mo}mo ago`;
+  return `${Math.floor(mo / 12)}y ago`;
+}
+
 const I = {
   edit: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>,
   media: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="m10 8 5 3-5 3V8z"/></svg>,
@@ -61,6 +74,7 @@ export default function AdminDashboard() {
   // admin command-center state
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
+  const [sort, setSort] = useState("recent"); // recent | name
 
   const isAdmin = userId === 1;
 
@@ -148,7 +162,7 @@ export default function AdminDashboard() {
   // Filtered list
   const visible = useMemo(() => {
     const q = search.toLowerCase().trim();
-    return companies.filter((c) => {
+    const list = companies.filter((c) => {
       if (filter === "live" && !c.live) return false;
       if (filter === "hidden" && c.live) return false;
       if (filter === "multiplayer" && !c.multiplayerMap) return false;
@@ -156,7 +170,11 @@ export default function AdminDashboard() {
       if (q && !(c.name || "").toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [companies, filter, search]);
+    list.sort((a, b) => sort === "name"
+      ? (a.name || "").localeCompare(b.name || "")
+      : new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0));
+    return list;
+  }, [companies, filter, search, sort]);
 
   const selected = companies.find((c) => String(c.id) === String(selectedId));
 
@@ -205,6 +223,12 @@ export default function AdminDashboard() {
                 <button className="dash-btn primary sm" onClick={createCompany}>{I.plus} New</button>
               </div>
 
+              {filter === "hidden" && (
+                <div className="dash-queue-note">
+                  📥 <b>Review queue</b> — companies not yet on the map, newest first. Flip <b>Live</b> when a vendor has finished uploading.
+                </div>
+              )}
+
               {/* Table */}
               <div className="dash-tablewrap">
                 {loading ? (
@@ -215,7 +239,9 @@ export default function AdminDashboard() {
                   <table className="dash-table">
                     <thead>
                       <tr>
-                        <th>Company</th><th>Category</th><th>Owner</th>
+                        <th className={`sortable ${sort === "name" ? "act" : ""}`} onClick={() => setSort("name")}>Company{sort === "name" ? " ↓" : ""}</th>
+                        <th>Category</th><th>Owner</th>
+                        <th className={`sortable ${sort === "recent" ? "act" : ""}`} onClick={() => setSort("recent")}>Updated{sort === "recent" ? " ↓" : ""}</th>
                         <th className="ctr">Live</th><th className="ctr">Multiplayer</th><th className="ctr">Actions</th>
                       </tr>
                     </thead>
@@ -232,6 +258,7 @@ export default function AdminDashboard() {
                             ? <span className="dash-cat" style={{ background: `hsl(${catHue(c)},70%,94%)`, color: `hsl(${catHue(c)},55%,32%)` }}>{catCode(c)}</span>
                             : <span className="muted">—</span>}</td>
                           <td className="dash-owner">{users[c.userId] || (c.userId === 1 ? "Admin" : `#${c.userId}`)}</td>
+                          <td className="dash-date">{timeAgo(c.updatedAt || c.createdAt)}</td>
                           <td className="ctr"><Switch on={!!c.live} busy={busy[c.id]} onClick={() => toggleField(c, "live")} /></td>
                           <td className="ctr"><Switch on={!!c.multiplayerMap} busy={busy[c.id]} onClick={() => toggleField(c, "multiplayerMap")} tone="teal" /></td>
                           <td className="ctr">
@@ -360,6 +387,11 @@ export default function AdminDashboard() {
         .dash-table { width: 100%; border-collapse: collapse; }
         .dash-table th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #8a93a6; font-weight: 700; padding: 12px 16px; border-bottom: 1px solid #eef2f8; white-space: nowrap; }
         .dash-table th.ctr, .dash-table td.ctr { text-align: center; }
+        .dash-table th.sortable { cursor: pointer; user-select: none; }
+        .dash-table th.sortable:hover { color: #2f6fe0; }
+        .dash-table th.sortable.act { color: #2f6fe0; }
+        .dash-date { color: #8a93a6; font-size: 12.5px; white-space: nowrap; }
+        .dash-queue-note { padding: 11px 16px; background: #f0f6ff; border-bottom: 1px solid #e0ebfb; font-size: 13px; color: #2a4a78; }
         .dash-table td { padding: 11px 16px; border-bottom: 1px solid #f2f5fa; font-size: 13.5px; color: #2a3c5a; vertical-align: middle; }
         .dash-table tr:last-child td { border-bottom: none; }
         .dash-table tr.warn td { background: #fffaf0; }
