@@ -3,6 +3,10 @@ import React, { useState, useEffect, useMemo } from "react";
 import { url } from "../../service/url.js";
 import { apiGetMultiplayerMapData } from "@/app/service/apiGetMultiplayerMapData";
 import styles from "./multiplayerMap.module.css";
+// Global filter-bar + map-wrapper styles (.interactive-map-filter, .text-style-titles,
+// .map-wrapper, .div-search-input …). MultiplayerMap originally relied on a sibling
+// (NewTreasuryMap3) importing these; rendered standalone it must import them itself.
+import "../newmap3/NewTreasuryMap3.css";
 import { MultiplayerMapCategories } from "./staticdata.jsx";
 import { cld } from "../../utils/cloudinary";
 import { providerHref } from "../../utils/slugify";
