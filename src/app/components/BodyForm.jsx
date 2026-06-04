@@ -3,7 +3,7 @@ import Image from "next/image";
 import styles from "../styles/BodyForm.module.css";
 import PhotoImg from "../assets/photoImg.svg";
 import { Checkbox } from "primereact/checkbox";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { apiCreateCompany } from "../service/apiCreateCompany";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
@@ -29,6 +29,79 @@ import { RadioButton } from "primereact/radiobutton";
 import { apiUploadSubOptions } from "../service/apiUploadSubOptions";
 import { apiGetSubOptionsByCompany } from "../service/apiGetSubOptionsByCompany";
 import { apiDeleteCompanyById } from "../service/apiDeleteCompanyById";
+
+// ── Section divider — turns the long form into clearly labelled sections ──────
+const SectionHead = ({ n, title, sub, first }) => (
+  <div
+    style={{
+      display: "flex", alignItems: "center", gap: 12,
+      margin: first ? "2px 0 18px" : "36px 0 18px",
+      paddingTop: first ? 0 : 20,
+      borderTop: first ? "none" : "1px solid #eef2f8",
+    }}
+  >
+    <span style={{ width: 28, height: 28, borderRadius: 8, background: "linear-gradient(135deg,#4D8DFF,#2f6fe0)", color: "#fff", display: "grid", placeItems: "center", fontSize: 13, fontWeight: 700, flexShrink: 0 }}>{n}</span>
+    <div>
+      <div style={{ fontSize: 16, fontWeight: 700, color: "#0e2c5c" }}>{title}</div>
+      {sub && <div style={{ fontSize: 12.5, color: "#7a899f", marginTop: 1 }}>{sub}</div>}
+    </div>
+  </div>
+);
+
+// ── Inline help line under a label ───────────────────────────────────────────
+const Hint = ({ children }) => (
+  <p style={{ fontSize: 12.5, color: "#8a93a6", margin: "-2px 0 6px", lineHeight: 1.45 }}>{children}</p>
+);
+
+// ── Searchable user/owner picker (admin) ─────────────────────────────────────
+const SearchableUsers = ({ users = [], value, onChange }) => {
+  const [open, setOpen] = useState(false);
+  const [q, setQ] = useState("");
+  const ref = useRef(null);
+  const selected = (users || []).find((u) => String(u.id) === String(value));
+  const shown = q.trim()
+    ? users.filter((u) => (u.fullName || u.email || "").toLowerCase().includes(q.toLowerCase().trim()))
+    : users;
+  useEffect(() => {
+    const h = (e) => { if (ref.current && !ref.current.contains(e.target)) { setOpen(false); setQ(""); } };
+    document.addEventListener("mousedown", h);
+    return () => document.removeEventListener("mousedown", h);
+  }, []);
+  return (
+    <div ref={ref} style={{ position: "relative" }}>
+      <div
+        onClick={() => setOpen((o) => !o)}
+        style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, padding: "12px 15px", borderRadius: 12, border: "1.5px solid #e3e9f2", background: "#f7f9fc", cursor: "pointer", fontSize: 14.5, color: selected ? "#0e2c5c" : "#9aa3b5", fontWeight: selected ? 600 : 400 }}
+      >
+        <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+          {selected ? (selected.fullName || selected.email) : "Select an owner"}
+        </span>
+        <span style={{ color: "#8a93a6" }}>▾</span>
+      </div>
+      {open && (
+        <div style={{ position: "absolute", top: "calc(100% + 6px)", left: 0, right: 0, zIndex: 60, background: "#fff", border: "1px solid #e1e7f1", borderRadius: 12, boxShadow: "0 16px 44px -12px rgba(10,26,51,.24)", overflow: "hidden" }}>
+          <input
+            autoFocus value={q} onChange={(e) => setQ(e.target.value)}
+            placeholder="Search a user…"
+            style={{ width: "100%", border: "none", borderBottom: "1px solid #f0f3f8", outline: "none", padding: "11px 14px", fontSize: 14, color: "#0e2c5c", boxSizing: "border-box" }}
+          />
+          <div style={{ maxHeight: 260, overflowY: "auto", padding: 4 }}>
+            {shown.slice(0, 50).map((u) => (
+              <div key={u.id}
+                onClick={() => { onChange({ target: { value: u.id } }); setOpen(false); setQ(""); }}
+                style={{ padding: "9px 12px", borderRadius: 8, fontSize: 13.5, color: String(u.id) === String(value) ? "#2f6fe0" : "#3a4a66", fontWeight: String(u.id) === String(value) ? 600 : 400, cursor: "pointer", background: String(u.id) === String(value) ? "#eef4ff" : "transparent" }}
+                onMouseEnter={(e) => { if (String(u.id) !== String(value)) e.currentTarget.style.background = "#f4f8ff"; }}
+                onMouseLeave={(e) => { if (String(u.id) !== String(value)) e.currentTarget.style.background = "transparent"; }}>
+                {u.fullName || u.email}
+              </div>
+            ))}
+            {!shown.length && <div style={{ padding: "10px 12px", color: "#9aa3b5", fontSize: 13 }}>No match</div>}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const BodyForm = () => {
   const dispatch = useDispatch();
@@ -329,7 +402,7 @@ const BodyForm = () => {
   return (
     <form onSubmit={submit} noValidate={isAdmin} className={styles.mainContainer}>
       <div className={styles.uploadPhotoContainer}>
-        <div className={styles.card}>
+        <div className={styles.card} style={{ borderStyle: "dashed", borderColor: "#cdd9ec" }}>
           <input
             className={styles.inputFile}
             type="file"
@@ -365,6 +438,9 @@ const BodyForm = () => {
               <span className={styles.span}>*</span>
             )}
           </p>
+          <p style={{ fontSize: 11.5, color: "#7a899f", margin: "2px 0 8px", textAlign: "center" }}>
+            Drag &amp; drop a file or click anywhere in this box
+          </p>
           <ul style={{ fontSize: "10px" }}>
             <li>Format: PNG</li>
             <li>Background: Transparent</li>
@@ -377,6 +453,9 @@ const BodyForm = () => {
         </div>
       </div>
       <div className={styles.rightContainer}>
+        {isAdmin && (
+          <SectionHead first n="A" title="Admin · Visibility" sub="Only you see this — controls where the company shows up and its client status." />
+        )}
         {(userId == 1 || backUpUserId == 1) && (
           <div className={styles.inputContainer}>
             <label className={styles.label} htmlFor="">
@@ -420,6 +499,7 @@ const BodyForm = () => {
             </Form.Select>
           </div>
         )}
+        <SectionHead n="1" title="Company details" sub="The essentials shown on your public page." first={!isAdmin} />
         <div className={styles.inputContainer}>
           <label className={styles.label} htmlFor="">
             Name of the company {!isAdmin && <span className={styles.span}>*</span>}
@@ -578,6 +658,12 @@ const BodyForm = () => {
           ></textarea>
         </div>
 
+        <SectionHead n="2" title="Positioning on the map" sub="Where and how your logo appears on the Treasury Map." />
+        <div style={{ background: "#f0f6ff", border: "1px solid #e0ebfb", borderRadius: 12, padding: "12px 16px", marginBottom: 18, fontSize: 12.5, color: "#2a4a78", lineHeight: 1.55 }}>
+          <b>Main category</b> — where your single logo sits on the map.{" "}
+          <b>Categories</b> — every area you also operate in.{" "}
+          <b>Sub-categories</b> — the specific functions you cover (used by the map filters).
+        </div>
         <div className={styles.inputContainer}>
           <label className={styles.label} htmlFor="">
             Category to display on the map (Main category){" "}
@@ -798,6 +884,9 @@ const BodyForm = () => {
             ))}
           </div>
         </div>
+        {questions?.length > 0 && (
+          <SectionHead n="3" title="Q&A" sub="These appear as a question-and-answer block on your public page." />
+        )}
         {questions?.map((question, index) => (
           <div className={styles.inputContainer} key={index}>
             <label className={styles.label} htmlFor="">
@@ -813,6 +902,7 @@ const BodyForm = () => {
             ></textarea>
           </div>
         ))}
+        <SectionHead n="4" title="Keywords" sub="Help treasurers find this company in search." />
         <div className={styles.inputContainer}>
           <label className={styles.label} htmlFor="">
             Insert keywords related to the company (separated by commas):
@@ -830,24 +920,13 @@ const BodyForm = () => {
             <label className={styles.label} htmlFor="description">
               Company owner {!isAdmin && <span className={styles.span}>*</span>}
             </label>
-            <Form.Select
+            <SearchableUsers
+              users={users || []}
               value={userSelected}
-              className={styles.inputText}
               onChange={(e) =>
-                setUserSelected(
-                  e.target.value == "Select User" ? false : e.target.value
-                )
+                setUserSelected(e.target.value == "Select User" ? false : e.target.value)
               }
-              bsPrefix={`form-select ${styles.input} ${
-                userSelected ? styles.active : ""
-              }`}
-            >
-              {users?.map((user, index) => (
-                <option key={index} value={user.id}>
-                  {user.fullName}
-                </option>
-              ))}
-            </Form.Select>
+            />
           </div>
         )}
         <div className={styles.buttonContainer}>
