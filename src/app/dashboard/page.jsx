@@ -1,24 +1,18 @@
 "use client";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import styles from "../styles/layout.module.css";
-import HeaderDashboard from "../components/HeaderDashboard";
-import BodyDashboard from "../components/BodyDashboard";
+import AdminDashboard from "../components/AdminDashboard";
 
-const Layout = () => {
+export default function DashboardPage() {
   return (
     <>
-      <div
-        className={styles.mainContainer}
-        style={{ backgroundPosition: "bottom", paddingBottom: "1.65%" }}
-      >
-        <Navbar buttonLabel={"Login"} />
-        <HeaderDashboard />
-      </div>
-      <BodyDashboard />
+      <link
+        href="https://fonts.googleapis.com/css2?family=Chivo:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+      />
+      <Navbar buttonLabel="Log In" />
+      <AdminDashboard />
       <Footer />
     </>
   );
-};
-
-export default Layout;
+}
