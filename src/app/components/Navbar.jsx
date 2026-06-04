@@ -87,9 +87,13 @@ const Navbar = ({ buttonLabel, multiplayerMap, set, rotate }) => {
           {/* ── Nav links ── */}
           <div className={`${styles.navbarLinks} ${isMenuOpen ? styles.navbarLinksMobile : ""}`}>
             {loggedIn && (
-              <a className={styles.navbarA} href="/dashboard">Admin Dashboard</a>
+              <>
+                <a className={styles.navbarA} href="/dashboard">Admin Dashboard</a>
+                <span className={styles.linkSep} />
+              </>
             )}
             <a className={styles.navbarA} href="/contactUs">Contact us</a>
+            <span className={styles.linkSep} />
             <a className={styles.navbarA} href="/insights">Insights</a>
 
             {/* Make my Selection — highlighted (new AI tool, points to Long List) */}

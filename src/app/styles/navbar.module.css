@@ -81,16 +81,16 @@
 .navbarLinks {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 8px;
 }
 
 /* ─── LINK SEPARATOR ─────────────────────────────────────────────────────── */
 .linkSep {
   display: inline-block;
   width: 1px;
-  height: 18px;
-  background: #E1E7F1;
-  margin: 0 8px;
+  height: 16px;
+  background: #d7deea;
+  margin: 0;
   flex-shrink: 0;
 }
 
@@ -109,7 +109,7 @@
 
 .navbarA:hover {
   color: #0e2c5c;
-  background: rgba(47, 111, 224, .06);
+  background: rgba(47, 111, 224, .10);
 }
 
 /* underline on hover */
