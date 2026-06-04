@@ -17,14 +17,19 @@ const IconCheck = () => (
   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2f6fe0" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: "auto", flexShrink: 0 }}><path d="M20 6L9 17l-5-5" /></svg>
 );
 
-// Generic searchable dropdown (used for Sub-Category & Country)
-function Dropdown({ label, placeholder, options, activeId, onPick }) {
+// Generic searchable dropdown — single-select (Country) or multi-select (Sub-Category).
+function Dropdown({ label, placeholder, options, activeId, onPick, multi = false, selectedIds = [], onToggle, onClearMulti }) {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
   const ref = useRef(null);
+  const selSet = new Set((selectedIds || []).map(String));
   const active = options.find((o) => String(o.id) === String(activeId));
   const searchable = options.length > 12;
   const shown = q.trim() ? options.filter((o) => o.name.toLowerCase().includes(q.toLowerCase().trim())) : options;
+  const isActive = multi ? selSet.size > 0 : !!active;
+  const triggerText = multi
+    ? (selSet.size ? `${selSet.size} selected` : placeholder)
+    : (active ? active.name : placeholder);
   useEffect(() => {
     const h = (e) => { if (ref.current && !ref.current.contains(e.target)) { setOpen(false); setQ(""); } };
     document.addEventListener("mousedown", h);
@@ -33,8 +38,8 @@ function Dropdown({ label, placeholder, options, activeId, onPick }) {
   return (
     <div className="pf-col" ref={ref}>
       <label className="pf-label">{label}</label>
-      <div className={`pf-ctl pf-select ${active ? "pf-active" : ""}`} onClick={() => setOpen(!open)}>
-        <span className={active ? "pf-val" : "pf-ph"}>{active ? active.name : placeholder}</span>
+      <div className={`pf-ctl pf-select ${isActive ? "pf-active" : ""}`} onClick={() => setOpen(!open)}>
+        <span className={isActive ? "pf-val" : "pf-ph"}>{triggerText}</span>
         <IconChevron open={open} />
       </div>
       {open && (
@@ -43,12 +48,15 @@ function Dropdown({ label, placeholder, options, activeId, onPick }) {
             <input className="pf-search" autoFocus placeholder="Search…" value={q}
               onChange={(e) => setQ(e.target.value)} onClick={(e) => e.stopPropagation()} />
           )}
-          <div className="pf-option pf-all" onClick={() => { onPick(null); setOpen(false); setQ(""); }}>All</div>
+          <div className="pf-option pf-all"
+            onClick={() => { if (multi) { onClearMulti?.(); } else { onPick(null); setOpen(false); setQ(""); } }}>
+            {multi ? "Clear sub-categories" : "All"}
+          </div>
           {shown.map((o) => {
-            const sel = String(o.id) === String(activeId);
+            const sel = multi ? selSet.has(String(o.id)) : String(o.id) === String(activeId);
             return (
               <div key={o.id} className={`pf-option ${sel ? "pf-option-active" : ""}`}
-                onClick={() => { onPick(o); setOpen(false); setQ(""); }}>
+                onClick={() => { if (multi) { onToggle(o); } else { onPick(o); setOpen(false); setQ(""); } }}>
                 {o.name}{sel && <IconCheck />}
               </div>
             );
@@ -61,7 +69,7 @@ function Dropdown({ label, placeholder, options, activeId, onPick }) {
 }
 
 export default function ProceduralMapFilters({
-  filters = {}, onAddFilter, onRemoveFilter, onClear,
+  filters = {}, subs = [], onAddFilter, onRemoveFilter, onToggleSub, onRemoveSub, onClear,
   vendors = [], subCategories = [], countries = [],
   matchCount, totalVendors = 0, totalCats = 14,
 }) {
@@ -73,7 +81,8 @@ export default function ProceduralMapFilters({
   const catRef = useRef(null);
 
   const catFilter = filters.category;
-  const activeList = Object.values(filters).filter((f) => f && !(f.type === "keyword" && !String(f.value || "").trim()));
+  // Single-value chips (category / keyword / active) + multi sub-category chips
+  const singleChips = Object.values(filters).filter((f) => f && !(f.type === "keyword" && !String(f.value || "").trim()));
 
   const matches = keyword.trim().length >= 1
     ? vendors.filter((v) => v.name.toLowerCase().includes(keyword.toLowerCase().trim()))
@@ -113,12 +122,11 @@ export default function ProceduralMapFilters({
     return () => document.removeEventListener("mousedown", h);
   }, []);
 
-  const filtersActive = activeList.length > 0;
+  const filtersActive = singleChips.length > 0 || subs.length > 0;
 
   const chipText = (f) => {
     if (f.type === "keyword") return f.label;
     if (f.type === "category") return f.code;
-    if (f.type === "sub") return subCategories.find((s) => String(s.id) === String(f.value))?.name || "Sub-category";
     if (f.type === "active") return countries.find((c) => String(c.id) === String(f.value))?.name || "Country";
     return "";
   };
@@ -172,10 +180,11 @@ export default function ProceduralMapFilters({
           )}
         </div>
 
-        {/* Sub-Category */}
-        <Dropdown label="Sub-Category" placeholder="Select sub-category" options={subCategories}
-          activeId={filters.sub?.value}
-          onPick={(o) => o ? onAddFilter({ type: "sub", value: o.id, label: o.name }) : onRemoveFilter("sub")} />
+        {/* Sub-Category — multi-select (OR within facet) */}
+        <Dropdown label="Sub-Category" placeholder="Select sub-categories" options={subCategories}
+          multi selectedIds={subs.map((s) => s.value)}
+          onToggle={(o) => onToggleSub({ value: o.id, label: o.name })}
+          onClearMulti={() => subs.forEach((s) => onRemoveSub(s.value))} />
 
         {/* Country */}
         <Dropdown label="Country" placeholder="Select country" options={countries}
@@ -186,12 +195,18 @@ export default function ProceduralMapFilters({
       {/* Active filter chips */}
       {filtersActive && (
         <div className="pmf-chips">
-          {activeList.map((f, i) => (
-            <span key={i} className="pf-chip"
+          {singleChips.map((f, i) => (
+            <span key={`s${i}`} className="pf-chip"
               style={f.type === "category" ? { background: `hsl(${f.hue},70%,94%)`, color: `hsl(${f.hue},55%,30%)`, borderColor: `hsl(${f.hue},50%,82%)` } : {}}>
               {f.type === "category" && <span className="pf-chip-dot" style={{ background: `hsl(${f.hue},72%,50%)` }} />}
               {chipText(f)}
               <button className="pf-chip-x" onClick={() => removeChip(f)}>✕</button>
+            </span>
+          ))}
+          {subs.map((s, i) => (
+            <span key={`sub${i}`} className="pf-chip">
+              {s.label}
+              <button className="pf-chip-x" onClick={() => onRemoveSub(s.value)}>✕</button>
             </span>
           ))}
           <button className="pf-clear-all" onClick={clearAll}>Clear all</button>

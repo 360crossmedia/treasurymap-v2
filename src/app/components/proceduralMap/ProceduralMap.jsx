@@ -101,7 +101,7 @@ function toCatsMultiplayer(mp, companies = [], countries = []) {
   return groups.sort((a, b) => a.catId - b.catId);
 }
 
-export default function ProceduralMap({ multiplayer = false, filters, onCategoryClick, onClear, onVendors, onCats, onFilterOptions, onMatchCount }) {
+export default function ProceduralMap({ multiplayer = false, filters, subs = [], onCategoryClick, onClear, onVendors, onCats, onFilterOptions, onMatchCount }) {
   const rootRef             = useRef(null);
   const router              = useRouter();
   // Use a ref for onCategoryClick so it never triggers a map rebuild
@@ -192,28 +192,34 @@ export default function ProceduralMap({ multiplayer = false, filters, onCategory
     return () => { cancelled = true; cleanup(); };
   }, [handleNavigate, multiplayer]); // onCategoryClick intentionally excluded — handled via ref
 
-  // Apply combinable filters (AND) — dim non-matching, report match count.
+  // Apply combinable filters (AND across facets, OR within sub-categories).
+  // When filtering, NON-matching logos are fully hidden so only the vendors
+  // concerned by the filters remain on the map.
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
     const toks   = [...root.querySelectorAll(".tok")];
     const labels = [...root.querySelectorAll(".clabel")];
     const auras  = [...root.querySelectorAll(".aura")];
-    const all    = [...toks, ...labels, ...auras];
 
-    const show  = (e) => { e.style.opacity = ""; e.classList.remove("dim"); e.classList.add("on"); };
-    const hide  = (e) => { e.style.opacity = "0.1"; e.classList.add("dim"); e.classList.remove("on"); };
-    const reset = (e) => { e.style.opacity = ""; e.classList.remove("dim", "on"); };
+    const showTok = (e) => { e.style.opacity = ""; e.style.pointerEvents = ""; e.classList.remove("dim"); e.classList.add("on"); };
+    const hideTok = (e) => { e.style.opacity = "0"; e.style.pointerEvents = "none"; e.classList.add("dim"); e.classList.remove("on"); };
+    const dimCtx  = (e) => { e.style.opacity = "0.16"; e.classList.add("dim"); e.classList.remove("on"); };
+    const reset   = (e) => { e.style.opacity = ""; e.style.pointerEvents = ""; e.classList.remove("dim", "on"); };
 
-    // Active filters (ignore an empty keyword)
-    const active = Object.values(filters || {}).filter(
-      (f) => f && !(f.type === "keyword" && !String(f.value || "").trim())
-    );
+    // Build active conditions
+    const fcat = filters?.category;
+    const fkw  = filters?.keyword && String(filters.keyword.value || "").trim()
+      ? String(filters.keyword.value).toLowerCase().trim() : null;
+    const fac  = filters?.active;
+    const subVals = (subs || []).map((s) => String(s.value));
+    const anyActive = !!(fcat || fkw || fac || subVals.length);
 
-    if (!active.length) {
+    if (!anyActive) {
       root.classList.remove("focusing");
-      all.forEach(reset);
+      [...toks, ...labels, ...auras].forEach(reset);
       onMatchCount?.(null);
+      setNoResults(false);
       return;
     }
 
@@ -221,26 +227,25 @@ export default function ProceduralMap({ multiplayer = false, filters, onCategory
     const codeToCat = {};
     labels.forEach((l) => { codeToCat[l.dataset.code] = l.dataset.cat; });
 
-    const tokMatches = (t) => active.every((f) => {
-      if (f.type === "category") return t.dataset.cat === codeToCat[f.code];
-      if (f.type === "keyword")  return (t.querySelector("img")?.alt || "").toLowerCase().includes(String(f.value).toLowerCase().trim());
-      if (f.type === "sub")      return (t.dataset.sub    || "").includes("," + f.value + ",");
-      if (f.type === "active")   return (t.dataset.active || "").includes("," + f.value + ",");
+    const tokMatches = (t) => {
+      if (fcat && t.dataset.cat !== codeToCat[fcat.code]) return false;
+      if (fkw && !(t.querySelector("img")?.alt || "").toLowerCase().includes(fkw)) return false;
+      if (fac && !(t.dataset.active || "").includes("," + fac.value + ",")) return false;
+      if (subVals.length && !subVals.some((v) => (t.dataset.sub || "").includes("," + v + ","))) return false;
       return true;
-    });
+    };
 
     root.classList.add("focusing");
     let count = 0;
-    toks.forEach((t) => { if (tokMatches(t)) { show(t); count++; } else hide(t); });
+    toks.forEach((t) => { if (tokMatches(t)) { showTok(t); count++; } else hideTok(t); });
 
-    // Labels/auras: highlight the filtered category if any, else dim all
-    const cat = active.find((f) => f.type === "category");
-    labels.forEach((l) => { if (cat && l.dataset.code === cat.code) show(l); else hide(l); });
-    auras.forEach((a)  => { if (cat && a.dataset.cat === codeToCat[cat.code]) show(a); else hide(a); });
+    // Labels/auras stay for context: highlight the filtered category if any, else dim
+    labels.forEach((l) => { if (fcat && l.dataset.code === fcat.code) showTok(l); else dimCtx(l); });
+    auras.forEach((a)  => { if (fcat && a.dataset.cat === codeToCat[fcat.code]) showTok(a); else dimCtx(a); });
 
     onMatchCount?.(count);
     setNoResults(count === 0);
-  }, [filters]);
+  }, [filters, subs]);
 
   // C3: Escape key clears filters
   useEffect(() => {

@@ -15,7 +15,8 @@ const CODE_TO_ID = Object.fromEntries(
 // Shared map page body, used by both the homepage ("Treasury Map", 1 logo/vendor)
 // and /multiplayer-map ("Multiplayer Map", vendor repeated across every category).
 export default function MapExperience({ multiplayer = false }) {
-  const [filters, setFilters] = useState({});
+  const [filters, setFilters] = useState({});         // single-value facets: category / keyword / active
+  const [subs, setSubs] = useState([]);               // multi-select sub-categories [{value,label}]
   const [vendors, setVendors] = useState([]);
   const [cats, setCats] = useState([]);               // full per-category vendor lists
   const [drillCode, setDrillCode] = useState(null);   // category drill-down panel
@@ -39,7 +40,17 @@ export default function MapExperience({ multiplayer = false }) {
     setFilters((f) => { const n = { ...f }; delete n[type]; return n; });
   }, []);
 
-  const handleClear = useCallback(() => setFilters({}), []);
+  // Multi-select sub-categories (OR within the facet)
+  const toggleSub = useCallback((sub) => {
+    setSubs((s) => (s.some((x) => String(x.value) === String(sub.value))
+      ? s.filter((x) => String(x.value) !== String(sub.value))
+      : [...s, sub]));
+  }, []);
+  const removeSub = useCallback((value) => {
+    setSubs((s) => s.filter((x) => String(x.value) !== String(value)));
+  }, []);
+
+  const handleClear = useCallback(() => { setFilters({}); setSubs([]); }, []);
 
   // Clicking a category LABEL on the map opens the full drill-down panel
   // (shows every vendor of that category). The filter dropdown is separate
@@ -67,8 +78,11 @@ export default function MapExperience({ multiplayer = false }) {
       <Navbar buttonLabel="Log In" />
       <ProceduralMapFilters
         filters={filters}
+        subs={subs}
         onAddFilter={addFilter}
         onRemoveFilter={removeFilter}
+        onToggleSub={toggleSub}
+        onRemoveSub={removeSub}
         onClear={handleClear}
         vendors={vendors}
         subCategories={filterOpts.subCategories}
@@ -81,6 +95,7 @@ export default function MapExperience({ multiplayer = false }) {
         <ProceduralMap
           multiplayer={multiplayer}
           filters={filters}
+          subs={subs}
           onCategoryClick={handleCategoryClick}
           onClear={handleClear}
           onVendors={setVendors}
