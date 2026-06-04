@@ -41,6 +41,16 @@ export default function BodyPublicationsControl() {
   const [search, setSearch] = useState("");
   const [typeF, setTypeF] = useState("all");
   const [statusF, setStatusF] = useState("all");
+  const [newKind, setNewKind] = useState(null); // "article" | "video" — opens the company picker
+
+  // Create a new publication: pick a company, then open the editor in create mode.
+  const startNew = (cid) => {
+    if (!newKind || !cid) return;
+    dispatch(setCompanyId(Number(cid)));
+    try { localStorage.setItem("companyId", Number(cid)); } catch (_) {}
+    if (newKind === "article") { dispatch(setArticleId(null)); router.push("/mediaZone/article"); }
+    else { dispatch(setVideoId(null)); router.push("/mediaZone/video"); }
+  };
 
   const loadMains = async () => setMains((await apiGetMainPublications()) || []);
 
@@ -130,7 +140,13 @@ export default function BodyPublicationsControl() {
         </div>
 
         {/* All publications */}
-        <h2 className="pc-sec">All publications <span>{allPubs ? `${allPubs.length} total` : ""}</span></h2>
+        <div className="pc-sechead">
+          <h2 className="pc-sec">All publications <span>{allPubs ? `${allPubs.length} total` : ""}</span></h2>
+          <div className="pc-newbtns">
+            <button onClick={() => setNewKind("article")}>+ New article</button>
+            <button onClick={() => setNewKind("video")}>+ New video</button>
+          </div>
+        </div>
         <div className="pc-card">
           <div className="pc-toolbar">
             <div className="pc-srch">{I.search}<input placeholder="Search title or company…" value={search} onChange={(e) => setSearch(e.target.value)} /></div>
@@ -172,6 +188,9 @@ export default function BodyPublicationsControl() {
         </div>
       </div>
 
+      {newKind && (
+        <NewModal kind={newKind} companies={companies} onClose={() => setNewKind(null)} onContinue={startNew} />
+      )}
       {modalSlot != null && (
         <ChangeModal slot={modalSlot} companies={companies} onClose={() => setModalSlot(null)} onSaved={onSavedFeatured} />
       )}
@@ -198,6 +217,11 @@ export default function BodyPublicationsControl() {
         .pc-head p { font-size: 14.5px; color: #5a6a85; margin: 0; }
         .pc-sec { font-size: 15px; font-weight: 700; color: #0e2c5c; margin: 26px 0 12px; display: flex; align-items: baseline; gap: 10px; }
         .pc-sec span { font-size: 12.5px; font-weight: 500; color: #8a93a6; }
+        .pc-sechead { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+        .pc-sechead .pc-sec { margin-bottom: 0; }
+        .pc-newbtns { display: flex; gap: 8px; }
+        .pc-newbtns button { background: linear-gradient(135deg,#4D8DFF,#2f6fe0); color: #fff; border: none; border-radius: 100px; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 6px 16px -6px rgba(47,111,224,.5); transition: transform .15s; }
+        .pc-newbtns button:hover { transform: translateY(-1px); }
         .pc-card { background: #fff; border: 1px solid #e6ecf5; border-radius: 18px; box-shadow: 0 10px 34px -18px rgba(10,26,51,.18); overflow: hidden; }
         .pc-muted { color: #8a93a6; }
         .pc-pad { padding: 26px; text-align: center; font-size: 14px; }
@@ -374,6 +398,29 @@ function CompanyPicker({ companies, value, onChange }) {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// ── New-publication modal: pick a company, then open the editor ───────────────
+function NewModal({ kind, companies, onClose, onContinue }) {
+  const [cid, setCid] = useState(null);
+  return (
+    <div onClick={onClose}
+      style={{ position: "fixed", inset: 0, zIndex: 410, background: "rgba(10,26,51,.42)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20, fontFamily: "'Chivo', system-ui, sans-serif" }}>
+      <div onClick={(e) => e.stopPropagation()}
+        style={{ background: "#fff", borderRadius: 18, width: "min(520px,100%)", padding: "24px 26px", boxShadow: "0 30px 80px -16px rgba(10,26,51,.4)" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+          <h3 style={{ fontSize: 18, fontWeight: 700, color: "#0e2c5c", margin: 0, textTransform: "capitalize" }}>New {kind} — for which company?</h3>
+          <button onClick={onClose} aria-label="Close" style={{ background: "#f1f4f9", border: "none", borderRadius: "50%", width: 32, height: 32, cursor: "pointer", color: "#5a6a85" }}>✕</button>
+        </div>
+        <CompanyPicker companies={companies} value={cid} onChange={setCid} />
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 18 }}>
+          <button onClick={onClose} style={{ background: "#f1f4f9", border: "none", borderRadius: 100, padding: "11px 22px", fontWeight: 600, color: "#2a3c5a", cursor: "pointer" }}>Cancel</button>
+          <button disabled={!cid} onClick={() => onContinue(cid)}
+            style={{ background: "linear-gradient(135deg,#4D8DFF,#2f6fe0)", border: "none", borderRadius: 100, padding: "11px 24px", fontWeight: 600, color: "#fff", cursor: cid ? "pointer" : "default", opacity: cid ? 1 : 0.5, boxShadow: "0 8px 20px -6px rgba(47,111,224,.55)" }}>Continue →</button>
+        </div>
+      </div>
     </div>
   );
 }
