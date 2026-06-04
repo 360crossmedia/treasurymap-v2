@@ -1,193 +1,123 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import styles from "../styles/signupCard.module.css";
-import Image from "next/image";
-import inputEmailIcon from "../assets/inputEmailIcon.svg";
-import inputPasswordIcon from "../assets/inputPasswordIcon.svg";
-import inputFullNameIcon from "../assets/person.svg";
-import inputCompanyNameIcon from "../assets/building.svg";
+import { useState } from "react";
+import styles from "../styles/auth.module.css";
 import { apiCreateUser } from "../service/apiCreateUser";
-import { useDispatch } from "react-redux";
-import { setIsLoading } from "../store/slices/isLoading.slice";
 import { apiSendSignUpAlert } from "../service/apiSendSignUpAlert";
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const I = {
+  building: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M16 6h.01M8 10h.01M16 10h.01M8 14h.01M16 14h.01"/></svg>,
+  user: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+  mail: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>,
+  lock: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>,
+  check: <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>,
+};
+
+function Field({ label, icon, type = "text", placeholder, value, onChange, error }) {
+  return (
+    <div className={styles.field}>
+      <label className={styles.label}>{label}</label>
+      <div className={`${styles.inputWrap} ${error ? styles.err : ""}`}>
+        <span className={styles.icon}>{icon}</span>
+        <input className={styles.input} type={type} placeholder={placeholder} value={value} onChange={onChange} />
+      </div>
+      {error && <span className={styles.errorMsg}>{error}</span>}
+    </div>
+  );
+}
+
 const SignupCard = () => {
-  const [companyName, setcompanyName] = useState("");
-  const [fullName, setfullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confPassword, setconfPassword] = useState("");
-  const [passwordMatch, setPasswordsMatch] = useState(true);
-  const [error, setError] = useState("");
-  const router = useRouter();
-  const dispatch = useDispatch();
+  const [f, setF] = useState({ companyName: "", fullName: "", email: "", password: "", confPassword: "" });
+  const [errors, setErrors] = useState({});
+  const [banner, setBanner] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [done, setDone] = useState(false);
 
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-    checkPasswordsMatch(e.target.value, confPassword);
+  const set = (k) => (e) => { setF((x) => ({ ...x, [k]: e.target.value })); setErrors((x) => ({ ...x, [k]: undefined })); };
+
+  const validate = () => {
+    const e = {};
+    if (!f.companyName.trim()) e.companyName = "Required";
+    if (!f.fullName.trim()) e.fullName = "Required";
+    if (!f.email.trim()) e.email = "Required";
+    else if (!EMAIL_RE.test(f.email)) e.email = "Enter a valid email";
+    if (f.password.length < 6) e.password = "Use at least 6 characters";
+    if (f.confPassword !== f.password) e.confPassword = "Passwords don't match";
+    setErrors(e);
+    return !Object.keys(e).length;
   };
 
-  const handleConfirmPasswordChange = (e) => {
-    setconfPassword(e.target.value);
-    checkPasswordsMatch(password, e.target.value);
-  };
-
-  const checkPasswordsMatch = (pwd1, pwd2) => {
-    setPasswordsMatch(pwd1 === pwd2);
-  };
-
-  const handleSubmit = async () => {
-    if (
-      !companyName.length ||
-      !fullName.length ||
-      !email.length ||
-      !password.length ||
-      !confPassword.length
-    ) {
-      return setError("Complete information");
-    } else if (!email.includes("@") || !email.includes(".")) {
-      return setError("Enter valid email");
-    } else if (!passwordMatch) {
-      return setError("Password doesn't match");
-    } else {
-      dispatch(setIsLoading(true));
-      let datos = {
-        companyName: companyName,
-        fullName: fullName,
-        email: email.toLowerCase(),
-        password: password,
+  const submit = async (ev) => {
+    ev.preventDefault();
+    setBanner("");
+    if (loading || !validate()) return;
+    setLoading(true);
+    try {
+      const payload = {
+        companyName: f.companyName.trim(),
+        fullName: f.fullName.trim(),
+        email: f.email.toLowerCase().trim(),
+        password: f.password,
       };
-
-      try {
-        setError("");
-        let data = await apiCreateUser(datos);
-        if (data == 201) {
-          const result = await apiSendSignUpAlert(datos);
-          if (result.status == 200) {
-            dispatch(setIsLoading(false));
-            alert("User created succesfully");
-            router.push("/login");
-          } else {
-            dispatch(setIsLoading(false));
-            console.log(result);
-          }
-        } else {
-          dispatch(setIsLoading(false));
-          setError("Can not create user, information is incorrect.");
-          console.log(data);
-        }
-      } catch (e) {
-        dispatch(setIsLoading(false));
-        setError("Can not create user, information is incorrect.");
-        console.log(e);
+      const data = await apiCreateUser(payload);
+      if (data === 201) {
+        try { await apiSendSignUpAlert(payload); } catch (_) {}
+        setDone(true);
+      } else {
+        setBanner("We couldn't create your account. Please check your details and try again.");
+        setLoading(false);
       }
+    } catch {
+      setBanner("Something went wrong. Please try again.");
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    setPasswordsMatch(password == confPassword);
-  }, [confPassword, password]);
-
-  return (
-    <div className={styles.cardContainer}>
-      <div className={styles.card}>
-        <div>
-          <p className={styles.cardDescription}>Welcome to Treasury MAP</p>
-          <p
-            style={{
-              color: "#626b80",
-              textAlign: "center",
-              fontWeight: "bold",
-            }}
-          >
-            Contact us if you feel that your company should be on the map:
-            contact@360Crossmedia.com
-          </p>
-          <hr style={{ borderTop: "1px dashed" }} />
-          <p className={styles.cardDescription}>Sign Up</p>
-          <p
-            style={{
-              color: "#626b80",
-              textAlign: "center",
-              fontSize: "smaller",
-            }}
-          >
-            Once we have validated the presence of your company on the map by
-            email, you can set-up your account below.
-          </p>
-        </div>
-        <div className={styles.inputContainer}>
-          <Image className={styles.icon} src={inputCompanyNameIcon} alt="" />
-          <input
-            className={styles.input}
-            placeholder="Company Name"
-            type="text"
-            value={companyName}
-            onChange={(e) => setcompanyName(e.target.value)}
-          />
-        </div>
-        <div className={styles.inputContainer}>
-          <Image className={styles.icon} src={inputFullNameIcon} alt="" />
-          <input
-            className={styles.input}
-            placeholder="Full Name"
-            type="text"
-            value={fullName}
-            onChange={(e) => setfullName(e.target.value)}
-          />
-        </div>
-        <div className={styles.inputContainer}>
-          <Image className={styles.icon} src={inputEmailIcon} alt="" />
-          <input
-            className={styles.input}
-            placeholder="Email Address"
-            type="text"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        <div className={styles.inputContainer}>
-          <Image className={styles.icon} src={inputPasswordIcon} alt="" />
-          <input
-            className={`${styles.input} ${styles.removeOutline}`}
-            placeholder="Password"
-            type="password"
-            value={password}
-            style={
-              passwordMatch && password.length > 0
-                ? { borderColor: "green" }
-                : !passwordMatch && password.length > 0
-                ? { borderColor: "red" }
-                : {}
-            }
-            onChange={(e) => handlePasswordChange(e)}
-          />
-        </div>
-        <div className={styles.inputContainer}>
-          <Image className={styles.icon} src={inputPasswordIcon} alt="" />
-          <input
-            className={`${styles.input} ${styles.removeOutline}`}
-            placeholder="Confirm Password"
-            type="password"
-            value={confPassword}
-            style={
-              passwordMatch && password.length > 0
-                ? { borderColor: "green" }
-                : !passwordMatch && password.length > 0
-                ? { borderColor: "red" }
-                : {}
-            }
-            onChange={(e) => handleConfirmPasswordChange(e)}
-          />
-        </div>
-        <div>
-          <button className={styles.button} onClick={handleSubmit}>
-            Sign up
-          </button>
-          {!!error.length && <p className={styles.error}>Error: {error}</p>}
+  if (done) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.card}>
+          <div className={styles.successWrap}>
+            <div className={styles.successIcon}>{I.check}</div>
+            <h1 className={styles.title}>Account created</h1>
+            <p className={styles.subtitle}>Your account is ready. You can now log in to manage your listing.</p>
+            <a href="/login" className={styles.button} style={{ textDecoration: "none" }}>Go to login</a>
+          </div>
         </div>
       </div>
+    );
+  }
+
+  return (
+    <div className={styles.page}>
+      <form className={styles.card} style={{ maxWidth: 460 }} onSubmit={submit} noValidate>
+        <h1 className={styles.title}>Create your account</h1>
+        <p className={styles.subtitle}>
+          Once we've validated your company's presence on the map by email, set up your account here.
+        </p>
+
+        {banner && <div className={`${styles.banner} ${styles.bannerError}`}>{banner}</div>}
+
+        <Field label="Company name" icon={I.building} placeholder="Acme Corp" value={f.companyName} onChange={set("companyName")} error={errors.companyName} />
+        <Field label="Full name" icon={I.user} placeholder="Jane Doe" value={f.fullName} onChange={set("fullName")} error={errors.fullName} />
+        <Field label="Email" icon={I.mail} type="email" placeholder="you@company.com" value={f.email} onChange={set("email")} error={errors.email} />
+        <Field label="Password" icon={I.lock} type="password" placeholder="••••••••" value={f.password} onChange={set("password")} error={errors.password} />
+        <Field label="Confirm password" icon={I.lock} type="password" placeholder="••••••••" value={f.confPassword} onChange={set("confPassword")} error={errors.confPassword} />
+
+        <button type="submit" className={styles.button} disabled={loading}>
+          {loading && <span className={styles.spinner} />}
+          {loading ? "Creating…" : "Sign up"}
+        </button>
+
+        <p className={styles.alt}>
+          Already have an account? <a href="/login">Log in</a>
+        </p>
+        <p className={styles.subtitle} style={{ fontSize: "0.82rem", marginTop: 14, marginBottom: 0 }}>
+          Think your company should be on the map?{" "}
+          <a className={styles.link} href="mailto:contact@360Crossmedia.com">contact@360Crossmedia.com</a>
+        </p>
+      </form>
     </div>
   );
 };
