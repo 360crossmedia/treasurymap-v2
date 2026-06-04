@@ -1,17 +1,14 @@
 "use client";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import styles from "../styles/layout.module.css";
 import Gdpr from "../components/Gdpr";
 
-const Layout = () => {
+export default function GdprPage() {
   return (
-    <div className={styles.mainContainer}>
-      <Navbar buttonLabel={"Login"} />
+    <>
+      <Navbar buttonLabel="Log In" />
       <Gdpr />
       <Footer />
-    </div>
+    </>
   );
-};
-
-export default Layout;
+}

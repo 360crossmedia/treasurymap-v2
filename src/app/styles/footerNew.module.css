@@ -4,7 +4,8 @@
   align-items: center;
   padding: 30px 40px;
   background-color: #ffffff;
-  border-top: 1px solid #e7e7e7;
+  border-top: 1px solid #E1E7F1;
+  box-shadow: 0 -1px 0 #f0f3f8;
   width: 100%;
 }
 
@@ -47,10 +48,13 @@
 }
 
 .gdprText {
-  color: #666;
+  color: #3a4a66;
   font-size: 14px;
-  font-weight: normal;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color .18s;
 }
+.gdprText:hover { color: #2f6fe0; }
 
 .addressText {
   font-size: 14px;
