@@ -99,15 +99,16 @@ const BodyForm = () => {
     dispatch(setIsLoading(true));
     e.preventDefault();
     if (
-      selectedCategoryIds?.length > 0 &&
-      selectedCountriesIds?.length > 0 &&
-      selectedSubCategoryIds?.length > 0 &&
-      selectMainCategory
+      isAdmin ||
+      (selectedCategoryIds?.length > 0 &&
+        selectedCountriesIds?.length > 0 &&
+        selectedSubCategoryIds?.length > 0 &&
+        selectMainCategory)
     ) {
-      const logoCloudinary = image?.includes("https://")
-        ? ""
-        : await uploadImage(file);
-      const logo = image?.includes("https://") ? image : logoCloudinary;
+      // Logo is optional for admins; only upload when a new file was picked.
+      let logo = "";
+      if (image?.includes("https://")) logo = image;
+      else if (file) logo = await uploadImage(file);
       const users = await apiGetAllUsers();
 
       const data = {
@@ -129,7 +130,7 @@ const BodyForm = () => {
         productName,
         productVersion,
         keywords: [companyName, ...(keywords || [])],
-        maincategory: [selectMainCategory],
+        maincategory: selectMainCategory ? [selectMainCategory] : [],
       };
 
       if (companyId || backUpCompanyId) {
@@ -182,7 +183,7 @@ const BodyForm = () => {
           if (userSelected) {
             data.userId = userSelected;
             const result = await apiCreateCompany(data);
-            if (result?.status == 201 && logo) {
+            if (result?.status == 201) {
               const answersResult = await apiUploadAnswers(
                 result?.data?.id,
                 answers
@@ -212,7 +213,7 @@ const BodyForm = () => {
           }
         } else {
           const result = await apiCreateCompany(data);
-          if (result?.status == 201 && logo) {
+          if (result?.status == 201) {
             const answersResult = await apiUploadAnswers(
               result?.data?.id,
               answers
@@ -349,7 +350,7 @@ const BodyForm = () => {
   useEffect(() => setBackUpUserId(user), [user]);
 
   return (
-    <form onSubmit={submit} className={styles.mainContainer}>
+    <form onSubmit={submit} noValidate={isAdmin} className={styles.mainContainer}>
       <div className={styles.uploadPhotoContainer}>
         <div className={styles.card}>
           <input
