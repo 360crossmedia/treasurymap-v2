@@ -75,10 +75,13 @@ function toCatsMultiplayer(mp, companies = [], countries = []) {
     const seen = new Set();
     for (const logo of mp[key] || []) {
       if (!logo || !logo.live || !logo.logo) continue;
-      if (seen.has(logo.id)) continue; // no dupe in same category
-      seen.add(logo.id);
       const comp = byId[logo.id] || {};
       const name = logo.name || comp.name || "—";
+      // Golden rule: one logo per vendor per category — dedupe by name
+      // (source data has duplicate records, e.g. two "Payflows" in TRMS).
+      const dedupeKey = name.trim().toLowerCase() || `id-${logo.id}`;
+      if (seen.has(dedupeKey)) continue;
+      seen.add(dedupeKey);
       items.push({
         id: logo.id,
         n: name,
