@@ -99,6 +99,12 @@ const BodyForm = () => {
   const submit = async (e) => {
     dispatch(setIsLoading(true));
     e.preventDefault();
+    // A company name is the only field the database truly requires.
+    if (isAdmin && !companyName?.trim()) {
+      dispatch(setIsLoading(false));
+      alert("Please enter a company name.");
+      return;
+    }
     if (
       isAdmin ||
       (selectedCategoryIds?.length > 0 &&
@@ -356,7 +362,7 @@ const BodyForm = () => {
           <p>
             {fileName}{" "}
             {fileName == "Upload logo" && (
-              <span className={styles.span}>*</span>
+              {!isAdmin && <span className={styles.span}>*</span>}
             )}
           </p>
           <ul style={{ fontSize: "10px" }}>
@@ -416,7 +422,7 @@ const BodyForm = () => {
         )}
         <div className={styles.inputContainer}>
           <label className={styles.label} htmlFor="">
-            Name of the company <span className={styles.span}>*</span>
+            Name of the company {!isAdmin && <span className={styles.span}>*</span>}
           </label>
           <input
             className={styles.inputText}
@@ -429,7 +435,7 @@ const BodyForm = () => {
         </div>
         <div className={styles.inputContainer}>
           <label className={styles.label} htmlFor="description">
-            Description <span className={styles.span}>*</span>
+            Description {!isAdmin && <span className={styles.span}>*</span>}
           </label>
           <textarea
             className={styles.inputText}
@@ -448,7 +454,7 @@ const BodyForm = () => {
             className={`${styles.inputContainer} ${styles.inputContainer50}`}
           >
             <label className={styles.label} htmlFor="">
-              Creation date (year) <span className={styles.span}>*</span>
+              Creation date (year) {!isAdmin && <span className={styles.span}>*</span>}
             </label>
             <input
               className={`${styles.inputText} `}
@@ -465,7 +471,7 @@ const BodyForm = () => {
             className={`${styles.inputContainer} ${styles.inputContainer50}`}
           >
             <label className={styles.label} htmlFor="">
-              Turnover (last year) <span className={styles.span}>*</span>
+              Turnover (last year) {!isAdmin && <span className={styles.span}>*</span>}
               <Form.Check
                 type="switch"
                 id="custom-switch2"
@@ -492,7 +498,7 @@ const BodyForm = () => {
             className={`${styles.inputContainer} ${styles.inputContainer50}`}
           >
             <label className={styles.label} htmlFor="">
-              Number of employees <span className={styles.span}>*</span>
+              Number of employees {!isAdmin && <span className={styles.span}>*</span>}
             </label>
             <input
               className={styles.inputText}
@@ -509,7 +515,7 @@ const BodyForm = () => {
             className={`${styles.inputContainer} ${styles.inputContainer50}`}
           >
             <label className={styles.label} htmlFor="">
-              Headquarters location <span className={styles.span}>*</span>
+              Headquarters location {!isAdmin && <span className={styles.span}>*</span>}
             </label>
             <input
               className={styles.inputText}
@@ -524,7 +530,7 @@ const BodyForm = () => {
         <div className={styles.inputContainer}>
           <label className={styles.label} htmlFor="">
             Active in (Choose as many as apply){" "}
-            <span className={styles.span}>*</span>
+            {!isAdmin && <span className={styles.span}>*</span>}
           </label>
           <MultiSelect
             options={countries}
@@ -534,7 +540,7 @@ const BodyForm = () => {
         </div>
         <div className={styles.inputContainer}>
           <label className={styles.label} htmlFor="">
-            Company website: <span className={styles.span}>*</span>
+            Company website: {!isAdmin && <span className={styles.span}>*</span>}
           </label>
           <input
             className={styles.inputText}
@@ -575,7 +581,7 @@ const BodyForm = () => {
         <div className={styles.inputContainer}>
           <label className={styles.label} htmlFor="">
             Category to display on the map (Main category){" "}
-            <span className={styles.span}>*</span>
+            {!isAdmin && <span className={styles.span}>*</span>}
           </label>
 
           <Form.Select
@@ -596,7 +602,7 @@ const BodyForm = () => {
           <div>
             <p className={styles.label}>
               Categories (Choose as many as apply){" "}
-              <span className={styles.span}>*</span>
+              {!isAdmin && <span className={styles.span}>*</span>}
             </p>
           </div>
           <div className={styles.categoriesContainer}>
@@ -643,7 +649,7 @@ const BodyForm = () => {
                         <div className={styles.inputRadioContainer}>
                           <p className={styles.labelCheckbox}>
                             How do you proceed?{" "}
-                            <span className={styles.span}>*</span>
+                            {!isAdmin && <span className={styles.span}>*</span>}
                           </p>
                           {category.sub_options.map((subOption) => (
                             <div
@@ -721,7 +727,7 @@ const BodyForm = () => {
                         <div className={styles.inputRadioContainer}>
                           <p className={styles.labelCheckbox}>
                             How do you proceed?{" "}
-                            <span className={styles.span}>*</span>
+                            {!isAdmin && <span className={styles.span}>*</span>}
                           </p>
                           {category.sub_options.map((subOption) => (
                             <div
@@ -761,7 +767,7 @@ const BodyForm = () => {
         <div>
           <div>
             <p className={styles.label}>
-              Sub-Categories <span className={styles.span}>*</span>
+              Sub-Categories {!isAdmin && <span className={styles.span}>*</span>}
             </p>
           </div>
           <div className={styles.subCategoriesContainer}>
@@ -822,7 +828,7 @@ const BodyForm = () => {
         {(userId == 1 || backUpUserId == 1) && (
           <div className={styles.inputContainer}>
             <label className={styles.label} htmlFor="description">
-              Company owner <span className={styles.span}>*</span>
+              Company owner {!isAdmin && <span className={styles.span}>*</span>}
             </label>
             <Form.Select
               value={userSelected}
