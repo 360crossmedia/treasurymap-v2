@@ -278,39 +278,29 @@ const BodyForm = () => {
           data
         );
         if (result?.status == 200) {
-          const answersResult = await apiDeleteAllAnswersByCompanyId(
-            companyId ? companyId : backUpCompanyId
-          );
-          if (answersResult?.status == 200) {
-            const answersCreate = await apiUploadAnswers(
-              companyId ? companyId : backUpCompanyId,
-              answers
-            );
-            if (answersCreate?.status == 201) {
-              const uploadSubOptions = await apiUploadSubOptions(
-                companyId ? companyId : backUpCompanyId,
-                selectedSubOptions
-              );
-              if (uploadSubOptions?.status == 200) {
-                const sendEmail = await apiSendUpdateEmail({
-                  companyName,
-                  name: users[!userId ? backUpUserId - 1 : userId - 1]
-                    ?.fullName,
-                  previousValue: result.data,
-                  newValue: JSON.parse(result.config.data),
-                });
-                if (sendEmail?.status == 200) {
-                  alert("Company updated successfully");
-                  dispatch(setCompanyId(false));
-                  dispatch(setIsLoading(false));
-                  router.push("/dashboard");
-                } else {
-                  console.log(sendEmail);
-                  dispatch(setIsLoading(false));
-                }
-              }
+          // The company (incl. logo) is saved at this point. Answers, sub-options
+          // and the notification email are best-effort and must NEVER block the
+          // success confirmation/redirect.
+          const cid = companyId ? companyId : backUpCompanyId;
+          try {
+            const answersResult = await apiDeleteAllAnswersByCompanyId(cid);
+            if (answersResult?.status == 200) {
+              await apiUploadAnswers(cid, answers);
+              await apiUploadSubOptions(cid, selectedSubOptions);
             }
-          }
+          } catch (_) {}
+          try {
+            await apiSendUpdateEmail({
+              companyName,
+              name: users[!userId ? backUpUserId - 1 : userId - 1]?.fullName,
+              previousValue: result.data,
+              newValue: JSON.parse(result.config.data),
+            });
+          } catch (_) {}
+          alert("Company updated successfully");
+          dispatch(setCompanyId(false));
+          dispatch(setIsLoading(false));
+          router.push("/dashboard");
         } else {
           alert("Something went wrong. Please check information.");
           console.log(result);
