@@ -186,6 +186,8 @@ export function buildMap(root, cats, opts = {}) {
     return accepted;
   }
 
+  let revealIndex = 0; // global counter → logos appear one after another (progressive reveal)
+
   cats.forEach((c, i) => {
     const theta = starts[i] + wid[i] / 2, eR = edgeR(theta);
     const N = Math.min(c.items.length, cap);
@@ -239,9 +241,10 @@ export function buildMap(root, cats, opts = {}) {
       img.loading = "lazy"; img.src = cld(it.i, { w: 200 }); img.alt = it.n;
       img.style.maxWidth = imgW + "px"; img.style.maxHeight = imgH + "px";
       t.appendChild(img);
-      // A3: entry animation delay based on ring distance (inner first)
-      const rMin = innerAt(theta);
-      const delay = Math.round(((sl.r - rMin) / Math.max(eR - rMin, 1)) * 400);
+      // Progressive reveal: each logo appears slightly after the previous one,
+      // sweeping across the constellation as the map loads.
+      const delay = revealIndex * 7;
+      revealIndex += 1;
       t.style.setProperty("--delay", delay + "ms");
 
       t.addEventListener("mouseenter", () => {

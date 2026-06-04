@@ -124,6 +124,41 @@
 }
 .navbarAFeature:hover { color: #2f6fe0; }
 
+/* Make my Selection — highlighted pill (promoted new tool) */
+.makeSelection {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #4D8DFF, #2f6fe0);
+  color: #fff;
+  padding: 8px 18px;
+  border-radius: 100px;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 6px 16px -6px rgba(47, 111, 224, 0.6);
+  transition: transform .2s, box-shadow .2s;
+}
+.makeSelection:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px -6px rgba(47, 111, 224, 0.7);
+  color: #fff;
+}
+.newDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+  animation: nbPulse 1.8s infinite;
+}
+@keyframes nbPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(255,255,255,.7); }
+  70%  { box-shadow: 0 0 0 6px rgba(255,255,255,0); }
+  100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+}
+
 /* ─── RIGHT SIDE ──────────────────────────────────────────────────────────── */
 .navbarRight {
   display: flex;

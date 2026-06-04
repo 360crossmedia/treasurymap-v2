@@ -65,32 +65,23 @@ const Navbar = ({ buttonLabel, multiplayerMap, set, rotate }) => {
 
           {/* ── Nav links ── */}
           <div className={`${styles.navbarLinks} ${isMenuOpen ? styles.navbarLinksMobile : ""}`}>
-            {/* Informational links */}
             {loggedIn && (
               <a className={styles.navbarA} href="/dashboard">Admin Dashboard</a>
             )}
             <a className={styles.navbarA} href="/contactUs">Contact us</a>
-            {/* Separator */}
-            <span className={styles.linkSep} />
+            <a className={styles.navbarA} href="/insights">Insights</a>
 
-            {/* Feature links */}
-            <a className={`${styles.navbarA} ${styles.navbarAFeature}`} href="/insights">Insights</a>
-            <a className={`${styles.navbarA} ${styles.navbarAFeature}`} href="/get-my-list">Get my Long List</a>
-            <a className={`${styles.navbarA} ${styles.navbarAFeature}`} href="/compare-tools">Compare Tools</a>
+            {/* Make my Selection — highlighted (new AI tool, points to Long List) */}
+            <a className={styles.makeSelection} href="/get-my-list">
+              <span className={styles.newDot} />
+              Make my Selection
+            </a>
           </div>
         </div>
 
         {/* ── Right CTAs ── */}
         <div className={styles.navbarRight}>
           <span className={styles.ctaSep} />
-
-          <a className={styles.ctaButton} href="/make-my-selection">
-            Make my selection
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5 12h14M13 6l6 6-6 6"/>
-            </svg>
-          </a>
 
           <button
             onClick={() => { if (set) rotate(); else router.push("/"); }}
