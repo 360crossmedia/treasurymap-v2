@@ -8,7 +8,7 @@ import { url } from "../service/url";
 const STEPS = [
   { key: "pending",    label: "Queued",            icon: <ClockIcon /> },
   { key: "generating", label: "Generating report",  icon: <SpinnerIcon /> },
-  { key: "sent",       label: "Sent to your inbox", icon: <CheckIcon /> },
+  { key: "sent",       label: "Ready to download",  icon: <CheckIcon /> },
 ];
 
 export default function ConfirmationStatus({ id, email, type = "longlist" }) {
@@ -90,9 +90,12 @@ export default function ConfirmationStatus({ id, email, type = "longlist" }) {
       {/* Status-specific messages */}
       {sent ? (
         <div className="cfs-success-box">
-          Check your inbox — the report should be there now.
-          <br/>
-          <span className="cfs-hint">If not, check your spam folder.</span>
+          Your report is ready. <strong>Download it right here</strong> — we’ve
+          also emailed a copy to you.
+          <a className="cfs-download" href={`${url}/api/v1/longlist/pdf/${id}`} target="_blank" rel="noopener noreferrer">
+            <DownloadIcon /> Download your PDF
+          </a>
+          <span className="cfs-hint">The download link stays available on this page.</span>
         </div>
       ) : failed ? (
         <div className="cfs-error-box">
@@ -190,10 +193,20 @@ export default function ConfirmationStatus({ id, email, type = "longlist" }) {
         /* ── Status boxes ── */
         .cfs-success-box {
           background: #f0fdf4; border: 1px solid #bbf7d0;
-          border-radius: 10px; padding: 14px 20px;
+          border-radius: 10px; padding: 18px 20px;
           color: #166534; font-size: 14px; line-height: 1.55;
           margin-bottom: 20px;
+          display: flex; flex-direction: column; align-items: center; gap: 12px;
         }
+        .cfs-download {
+          display: inline-flex; align-items: center; gap: 8px;
+          background: linear-gradient(135deg, #10b981, #059669);
+          color: #fff; font-weight: 700; font-size: 14.5px;
+          text-decoration: none; padding: 12px 26px; border-radius: 100px;
+          box-shadow: 0 8px 20px -6px rgba(16,185,129,.5);
+          transition: transform .15s;
+        }
+        .cfs-download:hover { transform: translateY(-2px); }
         .cfs-error-box {
           background: #fef2f2; border: 1px solid #fecaca;
           border-radius: 10px; padding: 14px 20px;
@@ -267,6 +280,14 @@ function SmallSpinner() {
       border: "2px solid #dbeafe", borderTopColor: "#2f6fe0",
       animation: "spin .8s linear infinite",
     }} />
+  );
+}
+
+function DownloadIcon() {
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+    </svg>
   );
 }
 
