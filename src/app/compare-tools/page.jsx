@@ -137,22 +137,47 @@ export default function CompareToolsPage() {
   const selectedCategory = CATEGORIES.find((c) => c.id === categoryId);
   const showTable = selectedVendors.length >= MIN_VENDORS;
 
-  // Comparison rows
-  const subNames = (c) => asArray(c.companySubcategories).map((id) => subMap[id]).filter(Boolean);
+  // Comparison helpers
   const officeNames = (c) => asArray(c.companyOffices).map((id) => countryMap[id]).filter(Boolean);
 
-  const ROWS = [
-    { label: "Product", get: (c) => [c.productName, c.productVersion && c.productVersion !== "None" ? `v${c.productVersion}` : ""].filter(Boolean).join(" ") || "—" },
-    { label: "What it does", get: (c) => c.description || "—", long: true },
-    { label: "Sub-categories", chips: (c) => subNames(c) },
-    { label: "Headquarters", get: (c) => c.location || "—" },
-    { label: "Active in", get: (c) => { const o = officeNames(c); return o.length ? `${o.length} ${o.length > 1 ? "countries" : "country"}` : "—"; }, sub: (c) => officeNames(c).slice(0, 6).join(", ") },
-    { label: "Employees", get: (c) => (c.employees ? Number(c.employees).toLocaleString() : "—") },
-    { label: "Turnover", get: (c) => fmtTurnover(c) || "—" },
-    { label: "Founded", get: (c) => c.creationDate || "—" },
-    { label: "Website", link: (c) => (c.companyWebsite || "") },
+  // Profile completeness (so the treasurer can weight a sparse profile fairly)
+  const COMPLETE_CHECKS = [
+    (c) => (c.productName || "").trim() && c.productName !== "None",
+    (c) => (c.description || "").trim(),
+    (c) => c.employees,
+    (c) => c.creationDate,
+    (c) => (c.companyWebsite || "").trim(),
+    (c) => (c.location || "").trim(),
+    (c) => asArray(c.companySubcategories).length > 0,
+    (c) => asArray(c.companyOffices).length > 0,
+  ];
+  const completeness = (c) => Math.round(COMPLETE_CHECKS.filter((fn) => fn(c)).length / COMPLETE_CHECKS.length * 100);
+
+  // Fact rows — each getter returns null when "not declared" (rendered neutrally,
+  // never as a deficiency). Turnover only shows if EVERY compared vendor declares it.
+  const allDeclareTurnover = selectedVendors.length > 0 && selectedVendors.every((c) => fmtTurnover(c));
+  const RAW_ROWS = [
+    { label: "Product", get: (c) => ((c.productName && c.productName !== "None") ? [c.productName, c.productVersion && c.productVersion !== "None" ? `v${c.productVersion}` : ""].filter(Boolean).join(" ") : null) },
+    { label: "What it does", get: (c) => c.description || null, long: true },
+    { label: "Headquarters", get: (c) => c.location || null },
+    { label: "Active in", get: (c) => { const o = officeNames(c); return o.length ? `${o.length} ${o.length > 1 ? "countries" : "country"}` : null; }, sub: (c) => officeNames(c).slice(0, 6).join(", ") },
+    { label: "Employees", get: (c) => (c.employees ? Number(c.employees).toLocaleString() : null) },
+    ...(allDeclareTurnover ? [{ label: "Turnover", get: (c) => fmtTurnover(c) }] : []),
+    { label: "Founded", get: (c) => c.creationDate || null },
+    { label: "Website", link: (c) => c.companyWebsite || null },
     { label: "Tags", chips: (c) => asArray(c.keywords) },
   ];
+  // Hide a row when no compared vendor has any value for it
+  const hasAny = (row) => selectedVendors.some((v) =>
+    row.chips ? row.chips(v).length : row.link ? row.link(v) : row.get(v));
+  const ROWS = RAW_ROWS.filter(hasAny);
+
+  // Capability coverage matrix — union of self-declared sub-categories, ✓ / not declared
+  const coverageSubs = (() => {
+    const m = new Map();
+    selectedVendors.forEach((v) => asArray(v.companySubcategories).forEach((id) => { if (subMap[id]) m.set(id, subMap[id]); }));
+    return [...m.entries()].sort((a, b) => a[1].localeCompare(b[1])); // [id, name]
+  })();
 
   return (
     <div>
@@ -225,20 +250,36 @@ export default function CompareToolsPage() {
 
           {showTable && (
             <div className="cmp-wrap">
+              {/* Transparency banner — self-declared data */}
+              <div className="cmp-disclaimer">
+                <span className="cmp-disclaimer-i">ℹ</span>
+                <span>
+                  Profiles are <strong>self-declared by the vendors</strong>. A blank field means it
+                  wasn’t provided — <strong>not</strong> that the capability is missing. For a normalised,
+                  enriched analysis, use <a href="/get-my-list">Make my Selection</a>.
+                </span>
+              </div>
+
               <div className="cmp-scroll">
                 <table className="cmp-table">
                   <thead>
                     <tr>
                       <th className="cmp-rowhead cmp-corner" />
-                      {selectedVendors.map((v) => (
-                        <th key={v.id} className="cmp-vhead">
-                          <button className="cmp-remove" onClick={() => toggleVendor(v.id)} aria-label={`Remove ${v.name}`}>✕</button>
-                          <a href={providerHref({ name: v.name, id: v.id })} className="cmp-vlogo">
-                            {v.logo ? <img src={cld(v.logo, { w: 200 })} alt={v.name} /> : <span>{(v.name || "?").slice(0, 3).toUpperCase()}</span>}
-                          </a>
-                          <a href={providerHref({ name: v.name, id: v.id })} className="cmp-vname">{v.name}</a>
-                        </th>
-                      ))}
+                      {selectedVendors.map((v) => {
+                        const pct = completeness(v);
+                        return (
+                          <th key={v.id} className="cmp-vhead">
+                            <button className="cmp-remove" onClick={() => toggleVendor(v.id)} aria-label={`Remove ${v.name}`}>✕</button>
+                            <a href={providerHref({ name: v.name, id: v.id })} className="cmp-vlogo">
+                              {v.logo ? <img src={cld(v.logo, { w: 200 })} alt={v.name} /> : <span>{(v.name || "?").slice(0, 3).toUpperCase()}</span>}
+                            </a>
+                            <a href={providerHref({ name: v.name, id: v.id })} className="cmp-vname">{v.name}</a>
+                            <span className={`cmp-complete ${pct >= 75 ? "hi" : pct >= 40 ? "mid" : "lo"}`} title="How complete this vendor's self-declared profile is">
+                              profile {pct}%
+                            </span>
+                          </th>
+                        );
+                      })}
                     </tr>
                   </thead>
                   <tbody>
@@ -250,14 +291,13 @@ export default function CompareToolsPage() {
                             {row.chips ? (
                               (() => { const arr = row.chips(v); return arr.length
                                 ? <div className="cmp-chips">{arr.slice(0, 8).map((x, i) => <span key={i} className="cmp-chip">{x}</span>)}{arr.length > 8 && <span className="cmp-chip cmp-chip-more">+{arr.length - 8}</span>}</div>
-                                : <span className="cmp-empty">—</span>; })()
+                                : <span className="cmp-nd">Not declared</span>; })()
                             ) : row.link ? (
-                              row.link(v) ? <a href={row.link(v)} target="_blank" rel="noopener noreferrer" className="cmp-link">Visit site ↗</a> : <span className="cmp-empty">—</span>
+                              row.link(v) ? <a href={row.link(v)} target="_blank" rel="noopener noreferrer" className="cmp-link">Visit site ↗</a> : <span className="cmp-nd">Not declared</span>
                             ) : (
-                              <>
-                                <span className={row.long ? "cmp-text-long" : ""}>{row.get(v)}</span>
-                                {row.sub && row.sub(v) && <span className="cmp-subtext">{row.sub(v)}</span>}
-                              </>
+                              (() => { const val = row.get(v); return val
+                                ? <><span className={row.long ? "cmp-text-long" : ""}>{val}</span>{row.sub && row.sub(v) && <span className="cmp-subtext">{row.sub(v)}</span>}</>
+                                : <span className="cmp-nd">Not declared</span>; })()
                             )}
                           </td>
                         ))}
@@ -267,11 +307,48 @@ export default function CompareToolsPage() {
                 </table>
               </div>
 
+              {/* Capability coverage matrix — self-declared sub-categories (✓ / not declared) */}
+              {coverageSubs.length > 0 && (
+                <div className="cmp-cov">
+                  <div className="cmp-cov-head">
+                    <h3>Capability coverage</h3>
+                    <span>self-declared — which functions each vendor says it covers</span>
+                  </div>
+                  <div className="cmp-scroll">
+                    <table className="cmp-table">
+                      <thead>
+                        <tr>
+                          <th className="cmp-rowhead cmp-corner" />
+                          {selectedVendors.map((v) => (
+                            <th key={v.id} className="cmp-vhead cmp-vhead-slim">{v.name}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {coverageSubs.map(([id, name]) => (
+                          <tr key={id}>
+                            <td className="cmp-rowhead cmp-rowhead-norm">{name}</td>
+                            {selectedVendors.map((v) => {
+                              const has = asArray(v.companySubcategories).includes(id);
+                              return (
+                                <td key={v.id} className="cmp-cell">
+                                  {has ? <span className="cmp-yes">✓</span> : <span className="cmp-no">—</span>}
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
               {/* Soft conversion CTA → Make my Selection */}
               <div className="cmp-cta">
                 <div className="cmp-cta-text">
-                  <strong>Want a shortlist tailored to your setup?</strong>
-                  <span>Answer a few questions and our AI builds your personalised long list.</span>
+                  <strong>This is what vendors declare about themselves.</strong>
+                  <span>For a fair, enriched shortlist — normalised and cross-checked beyond self-reported profiles — let our AI build your personalised long list.</span>
                 </div>
                 <a href="/get-my-list" className="cmp-cta-btn">Make my Selection →</a>
               </div>
@@ -318,6 +395,37 @@ export default function CompareToolsPage() {
         .cmp-text-long { display: block; text-align: left; line-height: 1.5; font-size: 13px; color: #45556e; }
         .cmp-subtext { display: block; font-size: 11.5px; color: #8a93a6; margin-top: 3px; line-height: 1.4; }
         .cmp-empty { color: #c2cad8; }
+        .cmp-nd { color: #b3bdcc; font-style: italic; font-size: 12.5px; }
+
+        .cmp-disclaimer {
+          display: flex; align-items: flex-start; gap: 10px;
+          background: #fff8ec; border: 1px solid #f3e2c0; border-radius: 12px;
+          padding: 12px 16px; margin-bottom: 16px; font-size: 13px; color: #6b5a36; line-height: 1.5;
+        }
+        .cmp-disclaimer-i {
+          flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%;
+          background: #f0c674; color: #5a4716; font-weight: 700; font-size: 12px;
+          display: flex; align-items: center; justify-content: center; margin-top: 1px;
+        }
+        .cmp-disclaimer a { color: #2f6fe0; font-weight: 600; text-decoration: none; }
+        .cmp-disclaimer a:hover { text-decoration: underline; }
+
+        .cmp-complete {
+          display: inline-block; margin-top: 7px; font-family: 'JetBrains Mono', monospace;
+          font-size: 10.5px; font-weight: 600; padding: 2px 8px; border-radius: 100px;
+        }
+        .cmp-complete.hi  { background: #e4f6ec; color: #1f8a52; }
+        .cmp-complete.mid { background: #fdf3e0; color: #b07d22; }
+        .cmp-complete.lo  { background: #fdeaea; color: #c0392b; }
+
+        .cmp-cov { margin-top: 26px; }
+        .cmp-cov-head { margin-bottom: 12px; }
+        .cmp-cov-head h3 { font-size: 17px; font-weight: 700; color: #0e2c5c; margin: 0; display: inline; }
+        .cmp-cov-head span { font-size: 12.5px; color: #8a93a6; margin-left: 10px; }
+        .cmp-vhead-slim { min-width: 120px; padding: 12px 14px; font-size: 13px; font-weight: 700; color: #0e2c5c; }
+        .cmp-rowhead-norm { text-transform: none; font-weight: 600; font-size: 12.5px; color: #2a3c5a; letter-spacing: 0; }
+        .cmp-yes { color: #1f8a52; font-weight: 800; font-size: 15px; }
+        .cmp-no { color: #d2d9e4; }
         .cmp-chips { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; }
         .cmp-cell-long .cmp-chips { justify-content: flex-start; }
         .cmp-chip {
