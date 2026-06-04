@@ -23,6 +23,8 @@ const I = {
   edit: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>,
   trash: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>,
   search: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>,
+  back: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>,
+  media: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4M10 8l5 3-5 3V8z"/></svg>,
 };
 
 export default function BodyPublicationsControl() {
@@ -42,6 +44,15 @@ export default function BodyPublicationsControl() {
   const [typeF, setTypeF] = useState("all");
   const [statusF, setStatusF] = useState("all");
   const [newKind, setNewKind] = useState(null); // "article" | "video" — opens the company picker
+  const [mediaPick, setMediaPick] = useState(false); // open Media Zone → pick a company first
+
+  // Open a company's Media Zone (per-company articles/videos manager).
+  const openMediaZone = (cid) => {
+    if (!cid) return;
+    dispatch(setCompanyId(Number(cid)));
+    try { localStorage.setItem("companyId", Number(cid)); } catch (_) {}
+    router.push("/mediaZone");
+  };
 
   // Create a new publication: pick a company, then open the editor in create mode.
   const startNew = (cid) => {
@@ -112,6 +123,10 @@ export default function BodyPublicationsControl() {
   return (
     <div className="pc">
       <div className="pc-inner">
+        <nav className="pc-nav">
+          <button className="pc-navbtn" onClick={() => router.push("/dashboard")}>{I.back} Dashboard</button>
+          <button className="pc-navbtn primary" onClick={() => setMediaPick(true)}>{I.media} Media Zone</button>
+        </nav>
         <header className="pc-head">
           <h1>Publications</h1>
           <p>Edit any article or video, and pick the ones featured first on Insights.</p>
@@ -191,6 +206,15 @@ export default function BodyPublicationsControl() {
       {newKind && (
         <NewModal kind={newKind} companies={companies} onClose={() => setNewKind(null)} onContinue={startNew} />
       )}
+      {mediaPick && (
+        <PickCompanyModal
+          title="Open Media Zone — for which company?"
+          cta="Open Media Zone →"
+          companies={companies}
+          onClose={() => setMediaPick(false)}
+          onContinue={(cid) => { setMediaPick(false); openMediaZone(cid); }}
+        />
+      )}
       {modalSlot != null && (
         <ChangeModal slot={modalSlot} companies={companies} onClose={() => setModalSlot(null)} onSaved={onSavedFeatured} />
       )}
@@ -212,6 +236,11 @@ export default function BodyPublicationsControl() {
       <style jsx>{`
         .pc { min-height: 70vh; background: radial-gradient(ellipse 100% 40% at 50% 0%, #eef4ff 0%, #eef2f9 55%); padding: 44px 20px 70px; font-family: 'Chivo', system-ui, -apple-system, sans-serif; }
         .pc-inner { max-width: 900px; margin: 0 auto; }
+        .pc-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+        .pc-navbtn { display: inline-flex; align-items: center; gap: 7px; background: #fff; border: 1.5px solid #dce4ef; color: #2a3c5a; border-radius: 100px; padding: 8px 16px; font-size: 13.5px; font-weight: 600; cursor: pointer; transition: border-color .15s, background .15s, transform .15s; }
+        .pc-navbtn:hover { border-color: #b8c6db; }
+        .pc-navbtn.primary { background: linear-gradient(135deg,#4D8DFF,#2f6fe0); border-color: transparent; color: #fff; box-shadow: 0 6px 16px -6px rgba(47,111,224,.5); }
+        .pc-navbtn.primary:hover { transform: translateY(-1px); }
         .pc-head { text-align: center; margin-bottom: 26px; }
         .pc-head h1 { font-size: 30px; font-weight: 800; color: #0e2c5c; margin: 0 0 8px; letter-spacing: -.01em; }
         .pc-head p { font-size: 14.5px; color: #5a6a85; margin: 0; }
@@ -404,6 +433,19 @@ function CompanyPicker({ companies, value, onChange }) {
 
 // ── New-publication modal: pick a company, then open the editor ───────────────
 function NewModal({ kind, companies, onClose, onContinue }) {
+  return (
+    <PickCompanyModal
+      title={`New ${kind} — for which company?`}
+      cta="Continue →"
+      companies={companies}
+      onClose={onClose}
+      onContinue={onContinue}
+    />
+  );
+}
+
+// ── Generic "pick a company then continue" modal ──────────────────────────────
+function PickCompanyModal({ title, cta, companies, onClose, onContinue }) {
   const [cid, setCid] = useState(null);
   return (
     <div onClick={onClose}
@@ -411,14 +453,14 @@ function NewModal({ kind, companies, onClose, onContinue }) {
       <div onClick={(e) => e.stopPropagation()}
         style={{ background: "#fff", borderRadius: 18, width: "min(520px,100%)", padding: "24px 26px", boxShadow: "0 30px 80px -16px rgba(10,26,51,.4)" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-          <h3 style={{ fontSize: 18, fontWeight: 700, color: "#0e2c5c", margin: 0, textTransform: "capitalize" }}>New {kind} — for which company?</h3>
+          <h3 style={{ fontSize: 18, fontWeight: 700, color: "#0e2c5c", margin: 0, textTransform: "capitalize" }}>{title}</h3>
           <button onClick={onClose} aria-label="Close" style={{ background: "#f1f4f9", border: "none", borderRadius: "50%", width: 32, height: 32, cursor: "pointer", color: "#5a6a85" }}>✕</button>
         </div>
         <CompanyPicker companies={companies} value={cid} onChange={setCid} />
         <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 18 }}>
           <button onClick={onClose} style={{ background: "#f1f4f9", border: "none", borderRadius: 100, padding: "11px 22px", fontWeight: 600, color: "#2a3c5a", cursor: "pointer" }}>Cancel</button>
           <button disabled={!cid} onClick={() => onContinue(cid)}
-            style={{ background: "linear-gradient(135deg,#4D8DFF,#2f6fe0)", border: "none", borderRadius: 100, padding: "11px 24px", fontWeight: 600, color: "#fff", cursor: cid ? "pointer" : "default", opacity: cid ? 1 : 0.5, boxShadow: "0 8px 20px -6px rgba(47,111,224,.55)" }}>Continue →</button>
+            style={{ background: "linear-gradient(135deg,#4D8DFF,#2f6fe0)", border: "none", borderRadius: 100, padding: "11px 24px", fontWeight: 600, color: "#fff", cursor: cid ? "pointer" : "default", opacity: cid ? 1 : 0.5, boxShadow: "0 8px 20px -6px rgba(47,111,224,.55)" }}>{cta}</button>
         </div>
       </div>
     </div>
