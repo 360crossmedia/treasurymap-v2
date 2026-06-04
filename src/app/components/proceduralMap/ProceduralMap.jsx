@@ -202,10 +202,13 @@ export default function ProceduralMap({ multiplayer = false, filters, subs = [],
     const labels = [...root.querySelectorAll(".clabel")];
     const auras  = [...root.querySelectorAll(".aura")];
 
-    const showTok = (e) => { e.style.opacity = ""; e.style.pointerEvents = ""; e.classList.remove("dim"); e.classList.add("on"); };
-    const hideTok = (e) => { e.style.opacity = "0"; e.style.pointerEvents = "none"; e.classList.add("dim"); e.classList.remove("on"); };
+    // NB: tokens carry the `tokIn` reveal animation with fill-mode:both, which
+    // pins opacity:1 and OVERRIDES inline styles. So hiding must use a class
+    // with !important (an author !important rule beats a CSS animation).
+    const showTok = (e) => { e.style.opacity = ""; e.style.pointerEvents = ""; e.classList.remove("dim", "filtered-out"); e.classList.add("on"); };
+    const hideTok = (e) => { e.classList.add("dim", "filtered-out"); e.classList.remove("on"); };
     const dimCtx  = (e) => { e.style.opacity = "0.16"; e.classList.add("dim"); e.classList.remove("on"); };
-    const reset   = (e) => { e.style.opacity = ""; e.style.pointerEvents = ""; e.classList.remove("dim", "on"); };
+    const reset   = (e) => { e.style.opacity = ""; e.style.pointerEvents = ""; e.classList.remove("dim", "on", "filtered-out"); };
 
     // Build active conditions
     const fcat = filters?.category;
@@ -488,6 +491,8 @@ export default function ProceduralMap({ multiplayer = false, filters, subs = [],
         .pmap-root .tok:hover img { filter: drop-shadow(0 5px 16px var(--tglow)); }
         .pmap-root.focusing .clabel.dim { opacity: .2; }
         .pmap-root.focusing .tok.dim { opacity: .1; }
+        /* Filtered-out tokens fully hidden — !important beats the tokIn reveal animation */
+        .pmap-root .tok.filtered-out { opacity: 0 !important; pointer-events: none !important; }
         .pmap-root.focusing .aura.dim { opacity: .03; }
         .pmap-root.focusing .aura.on  { opacity: .4; }
         .pmap-root .tip {
