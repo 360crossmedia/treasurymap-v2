@@ -67,9 +67,11 @@ export function buildMap(root, cats, opts = {}) {
   const ce = root.querySelector(".center");
   ce.style.left = cx + "px"; ce.style.top = cy + "px";
 
-  // measure real title box -> tight inner radius (clears the title)
+  // measure real title box -> tight inner radius (clears the title).
+  // Use the whole .center box (title + optional MULTIPLAYER badge) so the
+  // exclusion zone covers everything rendered at the centre.
   const _h1 = ce.querySelector("h1");
-  const _tb = _h1.getBoundingClientRect();
+  const _tb = ce.getBoundingClientRect();
   const _mb = map.getBoundingClientRect();
   const TITLE_HALF_W = _tb.width / 2, TITLE_HALF_H = _tb.height / 2;
   const TMARGIN = 22;
@@ -109,12 +111,13 @@ export function buildMap(root, cats, opts = {}) {
   let c0 = base;
   cats.forEach((c, i) => { wid[i] = weights[i] / sumW * TAU; starts[i] = c0; c0 += wid[i]; });
 
-  // hard title-rectangle exclusion (map-local)
+  // hard title-rectangle exclusion (map-local) — covers the full centre box
+  const _cb = ce.getBoundingClientRect();
   const TR = {
-    l: _h1.getBoundingClientRect().left - _mb.left - 26,
-    t: _h1.getBoundingClientRect().top - _mb.top - 20,
-    r: _h1.getBoundingClientRect().right - _mb.left + 26,
-    b: _h1.getBoundingClientRect().bottom - _mb.top + 20,
+    l: _cb.left - _mb.left - 26,
+    t: _cb.top - _mb.top - 20,
+    r: _cb.right - _mb.left + 26,
+    b: _cb.bottom - _mb.top + 20,
   };
 
   // Pre-compute FIXED label centres for ALL categories before placing any logo.

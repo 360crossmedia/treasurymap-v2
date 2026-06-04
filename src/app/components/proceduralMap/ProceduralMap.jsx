@@ -21,16 +21,20 @@ function deriveHq(location, countries) {
   return out;
 }
 
-function toCats(companies, countries = []) {
+// Build the per-category vendor groups.
+//  - default (homepage / "Treasury Map"): 1 logo per vendor, in its MAIN category.
+//  - multiplayer ("Multiplayer Map"): each vendor appears in EVERY category it
+//    is active in (companyCategories) — same vendor repeated across wedges.
+function toCats(companies, countries = [], multiplayer = false) {
   if (!Array.isArray(companies)) return [];
   const byId = {};
-  for (const c of companies) {
-    if (!c.live || !c.logo || !c.maincategory || !c.maincategory.length) continue;
-    const catId = c.maincategory[0];
+  const pushItem = (catId, c) => {
     const key = `category-${catId}`;
-    if (!CAT_META[key]) continue;
+    if (!CAT_META[key]) return;
     if (!byId[catId]) byId[catId] = [];
+    if (byId[catId].some((x) => x.id === c.id)) return; // no dupe in same category
     byId[catId].push({
+      id: c.id,
       n: c.name || "—",
       i: c.logo,
       href: providerHref({ name: c.name, id: c.id }),
@@ -38,6 +42,15 @@ function toCats(companies, countries = []) {
       active: c.companyOffices || [],
       hq: deriveHq(c.location, countries),
     });
+  };
+  for (const c of companies) {
+    if (!c.live || !c.logo) continue;
+    if (multiplayer) {
+      for (const catId of c.companyCategories || []) pushItem(catId, c);
+    } else {
+      if (!c.maincategory || !c.maincategory.length) continue;
+      pushItem(c.maincategory[0], c);
+    }
   }
   return Object.entries(byId)
     .sort((a, b) => Number(a[0]) - Number(b[0]))
@@ -47,7 +60,7 @@ function toCats(companies, countries = []) {
     });
 }
 
-export default function ProceduralMap({ filters, onCategoryClick, onClear, onVendors, onFilterOptions, onMatchCount }) {
+export default function ProceduralMap({ multiplayer = false, filters, onCategoryClick, onClear, onVendors, onFilterOptions, onMatchCount }) {
   const rootRef             = useRef(null);
   const router              = useRouter();
   // Use a ref for onCategoryClick so it never triggers a map rebuild
@@ -80,16 +93,22 @@ export default function ProceduralMap({ filters, onCategoryClick, onClear, onVen
           axios.get(`${url}/api/v1/subCategories`).then((r) => r.data).catch(() => []),
           axios.get(`${url}/api/v1/countries`).then((r) => r.data).catch(() => []),
         ]);
-        cats = toCats(res.data, countriesRes);
+        cats = toCats(res.data, countriesRes, multiplayer);
         // Expose filter dropdown options (sub-categories + countries)
         if (onFilterOptions) onFilterOptions({ subCategories: subsRes || [], countries: countriesRes || [] });
-        // Expose the full vendor list (for data-backed search autocomplete)
+        // Expose the full vendor list (for data-backed search autocomplete).
+        // In multiplayer mode a vendor recurs across categories → dedupe by name.
         if (onVendors) {
-          onVendors(
-            cats.flatMap((c) =>
-              c.items.map((it) => ({ name: it.n, href: it.href, code: c.code, hue: c.hue }))
-            )
+          const seen = new Set();
+          const list = [];
+          cats.forEach((c) =>
+            c.items.forEach((it) => {
+              if (seen.has(it.n)) return;
+              seen.add(it.n);
+              list.push({ name: it.n, href: it.href, code: c.code, hue: c.hue });
+            })
           );
+          onVendors(list);
         }
       } catch (e) {
         console.error("ProceduralMap: failed to load /api/v1/companies", e);
@@ -105,7 +124,7 @@ export default function ProceduralMap({ filters, onCategoryClick, onClear, onVen
       const render = () => {
         teardownMap(root);
         buildMap(root, cats, {
-          cap: 30,
+          cap: multiplayer ? 60 : 30,
           navigate: handleNavigate,
           onCategoryClick: (code, full, hue) => { // A2 — uses ref, no rebuild on change
             if (onCategoryClickRef.current) onCategoryClickRef.current(code, full, hue);
@@ -123,7 +142,7 @@ export default function ProceduralMap({ filters, onCategoryClick, onClear, onVen
     })();
 
     return () => { cancelled = true; cleanup(); };
-  }, [handleNavigate]); // onCategoryClick intentionally excluded — handled via ref
+  }, [handleNavigate, multiplayer]); // onCategoryClick intentionally excluded — handled via ref
 
   // Apply combinable filters (AND) — dim non-matching, report match count.
   useEffect(() => {
@@ -223,7 +242,7 @@ export default function ProceduralMap({ filters, onCategoryClick, onClear, onVen
         </div>
       )}
 
-      <div className="pmap-root" ref={rootRef}>
+      <div className={"pmap-root" + (multiplayer ? " pmap-root--mp" : "")} ref={rootRef}>
         <div className="circuit" />
         <div className="titleglow" />
         <div className="auras" />
@@ -237,7 +256,10 @@ export default function ProceduralMap({ filters, onCategoryClick, onClear, onVen
           </defs>
         </svg>
         <div className="center">
-          <h1>THE TREASURY TECHNOLOGY LANDSCAPE</h1>
+          <h1>
+            THE TREASURY TECHNOLOGY LANDSCAPE
+            {multiplayer && <span className="mp-badge">MULTIPLAYER MAP</span>}
+          </h1>
         </div>
         <div className="tip" />
       </div>
@@ -321,6 +343,8 @@ export default function ProceduralMap({ filters, onCategoryClick, onClear, onVen
           background: radial-gradient(ellipse 80% 76% at 50% 50%, #fbfdff 0%, #e7eef8 50%, #d2ddec 100%);
           font-family: 'Chivo', sans-serif; color: #0a1a33;
         }
+        /* Multiplayer map is ~2× denser (vendors repeat across categories) → taller canvas */
+        .pmap-root.pmap-root--mp { height: 1560px; }
         .pmap-root .circuit {
           position: absolute; inset: 0; z-index: 0;
           background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%27220%27%20height%3D%27220%27%20viewBox%3D%270%200%20220%20220%27%3E%3Cg%20fill%3D%27none%27%20stroke%3D%27%233a5c93%27%20stroke-width%3D%271.2%27%3E%3Cpath%20d%3D%27M12%2044H96V120H188M44%2012V76H128V160M0%20176H76V128M220%2064H160V20M160%20220V150H108M220%20188H128M188%200V40M12%20200H64V168%27/%3E%3C/g%3E%3Cg%20fill%3D%27%233a5c93%27%3E%3Ccircle%20cx%3D%2796%27%20cy%3D%27120%27%20r%3D%273%27/%3E%3Ccircle%20cx%3D%27128%27%20cy%3D%2776%27%20r%3D%273%27/%3E%3Ccircle%20cx%3D%2776%27%20cy%3D%27128%27%20r%3D%273%27/%3E%3Ccircle%20cx%3D%27160%27%20cy%3D%2720%27%20r%3D%273%27/%3E%3Ccircle%20cx%3D%27128%27%20cy%3D%27160%27%20r%3D%273%27/%3E%3Ccircle%20cx%3D%2744%27%20cy%3D%2744%27%20r%3D%272.6%27/%3E%3Ccircle%20cx%3D%2764%27%20cy%3D%27168%27%20r%3D%272.6%27/%3E%3C/g%3E%3C/svg%3E");
@@ -348,6 +372,13 @@ export default function ProceduralMap({ filters, onCategoryClick, onClear, onVen
           font-family: 'Oswald', sans-serif; font-weight: 500; font-size: 40px;
           letter-spacing: .18em; line-height: 1; color: #0e2c5c; white-space: nowrap;
           text-shadow: 0 2px 26px rgba(255,255,255,.9);
+        }
+        .pmap-root .center h1 .mp-badge {
+          display: block; margin: 14px auto 0; width: fit-content;
+          font-size: 23px; font-weight: 700; letter-spacing: .14em;
+          color: #fff; background: linear-gradient(135deg, #17a87f, #0e7a5b);
+          padding: 7px 20px; border-radius: 5px; white-space: nowrap;
+          text-shadow: none; box-shadow: 0 6px 20px -6px rgba(14,122,91,.6);
         }
         .pmap-root .clabel {
           position: absolute; z-index: 8; transform: translate(-50%,-50%);

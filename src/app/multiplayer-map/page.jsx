@@ -1,14 +1,6 @@
 "use client";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import MultiplayerMap from "../components/multiplayerMap/MultiplayerMap";
+import MapExperience from "../components/proceduralMap/MapExperience";
 
 export default function MultiplayerMapPage() {
-  return (
-    <>
-      <Navbar buttonLabel="Log In" />
-      <MultiplayerMap />
-      <Footer />
-    </>
-  );
+  return <MapExperience multiplayer={true} />;
 }
