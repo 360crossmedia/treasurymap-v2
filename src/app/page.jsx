@@ -13,47 +13,43 @@ const CODE_TO_ID    = Object.fromEntries(
 );
 
 export default function HomePage() {
-  const [activeFilter, setActiveFilter] = useState(null);
-  const [vendorCount,  setVendorCount]  = useState(TOTAL_VENDORS);
-  const [catCount,     setCatCount]     = useState(TOTAL_CATS);
-  const [vendors,      setVendors]      = useState([]);
-  const [filterOpts,   setFilterOpts]   = useState({ subCategories: [], countries: [] });
+  // Combinable filters, keyed by type (one of each: category / keyword / sub / active)
+  const [filters,    setFilters]    = useState({});
+  const [vendors,    setVendors]    = useState([]);
+  const [filterOpts, setFilterOpts] = useState({ subCategories: [], countries: [] });
+  const [matchCount, setMatchCount] = useState(null); // null = no filters
 
-  // Read ?category=CODE on mount (deep-link from provider page badges/breadcrumb)
+  // ?category=CODE deep-link
   useEffect(() => {
     const code = new URLSearchParams(window.location.search).get("category");
     if (code && Object.values(CAT_META).some((v) => v.code === code)) {
-      setActiveFilter({ type: "category", code });
-      setCatCount(1);
+      const meta = Object.values(CAT_META).find((v) => v.code === code);
+      setFilters({ category: { type: "category", code, label: code, hue: meta?.hue } });
     }
   }, []);
 
-  const handleFilter = useCallback((filter) => {
-    setActiveFilter(filter);
-    if (filter?.type === "category") setCatCount(1);
-    else { setVendorCount(null); setCatCount(null); }
+  const addFilter = useCallback((filter) => {
+    setFilters((f) => ({ ...f, [filter.type]: filter }));
   }, []);
 
-  const handleClear = useCallback(() => {
-    setActiveFilter(null);
-    setVendorCount(TOTAL_VENDORS);
-    setCatCount(TOTAL_CATS);
+  const removeFilter = useCallback((type) => {
+    setFilters((f) => { const n = { ...f }; delete n[type]; return n; });
   }, []);
 
+  const handleClear = useCallback(() => setFilters({}), []);
+
+  // label click on the map → toggle the category filter
   const handleCategoryClick = useCallback((code) => {
-    setActiveFilter(prev => {
-      if (prev?.type === "category" && prev.code === code) {
-        setVendorCount(TOTAL_VENDORS); setCatCount(TOTAL_CATS);
-        return null;
-      }
-      setCatCount(1);
-      return { type: "category", code };
+    setFilters((f) => {
+      if (f.category?.code === code) { const n = { ...f }; delete n.category; return n; }
+      const meta = Object.values(CAT_META).find((v) => v.code === code);
+      return { ...f, category: { type: "category", code, label: code, hue: meta?.hue } };
     });
   }, []);
 
-  const activeMeta = activeFilter?.type === "category"
-    ? Object.values(CAT_META).find(v => v.code === activeFilter.code)
-    : null;
+  const activeList = Object.values(filters);
+  const catFilter  = filters.category;
+  const activeMeta = catFilter ? Object.values(CAT_META).find((v) => v.code === catFilter.code) : null;
 
   return (
     <>
@@ -63,62 +59,51 @@ export default function HomePage() {
       />
       <Navbar buttonLabel="Log In" />
       <ProceduralMapFilters
-        onFilter={handleFilter}
+        filters={filters}
+        onAddFilter={addFilter}
+        onRemoveFilter={removeFilter}
         onClear={handleClear}
-        activeFilter={activeFilter}
-        vendorCount={vendorCount}
-        catCount={catCount}
         vendors={vendors}
         subCategories={filterOpts.subCategories}
         countries={filterOpts.countries}
+        matchCount={matchCount}
+        totalVendors={TOTAL_VENDORS}
+        totalCats={TOTAL_CATS}
       />
       <div style={{ position: "relative" }}>
         <ProceduralMap
-          activeFilter={activeFilter}
+          filters={filters}
           onCategoryClick={handleCategoryClick}
           onClear={handleClear}
-          vendorCount={vendorCount}
           onVendors={setVendors}
           onFilterOptions={setFilterOpts}
+          onMatchCount={setMatchCount}
         />
 
-        {/* Compare bar */}
+        {/* Compare bar — when a category filter is active */}
         {activeMeta && (
           <div style={{
-            position: "fixed", bottom: 28, left: "50%",
-            transform: "translateX(-50%)",
+            position: "fixed", bottom: 28, left: "50%", transform: "translateX(-50%)",
             display: "flex", alignItems: "center", gap: 14,
-            background: "rgba(255,255,255,0.97)",
-            backdropFilter: "blur(16px)",
-            WebkitBackdropFilter: "blur(16px)",
-            border: `1.5px solid hsl(${activeMeta.hue},55%,80%)`,
-            borderRadius: 100, padding: "12px 20px 12px 18px",
+            background: "rgba(255,255,255,0.97)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)",
+            border: `1.5px solid hsl(${activeMeta.hue},55%,80%)`, borderRadius: 100, padding: "12px 20px 12px 18px",
             boxShadow: `0 8px 32px -8px rgba(10,26,51,.25), 0 0 0 4px hsl(${activeMeta.hue},70%,93%)`,
             zIndex: 200, whiteSpace: "nowrap",
           }}>
             <span style={{
               width: 10, height: 10, borderRadius: "50%", flexShrink: 0,
-              background: `hsl(${activeMeta.hue},72%,50%)`,
-              boxShadow: `0 0 8px hsl(${activeMeta.hue},72%,60%)`,
-              display: "inline-block",
+              background: `hsl(${activeMeta.hue},72%,50%)`, boxShadow: `0 0 8px hsl(${activeMeta.hue},72%,60%)`, display: "inline-block",
             }} />
-            <span style={{ fontSize: 14, fontWeight: 700, color: "#0e2c5c" }}>
-              {activeFilter.code}
-            </span>
-            <span style={{ fontSize: 13, color: "#5a6a85" }}>
-              · Compare vendors in this category
-            </span>
-            <a
-              href="/compare-tools"
-              onClick={() => sessionStorage.setItem("comparePreCategoryId", CODE_TO_ID[activeFilter.code])}
+            <span style={{ fontSize: 14, fontWeight: 700, color: "#0e2c5c" }}>{catFilter.code}</span>
+            <span style={{ fontSize: 13, color: "#5a6a85" }}>· Compare vendors in this category</span>
+            <a href="/compare-tools"
+              onClick={() => sessionStorage.setItem("comparePreCategoryId", CODE_TO_ID[catFilter.code])}
               style={{
                 display: "inline-flex", alignItems: "center", gap: 7,
                 background: `linear-gradient(135deg,hsl(${activeMeta.hue},80%,55%),hsl(${activeMeta.hue},65%,38%))`,
-                color: "#fff", padding: "9px 18px", borderRadius: 100,
-                fontWeight: 600, fontSize: 13.5, textDecoration: "none",
-                boxShadow: `0 4px 14px -4px hsl(${activeMeta.hue},65%,40%)`,
-              }}
-            >
+                color: "#fff", padding: "9px 18px", borderRadius: 100, fontWeight: 600, fontSize: 13.5,
+                textDecoration: "none", boxShadow: `0 4px 14px -4px hsl(${activeMeta.hue},65%,40%)`,
+              }}>
               Compare →
             </a>
           </div>

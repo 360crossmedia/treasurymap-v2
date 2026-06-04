@@ -47,7 +47,7 @@ function toCats(companies, countries = []) {
     });
 }
 
-export default function ProceduralMap({ activeFilter, onCategoryClick, onClear, vendorCount, onVendors, onFilterOptions }) {
+export default function ProceduralMap({ filters, onCategoryClick, onClear, onVendors, onFilterOptions, onMatchCount }) {
   const rootRef             = useRef(null);
   const router              = useRouter();
   // Use a ref for onCategoryClick so it never triggers a map rebuild
@@ -125,7 +125,7 @@ export default function ProceduralMap({ activeFilter, onCategoryClick, onClear, 
     return () => { cancelled = true; cleanup(); };
   }, [handleNavigate]); // onCategoryClick intentionally excluded — handled via ref
 
-  // Apply filters (dim/highlight) without rebuilding the map
+  // Apply combinable filters (AND) — dim non-matching, report match count.
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
@@ -134,63 +134,46 @@ export default function ProceduralMap({ activeFilter, onCategoryClick, onClear, 
     const auras  = [...root.querySelectorAll(".aura")];
     const all    = [...toks, ...labels, ...auras];
 
-    // Use direct style.opacity — overrides CSS animations which would otherwise
-    // prevent class-based opacity from taking effect on animated .tok elements.
     const show  = (e) => { e.style.opacity = ""; e.classList.remove("dim"); e.classList.add("on"); };
     const hide  = (e) => { e.style.opacity = "0.1"; e.classList.add("dim"); e.classList.remove("on"); };
     const reset = (e) => { e.style.opacity = ""; e.classList.remove("dim", "on"); };
 
-    if (!activeFilter) {
+    // Active filters (ignore an empty keyword)
+    const active = Object.values(filters || {}).filter(
+      (f) => f && !(f.type === "keyword" && !String(f.value || "").trim())
+    );
+
+    if (!active.length) {
       root.classList.remove("focusing");
       all.forEach(reset);
-      setNoResults(false);
+      onMatchCount?.(null);
       return;
     }
 
-    if (activeFilter.type === "category") {
-      const idx = labels.findIndex(l => l.dataset.code === activeFilter.code);
-      if (idx === -1) return;
-      root.classList.add("focusing");
-      all.forEach(e => {
-        const match = parseInt(e.dataset.cat) === idx;
-        if (match) show(e); else hide(e);
-      });
-      setNoResults(false);
-    }
+    // code → cat index (from labels)
+    const codeToCat = {};
+    labels.forEach((l) => { codeToCat[l.dataset.code] = l.dataset.cat; });
 
-    if (activeFilter.type === "keyword") {
-      const kw = activeFilter.value.toLowerCase().trim();
-      if (!kw) {
-        root.classList.remove("focusing");
-        all.forEach(reset);
-        setNoResults(false);
-        return;
-      }
-      root.classList.add("focusing");
-      toks.forEach(t => {
-        const name  = (t.querySelector("img")?.alt || "").toLowerCase();
-        if (name.includes(kw)) show(t); else hide(t);
-      });
-      labels.forEach(hide);
-      auras.forEach(hide);
-      // Don't show a map-level "not found" — the search dropdown (data-backed)
-      // is the authoritative source. A vendor may exist without its logo drawn.
-      setNoResults(false);
-    }
+    const tokMatches = (t) => active.every((f) => {
+      if (f.type === "category") return t.dataset.cat === codeToCat[f.code];
+      if (f.type === "keyword")  return (t.querySelector("img")?.alt || "").toLowerCase().includes(String(f.value).toLowerCase().trim());
+      if (f.type === "sub")      return (t.dataset.sub    || "").includes("," + f.value + ",");
+      if (f.type === "active")   return (t.dataset.active || "").includes("," + f.value + ",");
+      return true;
+    });
 
-    // Metadata filters (sub-category / country / active-in) — dim non-matching logos.
-    if (activeFilter.type === "sub" || activeFilter.type === "hq" || activeFilter.type === "active") {
-      const needle = "," + activeFilter.value + ",";
-      const attr = activeFilter.type === "sub" ? "sub" : activeFilter.type === "hq" ? "hq" : "active";
-      root.classList.add("focusing");
-      toks.forEach(t => {
-        if ((t.dataset[attr] || "").includes(needle)) show(t); else hide(t);
-      });
-      labels.forEach(hide);
-      auras.forEach(hide);
-      setNoResults(false);
-    }
-  }, [activeFilter]);
+    root.classList.add("focusing");
+    let count = 0;
+    toks.forEach((t) => { if (tokMatches(t)) { show(t); count++; } else hide(t); });
+
+    // Labels/auras: highlight the filtered category if any, else dim all
+    const cat = active.find((f) => f.type === "category");
+    labels.forEach((l) => { if (cat && l.dataset.code === cat.code) show(l); else hide(l); });
+    auras.forEach((a)  => { if (cat && a.dataset.cat === codeToCat[cat.code]) show(a); else hide(a); });
+
+    onMatchCount?.(count);
+    setNoResults(count === 0);
+  }, [filters]);
 
   // C3: Escape key clears filters
   useEffect(() => {
@@ -211,7 +194,7 @@ export default function ProceduralMap({ activeFilter, onCategoryClick, onClear, 
       {/* C2: No results message */}
       {noResults && (
         <div className="pmap-no-results">
-          No vendor found for «&nbsp;{activeFilter?.value}&nbsp;»
+          No vendors match your filters
         </div>
       )}
 

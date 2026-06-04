@@ -5,7 +5,6 @@ export const redirectIfNotAuthenticated = (userId, pathname, router) => {
     "/login",
     "/contactUs",
     "/article",
-    (path) => path.startsWith("/procedural-map"),
     (path) => path.startsWith("/insights"),
     (path) => path.startsWith("/linkupdate"),
     (path) => path.startsWith("/companyPage"),
