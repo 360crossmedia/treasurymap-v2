@@ -153,42 +153,21 @@ const BodyForm = () => {
   const isAdmin = userId == 1 || backUpUserId == 1;
   const editingId = companyId || (backUpCompanyId ? Number(backUpCompanyId) : null);
 
-  // Logo upload: enforce PNG with a transparent background (anything else
-  // looks bad on the map). Validates type, size, and actual transparency.
+  // Logo upload: accept common image formats. A transparent PNG still looks
+  // best on the map, but it is only a recommendation now — not enforced.
   const handleLogoFile = (file) => {
     if (!file) return;
     setLogoError("");
-    const isPng = file.type === "image/png" || /\.png$/i.test(file.name || "");
-    if (!isPng) { setLogoError("Logo must be a PNG file (a .png with a transparent background)."); return; }
-    if (file.size > 1024 * 1024) { setLogoError("Logo is too large (max 1 MB). Please compress it and try again."); return; }
+    const isImg =
+      /^image\//.test(file.type || "") ||
+      /\.(png|jpe?g|webp|svg)$/i.test(file.name || "");
+    if (!isImg) { setLogoError("Please upload an image file (PNG, JPG, WEBP or SVG)."); return; }
+    if (file.size > 2 * 1024 * 1024) { setLogoError("Logo is too large (max 2 MB). Please compress it and try again."); return; }
     const reader = new FileReader();
     reader.onload = (ev) => {
-      const dataUrl = ev.target.result;
-      const img = new window.Image();
-      img.onload = () => {
-        let hasTransparency = false;
-        try {
-          const canvas = document.createElement("canvas");
-          canvas.width = img.width;
-          canvas.height = img.height;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, 0, 0);
-          const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-          for (let i = 3; i < data.length; i += 4) {
-            if (data[i] < 245) { hasTransparency = true; break; }
-          }
-        } catch (_) {
-          hasTransparency = true; // can't inspect → don't block
-        }
-        if (!hasTransparency) {
-          setLogoError("This PNG has a solid background. Please upload a logo with a transparent background.");
-          return;
-        }
-        setImage(dataUrl);
-        setFile(file);
-        setFileName(file.name.substring(0, 10) + (file.name.length > 10 ? "..." : ""));
-      };
-      img.src = dataUrl;
+      setImage(ev.target.result);
+      setFile(file);
+      setFileName(file.name.substring(0, 10) + (file.name.length > 10 ? "..." : ""));
     };
     reader.readAsDataURL(file);
   };
@@ -453,7 +432,7 @@ const BodyForm = () => {
           <input
             className={styles.inputFile}
             type="file"
-            accept="image/png"
+            accept="image/*"
             {...(image || isAdmin ? {} : { required: true })}
             onChange={(e) => handleLogoFile(e.target.files[0])}
           />
@@ -475,10 +454,10 @@ const BodyForm = () => {
             Drag &amp; drop a file or click anywhere in this box
           </p>
           <ul style={{ fontSize: "10px" }}>
-            <li>Format: PNG</li>
-            <li>Background: Transparent</li>
+            <li>Format: PNG, JPG, WEBP or SVG</li>
+            <li>Transparent background recommended (best on the map)</li>
             <li>Minimum Dimensions: 200px width</li>
-            <li>Maximum File Size: 1 MB</li>
+            <li>Maximum File Size: 2 MB</li>
             <li>
               Quality: Logos should be clear, without pixelation or distortion
             </li>
