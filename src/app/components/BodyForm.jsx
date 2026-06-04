@@ -63,6 +63,7 @@ const BodyForm = () => {
   const [selectMainCategory, setSelectMainCategory] = useState();
   const [showTurnover, setShowTurnover] = useState(true);
   const [isMultiplayerMap, setIsMultiplayerMap] = useState(false);
+  const [clientPackage, setClientPackage] = useState("");
   const [selectedSubOptions, setSelectedSubOptions] = useState({});
   const userId = useSelector((state) => state.user);
   const companyId = useSelector((state) => state.companyId);
@@ -120,6 +121,7 @@ const BodyForm = () => {
         userId: !userId ? backUpUserId : userId,
         live: isLive,
         multiplayerMap: isMultiplayerMap,
+        clientPackage: clientPackage || null,
         showTurnover,
         logo,
         creationDate,
@@ -296,6 +298,7 @@ const BodyForm = () => {
     setUserSelected(companyData?.userId);
     setShowTurnover(companyData?.showTurnover);
     setIsMultiplayerMap(companyData?.multiplayerMap);
+    setClientPackage(companyData?.clientPackage || "");
     let inputKeywords = companyData?.keywords;
     let toSetKeyword = inputKeywords?.filter(
       (item) => item !== companyData?.name
@@ -426,6 +429,21 @@ const BodyForm = () => {
               onChange={(e) => setIsMultiplayerMap(e.target.checked)}
               checked={isMultiplayerMap}
             />
+          </div>
+        )}
+        {(userId == 1 || backUpUserId == 1) && (
+          <div className={styles.inputContainer}>
+            <label className={styles.label} htmlFor="">
+              Client status
+            </label>
+            <Form.Select
+              value={clientPackage || ""}
+              onChange={(e) => setClientPackage(e.target.value)}
+              bsPrefix={`form-select ${styles.input} ${clientPackage ? styles.active : ""}`}
+            >
+              <option value="">Free</option>
+              <option value="paid">Paid client</option>
+            </Form.Select>
           </div>
         )}
         <div className={styles.inputContainer}>

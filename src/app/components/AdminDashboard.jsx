@@ -50,6 +50,7 @@ const FILTERS = [
   { key: "live", label: "Live" },
   { key: "hidden", label: "Hidden" },
   { key: "multiplayer", label: "Multiplayer" },
+  { key: "clients", label: "Paid clients" },
   { key: "attention", label: "Needs attention" },
 ];
 
@@ -108,7 +109,7 @@ export default function AdminDashboard() {
   const openMedia = (id) => { selectCompany(id); router.push("/mediaZone"); };
   const createCompany = () => { dispatch(setCompanyId(false)); try { localStorage.removeItem("companyId"); } catch (_) {} router.push("/form"); };
 
-  // Inline partial-update toggle (live / multiplayerMap)
+  // Inline partial-update toggle (live / multiplayerMap = boolean)
   const toggleField = async (c, field) => {
     const next = !c[field];
     setBusy((b) => ({ ...b, [c.id]: true }));
@@ -124,6 +125,23 @@ export default function AdminDashboard() {
     }
   };
 
+  // Client status: paid <-> free (stored in clientPackage)
+  const toggleClient = async (c) => {
+    const prev = c.clientPackage;
+    const next = c.clientPackage === "paid" ? null : "paid";
+    setBusy((b) => ({ ...b, [c.id]: true }));
+    setCompanies((cs) => cs.map((x) => (x.id === c.id ? { ...x, clientPackage: next } : x)));
+    try {
+      const res = await apiUpdateCompany(c.id, { clientPackage: next });
+      if (!res || res.status !== 200) throw new Error();
+    } catch (_) {
+      setCompanies((cs) => cs.map((x) => (x.id === c.id ? { ...x, clientPackage: prev } : x)));
+      showToast("Update failed — reverted.", "err");
+    } finally {
+      setBusy((b) => { const n = { ...b }; delete n[c.id]; return n; });
+    }
+  };
+
   // Stats
   const stats = useMemo(() => {
     const live = companies.filter((c) => c.live).length;
@@ -132,6 +150,7 @@ export default function AdminDashboard() {
       live,
       hidden: companies.length - live,
       multiplayer: companies.filter((c) => c.multiplayerMap).length,
+      clients: companies.filter((c) => c.clientPackage === "paid").length,
       attention: companies.filter(needsAttention).length,
     };
   }, [companies]);
@@ -143,6 +162,7 @@ export default function AdminDashboard() {
       if (filter === "live" && !c.live) return false;
       if (filter === "hidden" && c.live) return false;
       if (filter === "multiplayer" && !c.multiplayerMap) return false;
+      if (filter === "clients" && c.clientPackage !== "paid") return false;
       if (filter === "attention" && !needsAttention(c)) return false;
       if (q && !(c.name || "").toLowerCase().includes(q)) return false;
       return true;
@@ -176,6 +196,7 @@ export default function AdminDashboard() {
                 { k: "live", label: "Live on map", val: stats.live, tone: "green" },
                 { k: "hidden", label: "Hidden", val: stats.hidden, tone: "slate" },
                 { k: "multiplayer", label: "Multiplayer", val: stats.multiplayer, tone: "teal" },
+                { k: "clients", label: "Paid clients", val: stats.clients, tone: "green" },
                 { k: "attention", label: "Needs attention", val: stats.attention, tone: "amber" },
               ].map((s) => (
                 <button key={s.k} className={`dash-stat ${s.tone} ${filter === s.k ? "active" : ""}`} onClick={() => setFilter(s.k)}>
@@ -217,7 +238,7 @@ export default function AdminDashboard() {
                     <thead>
                       <tr>
                         <th className={`sortable ${sort === "name" ? "act" : ""}`} onClick={() => setSort("name")}>Company{sort === "name" ? " ↓" : ""}</th>
-                        <th>Category</th><th>Owner</th>
+                        <th>Category</th><th>Client</th><th>Owner</th>
                         <th className={`sortable ${sort === "recent" ? "act" : ""}`} onClick={() => setSort("recent")}>Updated{sort === "recent" ? " ↓" : ""}</th>
                         <th className="ctr">Live</th><th className="ctr">Multiplayer</th><th className="ctr">Actions</th>
                       </tr>
@@ -234,6 +255,16 @@ export default function AdminDashboard() {
                           <td>{catCode(c)
                             ? <span className="dash-cat" style={{ background: `hsl(${catHue(c)},70%,94%)`, color: `hsl(${catHue(c)},55%,32%)` }}>{catCode(c)}</span>
                             : <span className="muted">—</span>}</td>
+                          <td>
+                            <button
+                              className={`dash-client ${c.clientPackage === "paid" ? "paid" : "free"}`}
+                              disabled={busy[c.id]}
+                              onClick={() => toggleClient(c)}
+                              title="Click to toggle paid / free"
+                            >
+                              {c.clientPackage === "paid" ? "PAID CLIENT" : "FREE"}
+                            </button>
+                          </td>
                           <td className="dash-owner">{users[c.userId] || (c.userId === 1 ? "Admin" : `#${c.userId}`)}</td>
                           <td className="dash-date">{timeAgo(c.updatedAt || c.createdAt)}</td>
                           <td className="ctr"><Switch on={!!c.live} busy={busy[c.id]} onClick={() => toggleField(c, "live")} /></td>
@@ -318,7 +349,8 @@ export default function AdminDashboard() {
         .dash-role { flex-shrink: 0; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 100px; background: #e9edf4; color: #5a6a85; text-transform: uppercase; letter-spacing: .05em; }
         .dash-role.admin { background: linear-gradient(135deg,#dbe8ff,#cfe0ff); color: #1e4ba8; }
 
-        .dash-stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+        .dash-stats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        @media (max-width: 920px) { .dash-stats { grid-template-columns: repeat(3, 1fr); } }
         .dash-stat { display: flex; flex-direction: column; gap: 2px; padding: 16px 18px; border-radius: 14px; border: 1px solid #e6ecf5; background: #fff; cursor: pointer; text-align: left; transition: border-color .15s, transform .15s, box-shadow .15s; box-shadow: 0 8px 24px -16px rgba(10,26,51,.2); }
         .dash-stat:hover { transform: translateY(-2px); box-shadow: 0 12px 26px -14px rgba(10,26,51,.25); }
         .dash-stat.active { border-color: #2f6fe0; box-shadow: 0 0 0 3px rgba(47,111,224,.12); }
@@ -361,6 +393,11 @@ export default function AdminDashboard() {
         .dash-co-name { background: none; border: none; cursor: pointer; font-size: 14px; font-weight: 600; color: #0e2c5c; padding: 0; text-align: left; }
         .dash-co-name:hover { color: #2f6fe0; text-decoration: underline; }
         .dash-cat { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 100px; font-family: 'JetBrains Mono', monospace; }
+        .dash-client { font-size: 10.5px; font-weight: 800; letter-spacing: .03em; padding: 4px 11px; border-radius: 100px; border: 1.5px solid transparent; cursor: pointer; white-space: nowrap; transition: filter .15s, background .15s; }
+        .dash-client.paid { background: #e4f6ec; color: #1f8a52; border-color: #bce6cd; }
+        .dash-client.free { background: #f1f4f9; color: #9aa3b5; }
+        .dash-client:hover { filter: brightness(.96); }
+        .dash-client:disabled { opacity: .55; cursor: default; }
         .dash-owner { color: #6a788f; font-size: 12.5px; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .dash-rowact { display: inline-flex; gap: 4px; }
         .dash-rowact button { width: 30px; height: 30px; display: grid; place-items: center; border: none; background: #f4f7fc; border-radius: 8px; color: #5a6a85; cursor: pointer; transition: background .15s, color .15s; }
