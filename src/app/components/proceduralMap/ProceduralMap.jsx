@@ -45,12 +45,8 @@ function toCats(companies, countries = [], multiplayer = false) {
   };
   for (const c of companies) {
     if (!c.live || !c.logo) continue;
-    if (multiplayer) {
-      for (const catId of c.companyCategories || []) pushItem(catId, c);
-    } else {
-      if (!c.maincategory || !c.maincategory.length) continue;
-      pushItem(c.maincategory[0], c);
-    }
+    if (!c.maincategory || !c.maincategory.length) continue;
+    pushItem(c.maincategory[0], c);
   }
   return Object.entries(byId)
     .sort((a, b) => Number(a[0]) - Number(b[0]))
@@ -58,6 +54,44 @@ function toCats(companies, countries = [], multiplayer = false) {
       const meta = CAT_META[`category-${catId}`];
       return { code: meta.code, full: meta.full, hue: meta.hue, total: items.length, items };
     });
+}
+
+// Build groups for the Multiplayer Map from the CURATED endpoint
+// (/api/v1/mapdata/multiplayerMap) — the exact same source the original
+// multiplayer map used. Shape: { "category-N": [{ id, name, logo, live }] }.
+// Each vendor appears in every category it was curated into. We join to the
+// full companies list (by id) to recover sub-category / office data for filters.
+function toCatsMultiplayer(mp, companies = [], countries = []) {
+  if (!mp || typeof mp !== "object") return [];
+  const byId = {};
+  for (const c of companies) byId[c.id] = c;
+
+  const groups = [];
+  for (const key of Object.keys(mp)) {
+    const meta = CAT_META[key];
+    if (!meta) continue;
+    const catId = parseInt(key.split("-")[1], 10);
+    const items = [];
+    const seen = new Set();
+    for (const logo of mp[key] || []) {
+      if (!logo || !logo.live || !logo.logo) continue;
+      if (seen.has(logo.id)) continue; // no dupe in same category
+      seen.add(logo.id);
+      const comp = byId[logo.id] || {};
+      const name = logo.name || comp.name || "—";
+      items.push({
+        id: logo.id,
+        n: name,
+        i: logo.logo,
+        href: providerHref({ name, id: logo.id }),
+        sub: comp.companySubcategories || [],
+        active: comp.companyOffices || [],
+        hq: deriveHq(comp.location, countries),
+      });
+    }
+    if (items.length) groups.push({ catId, code: meta.code, full: meta.full, hue: meta.hue, total: items.length, items });
+  }
+  return groups.sort((a, b) => a.catId - b.catId);
 }
 
 export default function ProceduralMap({ multiplayer = false, filters, onCategoryClick, onClear, onVendors, onFilterOptions, onMatchCount }) {
@@ -88,12 +122,17 @@ export default function ProceduralMap({ multiplayer = false, filters, onCategory
       setLoading(true);
       let cats = [];
       try {
-        const [res, subsRes, countriesRes] = await Promise.all([
+        const [res, subsRes, countriesRes, mpRes] = await Promise.all([
           axios.get(`${url}/api/v1/companies`),
           axios.get(`${url}/api/v1/subCategories`).then((r) => r.data).catch(() => []),
           axios.get(`${url}/api/v1/countries`).then((r) => r.data).catch(() => []),
+          multiplayer
+            ? axios.get(`${url}/api/v1/mapdata/multiplayerMap`).then((r) => r.data).catch(() => null)
+            : Promise.resolve(null),
         ]);
-        cats = toCats(res.data, countriesRes, multiplayer);
+        cats = multiplayer
+          ? toCatsMultiplayer(mpRes, res.data, countriesRes)
+          : toCats(res.data, countriesRes);
         // Expose filter dropdown options (sub-categories + countries)
         if (onFilterOptions) onFilterOptions({ subCategories: subsRes || [], countries: countriesRes || [] });
         // Expose the full vendor list (for data-backed search autocomplete).
@@ -124,7 +163,7 @@ export default function ProceduralMap({ multiplayer = false, filters, onCategory
       const render = () => {
         teardownMap(root);
         buildMap(root, cats, {
-          cap: multiplayer ? 60 : 30,
+          cap: multiplayer ? 40 : 30,
           navigate: handleNavigate,
           onCategoryClick: (code, full, hue) => { // A2 — uses ref, no rebuild on change
             if (onCategoryClickRef.current) onCategoryClickRef.current(code, full, hue);
@@ -343,8 +382,15 @@ export default function ProceduralMap({ multiplayer = false, filters, onCategory
           background: radial-gradient(ellipse 80% 76% at 50% 50%, #fbfdff 0%, #e7eef8 50%, #d2ddec 100%);
           font-family: 'Chivo', sans-serif; color: #0a1a33;
         }
-        /* Multiplayer map is ~2× denser (vendors repeat across categories) → taller canvas */
-        .pmap-root.pmap-root--mp { height: 1560px; }
+        /* Multiplayer map: green circuit-board theme (echoes the original) */
+        .pmap-root.pmap-root--mp {
+          height: 1200px;
+          background: radial-gradient(ellipse 82% 78% at 50% 50%, #eaf6ec 0%, #bfe3c6 52%, #9ccfa6 100%);
+        }
+        .pmap-root.pmap-root--mp .circuit { opacity: .07; filter: hue-rotate(85deg); }
+        .pmap-root.pmap-root--mp .titleglow {
+          background: radial-gradient(ellipse, rgba(240,250,242,.95) 0%, rgba(240,250,242,.5) 50%, transparent 76%);
+        }
         .pmap-root .circuit {
           position: absolute; inset: 0; z-index: 0;
           background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%27220%27%20height%3D%27220%27%20viewBox%3D%270%200%20220%20220%27%3E%3Cg%20fill%3D%27none%27%20stroke%3D%27%233a5c93%27%20stroke-width%3D%271.2%27%3E%3Cpath%20d%3D%27M12%2044H96V120H188M44%2012V76H128V160M0%20176H76V128M220%2064H160V20M160%20220V150H108M220%20188H128M188%200V40M12%20200H64V168%27/%3E%3C/g%3E%3Cg%20fill%3D%27%233a5c93%27%3E%3Ccircle%20cx%3D%2796%27%20cy%3D%27120%27%20r%3D%273%27/%3E%3Ccircle%20cx%3D%27128%27%20cy%3D%2776%27%20r%3D%273%27/%3E%3Ccircle%20cx%3D%2776%27%20cy%3D%27128%27%20r%3D%273%27/%3E%3Ccircle%20cx%3D%27160%27%20cy%3D%2720%27%20r%3D%273%27/%3E%3Ccircle%20cx%3D%27128%27%20cy%3D%27160%27%20r%3D%273%27/%3E%3Ccircle%20cx%3D%2744%27%20cy%3D%2744%27%20r%3D%272.6%27/%3E%3Ccircle%20cx%3D%2764%27%20cy%3D%27168%27%20r%3D%272.6%27/%3E%3C/g%3E%3C/svg%3E");
