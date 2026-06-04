@@ -24,17 +24,19 @@
 .logoMark {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 2px;
   cursor: pointer;
   flex-shrink: 0;
   text-decoration: none;
 }
 
 .logoPinSvg {
-  height: 27px;
+  height: 26px;
   width: auto;
   display: block;
-  margin-left: 4px;
+  margin-left: 3px;
+  align-self: center;
+  transform: translateY(1px);
   filter: drop-shadow(0 2px 4px rgba(47, 111, 224, 0.28));
 }
 
