@@ -30,10 +30,11 @@
   text-decoration: none;
 }
 
-.logoImg {
-  height: 28px;
+.logoPinImg {
+  height: 26px;
   width: auto;
   display: block;
+  margin-left: 3px;
 }
 
 .logoTreasury {
@@ -340,7 +341,8 @@
 
 @media screen and (max-width: 520px) {
   .navbar { padding: 0 12px; }
-  .logoImg { height: 23px; }
+  .logoTreasury, .logoMap { font-size: 18px; }
+  .logoPinImg { height: 21px; }
   .navbarButton, .redButton, .navbarButtonLogOut {
     padding: 6px 11px;
     font-size: 12px;

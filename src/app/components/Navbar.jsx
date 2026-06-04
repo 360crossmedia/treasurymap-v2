@@ -3,7 +3,7 @@ import styles from "../styles/navbar.module.css";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import MobileMenuNavbar from "../assets/MobileMenuNavbar.svg";
-import navbarLogo from "../assets/navbarlogo.svg";
+import navbarPin from "../assets/navbarpin.png";
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { setCompanyId } from "../store/slices/companyToUpdate.slice";
@@ -55,7 +55,9 @@ const Navbar = ({ buttonLabel, multiplayerMap, set, rotate }) => {
         {/* ── Logo ── */}
         <div className={styles.navbarLeft}>
           <div className={styles.logoMark} onClick={() => router.push("/")}>
-            <Image className={styles.logoImg} src={navbarLogo} alt="TreasuryMap" priority />
+            <span className={styles.logoTreasury}>Treasury</span>
+            <span className={styles.logoMap}>MAP</span>
+            <Image className={styles.logoPinImg} src={navbarPin} alt="TreasuryMap" priority />
           </div>
 
           {/* ── Nav links ── */}
