@@ -159,8 +159,8 @@ const BodyForm = () => {
     if (!file) return;
     setLogoError("");
     const isPng = file.type === "image/png" || /\.png$/i.test(file.name || "");
-    if (!isPng) { setLogoError("Logo must be a PNG file."); return; }
-    if (file.size > 600 * 1024) { setLogoError("Logo must be under 500 KB."); return; }
+    if (!isPng) { setLogoError("Logo must be a PNG file (a .png with a transparent background)."); return; }
+    if (file.size > 1024 * 1024) { setLogoError("Logo is too large (max 1 MB). Please compress it and try again."); return; }
     const reader = new FileReader();
     reader.onload = (ev) => {
       const dataUrl = ev.target.result;
@@ -217,6 +217,22 @@ const BodyForm = () => {
     if (isAdmin && !companyName?.trim()) {
       dispatch(setIsLoading(false));
       alert("Please enter a company name.");
+      return;
+    }
+    // Don't save with a rejected logo still showing an error.
+    if (logoError) {
+      dispatch(setIsLoading(false));
+      alert(`${logoError}\n\nPlease upload a valid logo (PNG, transparent background) before saving.`);
+      return;
+    }
+    // A company needs a logo to appear on the map (map = Live + logo + category).
+    // Block silently saving a Live company with no logo (it would be invisible).
+    const hasLogo = !!file || (typeof image === "string" && image.includes("http"));
+    if ((isLive || isMultiplayerMap) && !hasLogo) {
+      dispatch(setIsLoading(false));
+      alert(
+        "This company is set to Live but has no logo, so it will NOT appear on the map.\n\nAdd a transparent PNG logo, or turn off “Live on the Map” to save it as a draft for now."
+      );
       return;
     }
     if (
@@ -472,7 +488,7 @@ const BodyForm = () => {
             <li>Format: PNG</li>
             <li>Background: Transparent</li>
             <li>Minimum Dimensions: 200px width</li>
-            <li>Maximum File Size: 500KB</li>
+            <li>Maximum File Size: 1 MB</li>
             <li>
               Quality: Logos should be clear, without pixelation or distortion
             </li>
