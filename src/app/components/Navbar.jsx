@@ -3,13 +3,37 @@ import styles from "../styles/navbar.module.css";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import MobileMenuNavbar from "../assets/MobileMenuNavbar.svg";
-import navbarPin from "../assets/navbarpin.png";
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { setCompanyId } from "../store/slices/companyToUpdate.slice";
 import { setUser } from "../store/slices/user.slice";
 import { usePathname } from "next/navigation";
 
+// TreasuryMap brand pin — crisp vector recreation of the official mark
+// (gradient teardrop + white aperture + water wave). Scales without pixelation.
+const PinIcon = () => (
+  <svg className={styles.logoPinSvg} viewBox="0 0 40 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <linearGradient id="tmPin" x1="20" y1="1" x2="20" y2="50" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#2f6fe0" />
+        <stop offset="1" stopColor="#19a3e6" />
+      </linearGradient>
+      <linearGradient id="tmWave" x1="20" y1="26" x2="20" y2="46" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#7fe0ea" />
+        <stop offset="1" stopColor="#2db8dc" />
+      </linearGradient>
+      <clipPath id="tmClip">
+        <path d="M20 1.6C10.9 1.6 3.5 9 3.5 18.1c0 11.6 16.5 31.9 16.5 31.9S36.5 29.7 36.5 18.1C36.5 9 29.1 1.6 20 1.6Z" />
+      </clipPath>
+    </defs>
+    <path d="M20 1.6C10.9 1.6 3.5 9 3.5 18.1c0 11.6 16.5 31.9 16.5 31.9S36.5 29.7 36.5 18.1C36.5 9 29.1 1.6 20 1.6Z" fill="url(#tmPin)" />
+    <g clipPath="url(#tmClip)">
+      <path d="M0 30c5-4 10.5-4 15.5 0s11 3 16-1l9-5v34H0V30Z" fill="url(#tmWave)" opacity="0.95" />
+      <path d="M0 35.5c5.5-3.5 11 1 16-1.5s10.5 2 17.5-1.5V58H0V35.5Z" fill="#d2f0f6" opacity="0.5" />
+    </g>
+    <circle cx="20" cy="18" r="7" fill="#fff" />
+  </svg>
+);
 
 const Navbar = ({ buttonLabel, multiplayerMap, set, rotate }) => {
   const pathname = usePathname();
@@ -57,7 +81,7 @@ const Navbar = ({ buttonLabel, multiplayerMap, set, rotate }) => {
           <div className={styles.logoMark} onClick={() => router.push("/")}>
             <span className={styles.logoTreasury}>Treasury</span>
             <span className={styles.logoMap}>MAP</span>
-            <Image className={styles.logoPinImg} src={navbarPin} alt="TreasuryMap" priority />
+            <PinIcon />
           </div>
 
           {/* ── Nav links ── */}
