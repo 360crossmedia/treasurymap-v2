@@ -7,52 +7,65 @@ const CATEGORIES = Object.entries(CAT_META)
   .sort((a, b) => a.n - b.n);
 
 const IconSearch = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/>
-  </svg>
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4-4" /></svg>
+);
+const IconChevron = ({ open }) => (
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"
+    style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .2s", flexShrink: 0 }}><path d="M6 9l6 6 6-6" /></svg>
 );
 
-const IconGrid = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-    <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
-  </svg>
-);
+// Generic dropdown for sub-category / country / active-in
+function Dropdown({ label, placeholder, options, activeId, onPick }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+  const active = options.find((o) => String(o.id) === String(activeId));
+  useEffect(() => {
+    const h = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener("mousedown", h);
+    return () => document.removeEventListener("mousedown", h);
+  }, []);
+  return (
+    <div className="pf-col" ref={ref}>
+      <label className="pf-label">{label}</label>
+      <div className={`pf-ctl pf-select ${active ? "pf-active" : ""}`} onClick={() => setOpen(!open)}>
+        <span style={{ color: active ? "#2f6fe0" : "#9aa3b5", fontWeight: active ? 600 : 400, fontSize: 13, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: 150 }}>
+          {active ? active.name : placeholder}
+        </span>
+        <IconChevron open={open} />
+      </div>
+      {open && (
+        <div className="pf-dropdown">
+          <div className="pf-option" style={{ color: "#9aa3b5" }} onClick={() => { onPick(null); setOpen(false); }}>All</div>
+          {options.map((o) => (
+            <div key={o.id} className={`pf-option ${String(o.id) === String(activeId) ? "pf-option-active" : ""}`}
+              onClick={() => { onPick(o); setOpen(false); }}>
+              {o.name}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
-const IconChevron = ({ open, color }) => (
-  <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
-    stroke={color || "currentColor"} strokeWidth="2.4"
-    style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .2s", flexShrink: 0 }}>
-    <path d="M6 9l6 6 6-6"/>
-  </svg>
-);
-
-export default function ProceduralMapFilters({ onFilter, onClear, activeFilter, vendorCount, catCount, vendors = [] }) {
+export default function ProceduralMapFilters({ onFilter, onClear, activeFilter, vendorCount, catCount, vendors = [], subCategories = [], countries = [] }) {
   const [keyword, setKeyword] = useState("");
   const [catOpen, setCatOpen] = useState(false);
-  const [acOpen,  setAcOpen]  = useState(false); // autocomplete open
+  const [acOpen, setAcOpen] = useState(false);
   const debounceRef = useRef(null);
   const kwRef = useRef(null);
+  const catRef = useRef(null);
 
-  const activeCat = activeFilter?.type === "category"
-    ? CATEGORIES.find(c => c.code === activeFilter.code)
-    : null;
+  const activeCat = activeFilter?.type === "category" ? CATEGORIES.find((c) => c.code === activeFilter.code) : null;
 
-  // Data-backed autocomplete: match the FULL vendor list (not just drawn logos)
   const matches = keyword.trim().length >= 1
-    ? vendors
-        .filter(v => v.name.toLowerCase().includes(keyword.toLowerCase().trim()))
+    ? vendors.filter((v) => v.name.toLowerCase().includes(keyword.toLowerCase().trim()))
         .sort((a, b) => {
           const k = keyword.toLowerCase().trim();
-          // names that START with the query come first
-          const as = a.name.toLowerCase().startsWith(k) ? 0 : 1;
-          const bs = b.name.toLowerCase().startsWith(k) ? 0 : 1;
-          return as - bs || a.name.localeCompare(b.name);
-        })
-        .slice(0, 8)
+          return (a.name.toLowerCase().startsWith(k) ? 0 : 1) - (b.name.toLowerCase().startsWith(k) ? 0 : 1) || a.name.localeCompare(b.name);
+        }).slice(0, 8)
     : [];
 
-  // B3: debounced keyword (drives map dimming)
   const handleKeyword = useCallback((e) => {
     const val = e.target.value;
     setKeyword(val);
@@ -61,286 +74,162 @@ export default function ProceduralMapFilters({ onFilter, onClear, activeFilter, 
     debounceRef.current = setTimeout(() => onFilter({ type: "keyword", value: val }), 250);
   }, [onFilter]);
 
-  // Click a result → go to the vendor's profile page
-  const pickVendor = (v) => {
-    setAcOpen(false);
-    if (v?.href) window.location.href = v.href;
-  };
-
-  // Close autocomplete on outside click
-  useEffect(() => {
-    const h = (e) => { if (kwRef.current && !kwRef.current.contains(e.target)) setAcOpen(false); };
-    document.addEventListener("mousedown", h);
-    return () => document.removeEventListener("mousedown", h);
-  }, []);
+  const pickVendor = (v) => { setAcOpen(false); if (v?.href) window.location.href = v.href; };
 
   const handleCategory = (cat) => {
     setCatOpen(false);
     if (activeFilter?.type === "category" && activeFilter.code === cat.code) { handleClear(); return; }
+    setKeyword("");
     onFilter({ type: "category", key: cat.key, code: cat.code });
   };
 
   const handleClear = () => {
-    setKeyword("");
-    setCatOpen(false);
-    clearTimeout(debounceRef.current);
+    setKeyword(""); setCatOpen(false); clearTimeout(debounceRef.current);
     onClear();
   };
 
-  const hasFilter = !!(keyword || activeCat);
+  useEffect(() => {
+    const h = (e) => {
+      if (kwRef.current && !kwRef.current.contains(e.target)) setAcOpen(false);
+      if (catRef.current && !catRef.current.contains(e.target)) setCatOpen(false);
+    };
+    document.addEventListener("mousedown", h);
+    return () => document.removeEventListener("mousedown", h);
+  }, []);
+
+  const hasFilter = !!(keyword || activeFilter);
 
   return (
     <div className="pmf-bar">
-      {/* Keywords pill + autocomplete */}
-      <div className="pmf-pill-wrap" style={{ position: "relative" }} ref={kwRef}>
-        <div className="pmf-pill">
-          <span className="pmf-icon"><IconSearch /></span>
-          <input
-            className="pmf-input"
-            placeholder="Search a vendor…"
-            value={keyword}
-            onChange={handleKeyword}
-            onFocus={() => keyword && setAcOpen(true)}
-          />
-          {keyword && (
-            <button className="pmf-pill-clear" onClick={() => { setKeyword(""); setAcOpen(false); onFilter({ type: "keyword", value: "" }); }}>✕</button>
-          )}
+      {/* Keywords */}
+      <div className="pf-col" style={{ position: "relative" }} ref={kwRef}>
+        <label className="pf-label">Keywords</label>
+        <div className="pf-ctl pf-kw">
+          <span className="pf-icon"><IconSearch /></span>
+          <input className="pf-input" placeholder="Search a vendor…" value={keyword}
+            onChange={handleKeyword} onFocus={() => keyword && setAcOpen(true)} />
         </div>
-
         {acOpen && keyword.trim() && (
-          <div className="pmf-dropdown">
-            {matches.length > 0 ? (
-              matches.map((v, i) => (
-                <div key={i} className="pmf-option" onClick={() => pickVendor(v)} style={{ cursor: "pointer" }}>
-                  <span className="pmf-dot" style={{ background: `hsl(${v.hue},72%,50%)` }} />
-                  <span className="pmf-option-code" style={{ minWidth: 0, fontFamily: "inherit", fontWeight: 600 }}>{v.name}</span>
-                  <span className="pmf-option-full" style={{ marginLeft: "auto" }}>{v.code}</span>
-                </div>
-              ))
-            ) : (
-              <div className="pmf-option" style={{ color: "#9aa3b5", cursor: "default" }}>
-                No vendor matches “{keyword.trim()}”
+          <div className="pf-dropdown">
+            {matches.length ? matches.map((v, i) => (
+              <div key={i} className="pf-option" onClick={() => pickVendor(v)}>
+                <span className="pf-dot" style={{ background: `hsl(${v.hue},72%,50%)` }} />{v.name}
+                <span style={{ marginLeft: "auto", color: "#9aa3b5", fontSize: 11 }}>{v.code}</span>
               </div>
-            )}
+            )) : <div className="pf-option" style={{ color: "#9aa3b5" }}>No vendor matches "{keyword.trim()}"</div>}
           </div>
         )}
       </div>
 
-      {/* Category pill + dropdown */}
-      <div className="pmf-pill-wrap" style={{ position: "relative" }}>
-        {activeCat ? (
-          /* Active category chip */
-          <div className="pmf-chip" style={{
-            background: `hsl(${activeCat.hue},70%,93%)`,
-            color: `hsl(${activeCat.hue},60%,28%)`,
-            borderColor: `hsl(${activeCat.hue},55%,78%)`,
-          }}>
-            <span className="pmf-chip-dot" style={{ background: `hsl(${activeCat.hue},72%,50%)` }} />
-            <span className="pmf-chip-label">{activeCat.code}</span>
-            <button className="pmf-chip-x" style={{ color: `hsl(${activeCat.hue},55%,40%)` }}
-              onClick={handleClear}>✕</button>
-          </div>
-        ) : (
-          <div className="pmf-pill pmf-pill-select" onClick={() => setCatOpen(!catOpen)}>
-            <span className="pmf-icon" style={{ color: "#3a4a66" }}><IconGrid /></span>
-            <span className="pmf-placeholder">Select category</span>
-            <IconChevron open={catOpen} />
-          </div>
-        )}
-
+      {/* Category */}
+      <div className="pf-col" style={{ position: "relative" }} ref={catRef}>
+        <label className="pf-label">Category</label>
+        <div className={`pf-ctl pf-select ${activeCat ? "pf-active" : ""}`} onClick={() => setCatOpen(!catOpen)}>
+          <span style={{ color: activeCat ? "#2f6fe0" : "#9aa3b5", fontWeight: activeCat ? 600 : 400, fontSize: 13, whiteSpace: "nowrap" }}>
+            {activeCat ? activeCat.code : "Select category"}
+          </span>
+          <IconChevron open={catOpen} />
+        </div>
         {catOpen && (
-          <div className="pmf-dropdown">
-            <div className="pmf-dropdown-header">Categories</div>
-            {CATEGORIES.map(c => (
-              <div
-                key={c.key}
-                className={`pmf-option ${activeCat?.code === c.code ? "pmf-option-active" : ""}`}
-                style={activeCat?.code === c.code ? {
-                  background: `hsl(${c.hue},70%,93%)`,
-                  color: `hsl(${c.hue},60%,28%)`,
-                } : {}}
-                onClick={() => handleCategory(c)}
-              >
-                <span className="pmf-dot" style={{ background: `hsl(${c.hue},72%,50%)`, boxShadow: `0 0 6px hsl(${c.hue},72%,60%)` }} />
-                <span className="pmf-option-code">{c.code}</span>
-                <span className="pmf-option-full">{c.label.replace(c.code + " ", "")}</span>
+          <div className="pf-dropdown">
+            <div className="pf-option" style={{ color: "#9aa3b5" }} onClick={handleClear}>All</div>
+            {CATEGORIES.map((c) => (
+              <div key={c.key} className={`pf-option ${activeCat?.code === c.code ? "pf-option-active" : ""}`} onClick={() => handleCategory(c)}>
+                <span className="pf-dot" style={{ background: `hsl(${c.hue},72%,50%)` }} />
+                <strong style={{ minWidth: 42 }}>{c.code}</strong>
+                <span style={{ color: "#5a6a85", fontSize: 12, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.full}</span>
               </div>
             ))}
           </div>
         )}
       </div>
 
-      {/* Right side: counter + clear */}
+      {/* Sub-Category */}
+      <Dropdown label="Sub-Category" placeholder="Select sub-category"
+        options={subCategories}
+        activeId={activeFilter?.type === "sub" ? activeFilter.value : null}
+        onPick={(o) => o ? onFilter({ type: "sub", value: o.id }) : handleClear()} />
+
+      {/* Country (HQ) */}
+      <Dropdown label="Country" placeholder="Select country"
+        options={countries}
+        activeId={activeFilter?.type === "hq" ? activeFilter.value : null}
+        onPick={(o) => o ? onFilter({ type: "hq", value: o.id }) : handleClear()} />
+
+      {/* Active in */}
+      <Dropdown label="Active in" placeholder="Select country"
+        options={countries}
+        activeId={activeFilter?.type === "active" ? activeFilter.value : null}
+        onPick={(o) => o ? onFilter({ type: "active", value: o.id }) : handleClear()} />
+
+      {/* Right: counter / clear */}
       <div className="pmf-right">
         {!hasFilter && vendorCount > 0 && (
-          <div className="pmf-counter">
-            <span className="pmf-counter-n">{vendorCount}</span>
-            <span className="pmf-counter-sep">|</span>
-            <span className="pmf-counter-lbl">{catCount || 14} categories</span>
+          <div className="pf-counter">
+            <span className="pf-counter-n">{vendorCount}</span>
+            <span className="pf-counter-sep">|</span>
+            <span className="pf-counter-lbl">{catCount || 14} categories</span>
           </div>
         )}
         {hasFilter && (
-          <button className="pmf-clear-btn" onClick={handleClear} title="Clear filters (Esc)">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M18 6L6 18M6 6l12 12"/>
-            </svg>
+          <button className="pf-clear-btn" onClick={handleClear} title="Clear (Esc)">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12" /></svg>
           </button>
         )}
       </div>
 
       <style jsx>{`
         .pmf-bar {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          padding: 10px 38px;
-          background: rgba(255,255,255,0.92);
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          border-bottom: 1px solid #E1E7F1;
-          flex-wrap: wrap;
-          position: relative;
-          z-index: 40;
+          display: flex; align-items: flex-end; gap: 14px;
+          padding: 12px 38px; background: rgba(255,255,255,0.92);
+          backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+          border-bottom: 1px solid #E1E7F1; flex-wrap: wrap; position: relative; z-index: 40;
         }
-
-        /* ── Pill wrapper ── */
-        .pmf-pill-wrap { display: flex; align-items: center; }
-
-        .pmf-pill {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          background: #F4F7FC;
-          border: 1.5px solid transparent;
-          border-radius: 100px;
-          padding: 8px 16px;
-          min-width: 180px;
-          cursor: text;
-          transition: border-color .2s, box-shadow .2s;
+        .pf-col { display: flex; flex-direction: column; gap: 6px; position: relative; }
+        .pf-label {
+          font-family: 'JetBrains Mono', monospace; font-size: 10px;
+          letter-spacing: .08em; text-transform: uppercase; color: #0A1A33; font-weight: 500;
         }
-        .pmf-pill:focus-within {
-          border-color: #2f6fe0;
-          box-shadow: 0 0 0 3px rgba(47,111,224,.1);
-          background: #fff;
+        .pf-ctl {
+          display: flex; align-items: center; gap: 6px;
+          border: 1.5px solid transparent; background: #F4F7FC;
+          border-radius: 100px; padding: 8px 14px; min-width: 150px;
+          cursor: pointer; user-select: none; transition: border-color .2s, background .2s;
         }
-        .pmf-pill-select {
-          cursor: pointer;
-          min-width: 180px;
-          user-select: none;
-          justify-content: space-between;
-        }
-        .pmf-pill-select:hover { border-color: #adc0dc; }
-
-        .pmf-icon { color: #8a93a6; display: flex; align-items: center; flex-shrink: 0; }
-
-        .pmf-input {
-          border: none; outline: none; background: transparent;
-          font-size: 13.5px; color: #0A1A33; width: 160px;
-          font-family: inherit;
-        }
-        .pmf-input::placeholder { color: #9aa3b5; }
-
-        .pmf-placeholder { font-size: 13.5px; color: #9aa3b5; flex: 1; }
-
-        .pmf-pill-clear {
-          background: none; border: none; cursor: pointer;
-          color: #9aa3b5; font-size: 12px; padding: 0; line-height: 1;
-          transition: color .15s; flex-shrink: 0;
-        }
-        .pmf-pill-clear:hover { color: #3a4a66; }
-
-        /* ── Active category chip ── */
-        .pmf-chip {
-          display: inline-flex;
-          align-items: center;
-          gap: 7px;
-          border: 1.5px solid;
-          border-radius: 100px;
-          padding: 7px 14px 7px 10px;
-          font-size: 13.5px;
-          font-weight: 600;
-          cursor: default;
-          animation: chipIn .18s ease;
-        }
-        @keyframes chipIn { from { transform: scale(.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .pmf-chip-dot {
-          width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0;
-        }
-        .pmf-chip-label { font-size: 13.5px; font-weight: 700; letter-spacing: .02em; }
-        .pmf-chip-x {
-          background: none; border: none; cursor: pointer; font-size: 11px;
-          padding: 0; line-height: 1; margin-left: 2px; opacity: .7;
-          transition: opacity .15s;
-        }
-        .pmf-chip-x:hover { opacity: 1; }
-
-        /* ── Dropdown ── */
-        .pmf-dropdown {
-          position: absolute;
-          top: calc(100% + 6px); left: 0;
-          min-width: 300px;
-          background: #fff;
-          border: 1px solid #E1E7F1;
-          border-radius: 14px;
-          box-shadow: 0 16px 48px -8px rgba(10,26,51,.18);
-          z-index: 200;
-          max-height: 320px;
-          overflow-y: auto;
-          animation: dropIn .16s ease;
+        .pf-kw { cursor: text; }
+        .pf-ctl:hover { border-color: #adc0dc; }
+        .pf-select { justify-content: space-between; }
+        .pf-active { border-color: #2f6fe0 !important; background: #f4f8ff; }
+        .pf-icon { color: #8a93a6; display: flex; flex-shrink: 0; }
+        .pf-input { border: none; outline: none; background: transparent; font-size: 13px; color: #0A1A33; width: 140px; }
+        .pf-input::placeholder { color: #9aa3b5; }
+        .pf-dropdown {
+          position: absolute; top: calc(100% + 5px); left: 0; min-width: 230px;
+          background: #fff; border: 1px solid #E1E7F1; border-radius: 12px;
+          box-shadow: 0 12px 40px -8px rgba(10,26,51,.18); z-index: 200;
+          max-height: 300px; overflow-y: auto; animation: dropIn .15s ease;
         }
         @keyframes dropIn { from { transform: translateY(-6px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .pmf-dropdown-header {
-          font-family: 'JetBrains Mono', monospace;
-          font-size: 10px; text-transform: uppercase; letter-spacing: .1em;
-          color: #9aa3b5; padding: 10px 16px 6px; font-weight: 600;
+        .pf-option {
+          display: flex; align-items: center; gap: 9px;
+          padding: 9px 14px; font-size: 13px; color: #3a4a66; cursor: pointer;
+          border-bottom: 1px solid #f4f7fc; transition: background .1s; white-space: nowrap;
         }
-        .pmf-option {
-          display: flex; align-items: center; gap: 10px;
-          padding: 9px 16px; cursor: pointer;
-          border-bottom: 1px solid #f4f7fc;
-          transition: background .1s;
-        }
-        .pmf-option:last-child { border-bottom: none; }
-        .pmf-option:hover { background: #f7f9ff; }
-        .pmf-dot {
-          width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0;
-        }
-        .pmf-option-code {
-          font-weight: 700; font-size: 13px; color: #0e2c5c;
-          min-width: 44px; font-family: 'Oswald', sans-serif;
-        }
-        .pmf-option-full {
-          font-size: 12px; color: #5a6a85;
-          overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-        }
-
-        /* ── Right: counter + clear ── */
-        .pmf-right {
-          margin-left: auto;
-          display: flex; align-items: center; gap: 10px;
-        }
-        .pmf-counter {
-          display: flex; align-items: center; gap: 7px;
-          font-family: 'JetBrains Mono', monospace;
-        }
-        .pmf-counter-n {
-          font-size: 17px; font-weight: 700; color: #2f6fe0; line-height: 1;
-        }
-        .pmf-counter-sep { color: #D0D8E8; font-size: 14px; }
-        .pmf-counter-lbl {
-          font-size: 11px; color: #8a93a6;
-          text-transform: uppercase; letter-spacing: .06em;
-        }
-        .pmf-clear-btn {
+        .pf-option:last-child { border-bottom: none; }
+        .pf-option:hover { background: #f4f8ff; color: #0e2c5c; }
+        .pf-option-active { background: #eef4ff; color: #2f6fe0; font-weight: 600; }
+        .pf-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+        .pmf-right { margin-left: auto; display: flex; align-items: center; gap: 10px; align-self: flex-end; margin-bottom: 8px; }
+        .pf-counter { display: flex; align-items: center; gap: 7px; font-family: 'JetBrains Mono', monospace; }
+        .pf-counter-n { font-size: 17px; font-weight: 700; color: #2f6fe0; }
+        .pf-counter-sep { color: #D0D8E8; }
+        .pf-counter-lbl { font-size: 11px; color: #8a93a6; text-transform: uppercase; letter-spacing: .06em; }
+        .pf-clear-btn {
           display: flex; align-items: center; justify-content: center;
-          width: 30px; height: 30px; border-radius: 50%;
-          background: #F4F7FC; border: 1.5px solid #E1E7F1;
-          color: #626b80; cursor: pointer;
-          transition: background .2s, border-color .2s, color .2s;
+          width: 30px; height: 30px; border-radius: 50%; background: #F4F7FC;
+          border: 1.5px solid #E1E7F1; color: #626b80; cursor: pointer; transition: all .2s;
         }
-        .pmf-clear-btn:hover {
-          background: #fee; border-color: #f5a0a0; color: #cc0000;
-        }
+        .pf-clear-btn:hover { background: #fee; border-color: #f5a0a0; color: #cc0000; }
       `}</style>
     </div>
   );

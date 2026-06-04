@@ -17,6 +17,7 @@ export default function HomePage() {
   const [vendorCount,  setVendorCount]  = useState(TOTAL_VENDORS);
   const [catCount,     setCatCount]     = useState(TOTAL_CATS);
   const [vendors,      setVendors]      = useState([]);
+  const [filterOpts,   setFilterOpts]   = useState({ subCategories: [], countries: [] });
 
   // Read ?category=CODE on mount (deep-link from provider page badges/breadcrumb)
   useEffect(() => {
@@ -68,6 +69,8 @@ export default function HomePage() {
         vendorCount={vendorCount}
         catCount={catCount}
         vendors={vendors}
+        subCategories={filterOpts.subCategories}
+        countries={filterOpts.countries}
       />
       <div style={{ position: "relative" }}>
         <ProceduralMap
@@ -76,6 +79,7 @@ export default function HomePage() {
           onClear={handleClear}
           vendorCount={vendorCount}
           onVendors={setVendors}
+          onFilterOptions={setFilterOpts}
         />
 
         {/* Compare bar */}

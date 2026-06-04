@@ -234,6 +234,10 @@ export function buildMap(root, cats, opts = {}) {
       const it = c.items[placed];
       const t = document.createElement("div");
       t.className = "tok"; t.dataset.cat = i;
+      // Filter metadata (comma-wrapped id lists for fast includes-check)
+      t.dataset.sub    = "," + (it.sub    || []).join(",") + ",";
+      t.dataset.active = "," + (it.active || []).join(",") + ",";
+      t.dataset.hq     = "," + (it.hq     || []).join(",") + ",";
       t.style.left = sl.x + "px"; t.style.top = sl.y + "px";
       t.style.width = tokW + "px"; t.style.height = tokH + "px";
       t.style.setProperty("--tglow", "hsla(" + c.hue + ",80%,45%,.6)");

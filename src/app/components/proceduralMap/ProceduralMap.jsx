@@ -9,7 +9,19 @@ import { cld } from "../../utils/cloudinary";
 import { CAT_META } from "./catMeta";
 import { buildMap, teardownMap } from "./engine";
 
-function toCats(companies) {
+// Derive HQ country ids from the free-text `location` by matching country names.
+function deriveHq(location, countries) {
+  if (!location) return [];
+  const loc = String(location).toLowerCase();
+  const out = [];
+  for (const c of countries) {
+    const name = (c.name || "").toLowerCase();
+    if (name.length >= 4 && loc.includes(name)) out.push(c.id);
+  }
+  return out;
+}
+
+function toCats(companies, countries = []) {
   if (!Array.isArray(companies)) return [];
   const byId = {};
   for (const c of companies) {
@@ -18,7 +30,14 @@ function toCats(companies) {
     const key = `category-${catId}`;
     if (!CAT_META[key]) continue;
     if (!byId[catId]) byId[catId] = [];
-    byId[catId].push({ n: c.name || "—", i: c.logo, href: providerHref({ name: c.name, id: c.id }) });
+    byId[catId].push({
+      n: c.name || "—",
+      i: c.logo,
+      href: providerHref({ name: c.name, id: c.id }),
+      sub: c.companySubcategories || [],
+      active: c.companyOffices || [],
+      hq: deriveHq(c.location, countries),
+    });
   }
   return Object.entries(byId)
     .sort((a, b) => Number(a[0]) - Number(b[0]))
@@ -28,7 +47,7 @@ function toCats(companies) {
     });
 }
 
-export default function ProceduralMap({ activeFilter, onCategoryClick, onClear, vendorCount, onVendors }) {
+export default function ProceduralMap({ activeFilter, onCategoryClick, onClear, vendorCount, onVendors, onFilterOptions }) {
   const rootRef             = useRef(null);
   const router              = useRouter();
   // Use a ref for onCategoryClick so it never triggers a map rebuild
@@ -56,8 +75,14 @@ export default function ProceduralMap({ activeFilter, onCategoryClick, onClear, 
       setLoading(true);
       let cats = [];
       try {
-        const res = await axios.get(`${url}/api/v1/companies`);
-        cats = toCats(res.data);
+        const [res, subsRes, countriesRes] = await Promise.all([
+          axios.get(`${url}/api/v1/companies`),
+          axios.get(`${url}/api/v1/subCategories`).then((r) => r.data).catch(() => []),
+          axios.get(`${url}/api/v1/countries`).then((r) => r.data).catch(() => []),
+        ]);
+        cats = toCats(res.data, countriesRes);
+        // Expose filter dropdown options (sub-categories + countries)
+        if (onFilterOptions) onFilterOptions({ subCategories: subsRes || [], countries: countriesRes || [] });
         // Expose the full vendor list (for data-backed search autocomplete)
         if (onVendors) {
           onVendors(
@@ -150,6 +175,19 @@ export default function ProceduralMap({ activeFilter, onCategoryClick, onClear, 
       auras.forEach(hide);
       // Don't show a map-level "not found" — the search dropdown (data-backed)
       // is the authoritative source. A vendor may exist without its logo drawn.
+      setNoResults(false);
+    }
+
+    // Metadata filters (sub-category / country / active-in) — dim non-matching logos.
+    if (activeFilter.type === "sub" || activeFilter.type === "hq" || activeFilter.type === "active") {
+      const needle = "," + activeFilter.value + ",";
+      const attr = activeFilter.type === "sub" ? "sub" : activeFilter.type === "hq" ? "hq" : "active";
+      root.classList.add("focusing");
+      toks.forEach(t => {
+        if ((t.dataset[attr] || "").includes(needle)) show(t); else hide(t);
+      });
+      labels.forEach(hide);
+      auras.forEach(hide);
       setNoResults(false);
     }
   }, [activeFilter]);
