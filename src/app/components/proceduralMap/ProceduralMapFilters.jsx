@@ -181,12 +181,6 @@ export default function ProceduralMapFilters({
         <Dropdown label="Country" placeholder="Select country" options={countries}
           activeId={filters.active?.value}
           onPick={(o) => o ? onAddFilter({ type: "active", value: o.id, label: o.name }) : onRemoveFilter("active")} />
-
-        {/* Counter */}
-        <div className="pmf-counter">
-          <span className="pf-counter-n">{filtersActive ? (matchCount == null ? "…" : matchCount) : totalVendors}</span>
-          <span className="pf-counter-lbl">{filtersActive ? "match" : `vendors · ${totalCats} cats`}</span>
-        </div>
       </div>
 
       {/* Active filter chips */}
