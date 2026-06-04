@@ -25,16 +25,20 @@ const Insights = () => {
         ]);
         if (cancelled) return;
         setCompanyById(Object.fromEntries((companies || []).map((c) => [c.id, c.name])));
-        // Combine featured + all, dedupe, sort newest-first.
-        const merged = new Map();
-        [...(featured || []), ...(all || [])].forEach((p) => {
-          if (!p || !p.coverImage) return;
-          merged.set(`${p.url ? "v" : "a"}-${p.id}`, p);
-        });
-        const sorted = [...merged.values()].sort(
-          (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
-        );
-        setPubs(sorted);
+        // Featured (in the admin-chosen slot order) come FIRST, then everything
+        // else newest-first. So Publications control actually drives the top.
+        const key = (p) => `${p.url ? "v" : "a"}-${p.id}`;
+        const seen = new Set();
+        const orderedFeatured = [];
+        for (const p of featured || []) {
+          if (!p || !p.coverImage || seen.has(key(p))) continue;
+          seen.add(key(p));
+          orderedFeatured.push(p);
+        }
+        const rest = (all || [])
+          .filter((p) => p && p.coverImage && !seen.has(key(p)))
+          .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+        setPubs([...orderedFeatured, ...rest]);
       } catch {
         if (!cancelled) setError(true);
       }

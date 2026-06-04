@@ -1,47 +1,117 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
 import { truncateHtmlString } from "../../utils";
 import { apiGetMainPublications } from "@/app/service/apiGetMainPublication";
 import { apiUpdateMainPublication } from "@/app/service/apiUpdateMainPublication";
 import { apiGetAllCompanies } from "@/app/service/apiGetAllCompanies";
 import { apiGetAllVideosByCompanyId } from "@/app/service/apiGetAllVideosByCompanyId";
 import { apiGetAllArticlesByCompanyId } from "@/app/service/apiGetAllArticlesByCompanyId";
+import { apiGetAllArticles } from "@/app/service/apiGetAllArticles";
+import { apiGetAllVideos } from "@/app/service/apiGetAllVideos";
+import { apiDeleteArticleById } from "@/app/service/apiDeleteArticleById";
+import { apiDeleteVideoById } from "@/app/service/apiDeleteVideoById";
+import { setArticleId } from "@/app/store/slices/articleId.slice";
+import { setVideoId } from "@/app/store/slices/videoId.slice";
+import { setCompanyId } from "@/app/store/slices/companyToUpdate.slice";
 
 const isVideo = (p) => !!p?.url;
 const pubHref = (p) => (isVideo(p) ? `/publication/video/${p?.id}` : `/publication/article/${p?.id}`);
 
+const I = {
+  edit: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>,
+  trash: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>,
+  search: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>,
+};
+
 export default function BodyPublicationsControl() {
+  const router = useRouter();
+  const dispatch = useDispatch();
   const [mains, setMains] = useState(null);
   const [companies, setCompanies] = useState([]);
-  const [modalSlot, setModalSlot] = useState(null); // 1-based slot index
+  const [companyById, setCompanyById] = useState({});
+  const [allPubs, setAllPubs] = useState(null);
+  const [modalSlot, setModalSlot] = useState(null);
+  const [delConfirm, setDelConfirm] = useState(null);
+  const [deleting, setDeleting] = useState(false);
   const [toast, setToast] = useState(null);
+
+  // all-publications filters
+  const [search, setSearch] = useState("");
+  const [typeF, setTypeF] = useState("all");
+  const [statusF, setStatusF] = useState("all");
 
   const loadMains = async () => setMains((await apiGetMainPublications()) || []);
 
+  const loadAll = async () => {
+    const [arts, vids] = await Promise.all([apiGetAllArticles(), apiGetAllVideos()]);
+    const merged = [
+      ...(Array.isArray(arts) ? arts : []).map((a) => ({ ...a, isArticle: true })),
+      ...(Array.isArray(vids) ? vids : []).map((v) => ({ ...v, isArticle: false })),
+    ].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    setAllPubs(merged);
+  };
+
   useEffect(() => {
     loadMains();
+    loadAll();
     (async () => {
       const c = await apiGetAllCompanies();
-      setCompanies(Array.isArray(c) ? c.sort((a, b) => (a.name || "").localeCompare(b.name || "")) : []);
+      const arr = Array.isArray(c) ? c.sort((a, b) => (a.name || "").localeCompare(b.name || "")) : [];
+      setCompanies(arr);
+      setCompanyById(Object.fromEntries(arr.map((x) => [x.id, x.name])));
     })();
   }, []);
 
   const showToast = (msg, kind = "ok") => { setToast({ msg, kind }); setTimeout(() => setToast(null), 3000); };
-  const onSaved = async () => { await loadMains(); setModalSlot(null); showToast("Featured publication updated."); };
+  const onSavedFeatured = async () => { await loadMains(); setModalSlot(null); showToast("Featured publication updated."); };
+
+  const editPub = (p) => {
+    dispatch(setCompanyId(p.companyId));
+    if (p.isArticle) { dispatch(setArticleId(p.id)); router.push("/mediaZone/article"); }
+    else { dispatch(setVideoId(p.id)); router.push("/mediaZone/video"); }
+  };
+
+  const doDelete = async () => {
+    if (!delConfirm) return;
+    setDeleting(true);
+    try {
+      const res = delConfirm.isArticle ? await apiDeleteArticleById(delConfirm.id) : await apiDeleteVideoById(delConfirm.id);
+      if (res?.status === 200) {
+        setAllPubs((xs) => xs.filter((x) => !(x.id === delConfirm.id && x.isArticle === delConfirm.isArticle)));
+        showToast("Publication deleted.");
+      } else showToast("Could not delete. Please try again.", "err");
+    } catch (_) { showToast("Could not delete. Please try again.", "err"); }
+    finally { setDeleting(false); setDelConfirm(null); }
+  };
+
+  const visible = useMemo(() => {
+    if (!allPubs) return [];
+    const q = search.toLowerCase().trim();
+    return allPubs.filter((p) => {
+      if (typeF === "article" && !p.isArticle) return false;
+      if (typeF === "video" && p.isArticle) return false;
+      if (statusF === "live" && !p.live) return false;
+      if (statusF === "draft" && p.live) return false;
+      if (q && !(p.title || "").toLowerCase().includes(q) && !(companyById[p.companyId] || "").toLowerCase().includes(q)) return false;
+      return true;
+    });
+  }, [allPubs, search, typeF, statusF, companyById]);
 
   return (
     <div className="pc">
       <div className="pc-inner">
         <header className="pc-head">
-          <h1>Publications control</h1>
-          <p>Choose the articles &amp; videos featured on the Insights page. Only <b>live</b> publications can be featured.</p>
+          <h1>Publications</h1>
+          <p>Edit any article or video, and pick the ones featured first on Insights.</p>
         </header>
 
+        {/* Featured (shown first, in order) */}
+        <h2 className="pc-sec">★ Featured on Insights <span>shown first, in this order</span></h2>
         <div className="pc-card">
-          {mains === null ? (
-            <p className="pc-muted pc-pad">Loading…</p>
-          ) : mains.length === 0 ? (
-            <p className="pc-muted pc-pad">No featured slots configured.</p>
+          {mains === null ? <p className="pc-pad pc-muted">Loading…</p> : mains.length === 0 ? (
+            <p className="pc-pad pc-muted">No featured slots.</p>
           ) : (
             <div className="pc-list">
               {mains.map((p, i) => (
@@ -49,12 +119,52 @@ export default function BodyPublicationsControl() {
                   <span className="pc-slot">#{i + 1}</span>
                   <div className="pc-main">
                     <span className={`pc-type ${isVideo(p) ? "vid" : "art"}`}>{isVideo(p) ? "Video" : "Article"}</span>
-                    <span className="pc-title">{p?.title ? truncateHtmlString(p.title, 90) : <em className="pc-muted">Empty</em>}</span>
+                    <span className="pc-title">{p?.title ? truncateHtmlString(p.title, 80) : <em className="pc-muted">Empty</em>}</span>
                   </div>
-                  {p?.id && (
-                    <a className="pc-view" href={pubHref(p)} target="_blank" rel="noopener noreferrer">View ↗</a>
-                  )}
+                  {p?.id && <a className="pc-view" href={pubHref(p)} target="_blank" rel="noopener noreferrer">View ↗</a>}
                   <button className="pc-change" onClick={() => setModalSlot(i + 1)}>Change</button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* All publications */}
+        <h2 className="pc-sec">All publications <span>{allPubs ? `${allPubs.length} total` : ""}</span></h2>
+        <div className="pc-card">
+          <div className="pc-toolbar">
+            <div className="pc-srch">{I.search}<input placeholder="Search title or company…" value={search} onChange={(e) => setSearch(e.target.value)} /></div>
+            <div className="pc-chips">
+              {[["all", "All"], ["article", "Articles"], ["video", "Videos"]].map(([k, l]) => (
+                <button key={k} className={`pc-chip ${typeF === k ? "on" : ""}`} onClick={() => setTypeF(k)}>{l}</button>
+              ))}
+              <span className="pc-sep" />
+              {[["all", "Any"], ["live", "Live"], ["draft", "Draft"]].map(([k, l]) => (
+                <button key={k} className={`pc-chip ${statusF === k ? "on" : ""}`} onClick={() => setStatusF(k)}>{l}</button>
+              ))}
+            </div>
+          </div>
+          {allPubs === null ? (
+            <p className="pc-pad pc-muted">Loading…</p>
+          ) : visible.length === 0 ? (
+            <p className="pc-pad pc-muted">No publication matches.</p>
+          ) : (
+            <div className="pc-list">
+              {visible.map((p) => (
+                <div className="pc-row" key={`${p.isArticle ? "a" : "v"}-${p.id}`}>
+                  <div className="pc-main">
+                    <span className={`pc-type ${p.isArticle ? "art" : "vid"}`}>{p.isArticle ? "Article" : "Video"}</span>
+                    <div className="pc-titlewrap">
+                      <span className="pc-title">{truncateHtmlString(p.title || "", 80)}</span>
+                      <span className="pc-sub">{companyById[p.companyId] || `#${p.companyId}`} · {String(p.createdAt || "").slice(0, 10)}</span>
+                    </div>
+                  </div>
+                  {p.live ? <span className="pc-badge live">Live</span> : <span className="pc-badge draft">Draft</span>}
+                  <a className="pc-view" href={p.isArticle ? `/publication/article/${p.id}` : `/publication/video/${p.id}`} target="_blank" rel="noopener noreferrer">View ↗</a>
+                  <div className="pc-rowact">
+                    <button title="Edit" onClick={() => editPub(p)}>{I.edit}</button>
+                    <button title="Delete" className="del" onClick={() => setDelConfirm(p)}>{I.trash}</button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -63,39 +173,74 @@ export default function BodyPublicationsControl() {
       </div>
 
       {modalSlot != null && (
-        <ChangeModal slot={modalSlot} companies={companies} onClose={() => setModalSlot(null)} onSaved={onSaved} />
+        <ChangeModal slot={modalSlot} companies={companies} onClose={() => setModalSlot(null)} onSaved={onSavedFeatured} />
+      )}
+      {delConfirm && (
+        <div className="pc-back-drop" onClick={() => !deleting && setDelConfirm(null)}>
+          <div className="pc-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="pc-modal-ic">{I.trash}</div>
+            <h3>Delete this {delConfirm.isArticle ? "article" : "video"}?</h3>
+            <p>“{truncateHtmlString(delConfirm.title || "", 70)}” will be permanently removed. This cannot be undone.</p>
+            <div className="pc-modal-btns">
+              <button className="pc-ghost" disabled={deleting} onClick={() => setDelConfirm(null)}>Cancel</button>
+              <button className="pc-danger" disabled={deleting} onClick={doDelete}>{deleting ? "Deleting…" : "Delete"}</button>
+            </div>
+          </div>
+        </div>
       )}
       {toast && <div className={`pc-toast ${toast.kind}`}>{toast.msg}</div>}
 
       <style jsx>{`
-        .pc { min-height: 70vh; background: radial-gradient(ellipse 100% 45% at 50% 0%, #eef4ff 0%, #eef2f9 55%); padding: 44px 20px 70px; font-family: 'Chivo', system-ui, -apple-system, sans-serif; }
-        .pc-inner { max-width: 820px; margin: 0 auto; }
+        .pc { min-height: 70vh; background: radial-gradient(ellipse 100% 40% at 50% 0%, #eef4ff 0%, #eef2f9 55%); padding: 44px 20px 70px; font-family: 'Chivo', system-ui, -apple-system, sans-serif; }
+        .pc-inner { max-width: 900px; margin: 0 auto; }
         .pc-head { text-align: center; margin-bottom: 26px; }
         .pc-head h1 { font-size: 30px; font-weight: 800; color: #0e2c5c; margin: 0 0 8px; letter-spacing: -.01em; }
         .pc-head p { font-size: 14.5px; color: #5a6a85; margin: 0; }
+        .pc-sec { font-size: 15px; font-weight: 700; color: #0e2c5c; margin: 26px 0 12px; display: flex; align-items: baseline; gap: 10px; }
+        .pc-sec span { font-size: 12.5px; font-weight: 500; color: #8a93a6; }
         .pc-card { background: #fff; border: 1px solid #e6ecf5; border-radius: 18px; box-shadow: 0 10px 34px -18px rgba(10,26,51,.18); overflow: hidden; }
         .pc-muted { color: #8a93a6; }
-        .pc-pad { padding: 28px; text-align: center; font-size: 14px; }
+        .pc-pad { padding: 26px; text-align: center; font-size: 14px; }
         .pc-list { display: flex; flex-direction: column; }
-        .pc-row { display: flex; align-items: center; gap: 14px; padding: 16px 22px; border-bottom: 1px solid #f2f5fa; }
+        .pc-row { display: flex; align-items: center; gap: 13px; padding: 14px 20px; border-bottom: 1px solid #f2f5fa; }
         .pc-row:last-child { border-bottom: none; }
-        .pc-slot { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: #8a93a6; flex-shrink: 0; width: 34px; }
-        .pc-main { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; }
-        .pc-type { font-size: 10.5px; font-weight: 700; padding: 3px 9px; border-radius: 100px; flex-shrink: 0; text-transform: uppercase; letter-spacing: .04em; }
+        .pc-slot { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: #8a93a6; flex-shrink: 0; width: 30px; }
+        .pc-main { flex: 1; min-width: 0; display: flex; align-items: center; gap: 11px; }
+        .pc-titlewrap { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+        .pc-type { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 100px; flex-shrink: 0; text-transform: uppercase; letter-spacing: .04em; }
         .pc-type.vid { background: #fdeee0; color: #b06a18; }
         .pc-type.art { background: #e9f0fc; color: #2f6fe0; }
         .pc-title { font-size: 14px; color: #0e2c5c; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .pc-sub { font-size: 12px; color: #9aa3b5; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .pc-badge { font-size: 10.5px; font-weight: 700; padding: 2px 9px; border-radius: 100px; flex-shrink: 0; text-transform: uppercase; letter-spacing: .04em; }
+        .pc-badge.live { background: #e4f6ec; color: #1f8a52; }
+        .pc-badge.draft { background: #eef2f8; color: #8a93a6; }
         .pc-view { font-size: 12.5px; color: #2f6fe0; text-decoration: none; font-weight: 600; flex-shrink: 0; }
         .pc-view:hover { text-decoration: underline; }
-        .pc-change { flex-shrink: 0; background: linear-gradient(135deg,#4D8DFF,#2f6fe0); color: #fff; border: none; padding: 8px 18px; border-radius: 100px; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 6px 16px -6px rgba(47,111,224,.55); transition: transform .15s; }
-        .pc-change:hover { transform: translateY(-1px); }
-        .pc-toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); z-index: 320; padding: 13px 22px; border-radius: 100px; font-size: 14px; font-weight: 600; color: #fff; box-shadow: 0 12px 30px -8px rgba(10,26,51,.4); }
+        .pc-change { flex-shrink: 0; background: linear-gradient(135deg,#4D8DFF,#2f6fe0); color: #fff; border: none; padding: 8px 18px; border-radius: 100px; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 6px 16px -6px rgba(47,111,224,.55); }
+        .pc-rowact { display: inline-flex; gap: 5px; flex-shrink: 0; }
+        .pc-rowact button { width: 31px; height: 31px; display: grid; place-items: center; border: none; background: #f4f7fc; border-radius: 8px; color: #5a6a85; cursor: pointer; transition: background .15s, color .15s; }
+        .pc-rowact button:hover { background: #e7eef8; color: #0e2c5c; }
+        .pc-rowact button.del:hover { background: #fdeeee; color: #c0392b; }
+        .pc-toolbar { display: flex; align-items: center; gap: 12px; padding: 13px 16px; border-bottom: 1px solid #eef2f8; flex-wrap: wrap; }
+        .pc-srch { display: flex; align-items: center; gap: 8px; background: #f4f7fc; border: 1.5px solid #e3e9f2; border-radius: 100px; padding: 8px 14px; color: #8a93a6; flex: 1; min-width: 180px; }
+        .pc-srch input { border: none; outline: none; background: transparent; font-size: 13.5px; width: 100%; color: #0e2c5c; }
+        .pc-chips { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+        .pc-sep { width: 1px; height: 18px; background: #e3e9f2; margin: 0 2px; }
+        .pc-chip { border: 1.5px solid #e3e9f2; background: #fff; color: #5a6a85; border-radius: 100px; padding: 6px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer; }
+        .pc-chip.on { background: #eef4ff; border-color: #2f6fe0; color: #2f6fe0; }
+
+        .pc-back-drop { position: fixed; inset: 0; z-index: 400; background: rgba(10,26,51,.42); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .pc-modal { background: #fff; border-radius: 18px; padding: 28px; max-width: 390px; text-align: center; box-shadow: 0 30px 80px -16px rgba(10,26,51,.4); }
+        .pc-modal-ic { width: 48px; height: 48px; margin: 0 auto 14px; border-radius: 50%; display: grid; place-items: center; background: #fdeeee; color: #c0392b; }
+        .pc-modal h3 { font-size: 18px; font-weight: 700; color: #0e2c5c; margin: 0 0 8px; text-transform: capitalize; }
+        .pc-modal p { font-size: 13.5px; color: #5a6a85; margin: 0 0 22px; line-height: 1.55; }
+        .pc-modal-btns { display: flex; gap: 10px; justify-content: center; }
+        .pc-ghost { background: #f1f4f9; border: none; border-radius: 100px; padding: 11px 22px; font-weight: 600; color: #2a3c5a; cursor: pointer; }
+        .pc-danger { background: #c0392b; border: none; border-radius: 100px; padding: 11px 22px; font-weight: 600; color: #fff; cursor: pointer; }
+        .pc-toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); z-index: 420; padding: 13px 22px; border-radius: 100px; font-size: 14px; font-weight: 600; color: #fff; box-shadow: 0 12px 30px -8px rgba(10,26,51,.4); }
         .pc-toast.ok { background: #1f8a52; }
         .pc-toast.err { background: #c0392b; }
-        @media (max-width: 560px) {
-          .pc-row { flex-wrap: wrap; }
-          .pc-main { order: 3; flex-basis: 100%; }
-        }
       `}</style>
     </div>
   );
@@ -106,7 +251,7 @@ function ChangeModal({ slot, companies, onClose, onSaved }) {
   const [companyId, setCompanyId] = useState(null);
   const [pubs, setPubs] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [selected, setSelected] = useState(null); // { id, isArticle }
+  const [selected, setSelected] = useState(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -118,11 +263,10 @@ function ChangeModal({ slot, companies, onClose, onSaved }) {
         apiGetAllVideosByCompanyId(companyId).catch(() => []),
         apiGetAllArticlesByCompanyId(companyId).catch(() => []),
       ]);
-      const live = [
+      setPubs([
         ...(Array.isArray(vids) ? vids : []).filter((v) => v.live).map((v) => ({ ...v, isArticle: false })),
         ...(Array.isArray(arts) ? arts : []).filter((a) => a.live).map((a) => ({ ...a, isArticle: true })),
-      ];
-      setPubs(live);
+      ]);
       setLoading(false);
     })();
   }, [companyId]);
@@ -145,59 +289,47 @@ function ChangeModal({ slot, companies, onClose, onSaved }) {
           <h3>Featured publication · slot #{slot}</h3>
           <button className="pcm-x" onClick={onClose} aria-label="Close">✕</button>
         </div>
-
         <CompanyPicker companies={companies} value={companyId} onChange={setCompanyId} />
-
         <div className="pcm-body">
-          {!companyId ? (
-            <p className="pcm-muted">Pick a company to see its live publications.</p>
-          ) : loading ? (
-            <p className="pcm-muted">Loading publications…</p>
-          ) : pubs && pubs.length === 0 ? (
-            <p className="pcm-muted">This company has no live publications.</p>
-          ) : (
-            <div className="pcm-list">
-              {pubs?.map((p) => {
-                const sel = selected && selected.id === p.id && selected.isArticle === p.isArticle;
-                return (
-                  <label key={`${p.isArticle ? "a" : "v"}-${p.id}`} className={`pcm-opt ${sel ? "sel" : ""}`}>
-                    <input type="radio" name="pub" checked={!!sel} onChange={() => setSelected({ id: p.id, isArticle: p.isArticle })} />
-                    <span className={`pcm-type ${p.isArticle ? "art" : "vid"}`}>{p.isArticle ? "Article" : "Video"}</span>
-                    <span className="pcm-title">{p.title}</span>
-                    <a className="pcm-view" href={p.isArticle ? `/publication/article/${p.id}` : `/publication/video/${p.id}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>View ↗</a>
-                  </label>
-                );
-              })}
-            </div>
-          )}
+          {!companyId ? <p className="pcm-muted">Pick a company to see its live publications.</p>
+            : loading ? <p className="pcm-muted">Loading publications…</p>
+            : pubs && pubs.length === 0 ? <p className="pcm-muted">This company has no live publications.</p>
+            : (
+              <div className="pcm-list">
+                {pubs?.map((p) => {
+                  const sel = selected && selected.id === p.id && selected.isArticle === p.isArticle;
+                  return (
+                    <label key={`${p.isArticle ? "a" : "v"}-${p.id}`} className={`pcm-opt ${sel ? "sel" : ""}`}>
+                      <input type="radio" name="pub" checked={!!sel} onChange={() => setSelected({ id: p.id, isArticle: p.isArticle })} />
+                      <span className={`pcm-type ${p.isArticle ? "art" : "vid"}`}>{p.isArticle ? "Article" : "Video"}</span>
+                      <span className="pcm-title">{p.title}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            )}
         </div>
-
         {error && <p className="pcm-err">{error}</p>}
         <div className="pcm-actions">
           <button className="pcm-ghost" onClick={onClose} disabled={saving}>Cancel</button>
           <button className="pcm-save" onClick={save} disabled={!selected || saving}>{saving ? "Saving…" : "Set as featured"}</button>
         </div>
       </div>
-
       <style jsx>{`
-        .pcm-back { position: fixed; inset: 0; z-index: 400; background: rgba(10,26,51,.42); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 20px; font-family: 'Chivo', system-ui, sans-serif; }
-        .pcm { background: #fff; border-radius: 18px; width: min(640px, 100%); max-height: 86vh; display: flex; flex-direction: column; padding: 24px 26px; box-shadow: 0 30px 80px -16px rgba(10,26,51,.4); }
+        .pcm-back { position: fixed; inset: 0; z-index: 410; background: rgba(10,26,51,.42); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 20px; font-family: 'Chivo', system-ui, sans-serif; }
+        .pcm { background: #fff; border-radius: 18px; width: min(620px, 100%); max-height: 86vh; display: flex; flex-direction: column; padding: 24px 26px; box-shadow: 0 30px 80px -16px rgba(10,26,51,.4); }
         .pcm-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
         .pcm-head h3 { font-size: 18px; font-weight: 700; color: #0e2c5c; margin: 0; }
         .pcm-x { background: #f1f4f9; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; color: #5a6a85; }
-        .pcm-x:hover { background: #e3e9f3; color: #0e2c5c; }
         .pcm-body { flex: 1; overflow-y: auto; margin-top: 14px; min-height: 80px; }
         .pcm-muted { color: #8a93a6; font-size: 14px; padding: 16px 4px; }
         .pcm-list { display: flex; flex-direction: column; gap: 8px; }
-        .pcm-opt { display: flex; align-items: center; gap: 11px; padding: 11px 14px; border: 1.5px solid #eef2f8; border-radius: 12px; cursor: pointer; transition: border-color .15s, background .15s; }
-        .pcm-opt:hover { border-color: #cdd9ec; }
+        .pcm-opt { display: flex; align-items: center; gap: 11px; padding: 11px 14px; border: 1.5px solid #eef2f8; border-radius: 12px; cursor: pointer; }
         .pcm-opt.sel { border-color: #2f6fe0; background: #f4f8ff; }
         .pcm-type { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 100px; flex-shrink: 0; text-transform: uppercase; }
         .pcm-type.vid { background: #fdeee0; color: #b06a18; }
         .pcm-type.art { background: #e9f0fc; color: #2f6fe0; }
         .pcm-title { flex: 1; min-width: 0; font-size: 13.5px; color: #0e2c5c; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .pcm-view { font-size: 12px; color: #2f6fe0; text-decoration: none; flex-shrink: 0; }
-        .pcm-view:hover { text-decoration: underline; }
         .pcm-err { color: #c0392b; font-size: 13px; margin: 8px 0 0; }
         .pcm-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
         .pcm-ghost { background: #f1f4f9; border: none; border-radius: 100px; padding: 11px 22px; font-weight: 600; color: #2a3c5a; cursor: pointer; }
@@ -214,10 +346,7 @@ function CompanyPicker({ companies, value, onChange }) {
   const [q, setQ] = useState("");
   const ref = useRef(null);
   const selected = companies.find((c) => String(c.id) === String(value));
-  const shown = useMemo(
-    () => (q.trim() ? companies.filter((c) => (c.name || "").toLowerCase().includes(q.toLowerCase().trim())) : companies),
-    [companies, q]
-  );
+  const shown = q.trim() ? companies.filter((c) => (c.name || "").toLowerCase().includes(q.toLowerCase().trim())) : companies;
   useEffect(() => {
     const h = (e) => { if (ref.current && !ref.current.contains(e.target)) { setOpen(false); setQ(""); } };
     document.addEventListener("mousedown", h);
