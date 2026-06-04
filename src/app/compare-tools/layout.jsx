@@ -2,7 +2,7 @@
 
 const TITLE = "Compare Tools | TreasuryMap";
 const DESCRIPTION =
-  "Compare 2 to 5 treasury technology vendors side-by-side, within the same category. Multi-criteria table, plus/minus per vendor, delivered as a branded PDF — no recommendation, just facts.";
+  "Compare 2 to 5 treasury technology vendors side-by-side, within the same category. Instant multi-criteria table — product, coverage, scale, geography — no recommendation, just the facts. Free, no sign-up.";
 const URL = "https://treasurymap.com/compare-tools";
 
 export const metadata = {
