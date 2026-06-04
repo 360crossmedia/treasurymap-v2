@@ -142,6 +142,7 @@ const BodyForm = () => {
   const companyId = useSelector((state) => state.companyId);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [logoError, setLogoError] = useState("");
   let user;
   let backUpCompanyId;
   if (typeof window !== "undefined") {
@@ -151,6 +152,46 @@ const BodyForm = () => {
 
   const isAdmin = userId == 1 || backUpUserId == 1;
   const editingId = companyId || (backUpCompanyId ? Number(backUpCompanyId) : null);
+
+  // Logo upload: enforce PNG with a transparent background (anything else
+  // looks bad on the map). Validates type, size, and actual transparency.
+  const handleLogoFile = (file) => {
+    if (!file) return;
+    setLogoError("");
+    const isPng = file.type === "image/png" || /\.png$/i.test(file.name || "");
+    if (!isPng) { setLogoError("Logo must be a PNG file."); return; }
+    if (file.size > 600 * 1024) { setLogoError("Logo must be under 500 KB."); return; }
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const dataUrl = ev.target.result;
+      const img = new window.Image();
+      img.onload = () => {
+        let hasTransparency = false;
+        try {
+          const canvas = document.createElement("canvas");
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0);
+          const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+          for (let i = 3; i < data.length; i += 4) {
+            if (data[i] < 245) { hasTransparency = true; break; }
+          }
+        } catch (_) {
+          hasTransparency = true; // can't inspect → don't block
+        }
+        if (!hasTransparency) {
+          setLogoError("This PNG has a solid background. Please upload a logo with a transparent background.");
+          return;
+        }
+        setImage(dataUrl);
+        setFile(file);
+        setFileName(file.name.substring(0, 10) + (file.name.length > 10 ? "..." : ""));
+      };
+      img.src = dataUrl;
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleDeleteCompany = async () => {
     if (!editingId) return;
@@ -406,23 +447,9 @@ const BodyForm = () => {
           <input
             className={styles.inputFile}
             type="file"
-            {...(image ? {} : { required: true })}
-            onChange={(e) => {
-              const file = e.target.files[0];
-              if (file) {
-                const reader = new FileReader();
-                reader.onload = (readerEvent) => {
-                  const imageDataUrl = readerEvent.target.result;
-                  setImage(imageDataUrl);
-                };
-                reader.readAsDataURL(file);
-                setFileName(
-                  file.name.substring(0, 10) +
-                    (file.name.length > 10 ? "..." : "")
-                );
-                setFile(file);
-              }
-            }}
+            accept="image/png"
+            {...(image || isAdmin ? {} : { required: true })}
+            onChange={(e) => handleLogoFile(e.target.files[0])}
           />
           <Image
             src={!image ? PhotoImg : image}
@@ -450,6 +477,11 @@ const BodyForm = () => {
               Quality: Logos should be clear, without pixelation or distortion
             </li>
           </ul>
+          {logoError && (
+            <p style={{ marginTop: 10, fontSize: 12, color: "#c0392b", fontWeight: 600, textAlign: "center", lineHeight: 1.4 }}>
+              {logoError}
+            </p>
+          )}
         </div>
       </div>
       <div className={styles.rightContainer}>
