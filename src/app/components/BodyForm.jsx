@@ -361,8 +361,8 @@ const BodyForm = () => {
           />
           <p>
             {fileName}{" "}
-            {fileName == "Upload logo" && (
-              {!isAdmin && <span className={styles.span}>*</span>}
+            {fileName == "Upload logo" && !isAdmin && (
+              <span className={styles.span}>*</span>
             )}
           </p>
           <ul style={{ fontSize: "10px" }}>
