@@ -28,6 +28,7 @@ import { uploadImage } from "../utils";
 import { RadioButton } from "primereact/radiobutton";
 import { apiUploadSubOptions } from "../service/apiUploadSubOptions";
 import { apiGetSubOptionsByCompany } from "../service/apiGetSubOptionsByCompany";
+import { apiDeleteCompanyById } from "../service/apiDeleteCompanyById";
 
 const BodyForm = () => {
   const dispatch = useDispatch();
@@ -65,12 +66,34 @@ const BodyForm = () => {
   const [selectedSubOptions, setSelectedSubOptions] = useState({});
   const userId = useSelector((state) => state.user);
   const companyId = useSelector((state) => state.companyId);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   let user;
   let backUpCompanyId;
   if (typeof window !== "undefined") {
     user = localStorage.getItem("userId");
     backUpCompanyId = localStorage.getItem("companyId");
   }
+
+  const isAdmin = userId == 1 || backUpUserId == 1;
+  const editingId = companyId || (backUpCompanyId ? Number(backUpCompanyId) : null);
+
+  const handleDeleteCompany = async () => {
+    if (!editingId) return;
+    setDeleting(true);
+    try {
+      const res = await apiDeleteCompanyById(editingId);
+      if (res?.status === 200) {
+        dispatch(setCompanyId(false));
+        try { localStorage.removeItem("companyId"); } catch (_) {}
+        router.push("/dashboard");
+        return;
+      }
+    } catch (_) {}
+    setDeleting(false);
+    setConfirmDelete(false);
+    alert("Could not delete this company. Please try again.");
+  };
 
   const submit = async (e) => {
     dispatch(setIsLoading(true));
@@ -835,6 +858,19 @@ const BodyForm = () => {
           </div>
         )}
         <div className={styles.buttonContainer}>
+          {isAdmin && editingId && (
+            <button
+              type="button"
+              onClick={() => setConfirmDelete(true)}
+              style={{
+                marginRight: "auto", display: "inline-flex", alignItems: "center", gap: 8,
+                background: "#fff", color: "#c0392b", border: "1.5px solid #f0c4c4",
+                borderRadius: 10, padding: "10px 18px", fontWeight: 600, cursor: "pointer",
+              }}
+            >
+              Delete company
+            </button>
+          )}
           <button
             onClick={() => router.push("/dashboard")}
             type="button"
@@ -844,6 +880,35 @@ const BodyForm = () => {
           </button>
           <button className={styles.button}>Save information</button>
         </div>
+
+        {confirmDelete && (
+          <div
+            onClick={() => !deleting && setConfirmDelete(false)}
+            style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(10,26,51,.45)", backdropFilter: "blur(3px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              style={{ background: "#fff", borderRadius: 16, padding: 28, maxWidth: 390, textAlign: "center", boxShadow: "0 24px 60px -12px rgba(10,26,51,.34)" }}
+            >
+              <h3 style={{ margin: "0 0 8px", color: "#0e2c5c", fontSize: 19 }}>
+                Delete “{companyName || "this company"}”?
+              </h3>
+              <p style={{ margin: "0 0 22px", color: "#5a6a85", fontSize: 13.5, lineHeight: 1.55 }}>
+                This permanently removes the company and any of its media from the map. This cannot be undone.
+              </p>
+              <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
+                <button type="button" disabled={deleting} onClick={() => setConfirmDelete(false)}
+                  style={{ background: "#f1f4f9", border: "none", borderRadius: 100, padding: "11px 22px", fontWeight: 600, color: "#2a3c5a", cursor: "pointer" }}>
+                  Cancel
+                </button>
+                <button type="button" disabled={deleting} onClick={handleDeleteCompany}
+                  style={{ background: "#c0392b", border: "none", borderRadius: 100, padding: "11px 22px", fontWeight: 600, color: "#fff", cursor: "pointer", opacity: deleting ? 0.7 : 1 }}>
+                  {deleting ? "Deleting…" : "Delete"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </form>
   );

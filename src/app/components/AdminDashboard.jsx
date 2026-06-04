@@ -5,8 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { setCompanyId } from "../store/slices/companyToUpdate.slice";
 import { apiGetAllCompanies } from "../service/apiGetAllCompanies";
 import { apiGetCompaniesByOwner } from "../service/apiGetCompaniesByOwner";
-import { apiDeleteCompanyById } from "../service/apiDeleteCompanyById";
-import { apiGetCompanyHasMedia } from "../service/apiGetCompanyHasMedia";
 import { apiUpdateCompany } from "../service/apiUpdateCompany";
 import { apiGetAllUsers } from "../service/apiGetAllUsers";
 import { cld } from "../utils/cloudinary";
@@ -64,8 +62,6 @@ export default function AdminDashboard() {
   const [companies, setCompanies] = useState([]);
   const [users, setUsers] = useState({});
   const [loading, setLoading] = useState(true);
-  const [confirm, setConfirm] = useState(null);
-  const [deleting, setDeleting] = useState(false);
   const [toast, setToast] = useState(null);
   const [busy, setBusy] = useState({}); // id -> true while toggling
 
@@ -126,25 +122,6 @@ export default function AdminDashboard() {
     } finally {
       setBusy((b) => { const n = { ...b }; delete n[c.id]; return n; });
     }
-  };
-
-  const askDelete = async (c) => {
-    let hasMedia = false;
-    try { hasMedia = await apiGetCompanyHasMedia(c.id); } catch (_) {}
-    setConfirm({ id: c.id, name: c.name, hasMedia });
-  };
-  const doDelete = async () => {
-    if (!confirm) return;
-    setDeleting(true);
-    try {
-      const res = await apiDeleteCompanyById(confirm.id);
-      if (res?.status === 200) {
-        setCompanies((cs) => cs.filter((c) => c.id !== confirm.id));
-        if (selectedId === confirm.id) { setSelectedId(null); dispatch(setCompanyId(false)); }
-        showToast(`“${confirm.name}” deleted.`);
-      } else showToast("Could not delete this company.", "err");
-    } catch (_) { showToast("Could not delete this company.", "err"); }
-    finally { setDeleting(false); setConfirm(null); }
   };
 
   // Stats
@@ -265,7 +242,6 @@ export default function AdminDashboard() {
                             <div className="dash-rowact">
                               <button title="Edit listing" onClick={() => openEdit(c.id)}>{I.edit}</button>
                               <button title="Media Zone" onClick={() => openMedia(c.id)}>{I.media}</button>
-                              <button title="Delete" className="del" onClick={() => askDelete(c)}>{I.trash}</button>
                             </div>
                           </td>
                         </tr>
@@ -331,22 +307,6 @@ export default function AdminDashboard() {
         )}
       </div>
 
-      {/* Delete confirm */}
-      {confirm && (
-        <div className="dash-backdrop" onClick={() => !deleting && setConfirm(null)}>
-          <div className="dash-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="dash-modal-ic">{I.trash}</div>
-            <h3>Delete “{confirm.name}”?</h3>
-            <p>{confirm.hasMedia
-              ? "This company owns articles/videos — they will be deleted too. This cannot be undone."
-              : "This permanently removes the company from the map. This cannot be undone."}</p>
-            <div className="dash-modal-btns">
-              <button className="dash-btn ghost" disabled={deleting} onClick={() => setConfirm(null)}>Cancel</button>
-              <button className="dash-btn danger" disabled={deleting} onClick={doDelete}>{deleting ? "Deleting…" : "Delete"}</button>
-            </div>
-          </div>
-        </div>
-      )}
       {toast && <div className={`dash-toast ${toast.kind}`}>{toast.msg}</div>}
 
       <style jsx>{`
