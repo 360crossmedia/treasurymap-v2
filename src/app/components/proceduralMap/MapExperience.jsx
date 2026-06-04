@@ -4,6 +4,7 @@ import Navbar from "../Navbar";
 import Footer from "../Footer";
 import ProceduralMap from "./ProceduralMap";
 import ProceduralMapFilters from "./ProceduralMapFilters";
+import CategoryPanel from "./CategoryPanel";
 import { CAT_META } from "./catMeta";
 
 const TOTAL_CATS = Object.keys(CAT_META).length;
@@ -16,6 +17,8 @@ const CODE_TO_ID = Object.fromEntries(
 export default function MapExperience({ multiplayer = false }) {
   const [filters, setFilters] = useState({});
   const [vendors, setVendors] = useState([]);
+  const [cats, setCats] = useState([]);               // full per-category vendor lists
+  const [drillCode, setDrillCode] = useState(null);   // category drill-down panel
   const [filterOpts, setFilterOpts] = useState({ subCategories: [], countries: [] });
   const [matchCount, setMatchCount] = useState(null); // null = no filters
 
@@ -38,12 +41,11 @@ export default function MapExperience({ multiplayer = false }) {
 
   const handleClear = useCallback(() => setFilters({}), []);
 
+  // Clicking a category LABEL on the map opens the full drill-down panel
+  // (shows every vendor of that category). The filter dropdown is separate
+  // and keeps dimming the map for combinable filters.
   const handleCategoryClick = useCallback((code) => {
-    setFilters((f) => {
-      if (f.category?.code === code) { const n = { ...f }; delete n.category; return n; }
-      const meta = Object.values(CAT_META).find((v) => v.code === code);
-      return { ...f, category: { type: "category", code, label: code, hue: meta?.hue } };
-    });
+    setDrillCode((cur) => (cur === code ? null : code));
   }, []);
 
   // Live total of unique vendors currently on this map (varies by mode).
@@ -51,6 +53,10 @@ export default function MapExperience({ multiplayer = false }) {
 
   const catFilter = filters.category;
   const activeMeta = catFilter ? Object.values(CAT_META).find((v) => v.code === catFilter.code) : null;
+
+  // Drill-down panel (full category grid) — from clicking a category label.
+  const drillCat = drillCode ? cats.find((c) => c.code === drillCode) : null;
+  const drillId = drillCode ? CODE_TO_ID[drillCode] : null;
 
   return (
     <>
@@ -78,9 +84,15 @@ export default function MapExperience({ multiplayer = false }) {
           onCategoryClick={handleCategoryClick}
           onClear={handleClear}
           onVendors={setVendors}
+          onCats={setCats}
           onFilterOptions={setFilterOpts}
           onMatchCount={setMatchCount}
         />
+
+        {/* Category drill-down — full grid of every vendor in the clicked category */}
+        {drillCat && (
+          <CategoryPanel cat={drillCat} categoryId={drillId} onClose={() => setDrillCode(null)} />
+        )}
 
         {/* Compare bar — when a category filter is active */}
         {activeMeta && (

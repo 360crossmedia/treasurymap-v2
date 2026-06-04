@@ -97,7 +97,7 @@ function toCatsMultiplayer(mp, companies = [], countries = []) {
   return groups.sort((a, b) => a.catId - b.catId);
 }
 
-export default function ProceduralMap({ multiplayer = false, filters, onCategoryClick, onClear, onVendors, onFilterOptions, onMatchCount }) {
+export default function ProceduralMap({ multiplayer = false, filters, onCategoryClick, onClear, onVendors, onCats, onFilterOptions, onMatchCount }) {
   const rootRef             = useRef(null);
   const router              = useRouter();
   // Use a ref for onCategoryClick so it never triggers a map rebuild
@@ -152,6 +152,8 @@ export default function ProceduralMap({ multiplayer = false, filters, onCategory
           );
           onVendors(list);
         }
+        // Expose full (uncapped) per-category vendor lists for category drill-down.
+        if (onCats) onCats(cats);
       } catch (e) {
         console.error("ProceduralMap: failed to load /api/v1/companies", e);
         setLoading(false);
