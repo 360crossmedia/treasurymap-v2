@@ -32,8 +32,12 @@ function toCats(companies, countries = [], multiplayer = false) {
     const key = `category-${catId}`;
     if (!CAT_META[key]) return;
     if (!byId[catId]) byId[catId] = [];
-    if (byId[catId].some((x) => x.id === c.id)) return; // no dupe in same category
+    // Golden rule: one logo per vendor per category — dedupe by NAME
+    // (source data has duplicate records, e.g. two "Payflows" in TRMS).
+    const nameKey = (c.name || "").trim().toLowerCase() || `id-${c.id}`;
+    if (byId[catId].some((x) => x._k === nameKey)) return;
     byId[catId].push({
+      _k: nameKey,
       id: c.id,
       n: c.name || "—",
       i: c.logo,
