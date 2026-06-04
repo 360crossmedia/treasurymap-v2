@@ -1,146 +1,167 @@
-.mainContainer {
-  border-radius: 0px 24px 24px 0px;
-  opacity: 0.74;
-  background: rgba(238, 246, 252, 0.74);
-  backdrop-filter: blur(22px);
-  margin: 39px 182px;
-  padding: 40px 104px;
-}
+/* Modernised article / video editor. Class names preserved for the JSX. */
 
-.inputContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+.mainContainer {
+  max-width: 820px;
+  margin: 28px auto 70px;
+  padding: 0 24px;
+  font-family: "Chivo", system-ui, -apple-system, sans-serif;
 }
 
 .card {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 22px;
+  background: #fff;
+  border: 1px solid #e6ecf5;
+  border-radius: 18px;
+  box-shadow: 0 10px 34px -18px rgba(10, 26, 51, 0.18);
+  padding: 30px 32px;
+}
+
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.inputContainer label,
+.label {
+  color: #0e2c5c;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.required {
+  color: #e0413a;
+  font-weight: 700;
+  margin-left: 2px;
 }
 
 .input,
 .inputTextArea {
-  border-radius: 30px;
-  border: 1px solid #ccc;
+  border-radius: 12px;
+  border: 1.5px solid #e3e9f2;
+  background: #f7f9fc;
+  padding: 12px 15px;
+  font-size: 14.5px;
+  color: #0e2c5c;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+.inputTextArea { resize: vertical; min-height: 120px; }
+.input::placeholder,
+.inputTextArea::placeholder { color: #9aa3b5; }
+.input:focus,
+.inputTextArea:focus {
+  border-color: #2f6fe0;
   background: #fff;
-  height: 63px;
-  padding: 18px 26px;
+  box-shadow: 0 0 0 3px rgba(47, 111, 224, 0.12);
 }
 
-.inputTextArea {
-  height: inherit;
-}
-
-.buttonsContainer {
+/* ── Cover image dropzone ─────────────────────────────────────────────────── */
+.uploadPhotoContainer {
   display: flex;
+  align-items: stretch;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.imageContainer {
+  position: relative;
+  flex: 1;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 8px;
+  border: 1.5px dashed #cdd9ec;
+  border-radius: 14px;
+  background: #f7f9fc;
+  padding: 22px;
+  min-height: 150px;
+}
+.imageContainer img { border-radius: 8px; max-height: 140px; object-fit: contain; }
+.imageContainer p { font-size: 12px; color: #7a899f; margin: 0; }
+.inputFile {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+.imageLabel {
+  color: #2f6fe0;
+  font-weight: 600;
+  font-style: normal;
+  font-size: 13px;
+}
+.uploadPhotoContainer ul {
+  flex-shrink: 0;
+  align-self: center;
+  margin: 0;
+  padding-left: 16px;
+  color: #8a93a6;
+  line-height: 1.7;
 }
 
-.updateButton {
-  border-radius: 100px;
-  border: 0.8px solid #d9d9d9;
-  background: linear-gradient(89deg, #0f5199 4.29%, #44a8c0 99.49%);
-  box-shadow: 0px 10px 60px 0px rgba(0, 0, 0, 0.12);
-  color: #fff;
-  padding: 16.2px 22px;
-  width: 179px;
-}
-
-.deleteButton {
-  border-radius: 100px;
-  border: 0.8px solid #d9d9d9;
-  background: #fff;
-  box-shadow: 0px 10px 60px 0px rgba(0, 0, 0, 0.12);
-  padding: 16.2px 22px;
-  width: 179px;
-}
-
+/* ── Quill editor ─────────────────────────────────────────────────────────── */
 .customButton {
-  height: 40vh !important;
-  border: none !important;
+  height: 38vh !important;
+  border: 1.5px solid #e3e9f2 !important;
+  border-radius: 12px;
+  overflow: hidden;
 }
-
-.customButton div {
-  background-color: white;
-  border-radius: 30px !important;
-}
+.customButton div { background-color: #fff; }
 
 .urlInstructionsSpan {
   font-size: 12px;
-  color: red;
-  opacity: 100%;
-  margin-left: 15px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
+  color: #2f6fe0;
+  margin-left: 8px;
+  font-weight: 600;
 }
+.urlInstructionsIcon { font-size: 16px; font-weight: normal; }
+.radius { border-radius: 12px; border: 1.5px solid #e3e9f2; }
+.imageCard { border-radius: 14px; background: #f7f9fc; display: flex; align-items: center; padding: 20px; }
 
-.urlInstructionsIcon {
-  font-size: 18px;
-  font-weight: normal;
-}
-
-.radius {
-  border-radius: 30px;
-  border: 1px solid #ccc;
-}
-
-.uploadPhotoContainer {
+/* ── Buttons ──────────────────────────────────────────────────────────────── */
+.buttonsContainer {
   display: flex;
-  height: fit-content;
-  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 6px;
+  flex-wrap: wrap;
 }
-
-.imageCard {
-  border-radius: 6px;
-  background: #f6fafe;
-  display: flex;
-  align-items: center;
-  padding: 20px 40px;
-}
-
-.inputFile {
-  position: absolute;
-  opacity: 0;
-  height: 25vh;
-  width: 15vw;
+.updateButton {
+  border-radius: 100px;
+  border: none;
+  background: linear-gradient(135deg, #4d8dff, #2f6fe0);
+  color: #fff;
+  font-size: 14.5px;
+  font-weight: 600;
+  padding: 12px 30px;
   cursor: pointer;
+  box-shadow: 0 8px 20px -6px rgba(47, 111, 224, 0.55);
+  transition: transform 0.18s;
 }
-
-.imageContainer {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-}
-
-.imageLabel {
-  position: absolute;
-  margin-bottom: 12%;
-  margin-left: 3.25%;
-  z-index: -2;
+.updateButton:hover { transform: translateY(-2px); }
+.deleteButton {
+  border-radius: 100px;
+  border: 1.5px solid transparent;
+  background: #f1f4f9;
+  color: #2a3c5a;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 12px 24px;
   cursor: pointer;
+  transition: background 0.15s;
 }
+.deleteButton:hover { background: #e7ecf4; }
 
-.required {
-  color: red;
-}
-
-@media screen and (max-width: 1360px) {
-  .mainContainer {
-    padding: 30px 60px;
-  }
-}
-
-@media screen and (max-width: 1300px) {
-  .input,
-  .inputTextArea,
-  .buttonsContainer {
-    width: 280px;
-  }
-  .mainContainer {
-    padding: 20px 20px;
-    margin: 39px 16px;
-    border-radius: 24px;
-  }
+@media screen and (max-width: 600px) {
+  .card { padding: 22px 18px; }
+  .buttonsContainer { flex-direction: column-reverse; }
+  .updateButton, .deleteButton { width: 100%; }
 }

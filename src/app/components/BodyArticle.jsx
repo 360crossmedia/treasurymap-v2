@@ -51,10 +51,10 @@ const BodyArticle = ({ isArticle }) => {
     backUpUserId = localStorage.getItem("userId");
   }
 
-  const save = async () => {
+  const save = async (e) => {
+    if (e) e.preventDefault();
     dispatch(setIsLoading(true));
-    event.preventDefault();
-    var coverImage = image.includes("https://")
+    var coverImage = image && image.includes("https://")
       ? image
       : await uploadImage(file);
     if (!isUpdate) {
