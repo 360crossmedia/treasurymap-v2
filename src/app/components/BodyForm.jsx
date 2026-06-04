@@ -125,7 +125,7 @@ const BodyForm = () => {
         showTurnover,
         logo,
         creationDate,
-        turnover,
+        turnover: turnover === "" || turnover == null ? null : turnover,
         employees,
         location,
         companyWebsite,
@@ -181,67 +181,35 @@ const BodyForm = () => {
           dispatch(setIsLoading(false));
         }
       } else {
-        if (userId == 1 || user == 1) {
-          if (userSelected) {
-            data.userId = userSelected;
-            const result = await apiCreateCompany(data);
-            if (result?.status == 201) {
-              const answersResult = await apiUploadAnswers(
-                result?.data?.id,
-                answers
-              );
-              if (answersResult?.status == 201) {
-                const sendCreateEmail = await apiSendCreateEmail({
-                  companyName,
-                  name: users[!userId ? backUpUserId - 1 : userId - 1]
-                    ?.fullName,
-                });
-                if (sendCreateEmail.status == 200) {
-                  alert("Company created successfully");
-                  router.push("/dashboard");
-                  dispatch(setIsLoading(false));
-                } else {
-                  console.log(sendCreateEmail);
-                  dispatch(setIsLoading(false));
-                }
-              } else {
-                console.log(answersResult);
-                dispatch(setIsLoading(false));
-              }
-            }
-          } else {
+        // CREATE — success depends only on the company being created.
+        // Answers + notification email are best-effort and never block the redirect.
+        const isAdminCreate = userId == 1 || user == 1;
+        if (isAdminCreate) {
+          if (!userSelected) {
             dispatch(setIsLoading(false));
-            alert("Check missing required fields");
+            alert("Please select a company owner.");
+            return;
           }
+          data.userId = userSelected;
+        }
+        const result = await apiCreateCompany(data);
+        if (result?.status == 201) {
+          const newId = result?.data?.id;
+          try { if (newId) await apiUploadAnswers(newId, answers); } catch (_) {}
+          try {
+            await apiSendCreateEmail({
+              companyName,
+              name: users[!userId ? backUpUserId - 1 : userId - 1]?.fullName,
+            });
+          } catch (_) {}
+          dispatch(setCompanyId(false));
+          dispatch(setIsLoading(false));
+          alert("Company created successfully");
+          router.push("/dashboard");
         } else {
-          const result = await apiCreateCompany(data);
-          if (result?.status == 201) {
-            const answersResult = await apiUploadAnswers(
-              result?.data?.id,
-              answers
-            );
-            if (answersResult?.status == 201) {
-              const sendCreateEmail = await apiSendCreateEmail({
-                companyName,
-                name: users[!userId ? backUpUserId - 1 : userId - 1]?.fullName,
-              });
-              if (sendCreateEmail.status == 200) {
-                alert("Company created successfully");
-                router.push("/dashboard");
-                dispatch(setIsLoading(false));
-              } else {
-                console.log(sendCreateEmail);
-                dispatch(setIsLoading(false));
-              }
-            } else {
-              console.log(answersResult);
-              dispatch(setIsLoading(false));
-            }
-          } else {
-            alert("Something went wrong. Please check information.");
-            console.log(result);
-            dispatch(setIsLoading(false));
-          }
+          dispatch(setIsLoading(false));
+          alert("Something went wrong. Please check the information.");
+          console.log(result);
         }
       }
     } else {
