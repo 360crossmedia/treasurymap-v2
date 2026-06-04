@@ -1,6 +1,7 @@
 export const redirectIfNotAuthenticated = (userId, pathname, router) => {
   const allowedRoutes = [
     "/",
+    "/multiplayer-map",
     "/signup",
     "/login",
     "/contactUs",

@@ -37,10 +37,14 @@ const Navbar = ({ buttonLabel, multiplayerMap, set, rotate }) => {
     return () => window.removeEventListener("resize", fn);
   }, []);
 
+  // Red button toggles between the procedural Treasury Map (/) and the
+  // hand-tuned Multiplayer Map (/multiplayer-map).
+  const onMultiplayer = pathname === "/multiplayer-map";
   const redLabel = () => {
-    if (isDesktop) return !multiplayerMap ? "Treasury Map" : "Multiplayer Map";
-    return !multiplayerMap ? "TM" : "MP";
+    if (isDesktop) return onMultiplayer ? "Treasury Map" : "Multiplayer Map";
+    return onMultiplayer ? "TM" : "MP";
   };
+  const onRedClick = () => router.push(onMultiplayer ? "/" : "/multiplayer-map");
 
   return (
     <header className={styles.header}>
@@ -84,7 +88,7 @@ const Navbar = ({ buttonLabel, multiplayerMap, set, rotate }) => {
           <span className={styles.ctaSep} />
 
           <button
-            onClick={() => { if (set) rotate(); else router.push("/"); }}
+            onClick={onRedClick}
             className={styles.redButton}
           >
             <span className={styles.spanButton}>{redLabel()}</span>
