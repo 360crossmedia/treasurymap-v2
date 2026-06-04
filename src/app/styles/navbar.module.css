@@ -30,6 +30,12 @@
   text-decoration: none;
 }
 
+.logoImg {
+  height: 28px;
+  width: auto;
+  display: block;
+}
+
 .logoTreasury {
   font-size: 22px;
   font-weight: 400;
@@ -63,7 +69,7 @@
 .navbarLeft {
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 44px;
   flex: 1;
   min-width: 0;
 }
@@ -71,7 +77,7 @@
 .navbarLinks {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 14px;
 }
 
 /* ─── LINK SEPARATOR ─────────────────────────────────────────────────────── */
@@ -129,9 +135,10 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  margin-left: 8px;
   background: linear-gradient(135deg, #4D8DFF, #2f6fe0);
   color: #fff;
-  padding: 8px 18px;
+  padding: 9px 20px;
   border-radius: 100px;
   font-size: 14px;
   font-weight: 700;
@@ -272,7 +279,8 @@
 .navbarLogo  { cursor: pointer; }
 
 @media screen and (max-width: 1090px) {
-  .navbarLinks { gap: 2px; }
+  .navbarLinks { gap: 8px; }
+  .navbarLeft { gap: 26px; }
   .navbar { padding: 14px 24px; }
   .linkSep { margin: 0 4px; }
 }
@@ -332,8 +340,7 @@
 
 @media screen and (max-width: 520px) {
   .navbar { padding: 0 12px; }
-  .logoTreasury, .logoMap { font-size: 18px; }
-  .logoPin { width: 20px; height: 20px; }
+  .logoImg { height: 23px; }
   .navbarButton, .redButton, .navbarButtonLogOut {
     padding: 6px 11px;
     font-size: 12px;

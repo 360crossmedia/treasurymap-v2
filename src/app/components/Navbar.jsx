@@ -3,20 +3,13 @@ import styles from "../styles/navbar.module.css";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import MobileMenuNavbar from "../assets/MobileMenuNavbar.svg";
+import navbarLogo from "../assets/navbarlogo.svg";
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { setCompanyId } from "../store/slices/companyToUpdate.slice";
 import { setUser } from "../store/slices/user.slice";
 import { usePathname } from "next/navigation";
 
-const PinIcon = () => (
-  <span className={styles.logoPin}>
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 22s7-6.2 7-12A7 7 0 0 0 5 10c0 5.8 7 12 7 12Z"/>
-      <circle cx="12" cy="10" r="2.3" fill="#fff"/>
-    </svg>
-  </span>
-);
 
 const Navbar = ({ buttonLabel, multiplayerMap, set, rotate }) => {
   const pathname = usePathname();
@@ -62,9 +55,7 @@ const Navbar = ({ buttonLabel, multiplayerMap, set, rotate }) => {
         {/* ── Logo ── */}
         <div className={styles.navbarLeft}>
           <div className={styles.logoMark} onClick={() => router.push("/")}>
-            <span className={styles.logoTreasury}>Treasury</span>
-            <span className={styles.logoMap}>MAP</span>
-            <PinIcon />
+            <Image className={styles.logoImg} src={navbarLogo} alt="TreasuryMap" priority />
           </div>
 
           {/* ── Nav links ── */}
