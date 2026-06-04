@@ -206,6 +206,14 @@ export default function AdminDashboard() {
               ))}
             </div>
 
+            {/* Quick actions — always reachable without scrolling past the table */}
+            <div className="dash-quick">
+              <button onClick={createCompany}>{I.plus} New company</button>
+              <button onClick={() => router.push("/publicationsControl")}>{I.star} Publications</button>
+              <button onClick={() => router.push("/accountsettings")}>{I.users} Accounts</button>
+              <button onClick={() => router.push("/myaccount")}>{I.user} My account</button>
+            </div>
+
             {/* Toolbar */}
             <div className="dash-card" style={{ padding: 0, overflow: "hidden" }}>
               <div className="dash-toolbar">
@@ -283,33 +291,6 @@ export default function AdminDashboard() {
               </div>
               {!loading && <div className="dash-count">{visible.length} of {companies.length} companies</div>}
             </div>
-
-            {/* Admin tools */}
-            <section className="dash-card">
-              <h2 className="dash-card-title">Admin tools</h2>
-              <div className="dash-tiles">
-                <button className="dash-tile" onClick={createCompany}>
-                  <span className="dash-tile-ic blue">{I.plus}</span>
-                  <span className="dash-tile-t">Create a company</span>
-                  <span className="dash-tile-d">Add a new vendor listing</span>
-                </button>
-                <button className="dash-tile" onClick={() => router.push("/publicationsControl")}>
-                  <span className="dash-tile-ic amber">{I.star}</span>
-                  <span className="dash-tile-t">Publications control</span>
-                  <span className="dash-tile-d">Choose the featured article/video</span>
-                </button>
-                <button className="dash-tile" onClick={() => router.push("/accountsettings")}>
-                  <span className="dash-tile-ic violet">{I.users}</span>
-                  <span className="dash-tile-t">Accounts settings</span>
-                  <span className="dash-tile-d">Manage vendor accounts</span>
-                </button>
-                <button className="dash-tile" onClick={() => router.push("/myaccount")}>
-                  <span className="dash-tile-ic slate">{I.user}</span>
-                  <span className="dash-tile-t">My account</span>
-                  <span className="dash-tile-d">Name, email and password</span>
-                </button>
-              </div>
-            </section>
           </>
         ) : (
           /* ───────── VENDOR (simple) ───────── */
@@ -360,6 +341,11 @@ export default function AdminDashboard() {
         .dash-stat.amber .dash-stat-v { color: #c98a10; }
         .dash-stat.teal .dash-stat-v { color: #1593a8; }
         .dash-stat.slate .dash-stat-v { color: #64748b; }
+
+        .dash-quick { display: flex; gap: 10px; flex-wrap: wrap; }
+        .dash-quick button { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1.5px solid #dce4ef; color: #2a3c5a; border-radius: 100px; padding: 9px 16px; font-size: 13.5px; font-weight: 600; cursor: pointer; transition: border-color .15s, background .15s, transform .15s; }
+        .dash-quick button:hover { border-color: #b8c6db; background: #f7f9fc; transform: translateY(-1px); }
+        .dash-quick button :global(svg) { color: #2f6fe0; }
 
         .dash-card { background: #fff; border: 1px solid #e6ecf5; border-radius: 18px; padding: 22px 24px; box-shadow: 0 10px 34px -18px rgba(10,26,51,.18); }
         .dash-card-title { font-size: 17px; font-weight: 700; color: #0e2c5c; margin: 0 0 14px; }
