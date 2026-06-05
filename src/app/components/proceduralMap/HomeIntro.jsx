@@ -16,10 +16,7 @@ export default function HomeIntro() {
           <h1 className="hi-title">
             Find the right <span>treasury technology</span>, visually.
           </h1>
-          <p className="hi-sub">
-            Explore vetted providers across every treasury category, or answer 10 quick
-            questions to get a personalised shortlist.
-          </p>
+          <p className="hi-sub">Explore vetted providers across every treasury category, or answer 10 quick questions to get a personalised shortlist.</p>
         </div>
         <div className="hi-actions">
           <button
@@ -73,7 +70,6 @@ export default function HomeIntro() {
           font-size: 13.5px;
           color: #566072;
           margin: 5px 0 0;
-          max-width: 560px;
         }
         .hi-actions {
           display: flex;
