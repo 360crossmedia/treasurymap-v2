@@ -100,17 +100,22 @@ export default function BodyPublicationsControl() {
     return map;
   }, [mains]);
 
-  // Promote a publication to Featured #1: insert at the top, shift the rest down,
-  // drop the last. Only the slots that actually change are written (in parallel).
-  const featureFirst = async (p) => {
+  // Toggle a publication's featured state.
+  //  - Not featured  → insert at Featured #1, shift the rest down, drop the last.
+  //  - Featured      → remove it, shift the others up, leaving the last slot empty.
+  // Only the slots that actually change are written (in parallel).
+  const toggleFeature = async (p) => {
     if (!mains || !mains.length) return;
     const N = mains.length;
     const k = pubKey(p);
-    if (mains[0] && featuredKey(mains[0]) === k) { showToast("Already featured first."); return; }
+    const isOn = !!featuredPos[k];
     const rest = mains
       .filter((m) => m && m.id != null && featuredKey(m) !== k)
       .map((m) => ({ id: m.id, isArticle: !m.url }));
-    const newOrder = [{ id: p.id, isArticle: p.isArticle }, ...rest].slice(0, N);
+    // Build the target ordering (length N, null = empty slot).
+    const target = isOn ? [...rest] : [{ id: p.id, isArticle: p.isArticle }, ...rest];
+    const newOrder = target.slice(0, N);
+    while (newOrder.length < N) newOrder.push(null);
     setFeaturing(k);
     try {
       const writes = [];
@@ -125,9 +130,9 @@ export default function BodyPublicationsControl() {
       const results = await Promise.all(writes);
       if (results.some((r) => !r || r.status !== 200)) throw new Error("partial");
       await loadMains();
-      showToast("Featured first on Insights.");
+      showToast(isOn ? "Removed from featured." : "Featured first on Insights.");
     } catch (_) {
-      showToast("Could not feature. Please try again.", "err");
+      showToast("Could not update featured. Please try again.", "err");
       await loadMains();
     } finally {
       setFeaturing(null);
@@ -251,14 +256,14 @@ export default function BodyPublicationsControl() {
                   <a className="pc-view" href={p.isArticle ? `/publication/article/${p.id}` : `/publication/video/${p.id}`} target="_blank" rel="noopener noreferrer">View ↗</a>
                   <div className="pc-rowact">
                     <button
-                      title={!p.live
+                      title={featuredPos[pubKey(p)]
+                        ? `Featured #${featuredPos[pubKey(p)]} — click to remove`
+                        : !p.live
                         ? "Set the publication live to feature it"
-                        : featuredPos[pubKey(p)]
-                        ? `Featured #${featuredPos[pubKey(p)]} — move to top`
                         : "Feature first on Insights"}
                       className={`feat ${featuredPos[pubKey(p)] ? "on" : ""}`}
-                      disabled={!p.live || featuring === pubKey(p)}
-                      onClick={() => featureFirst(p)}
+                      disabled={featuring === pubKey(p) || (!p.live && !featuredPos[pubKey(p)])}
+                      onClick={() => toggleFeature(p)}
                     >
                       {featuredPos[pubKey(p)] ? I.starFill : I.star}
                     </button>
