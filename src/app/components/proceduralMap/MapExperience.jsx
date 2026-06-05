@@ -5,6 +5,7 @@ import Footer from "../Footer";
 import ProceduralMap from "./ProceduralMap";
 import ProceduralMapFilters from "./ProceduralMapFilters";
 import CategoryPanel from "./CategoryPanel";
+import HomeIntro from "./HomeIntro";
 import { CAT_META } from "./catMeta";
 
 const TOTAL_CATS = Object.keys(CAT_META).length;
@@ -84,6 +85,8 @@ export default function MapExperience({ multiplayer = false }) {
         rel="stylesheet"
       />
       <Navbar buttonLabel="Log In" />
+      {/* Onboarding strip · homepage only (not the /multiplayer-map view). */}
+      {!multiplayer && <HomeIntro />}
       <ProceduralMapFilters
         filters={filters}
         catSels={catSels}

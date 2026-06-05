@@ -8,6 +8,7 @@ import { apiGetCompaniesByOwner } from "../service/apiGetCompaniesByOwner";
 import { apiUpdateCompany } from "../service/apiUpdateCompany";
 import { apiGetAllUsers } from "../service/apiGetAllUsers";
 import { apiCreateMagicLink } from "../service/apiCreateMagicLink";
+import { apiSendSignUpAlert } from "../service/apiSendSignUpAlert";
 import { apiGetAllArticles } from "../service/apiGetAllArticles";
 import { apiGetAllVideos } from "../service/apiGetAllVideos";
 import { formatDateShort } from "../utils";
@@ -69,6 +70,7 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState({});
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
+  const [requested, setRequested] = useState(() => new Set()); // company ids the vendor asked to publish (this session)
   const [busy, setBusy] = useState({}); // id -> true while toggling
   const [latestPubs, setLatestPubs] = useState(null); // admin: most recent articles/videos
 
@@ -139,6 +141,19 @@ export default function AdminDashboard() {
     } catch (_) {
       window.prompt("Copy this edit link for the vendor (valid 30 days):", link);
     }
+  };
+
+  // Vendor: one-click "request publication" — emails the TreasuryMap team and
+  // marks the listing pending for this session. (A persistent pending state
+  // would need a backend field; this is the frontend-only v1.)
+  const requestPublication = async (c) => {
+    if (!c) return;
+    await apiSendSignUpAlert({
+      status: "Publication request",
+      companyName: `${c.name || "—"} (#${c.id})`,
+    });
+    setRequested((s) => new Set(s).add(c.id));
+    showToast("Request sent — the team will review your listing.");
   };
   const createCompany = () => { dispatch(setCompanyId(false)); try { localStorage.removeItem("companyId"); } catch (_) {} router.push("/form"); };
 
@@ -391,7 +406,9 @@ export default function AdminDashboard() {
                     <div className="dash-status-row">
                       {selected.live
                         ? <span className="dash-status live">● Live on the map</span>
-                        : <span className="dash-status draft">● Draft · not on the map yet</span>}
+                        : requested.has(selected.id)
+                          ? <span className="dash-status pending">● Pending review</span>
+                          : <span className="dash-status draft">● Draft · not on the map yet</span>}
                     </div>
                     <div className="dash-actions">
                       <button className="dash-btn primary" onClick={() => openEdit(selected.id)}>{I.edit} Edit listing</button>
@@ -402,10 +419,21 @@ export default function AdminDashboard() {
                     {!selected.live && (
                       <div className="dash-featured">
                         <div className="dash-featured-txt">
-                          <strong>Ready to go live?</strong>
-                          <span>Your profile is saved as a draft. Contact us to review it and feature your company live on the Treasury Map.</span>
+                          {requested.has(selected.id) ? (
+                            <>
+                              <strong>Pending review</strong>
+                              <span>Your request was sent to the TreasuryMap team. You&apos;ll be notified once your company is live on the map.</span>
+                            </>
+                          ) : (
+                            <>
+                              <strong>Ready to go live?</strong>
+                              <span>Make sure you&apos;ve added a logo and at least one category, then request publication — the TreasuryMap team will review and feature your company on the map.</span>
+                            </>
+                          )}
                         </div>
-                        <button className="dash-btn primary" onClick={() => router.push("/contactUs")}>Contact us to be featured live</button>
+                        {requested.has(selected.id)
+                          ? <button className="dash-btn" disabled>Requested ✓</button>
+                          : <button className="dash-btn primary" onClick={() => requestPublication(selected)}>Request publication →</button>}
                       </div>
                     )}
                   </>
@@ -480,6 +508,7 @@ export default function AdminDashboard() {
         .dash-status { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; padding: 4px 11px; border-radius: 100px; letter-spacing: .02em; }
         .dash-status.live { background: #e4f6ec; color: #1f8a52; }
         .dash-status.draft { background: #fff4d9; color: #cf8e1e; }
+        .dash-status.pending { background: #e6efff; color: #2f6fe0; }
         .dash-featured { margin-top: 18px; padding: 18px 20px; border-radius: 14px; background: linear-gradient(135deg,#0e2c5c,#1e478f); display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
         .dash-featured-txt { display: flex; flex-direction: column; gap: 3px; min-width: 220px; flex: 1; }
         .dash-featured-txt strong { color: #fff; font-size: 14.5px; }
