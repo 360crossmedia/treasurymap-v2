@@ -28,6 +28,7 @@ const I = {
   starFill: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>,
   up: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 15l-6-6-6 6"/></svg>,
   down: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6"/></svg>,
+  grip: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg>,
   media: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4M10 8l5 3-5 3V8z"/></svg>,
 };
 
@@ -37,6 +38,8 @@ export default function BodyPublicationsControl() {
   const [mains, setMains] = useState(null);
   const [featuring, setFeaturing] = useState(null); // pubKey while promoting
   const [reordering, setReordering] = useState(false); // while swapping featured slots
+  const [dragIndex, setDragIndex] = useState(null);
+  const [dragOverIndex, setDragOverIndex] = useState(null);
   const [companies, setCompanies] = useState([]);
   const [companyById, setCompanyById] = useState({});
   const [allPubs, setAllPubs] = useState(null);
@@ -151,19 +154,23 @@ export default function BodyPublicationsControl() {
     }
   };
 
-  // Reorder the featured list: swap a slot with its neighbour (move up/down).
-  const moveFeatured = async (i, dir) => {
+  // Persist a new featured ordering (array of {id,isArticle}|null, length N).
+  // Writes only the slots that changed.
+  const applyFeaturedOrder = async (newArr) => {
     if (!mains) return;
-    const j = i + dir;
-    if (j < 0 || j >= mains.length) return;
-    const a = mains[i], b = mains[j];
-    const payload = (m) => ({ publicationId: m && m.id != null ? m.id : null, isArticle: m && m.id != null ? !m.url : false });
+    const N = mains.length;
     setReordering(true);
     try {
-      const results = await Promise.all([
-        apiUpdateMainPublication(i + 1, payload(b)),
-        apiUpdateMainPublication(j + 1, payload(a)),
-      ]);
+      const writes = [];
+      for (let i = 0; i < N; i++) {
+        const cur = mains[i] && mains[i].id != null ? featuredKey(mains[i]) : null;
+        const nx = newArr[i] || null;
+        const nxKey = nx ? `${nx.isArticle ? "a" : "v"}-${nx.id}` : null;
+        if (cur !== nxKey) {
+          writes.push(apiUpdateMainPublication(i + 1, { publicationId: nx ? nx.id : null, isArticle: nx ? nx.isArticle : false }));
+        }
+      }
+      const results = await Promise.all(writes);
       if (results.some((r) => !r || r.status !== 200)) throw new Error("partial");
       await loadMains();
     } catch (_) {
@@ -172,6 +179,30 @@ export default function BodyPublicationsControl() {
     } finally {
       setReordering(false);
     }
+  };
+
+  const normSlot = (m) => (m && m.id != null ? { id: m.id, isArticle: !m.url } : null);
+
+  // Move up/down (arrows): swap with the neighbour.
+  const moveFeatured = (i, dir) => {
+    if (!mains) return;
+    const j = i + dir;
+    if (j < 0 || j >= mains.length) return;
+    const arr = mains.map(normSlot);
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+    applyFeaturedOrder(arr);
+  };
+
+  // Drag & drop: grab a row and drop it at another position (move + shift).
+  const handleFeaturedDrop = (targetIndex) => {
+    const from = dragIndex;
+    setDragIndex(null);
+    setDragOverIndex(null);
+    if (from == null || from === targetIndex || !mains) return;
+    const arr = mains.map(normSlot);
+    const [moved] = arr.splice(from, 1);
+    arr.splice(targetIndex, 0, moved);
+    applyFeaturedOrder(arr);
   };
 
   const onSavedFeatured = async () => { await loadMains(); setModalSlot(null); showToast("Featured publication updated."); };
@@ -237,7 +268,17 @@ export default function BodyPublicationsControl() {
           ) : (
             <div className="pc-list">
               {mains.map((p, i) => (
-                <div className="pc-row" key={i}>
+                <div
+                  className={`pc-row pc-frow ${dragIndex === i ? "dragging" : ""} ${dragOverIndex === i && dragIndex !== i ? "dragover" : ""}`}
+                  key={i}
+                  draggable={!reordering}
+                  onDragStart={(e) => { setDragIndex(i); e.dataTransfer.effectAllowed = "move"; try { e.dataTransfer.setData("text/plain", String(i)); } catch (_) {} }}
+                  onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; if (dragOverIndex !== i) setDragOverIndex(i); }}
+                  onDragLeave={() => { if (dragOverIndex === i) setDragOverIndex(null); }}
+                  onDrop={(e) => { e.preventDefault(); handleFeaturedDrop(i); }}
+                  onDragEnd={() => { setDragIndex(null); setDragOverIndex(null); }}
+                >
+                  <span className="pc-grip" title="Drag to reorder">{I.grip}</span>
                   <span className="pc-slot">#{i + 1}</span>
                   <div className="pc-main">
                     <span className={`pc-type ${isVideo(p) ? "vid" : "art"}`}>{isVideo(p) ? "Video" : "Article"}</span>
@@ -402,6 +443,12 @@ export default function BodyPublicationsControl() {
         .pc-view { font-size: 12.5px; color: #2f6fe0; text-decoration: none; font-weight: 600; flex-shrink: 0; }
         .pc-view:hover { text-decoration: underline; }
         .pc-change { flex-shrink: 0; background: linear-gradient(135deg,#4D8DFF,#2f6fe0); color: #fff; border: none; padding: 8px 18px; border-radius: 100px; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 6px 16px -6px rgba(47,111,224,.55); }
+        .pc-frow { transition: background .12s, box-shadow .12s; }
+        .pc-frow.dragging { opacity: .5; background: #f4f8ff; }
+        .pc-frow.dragover { box-shadow: inset 0 2px 0 #2f6fe0; background: #f4f8ff; }
+        .pc-grip { display: grid; place-items: center; color: #b8c2d4; cursor: grab; flex-shrink: 0; margin-right: -4px; }
+        .pc-grip:active { cursor: grabbing; }
+        .pc-frow:hover .pc-grip { color: #8a93a6; }
         .pc-reorder { display: inline-flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
         .pc-reorder button { width: 26px; height: 17px; display: grid; place-items: center; border: 1px solid #e3e9f2; background: #fff; color: #5a6a85; cursor: pointer; padding: 0; }
         .pc-reorder button:first-child { border-radius: 7px 7px 0 0; }
