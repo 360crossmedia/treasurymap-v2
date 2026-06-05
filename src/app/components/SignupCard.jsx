@@ -61,11 +61,22 @@ const SignupCard = () => {
         password: f.password,
       };
       const data = await apiCreateUser(payload);
+      const alertData = { email: payload.email, fullName: payload.fullName, companyName: payload.companyName };
       if (data === 201) {
-        try { await apiSendSignUpAlert(payload); } catch (_) {}
+        try { await apiSendSignUpAlert({ ...alertData, status: "New sign-up ✅" }); } catch (_) {}
         setDone(true);
       } else {
-        setBanner("We couldn't create your account. Please check your details and try again.");
+        try {
+          await apiSendSignUpAlert({
+            ...alertData,
+            status: data === 400 ? "Sign-up attempt ⚠️ (email may already exist)" : "Sign-up attempt ⚠️ (failed)",
+          });
+        } catch (_) {}
+        setBanner(
+          data === 400
+            ? "This email may already have an account. Try logging in, or use a different email."
+            : "We couldn't create your account. Please try again."
+        );
         setLoading(false);
       }
     } catch {
