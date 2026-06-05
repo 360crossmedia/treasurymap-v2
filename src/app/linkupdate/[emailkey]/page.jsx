@@ -5,13 +5,12 @@ import styles from "../../styles/layout.module.css";
 import LinkUpdateLoginCard from "@/app/components/LinkUpdateLoginCard";
 
 const Layout = ({ params }) => {
-  
-  const converted = params.emailkey.replace("ndFRgdTJJbVFR", "");
-
+  // The route segment (historically named "emailkey") now carries the signed
+  // magic-link token. Pass it straight through; the card verifies it server-side.
   return (
     <div className={styles.mainContainer}>
       <Navbar buttonLabel={"Sign up"} />
-      <LinkUpdateLoginCard emailkey={converted}/>
+      <LinkUpdateLoginCard token={params.emailkey} />
       <Footer />
     </div>
   );

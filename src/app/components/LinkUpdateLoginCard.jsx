@@ -1,89 +1,76 @@
 "use client";
 import styles from "../styles/loginCard.module.css";
-import Image from "next/image";
-import inputEmailIcon from "../assets/inputEmailIcon.svg";
-import inputPasswordIcon from "../assets/inputPasswordIcon.svg";
-import { useState } from "react";
-import { apiLogin } from "../service/apiLogin";
+import { useEffect, useState } from "react";
+import { apiMagicLogin } from "../service/apiMagicLogin";
 import { setAuthToken } from "../service/authToken";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { setUser } from "../store/slices/user.slice";
 import { setIsLoading } from "../store/slices/isLoading.slice";
 
-const LinkUpdateLoginCard = ({emailkey}) => {
+// Magic edit-link landing: the URL token IS the credential. We exchange it
+// server-side for a session (no shared password, nothing to guess). On success
+// we set the session and redirect to the dashboard; on failure we explain.
+const LinkUpdateLoginCard = ({ token }) => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const [email, setEmail] = useState(`${emailkey}@admin.com`);
-  const [password, setPassword] = useState('12345');
+  const [status, setStatus] = useState("loading"); // "loading" | "error"
 
-
-
-  const submit = async () => {
-    dispatch(setIsLoading(true));
-    const data = await apiLogin({
-      email: email.toLowerCase(),
-      password: password,
-    });
-
-    if (data && data.status == 200) {
-      dispatch(setUser(data.data.id));
-      localStorage.clear();
-      localStorage.setItem("userId", data.data.id);
-      setAuthToken(data.data.token);
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      if (!token) {
+        setStatus("error");
+        return;
+      }
+      dispatch(setIsLoading(true));
+      const res = await apiMagicLogin(token);
+      if (cancelled) return;
       dispatch(setIsLoading(false));
-      router.push("/dashboard");
-    } else {
-      dispatch(setIsLoading(false));
-      alert("Check your credentials");
-    }
-  };
+      if (res && res.status === 200 && res.data?.token) {
+        const data = res.data;
+        dispatch(setUser(data.id));
+        try {
+          localStorage.clear();
+          localStorage.setItem("userId", data.id);
+        } catch (_) {}
+        setAuthToken(data.token);
+        router.push("/dashboard");
+      } else {
+        setStatus("error");
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [token]);
 
   return (
     <div className={styles.cardContainer}>
       <div className={styles.card}>
-        <div>
-          <p className={styles.cardTitle}>Hello Again!</p>
-          <p className={styles.cardDescription}>Welcome Back</p>
-        </div>
-        <div className={styles.inputContainer}>
-          <Image className={styles.icon} src={inputEmailIcon} alt="" />
-          <input
-            className={styles.input}
-            placeholder="Email Address"
-            type="text"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        <div>
-          <div className={styles.inputContainer}>
-            <Image className={styles.icon} src={inputPasswordIcon} alt="" />
-            <input
-              className={styles.input}
-              placeholder="Password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+        {status === "loading" ? (
+          <div>
+            <p className={styles.cardTitle}>Signing you in…</p>
+            <p className={styles.cardDescription}>
+              Verifying your secure edit link.
+            </p>
           </div>
-          <a href="/restorePassword" className={styles.forgetPasswordA}>
-            Forget password?
-          </a>
-        </div>
-        <div>
-          <button onClick={submit} className={styles.button}>
-            Log in
-          </button>
-        </div>
-        <div>
-          <p className={styles.signUpButton}>
-            Don’t have account?{" "}
-            <a className={styles.signUpButton} href="/signup">
-              Sign up
+        ) : (
+          <div>
+            <p className={styles.cardTitle}>Link expired or invalid</p>
+            <p className={styles.cardDescription}>
+              This edit link is no longer valid. Please contact the administrator
+              to receive a new one.
+            </p>
+            <a
+              href="/login"
+              className={styles.button}
+              style={{ textDecoration: "none", display: "inline-block", textAlign: "center" }}
+            >
+              Go to login
             </a>
-          </p>
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

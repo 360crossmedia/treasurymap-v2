@@ -7,6 +7,7 @@ import { apiGetAllCompanies } from "../service/apiGetAllCompanies";
 import { apiGetCompaniesByOwner } from "../service/apiGetCompaniesByOwner";
 import { apiUpdateCompany } from "../service/apiUpdateCompany";
 import { apiGetAllUsers } from "../service/apiGetAllUsers";
+import { apiCreateMagicLink } from "../service/apiCreateMagicLink";
 import { apiGetAllArticles } from "../service/apiGetAllArticles";
 import { apiGetAllVideos } from "../service/apiGetAllVideos";
 import { formatDateShort } from "../utils";
@@ -124,6 +125,21 @@ export default function AdminDashboard() {
 
   const openEdit = (id) => { selectCompany(id); router.push("/form"); };
   const openMedia = (id) => { selectCompany(id); router.push("/mediaZone"); };
+
+  // Generate a signed magic edit-link for a company's owner and copy it, so the
+  // admin can email it to the vendor (replaces the old shared "12345" links).
+  const copyEditLink = async (c) => {
+    if (!c?.userId) { alert("This company has no owner assigned yet."); return; }
+    const data = await apiCreateMagicLink(c.userId);
+    if (!data?.token) { alert("Could not generate the edit link. Please try again."); return; }
+    const link = `${window.location.origin}/linkupdate/${data.token}`;
+    try {
+      await navigator.clipboard.writeText(link);
+      alert(`Edit link copied — valid 30 days. Send it to the vendor:\n\n${link}`);
+    } catch (_) {
+      window.prompt("Copy this edit link for the vendor (valid 30 days):", link);
+    }
+  };
   const createCompany = () => { dispatch(setCompanyId(false)); try { localStorage.removeItem("companyId"); } catch (_) {} router.push("/form"); };
 
   // Inline partial-update toggle (live / multiplayerMap = boolean)
@@ -336,6 +352,9 @@ export default function AdminDashboard() {
                             <div className="dash-rowact">
                               <button title="Edit listing" onClick={() => openEdit(c.id)}>{I.edit}</button>
                               <button title="Media Zone" onClick={() => openMedia(c.id)}>{I.media}</button>
+                              <button title="Copy vendor edit link" aria-label="Copy vendor edit link" onClick={() => copyEditLink(c)}>
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                              </button>
                             </div>
                           </td>
                         </tr>
