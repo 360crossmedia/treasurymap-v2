@@ -11,15 +11,16 @@
 .wrap {
   max-width: 1080px;
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 460px;
-  gap: 32px;
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
 }
 
-/* ─── LEFT ───────────────────────────────────────────────────────────────── */
-.left {
-  padding-top: 8px;
+/* ─── HEADER ─────────────────────────────────────────────────────────────── */
+.header {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto;
 }
 
 .eyebrow {
@@ -31,11 +32,11 @@
 }
 
 .title {
-  font-size: 2.2rem;
+  font-size: 2.4rem;
   font-weight: 800;
   color: #0e2c5c;
   line-height: 1.12;
-  margin: 10px 0 28px;
+  margin: 12px 0 16px;
 }
 
 .subTitle {
@@ -54,52 +55,49 @@
   margin: 0 0 28px;
 }
 
-/* ─── Audience value blocks (providers / treasurers) ─────────────────────── */
+/* ─── HEADER lead ────────────────────────────────────────────────────────── */
 .lead {
   color: #3a4a66;
   line-height: 1.6;
-  font-size: 1.02rem;
-  margin: 0 0 24px;
-  max-width: 480px;
+  font-size: 1.05rem;
+  margin: 0 auto;
+  max-width: 620px;
 }
 
+/* ─── Audience value blocks (providers / treasurers) ─────────────────────── */
 .audience {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin: 0 0 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
 }
 
 .audCard {
   display: flex;
-  gap: 14px;
+  flex-direction: column;
   background: #fff;
   border: 1px solid #e8edf5;
-  border-radius: 16px;
-  padding: 20px;
+  border-radius: 18px;
+  padding: 28px;
   transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
 }
 
 .audCard:hover {
   border-color: #cdddff;
-  transform: translateY(-2px);
-  box-shadow: 0 12px 28px -16px rgba(47, 111, 224, 0.4);
+  transform: translateY(-3px);
+  box-shadow: 0 16px 32px -18px rgba(47, 111, 224, 0.45);
 }
 
 .audIcon {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   flex-shrink: 0;
-  border-radius: 12px;
+  border-radius: 13px;
   background: linear-gradient(135deg, #0e2c5c, #2f6fe0);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.audBody {
-  min-width: 0;
+  margin-bottom: 16px;
 }
 
 .audTag {
@@ -121,45 +119,83 @@
 
 .audText {
   color: #5a6a85;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   line-height: 1.55;
-  margin: 0 0 12px;
+  margin: 0 0 18px;
+  flex: 1 1 auto;
 }
 
 .audCtas {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px 16px;
-}
-
-.ctaPrimary {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: #2f6fe0;
-  font-weight: 700;
-  font-size: 0.9rem;
-  text-decoration: none;
-  transition: gap 0.15s;
-}
-
-.ctaPrimary:hover {
   gap: 10px;
 }
 
-.ctaGhost {
-  color: #5a6a85;
-  font-weight: 600;
-  font-size: 0.86rem;
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: linear-gradient(135deg, #4d8dff, #2f6fe0);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 11px 18px;
+  border-radius: 100px;
   text-decoration: none;
-  border-bottom: 1px solid transparent;
-  transition: color 0.15s, border-color 0.15s;
+  box-shadow: 0 6px 16px -6px rgba(47, 111, 224, 0.55);
+  transition: transform 0.15s, box-shadow 0.2s;
 }
 
-.ctaGhost:hover {
+.btnPrimary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px -6px rgba(47, 111, 224, 0.65);
+}
+
+.btnGhost {
+  display: inline-flex;
+  align-items: center;
   color: #2f6fe0;
-  border-bottom-color: #2f6fe0;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 11px 16px;
+  border-radius: 100px;
+  border: 1.5px solid #d6e4fb;
+  text-decoration: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.btnGhost:hover {
+  border-color: #2f6fe0;
+  background: #f4f8ff;
+}
+
+/* ─── Contact row (intro + form) ─────────────────────────────────────────── */
+.contactRow {
+  display: grid;
+  grid-template-columns: 1fr 460px;
+  gap: 36px;
+  align-items: start;
+}
+
+.contactIntro {
+  padding-top: 6px;
+}
+
+.contactHeading {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0e2c5c;
+  margin: 0 0 12px;
+  line-height: 1.2;
+}
+
+.contactText {
+  color: #3a4a66;
+  line-height: 1.6;
+  font-size: 0.97rem;
+  margin: 0 0 22px;
+  max-width: 440px;
 }
 
 .trust {
@@ -418,11 +454,17 @@
 /* ─── RESPONSIVE ─────────────────────────────────────────────────────────── */
 @media (max-width: 860px) {
   .wrap {
+    gap: 32px;
+  }
+  .audience {
+    grid-template-columns: 1fr;
+  }
+  .contactRow {
     grid-template-columns: 1fr;
     gap: 24px;
   }
   .title {
-    font-size: 1.8rem;
+    font-size: 1.95rem;
   }
 }
 
