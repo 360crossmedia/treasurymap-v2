@@ -7,6 +7,7 @@ import { apiGetAllCompanies } from "../service/apiGetAllCompanies";
 import { apiGetCompaniesByOwner } from "../service/apiGetCompaniesByOwner";
 import { apiUpdateCompany } from "../service/apiUpdateCompany";
 import { apiGetAllUsers } from "../service/apiGetAllUsers";
+import { decodeToken } from "../service/decodeToken";
 import { apiCreateMagicLink } from "../service/apiCreateMagicLink";
 import { apiSendSignUpAlert } from "../service/apiSendSignUpAlert";
 import { apiGetAllArticles } from "../service/apiGetAllArticles";
@@ -84,7 +85,18 @@ export default function AdminDashboard() {
   const isAdmin = userId === 1;
 
   useEffect(() => {
-    const uid = Number(localStorage.getItem("userId")) || userIdRedux || null;
+    // Derive identity from the ACTUAL session token, not localStorage.userId.
+    // The two could drift (stale/expired token, or a session swapped by a magic
+    // edit link) and make the front render an admin view the backend won't
+    // honour, so owner emails silently fell back to "#id". The token is the
+    // single source of truth for who the API will treat us as.
+    let token = null;
+    try { token = localStorage.getItem("token"); } catch (_) {}
+    const claims = decodeToken(token);
+    const tokenId = claims && claims.id ? Number(claims.id) : null;
+    // Keep localStorage.userId in sync so the rest of the app agrees with the token.
+    if (tokenId) { try { localStorage.setItem("userId", String(tokenId)); } catch (_) {} }
+    const uid = tokenId || Number(localStorage.getItem("userId")) || userIdRedux || null;
     setUserId(uid);
     (async () => {
       try {
