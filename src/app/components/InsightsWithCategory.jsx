@@ -8,12 +8,16 @@ import { apiGetCategoryById } from "../service/apiGetCategoryById";
 import { apiGetPublicationsByCategoryId } from "../service/apiGetPublicationsByCategoryId";
 import { formatCategoryName } from "../utils";
 
-const InsightsWithCategory = ({ categoryId }) => {
-  const [category, setCategory] = useState(null);
-  const [pubs, setPubs]         = useState(null); // null = loading
-  const [companyById, setCompanyById] = useState({});
+const InsightsWithCategory = ({ categoryId, initialCategory = null, initialPubs = null, initialCompanyById = {} }) => {
+  // Seed from the server-rendered data when present (SSR/SEO). The server always
+  // passes an array (possibly empty), so the client fetch only runs as a fallback.
+  const hasInitial = Array.isArray(initialPubs);
+  const [category, setCategory] = useState(initialCategory);
+  const [pubs, setPubs]         = useState(hasInitial ? initialPubs : null);
+  const [companyById, setCompanyById] = useState(initialCompanyById);
 
   useEffect(() => {
+    if (hasInitial) return; // server already provided the data
     let cancelled = false;
     (async () => {
       const [cat, list, companies] = await Promise.all([
