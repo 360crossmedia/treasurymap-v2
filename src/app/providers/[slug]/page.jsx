@@ -94,7 +94,8 @@ export async function generateMetadata({ params }) {
   const image     = company.logo || undefined;
 
   return {
-    title: `${name} | TreasuryMap`,
+    // Bare name; the root layout's title template appends " | TreasuryMap".
+    title: name,
     description,
     alternates: { canonical },
     openGraph: {
