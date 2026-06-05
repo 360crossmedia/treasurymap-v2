@@ -68,6 +68,8 @@ const Footer = () => {
         <nav className={styles.links}>
           <a className={styles.link} href="/get-my-list">Build my shortlist</a>
           <span className={styles.linkSep} />
+          <a className={styles.link} href="/pricing">Pricing</a>
+          <span className={styles.linkSep} />
           <a className={styles.link} href="/gdpr">GDPR</a>
         </nav>
       </div>

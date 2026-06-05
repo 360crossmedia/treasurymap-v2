@@ -342,18 +342,29 @@ export default function AdminDashboard() {
         ) : (
           /* ───────── VENDOR (simple) ───────── */
           <>
-            <section className="dash-card">
-              <h2 className="dash-card-title">Your company</h2>
-              <p className="dash-card-sub">Edit your listing or manage your media.</p>
-              <CompanySelect companies={companies} loading={loading} value={selectedId} onChange={selectCompany} />
-              {selected && (
+            {!loading && companies.length === 0 ? (
+              <section className="dash-card dash-getlisted">
+                <span className="dash-gl-eyebrow">Get on the map</span>
+                <h2 className="dash-card-title">Your company isn’t on the Treasury Map yet</h2>
+                <p className="dash-card-sub">Choose a package — our team sets up and validates your listing, then you can manage it here.</p>
                 <div className="dash-actions">
-                  <button className="dash-btn primary" onClick={() => openEdit(selected.id)}>{I.edit} Edit listing</button>
-                  <button className="dash-btn" onClick={() => openMedia(selected.id)}>{I.media} Media Zone</button>
+                  <button className="dash-btn primary" onClick={() => router.push("/pricing")}>{I.star} See packages</button>
+                  <button className="dash-btn" onClick={() => router.push("/contactUs")}>Contact us to be featured</button>
                 </div>
-              )}
-              {!loading && companies.length === 0 && <p className="dash-empty">No company is linked to your account yet.</p>}
-            </section>
+              </section>
+            ) : (
+              <section className="dash-card">
+                <h2 className="dash-card-title">Your company</h2>
+                <p className="dash-card-sub">Edit your listing or manage your media.</p>
+                <CompanySelect companies={companies} loading={loading} value={selectedId} onChange={selectCompany} />
+                {selected && (
+                  <div className="dash-actions">
+                    <button className="dash-btn primary" onClick={() => openEdit(selected.id)}>{I.edit} Edit listing</button>
+                    <button className="dash-btn" onClick={() => openMedia(selected.id)}>{I.media} Media Zone</button>
+                  </div>
+                )}
+              </section>
+            )}
             <section className="dash-card">
               <h2 className="dash-card-title">Your account</h2>
               <button className="dash-tile solo" onClick={() => router.push("/myaccount")}>
@@ -410,6 +421,10 @@ export default function AdminDashboard() {
 
         .dash-card { background: #fff; border: 1px solid #e6ecf5; border-radius: 18px; padding: 22px 24px; box-shadow: 0 10px 34px -18px rgba(10,26,51,.18); }
         .dash-card-title { font-size: 17px; font-weight: 700; color: #0e2c5c; margin: 0 0 14px; }
+        .dash-getlisted { background: linear-gradient(135deg,#f4f8ff,#fff); border: 1px solid #dbe8ff; }
+        .dash-getlisted .dash-card-title { margin: 8px 0 6px; }
+        .dash-gl-eyebrow { font-size: 11.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #2f6fe0; }
+        .dash-getlisted .dash-actions { margin-top: 16px; }
         .dash-card-sub { font-size: 13.5px; color: #6a788f; margin: -10px 0 16px; }
         .dash-empty, .muted { color: #8a93a6; }
         .dash-pad { padding: 28px; text-align: center; font-size: 14px; }
