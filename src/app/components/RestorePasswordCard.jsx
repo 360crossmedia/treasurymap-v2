@@ -1,10 +1,9 @@
 "use client";
-import jwt from "jsonwebtoken";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styles from "../styles/auth.module.css";
 import { useRouter } from "next/navigation";
 import { apiRestorePassword } from "../service/apiRestorePassword";
-import { apiUpdatePassword } from "../service/apiUpdatePassword";
+import { apiResetPassword } from "../service/apiResetPassword";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -23,31 +22,21 @@ const RestorePasswordCard = ({ token }) => {
   const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
-  const [validToken, setValidToken] = useState(false);
-  const [userId, setUserId]     = useState();
   const [banner, setBanner]     = useState(null); // {type, text}
   const [done, setDone]         = useState(null); // "email" | "updated"
   const [loading, setLoading]   = useState(false);
   const [err, setErr]           = useState({});
 
-  useEffect(() => {
-    if (!token) return;
-    try {
-      const decoded = jwt.verify(token, "chatapi_academlo");
-      setUserId(decoded?.userId?.id);
-      setValidToken(!!decoded);
-    } catch {
-      setValidToken(false);
-      setBanner({ type: "error", text: "This reset link has expired. Please request a new one." });
-    }
-  }, [token]);
+  // The presence of a token (from the reset link) selects the "set new
+  // password" mode; the token itself is validated server-side on submit.
+  const hasToken = !!token;
 
   const submit = async (ev) => {
     ev.preventDefault();
     setBanner(null);
     if (loading) return;
 
-    if (!validToken) {
+    if (!hasToken) {
       if (!email.trim() || !EMAIL_RE.test(email)) { setErr({ email: "Please enter a valid email" }); return; }
       setLoading(true);
       try {
@@ -67,8 +56,10 @@ const RestorePasswordCard = ({ token }) => {
     if (Object.keys(e).length) return;
     setLoading(true);
     try {
-      const res = await apiUpdatePassword(userId, password);
+      const res = await apiResetPassword(token, password);
       if (res?.status === 200) setDone("updated");
+      else if (res?.status === 401)
+        setBanner({ type: "error", text: "This reset link is invalid or has expired. Please request a new one." });
       else setBanner({ type: "error", text: "Couldn't update your password. Please try again." });
     } catch { setBanner({ type: "error", text: "Something went wrong. Please try again." }); }
     setLoading(false);
@@ -99,12 +90,12 @@ const RestorePasswordCard = ({ token }) => {
       <form className={styles.card} onSubmit={submit} noValidate>
         <h1 className={styles.title}>Reset password</h1>
         <p className={styles.subtitle}>
-          {validToken ? "Choose a new password for your account." : "Enter your email and we'll send you a reset link."}
+          {hasToken ? "Choose a new password for your account." : "Enter your email and we'll send you a reset link."}
         </p>
 
         {banner && <div className={`${styles.banner} ${banner.type === "error" ? styles.bannerError : styles.bannerOk}`}>{banner.text}</div>}
 
-        {!validToken ? (
+        {!hasToken ? (
           <div className={styles.field}>
             <label className={styles.label}>Email</label>
             <div className={`${styles.inputWrap} ${err.email ? styles.err : ""}`}>
@@ -139,7 +130,7 @@ const RestorePasswordCard = ({ token }) => {
 
         <button type="submit" className={styles.button} disabled={loading}>
           {loading && <span className={styles.spinner} />}
-          {loading ? "Please wait…" : (validToken ? "Update password" : "Send reset link")}
+          {loading ? "Please wait…" : (hasToken ? "Update password" : "Send reset link")}
         </button>
 
         <p className={styles.alt}>
