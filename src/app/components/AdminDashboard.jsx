@@ -48,15 +48,6 @@ const I = {
   search: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>,
 };
 
-// TreasuryMap droplet (logo mark) used as the no-logo placeholder. Solid fill
-// (no gradient ids) so it's safe to render across many rows.
-const DropletMark = ({ size = 16 }) => (
-  <svg width={size} height={size} viewBox="0 0 40 52" fill="none" aria-hidden="true">
-    <path d="M20 1.6C10.9 1.6 3.5 9 3.5 18.1c0 11.6 16.5 31.9 16.5 31.9S36.5 29.7 36.5 18.1C36.5 9 29.1 1.6 20 1.6Z" fill="#2f6fe0" />
-    <circle cx="20" cy="18" r="7" fill="#fff" />
-  </svg>
-);
-
 const FILTERS = [
   { key: "all", label: "All" },
   { key: "live", label: "Live" },
@@ -312,7 +303,7 @@ export default function AdminDashboard() {
                         <tr key={c.id} className={needsAttention(c) ? "warn" : ""}>
                           <td>
                             <div className="dash-co">
-                              {c.logo ? <img src={cld(c.logo, { w: 80 })} alt="" /> : <span className="dash-co-ph" title="No logo"><DropletMark size={15} /></span>}
+                              {c.logo ? <img src={cld(c.logo, { w: 80 })} alt="" /> : <span className="dash-co-ph">{(c.name || "?").slice(0, 2).toUpperCase()}</span>}
                               <button className="dash-co-name" onClick={() => openEdit(c.id)} title="Edit listing">{c.name || "—"}</button>
                             </div>
                           </td>

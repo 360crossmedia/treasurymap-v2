@@ -1,7 +1,6 @@
 "use client";
 import Image from "next/image";
 import styles from "../styles/footerNew.module.css";
-import footerLocationIcon from "../assets/footerLocationIcon.svg";
 import bnpLogo from "../assets/BNP_logo.png";
 import intensumLogo from "../assets/intensum-logo.jpg";
 import kantoxLogo from "../assets/Kantox-logo.png";
@@ -17,7 +16,16 @@ const Footer = () => {
         <div className={styles.col}>
           <span className={styles.label}>Address</span>
           <div className={styles.address}>
-            <Image alt="" src={footerLocationIcon} className={styles.pin} />
+            <svg className={styles.pin} viewBox="0 0 40 52" fill="none" aria-hidden="true">
+              <defs>
+                <linearGradient id="tmFooterPin" x1="20" y1="1" x2="20" y2="50" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#2f6fe0" />
+                  <stop offset="1" stopColor="#19a3e6" />
+                </linearGradient>
+              </defs>
+              <path d="M20 1.6C10.9 1.6 3.5 9 3.5 18.1c0 11.6 16.5 31.9 16.5 31.9S36.5 29.7 36.5 18.1C36.5 9 29.1 1.6 20 1.6Z" fill="url(#tmFooterPin)" />
+              <circle cx="20" cy="18" r="7" fill="#fff" />
+            </svg>
             <span className={styles.addressText}>
               <a
                 className={styles.addrLink}

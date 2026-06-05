@@ -34,8 +34,8 @@
 }
 
 /* Address */
-.address { display: flex; align-items: flex-start; gap: 9px; }
-.pin { width: 16px !important; height: auto !important; margin-top: 2px; flex-shrink: 0; }
+.address { display: flex; align-items: center; gap: 10px; }
+.pin { width: auto; height: 26px; flex-shrink: 0; display: block; }
 .addressText { font-size: 13.5px; color: #3a4a66; line-height: 1.5; }
 .addrLink { color: #0e2c5c; font-weight: 600; text-decoration: none; transition: color .18s; }
 .addrLink:hover { color: #2f6fe0; }
