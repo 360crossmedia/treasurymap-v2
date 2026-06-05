@@ -6,6 +6,7 @@ import InsightsCard from "./InsightsCard";
 import { truncateHtmlString } from "../utils";
 import { publicationHref } from "../utils/slugify";
 import { coverImg, coverImgFull } from "../utils/cloudinary";
+import NewsletterForm from "./NewsletterForm";
 import { url } from "../service/url";
 import { apiGetFullMainPublications } from "../service/apiGetFullMainPublications";
 
@@ -111,6 +112,10 @@ const Insights = () => {
           </div>
         </>
       )}
+
+      <div style={{ margin: "48px auto 8px", padding: "36px 24px", maxWidth: 720, background: "#fff", border: "1px solid #e6ecf5", borderRadius: 20, boxShadow: "0 10px 34px -20px rgba(10,26,51,.18)" }}>
+        <NewsletterForm variant="panel" />
+      </div>
     </div>
   );
 };
