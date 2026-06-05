@@ -252,6 +252,14 @@ export default function BodyPublicationsControl() {
                       <span className="pc-sub">{companyById[p.companyId] || `#${p.companyId}`} · {String(p.createdAt || "").slice(0, 10)}</span>
                     </div>
                   </div>
+                  {featuredPos[pubKey(p)] && (
+                    <span
+                      className={`pc-featbadge ${featuredPos[pubKey(p)] === 1 ? "first" : ""}`}
+                      title={`Featured #${featuredPos[pubKey(p)]} on Insights`}
+                    >
+                      ★ #{featuredPos[pubKey(p)]}
+                    </span>
+                  )}
                   {p.live ? <span className="pc-badge live">Live</span> : <span className="pc-badge draft">Draft</span>}
                   <a className="pc-view" href={p.isArticle ? `/publication/article/${p.id}` : `/publication/video/${p.id}`} target="_blank" rel="noopener noreferrer">View ↗</a>
                   <div className="pc-rowact">
@@ -349,6 +357,8 @@ export default function BodyPublicationsControl() {
         .pc-rowact button { width: 31px; height: 31px; display: grid; place-items: center; border: none; background: #f4f7fc; border-radius: 8px; color: #5a6a85; cursor: pointer; transition: background .15s, color .15s; }
         .pc-rowact button:hover { background: #e7eef8; color: #0e2c5c; }
         .pc-rowact button.del:hover { background: #fdeeee; color: #c0392b; }
+        .pc-featbadge { font-size: 10.5px; font-weight: 700; padding: 2px 9px; border-radius: 100px; flex-shrink: 0; background: #fff4d9; color: #cf8e1e; letter-spacing: .02em; }
+        .pc-featbadge.first { background: linear-gradient(135deg,#f6b73c,#e0a32e); color: #fff; box-shadow: 0 2px 8px -2px rgba(224,163,46,.6); }
         .pc-rowact button.feat:hover { background: #fff7e6; color: #e0a32e; }
         .pc-rowact button.feat.on { background: #fff4d9; color: #e0a32e; }
         .pc-rowact button.feat:disabled { opacity: .45; cursor: default; }
