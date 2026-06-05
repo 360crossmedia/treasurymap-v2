@@ -70,8 +70,6 @@ export default function PricingPlans() {
           <div key={p.key} className={`pp-card ${p.popular ? "pop" : ""}`} style={{ "--accent": p.accent }}>
             {p.popular && <span className="pp-badge">Most popular</span>}
             <h2 className="pp-name">{p.name}</h2>
-            <div className="pp-price"><span className="pp-amount">{p.price}</span><span className="pp-period">{p.period}</span></div>
-            {p.note && <p className="pp-note">{p.note}</p>}
             {p.lead && <p className="pp-lead">{p.lead}</p>}
             <ul className="pp-feats">
               {p.features.map((f, i) => (
@@ -82,8 +80,6 @@ export default function PricingPlans() {
           </div>
         ))}
       </div>
-
-      <p className="pp-foot">12-month commitment · billed monthly. Prices exclude VAT.</p>
 
       <div className="pp-contact">
         <p>Not sure which package? We'll guide you.</p>
@@ -101,12 +97,8 @@ export default function PricingPlans() {
         .pp-card { position: relative; display: flex; flex-direction: column; background: #fff; border: 1px solid #e6ecf5; border-radius: 20px; padding: 30px 26px 28px; box-shadow: 0 14px 40px -26px rgba(10,26,51,.3); }
         .pp-card.pop { border: 2px solid var(--accent); box-shadow: 0 24px 54px -24px rgba(47,111,224,.35); transform: translateY(-6px); }
         .pp-badge { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #fff; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 5px 14px; border-radius: 100px; white-space: nowrap; }
-        .pp-name { font-size: 1.05rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
-        .pp-price { display: flex; align-items: baseline; gap: 4px; }
-        .pp-amount { font-size: 2.3rem; font-weight: 800; color: #0e2c5c; letter-spacing: -.02em; }
-        .pp-period { font-size: 1rem; color: #8a93a6; font-weight: 600; }
-        .pp-note { font-size: 12.5px; color: #6a788f; margin: 6px 0 0; }
-        .pp-lead { font-size: 13px; font-weight: 700; color: #0e2c5c; margin: 18px 0 10px; }
+        .pp-name { font-size: 1.15rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); margin: 0 0 4px; }
+        .pp-lead { font-size: 13px; font-weight: 700; color: #0e2c5c; margin: 16px 0 10px; }
         .pp-feats { list-style: none; margin: 16px 0 22px; padding: 0; display: flex; flex-direction: column; gap: 11px; flex: 1; }
         .pp-feats li { display: flex; align-items: flex-start; gap: 10px; font-size: 13.7px; color: #3a4a66; line-height: 1.5; }
         .pp-ic { flex-shrink: 0; width: 21px; height: 21px; border-radius: 6px; display: grid; place-items: center; background: color-mix(in srgb, var(--accent) 14%, #fff); color: var(--accent); margin-top: 1px; }
@@ -114,7 +106,6 @@ export default function PricingPlans() {
         .pp-cta:hover { transform: translateY(-2px); background: color-mix(in srgb, var(--accent) 8%, #fff); }
         .pp-cta.primary { background: var(--accent); color: #fff; box-shadow: 0 10px 22px -8px color-mix(in srgb, var(--accent) 70%, transparent); }
 
-        .pp-foot { text-align: center; font-size: 12.5px; color: #9aa3b5; margin: 22px 0 0; }
         .pp-contact { text-align: center; margin: 40px auto 0; }
         .pp-contact p { font-size: 15px; color: #3a4a66; margin: 0 0 14px; font-weight: 600; }
         .pp-contact-btn { display: inline-block; background: linear-gradient(135deg,#4D8DFF,#2f6fe0); color: #fff; font-weight: 700; font-size: 14.5px; text-decoration: none; padding: 12px 30px; border-radius: 100px; box-shadow: 0 10px 24px -8px rgba(47,111,224,.55); transition: transform .15s; }
