@@ -345,23 +345,41 @@ export default function AdminDashboard() {
             {!loading && companies.length === 0 ? (
               <section className="dash-card dash-getlisted">
                 <span className="dash-gl-eyebrow">Get on the map</span>
-                <h2 className="dash-card-title">Your company isn’t on the Treasury Map yet</h2>
-                <p className="dash-card-sub">Choose a package — our team sets up and validates your listing, then you can manage it here.</p>
+                <h2 className="dash-card-title">Add your company to the Treasury Map</h2>
+                <p className="dash-card-sub">Create your company profile (logo, description, categories) — it’s free. When it’s ready, contact us to be featured live on the map.</p>
                 <div className="dash-actions">
-                  <button className="dash-btn primary" onClick={() => router.push("/pricing")}>{I.star} See packages</button>
-                  <button className="dash-btn" onClick={() => router.push("/contactUs")}>Contact us to be featured</button>
+                  <button className="dash-btn primary" onClick={createCompany}>{I.plus} Create my company profile</button>
                 </div>
               </section>
             ) : (
               <section className="dash-card">
-                <h2 className="dash-card-title">Your company</h2>
+                <div className="dash-co-head">
+                  <h2 className="dash-card-title">Your company</h2>
+                  <button className="dash-link" onClick={createCompany}>{I.plus} Add another</button>
+                </div>
                 <p className="dash-card-sub">Edit your listing or manage your media.</p>
                 <CompanySelect companies={companies} loading={loading} value={selectedId} onChange={selectCompany} />
                 {selected && (
-                  <div className="dash-actions">
-                    <button className="dash-btn primary" onClick={() => openEdit(selected.id)}>{I.edit} Edit listing</button>
-                    <button className="dash-btn" onClick={() => openMedia(selected.id)}>{I.media} Media Zone</button>
-                  </div>
+                  <>
+                    <div className="dash-status-row">
+                      {selected.live
+                        ? <span className="dash-status live">● Live on the map</span>
+                        : <span className="dash-status draft">● Draft — not on the map yet</span>}
+                    </div>
+                    <div className="dash-actions">
+                      <button className="dash-btn primary" onClick={() => openEdit(selected.id)}>{I.edit} Edit listing</button>
+                      <button className="dash-btn" onClick={() => openMedia(selected.id)}>{I.media} Media Zone</button>
+                    </div>
+                    {!selected.live && (
+                      <div className="dash-featured">
+                        <div className="dash-featured-txt">
+                          <strong>Ready to go live?</strong>
+                          <span>Your profile is saved as a draft. Contact us to review it and feature your company live on the Treasury Map.</span>
+                        </div>
+                        <button className="dash-btn primary" onClick={() => router.push("/contactUs")}>Contact us to be featured live</button>
+                      </div>
+                    )}
+                  </>
                 )}
               </section>
             )}
@@ -425,6 +443,20 @@ export default function AdminDashboard() {
         .dash-getlisted .dash-card-title { margin: 8px 0 6px; }
         .dash-gl-eyebrow { font-size: 11.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #2f6fe0; }
         .dash-getlisted .dash-actions { margin-top: 16px; }
+        .dash-co-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .dash-co-head .dash-card-title { margin-bottom: 0; }
+        .dash-link { display: inline-flex; align-items: center; gap: 5px; background: none; border: none; color: #2f6fe0; font-size: 13px; font-weight: 600; cursor: pointer; }
+        .dash-link :global(svg) { width: 14px; height: 14px; }
+        .dash-status-row { margin: 14px 0 4px; }
+        .dash-status { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; padding: 4px 11px; border-radius: 100px; letter-spacing: .02em; }
+        .dash-status.live { background: #e4f6ec; color: #1f8a52; }
+        .dash-status.draft { background: #fff4d9; color: #cf8e1e; }
+        .dash-featured { margin-top: 18px; padding: 18px 20px; border-radius: 14px; background: linear-gradient(135deg,#0e2c5c,#1e478f); display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
+        .dash-featured-txt { display: flex; flex-direction: column; gap: 3px; min-width: 220px; flex: 1; }
+        .dash-featured-txt strong { color: #fff; font-size: 14.5px; }
+        .dash-featured-txt span { color: #c5d6f0; font-size: 12.5px; line-height: 1.5; }
+        .dash-featured .dash-btn.primary { width: auto; flex-shrink: 0; background: #fff; color: #0e2c5c; border: none; }
+        .dash-featured .dash-btn.primary:hover { background: #f0f5ff; }
         .dash-card-sub { font-size: 13.5px; color: #6a788f; margin: -10px 0 16px; }
         .dash-empty, .muted { color: #8a93a6; }
         .dash-pad { padding: 28px; text-align: center; font-size: 14px; }
