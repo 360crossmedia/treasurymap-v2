@@ -208,14 +208,14 @@ export default function AdminDashboard() {
             {/* Stats */}
             <div className="dash-stats">
               {[
-                { k: "all", label: "Companies", val: stats.all, tone: "blue" },
-                { k: "live", label: "Live on map", val: stats.live, tone: "green" },
-                { k: "hidden", label: "Hidden", val: stats.hidden, tone: "slate" },
-                { k: "multiplayer", label: "Multiplayer", val: stats.multiplayer, tone: "teal" },
-                { k: "clients", label: "Paid clients", val: stats.clients, tone: "green" },
-                { k: "attention", label: "Needs attention", val: stats.attention, tone: "amber" },
+                { k: "all", label: "Companies", val: stats.all, tone: "blue", hint: "All companies in the database." },
+                { k: "live", label: "Live on map", val: stats.live, tone: "green", hint: "Companies visible on the Treasury Map (live, with a logo and a category)." },
+                { k: "hidden", label: "Hidden", val: stats.hidden, tone: "slate", hint: "Companies not set live — not shown on the map." },
+                { k: "multiplayer", label: "Multiplayer", val: stats.multiplayer, tone: "teal", hint: "Companies flagged for the Multiplayer Map." },
+                { k: "clients", label: "Paid clients", val: stats.clients, tone: "green", hint: "Companies marked as paid clients." },
+                { k: "attention", label: "Needs attention", val: stats.attention, tone: "amber", hint: "Live companies with a logo but no sub-categories — their profile is incomplete. Click to see and fix them." },
               ].map((s) => (
-                <button key={s.k} className={`dash-stat ${s.tone} ${filter === s.k ? "active" : ""}`} onClick={() => setFilter(s.k)}>
+                <button key={s.k} title={s.hint} className={`dash-stat ${s.tone} ${filter === s.k ? "active" : ""}`} onClick={() => setFilter(s.k)}>
                   <span className="dash-stat-v">{s.val}</span>
                   <span className="dash-stat-l">{s.label}</span>
                 </button>
