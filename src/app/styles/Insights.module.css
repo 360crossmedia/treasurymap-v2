@@ -92,9 +92,10 @@
 }
 .hero:hover { box-shadow: 0 12px 36px -16px rgba(47, 111, 224, 0.28); transform: translateY(-2px); }
 .heroCover {
-  background-size: cover;
-  background-position: center top; /* top-align so faces aren't cropped */
-  background-color: #e7eef8;
+  background-size: contain; /* show the whole image, never crop it */
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: #f4f7fc;
   min-height: 340px;
 }
 .heroBody {

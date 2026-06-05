@@ -16,7 +16,7 @@ export function providerHref(company) {
 }
 
 // Cap a slug to a sensible length on a word (dash) boundary.
-function capSlug(s, max = 70) {
+function capSlug(s, max = 45) {
   if (!s || s.length <= max) return s || "";
   const cut = s.slice(0, max);
   const lastDash = cut.lastIndexOf("-");
