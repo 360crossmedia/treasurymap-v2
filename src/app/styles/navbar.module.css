@@ -350,38 +350,3 @@
     font-size: 12px;
   }
 }
-
-/* ── Newsletter modal (from header link) ─────────────────────────────────── */
-.nlBackdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 500;
-  background: rgba(10, 26, 51, 0.42);
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-.nlModal {
-  position: relative;
-  background: #fff;
-  border-radius: 20px;
-  width: min(540px, 100%);
-  padding: 36px 30px 32px;
-  box-shadow: 0 30px 80px -16px rgba(10, 26, 51, 0.45);
-}
-.nlClose {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 32px;
-  height: 32px;
-  border: none;
-  border-radius: 50%;
-  background: #f1f4f9;
-  color: #5a6a85;
-  font-size: 14px;
-  cursor: pointer;
-}
-.nlClose:hover { background: #e7ecf4; color: #0e2c5c; }
