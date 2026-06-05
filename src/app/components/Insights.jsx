@@ -9,12 +9,16 @@ import { coverImg, coverImgFull } from "../utils/cloudinary";
 import { url } from "../service/url";
 import { apiGetFullMainPublications } from "../service/apiGetFullMainPublications";
 
-const Insights = () => {
-  const [pubs, setPubs]   = useState(null); // null = loading
+const Insights = ({ initialPubs = null, initialCompanyById = {} }) => {
+  // Seed from the server-rendered list when present (SSR/SEO); otherwise null
+  // shows the skeleton and the client fetch below runs (fallback / recovery).
+  const hasInitial = Array.isArray(initialPubs) && initialPubs.length > 0;
+  const [pubs, setPubs]   = useState(hasInitial ? initialPubs : null);
   const [error, setError] = useState(false);
-  const [companyById, setCompanyById] = useState({}); // companyId -> name (for SEO URLs)
+  const [companyById, setCompanyById] = useState(initialCompanyById); // companyId -> name (for SEO URLs)
 
   useEffect(() => {
+    if (hasInitial) return; // server already provided the data
     let cancelled = false;
     (async () => {
       try {
