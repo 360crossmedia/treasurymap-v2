@@ -19,9 +19,21 @@ const DEFAULT_DESCRIPTION =
 const DEFAULT_OG_IMAGE =
   "https://res.cloudinary.com/dq7aof6vb/image/upload/f_auto,q_auto,w_1200/v1739685416/MultiplayerMapBg_z1htg0.png";
 
+// Bump this when the icons change to force browsers to re-fetch (favicons are
+// cached very aggressively, especially by Safari).
+const ICON_V = "3";
+
 export const metadata = {
   title: { default: SITE_NAME, template: `%s | ${SITE_NAME}` },
   description: DEFAULT_DESCRIPTION,
+  icons: {
+    icon: [
+      { url: `/icon.svg?v=${ICON_V}`, type: "image/svg+xml" },
+      { url: `/favicon.ico?v=${ICON_V}`, sizes: "any", type: "image/x-icon" },
+    ],
+    apple: [{ url: `/apple-icon.png?v=${ICON_V}` }],
+    shortcut: [{ url: `/favicon.ico?v=${ICON_V}` }],
+  },
   openGraph: {
     title: SITE_NAME,
     description: DEFAULT_DESCRIPTION,
