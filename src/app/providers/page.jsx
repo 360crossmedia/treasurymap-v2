@@ -25,7 +25,7 @@ async function fetchLiveCompanies() {
 export async function generateMetadata() {
   const canonical = `${SITE_URL}/providers`;
   const description =
-    "Browse every treasury technology provider on the TreasuryMap landscape — solutions, integrators and data vendors, A to Z.";
+    "Browse every treasury technology provider on the TreasuryMap landscape: solutions, integrators and data vendors, A to Z.";
   return {
     title: "Providers",
     description,
@@ -80,7 +80,7 @@ export default async function ProvidersIndex() {
           <h1 className={styles.title}>Providers</h1>
           <p className={styles.sub}>
             Every treasury technology provider on the TreasuryMap landscape
-            {sorted.length ? ` — ${sorted.length} and counting.` : "."}
+            {sorted.length ? `. ${sorted.length} providers and counting.` : "."}
           </p>
         </header>
 

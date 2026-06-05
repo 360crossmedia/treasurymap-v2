@@ -14,7 +14,7 @@ export default function HomeIntro() {
       <div className="hi-inner">
         <div className="hi-copy">
           <h1 className="hi-title">
-            Find the right <span>treasury technology</span> — visually.
+            Find the right <span>treasury technology</span>, visually.
           </h1>
           <p className="hi-sub">
             Explore vetted providers across every treasury category, or answer 10 quick

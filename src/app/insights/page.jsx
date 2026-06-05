@@ -20,7 +20,7 @@ async function getJson(path) {
 }
 
 // Same ordering the client used (featured first in admin slot order, then the
-// rest newest-first) — computed server-side so the list lands in the SSR HTML.
+// rest newest-first), computed server-side so the list lands in the SSR HTML.
 async function getInsightsData() {
   const [featured, all, companies] = await Promise.all([
     getJson("mainPublications/full"),

@@ -38,7 +38,7 @@ export async function generateMetadata({ params }) {
   const { categoryId } = await params;
   const category = await getJson(`categories/${categoryId}`);
   const name = category?.name ? formatCategoryName(category.name) : "Insights";
-  const description = `Treasury technology insights on ${name} — articles, videos and research from the TreasuryMap community.`;
+  const description = `Treasury technology insights on ${name}. Articles, videos and research from the TreasuryMap community.`;
   const canonical = `${SITE_URL}/insights/${categoryId}`;
   return {
     title: `${name} insights`,

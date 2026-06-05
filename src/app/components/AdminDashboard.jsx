@@ -149,23 +149,23 @@ export default function AdminDashboard() {
     const link = `${window.location.origin}/linkupdate/${data.token}`;
     try {
       await navigator.clipboard.writeText(link);
-      alert(`Edit link copied — valid 30 days. Send it to the vendor:\n\n${link}`);
+      alert(`Edit link copied, valid 30 days. Send it to the vendor:\n\n${link}`);
     } catch (_) {
       window.prompt("Copy this edit link for the vendor (valid 30 days):", link);
     }
   };
 
-  // Vendor: one-click "request publication" — emails the TreasuryMap team and
+  // Vendor: one-click "request publication". Emails the TreasuryMap team and
   // marks the listing pending for this session. (A persistent pending state
   // would need a backend field; this is the frontend-only v1.)
   const requestPublication = async (c) => {
     if (!c) return;
     await apiSendSignUpAlert({
       status: "Publication request",
-      companyName: `${c.name || "—"} (#${c.id})`,
+      companyName: `${c.name || "-"} (#${c.id})`,
     });
     setRequested((s) => new Set(s).add(c.id));
-    showToast("Request sent — the team will review your listing.");
+    showToast("Request sent. The team will review your listing.");
   };
   const createCompany = () => { dispatch(setCompanyId(false)); try { localStorage.removeItem("companyId"); } catch (_) {} router.push("/form"); };
 
@@ -439,7 +439,7 @@ export default function AdminDashboard() {
                           ) : (
                             <>
                               <strong>Ready to go live?</strong>
-                              <span>Make sure you&apos;ve added a logo and at least one category, then request publication — the TreasuryMap team will review and feature your company on the map.</span>
+                              <span>Make sure you&apos;ve added a logo and at least one category, then request publication. The TreasuryMap team will review and feature your company on the map.</span>
                             </>
                           )}
                         </div>
