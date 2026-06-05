@@ -26,9 +26,14 @@ const ALLOWED_ATTR = ["href", "target", "rel"];
 
 export function sanitizeRich(html) {
   if (!html) return "";
-  return DOMPurify.sanitize(html, {
+  const clean = DOMPurify.sanitize(html, {
     ALLOWED_TAGS,
     ALLOWED_ATTR,
     ALLOW_DATA_ATTR: false,
   });
+  // Collapse blank editor paragraphs (e.g. <p><br></p>, <p>&nbsp;</p>) that
+  // create oversized gaps between paragraphs.
+  return clean
+    .replace(/<p>(?:\s|&nbsp;|<br\s*\/?>)*<\/p>/gi, "")
+    .replace(/(?:<br\s*\/?>\s*){2,}/gi, "<br>");
 }

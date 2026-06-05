@@ -35,3 +35,18 @@ export function coverImg(url, w, h) {
   const tx = ["c_fill", "g_auto", `w_${w}`, `h_${h}`, "f_auto", "q_auto", "dpr_auto"];
   return `${head}${tx.join(",")}/${tail}`;
 }
+
+// Full cover that is NEVER cropped: just downscale to a max width (c_limit).
+// The image keeps its natural aspect ratio. Use for article hero covers.
+export function coverImgFull(url, w) {
+  if (!url || typeof url !== "string") return url;
+  if (!url.includes(CLOUDINARY_HOST)) return url;
+  const marker = "/image/upload/";
+  const i = url.indexOf(marker);
+  if (i === -1) return url;
+  const head = url.slice(0, i + marker.length);
+  const tail = url.slice(i + marker.length);
+  if (/^[a-z]_[^/]+\//.test(tail)) return url; // already transformed
+  const tx = ["c_limit", `w_${w}`, "f_auto", "q_auto", "dpr_auto"];
+  return `${head}${tx.join(",")}/${tail}`;
+}
