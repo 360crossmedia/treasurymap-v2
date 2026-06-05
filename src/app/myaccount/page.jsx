@@ -1,16 +1,19 @@
 "use client";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import styles from "../styles/layout.module.css";
 import MyAccountCard from "../components/MyAccountCard";
 
 const Layout = () => {
   return (
-    <div className={styles.mainContainer}>
-      <Navbar buttonLabel={"Login"} />
+    <>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Chivo:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+      />
+      <Navbar buttonLabel="Log In" />
       <MyAccountCard />
       <Footer />
-    </div>
+    </>
   );
 };
 
