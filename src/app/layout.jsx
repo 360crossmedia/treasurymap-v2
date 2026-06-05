@@ -21,7 +21,7 @@ const DEFAULT_OG_IMAGE =
 
 // Bump this when the icons change to force browsers to re-fetch (favicons are
 // cached very aggressively, especially by Safari).
-const ICON_V = "3";
+const ICON_V = "4";
 
 export const metadata = {
   title: { default: SITE_NAME, template: `%s | ${SITE_NAME}` },
