@@ -43,11 +43,11 @@ export default function ConfirmationStatus({ id, email, type = "longlist" }) {
 
   const title = type === "compare"
     ? (sent ? "Your comparison is on its way ✓" : "Your comparison is being prepared")
-    : (sent ? "Your Long List is on its way ✓" : "Your Long List is being generated");
+    : (sent ? "Your shortlist is on its way ✓" : "Your shortlist is being built");
 
   const subtitle = type === "compare"
     ? "A side-by-side vendor comparison PDF, delivered to your inbox."
-    : "A personalised selection report, curated by AI, delivered to your inbox.";
+    : "A personalised shortlist, curated by AI, delivered to your inbox.";
 
   const timing = type === "compare" ? "2–3 minutes" : "4–5 minutes";
 

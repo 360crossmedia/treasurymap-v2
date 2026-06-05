@@ -183,7 +183,7 @@ export default function GetMyListPage() {
       <div className={styles.page}>
         <div className={styles.container}>
           <div className={styles.hero}>
-            <h1 className={styles.heroTitle}>Get my Long List</h1>
+            <h1 className={styles.heroTitle}>Build my shortlist</h1>
             <p className={styles.heroSubtitle}>
               Answer 10 quick questions and receive a personalised consultant-style report
               of treasury solutions matched to your profile, based on the Treasury Technology Map.
