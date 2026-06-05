@@ -110,6 +110,14 @@ export default function BodyPublicationsControl() {
   const featuredCount = (mains || []).filter((m) => m && m.id != null).length;
   const featuredFull = slotCount > 0 && featuredCount >= slotCount;
 
+  // Featured items only carry {id,title,url}. Match against allPubs (which has
+  // companyId + createdAt) by id + type to resolve the company name and date.
+  const featMatch = (p) => {
+    if (!p?.id) return null;
+    const isArt = !p.url;
+    return (allPubs || []).find((x) => x.id === p.id && x.isArticle === isArt) || null;
+  };
+
   // Toggle a publication's featured state.
   //  - Not featured  → insert at Featured #1, shift the rest down, drop the last.
   //  - Featured      → remove it, shift the others up, leaving the last slot empty.
@@ -268,7 +276,9 @@ export default function BodyPublicationsControl() {
             <p className="pc-pad pc-muted">No featured slots.</p>
           ) : (
             <div className="pc-list">
-              {mains.map((p, i) => (
+              {mains.map((p, i) => {
+                const m = featMatch(p);
+                return (
                 <div
                   className={`pc-row pc-frow ${dragIndex === i ? "dragging" : ""} ${dragOverIndex === i && dragIndex !== i ? "dragover" : ""}`}
                   key={i}
@@ -283,7 +293,15 @@ export default function BodyPublicationsControl() {
                   <span className="pc-slot">#{i + 1}</span>
                   <div className="pc-main">
                     <span className={`pc-type ${isVideo(p) ? "vid" : "art"}`}>{isVideo(p) ? "Video" : "Article"}</span>
-                    <span className="pc-title">{p?.title ? truncateHtmlString(p.title, 80) : <em className="pc-muted">Empty</em>}</span>
+                    <div className="pc-titlewrap">
+                      <span className="pc-title">{p?.title ? truncateHtmlString(p.title, 80) : <em className="pc-muted">Empty</em>}</span>
+                      {p?.id && (
+                        <span className="pc-sub">
+                          {m ? (companyById[m.companyId] || `#${m.companyId}`) : "—"}
+                          {m?.createdAt ? ` · ${formatDateShort(m.createdAt)}` : ""}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   {p?.id && <a className="pc-view" href={pubHref(p)} target="_blank" rel="noopener noreferrer">View ↗</a>}
                   <div className="pc-reorder">
@@ -292,7 +310,8 @@ export default function BodyPublicationsControl() {
                   </div>
                   <button className="pc-change" onClick={() => setModalSlot(i + 1)}>Change</button>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
