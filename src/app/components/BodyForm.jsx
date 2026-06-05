@@ -319,7 +319,16 @@ const BodyForm = () => {
       }
     } else {
       dispatch(setIsLoading(false));
-      alert("Check missing required fields");
+      const missing = [];
+      if (!selectMainCategory) missing.push("Main category");
+      if (!(selectedCategoryIds?.length > 0)) missing.push("Categories (at least one)");
+      if (!(selectedSubCategoryIds?.length > 0)) missing.push("Sub-categories (at least one)");
+      if (!(selectedCountriesIds?.length > 0)) missing.push("Countries / offices (at least one)");
+      alert(
+        missing.length
+          ? `Please complete the following before saving:\n\n• ${missing.join("\n• ")}`
+          : "Some required information is missing. Please review the form."
+      );
     }
   };
 
