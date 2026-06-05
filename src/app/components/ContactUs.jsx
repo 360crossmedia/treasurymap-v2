@@ -13,6 +13,9 @@ const Icon = {
   at: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"/></svg>,
   building: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M16 6h.01M8 10h.01M16 10h.01M8 14h.01M16 14h.01"/></svg>,
   check: <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>,
+  map: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>,
+  compass: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>,
+  arrow: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>,
 };
 
 const ContactUs = () => {
@@ -65,20 +68,64 @@ const ContactUs = () => {
     <div className={styles.page}>
       <div className={styles.wrap}>
 
-        {/* Left · who we are + contacts */}
+        {/* Left · value proposition for the two audiences */}
         <aside className={styles.left}>
           <span className={styles.eyebrow}>// Get in touch</span>
           <h1 className={styles.title}>Let's talk treasury technology</h1>
-
-          <h2 className={styles.subTitle}>Who we are</h2>
-          <p className={styles.text}>
-            Simply Treasury is a company founded by François Masquelier. He had notable
-            successes both in his corporate role as Treasurer at RTL and in the wider
-            profession as founder and Chairman of ATEL (Association des Trésoriers
-            d'Entreprise de Luxembourg), and co-founder and Chairman of EACT (European
-            Association of Corporate Treasurers).
+          <p className={styles.lead}>
+            TreasuryMap is the independent map of treasury technology, built with the
+            profession and neutral by design. Here is how to get on board.
           </p>
 
+          <div className={styles.audience}>
+            {/* Providers */}
+            <div className={styles.audCard}>
+              <div className={styles.audIcon}>{Icon.map}</div>
+              <div className={styles.audBody}>
+                <span className={styles.audTag}>For providers</span>
+                <h3 className={styles.audTitle}>Get your solution on the map</h3>
+                <p className={styles.audText}>
+                  Be discovered by corporate treasurers actively selecting their next TMS,
+                  payment hub or FX tool. Claim your profile, publish in your Media Zone,
+                  and get featured to a qualified audience.
+                </p>
+                <div className={styles.audCtas}>
+                  <a className={styles.ctaPrimary} href="/signup">
+                    Create your profile {Icon.arrow}
+                  </a>
+                  <a className={styles.ctaGhost} href="mailto:contact@360crossmedia.com">
+                    Contact us to be featured
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Treasurers */}
+            <div className={styles.audCard}>
+              <div className={styles.audIcon}>{Icon.compass}</div>
+              <div className={styles.audBody}>
+                <span className={styles.audTag}>For treasurers</span>
+                <h3 className={styles.audTitle}>Follow TreasuryMap</h3>
+                <p className={styles.audText}>
+                  Explore the interactive map, read independent insights, and build a vendor
+                  shortlist in minutes. Free, neutral, and no sales pitch.
+                </p>
+                <div className={styles.audCtas}>
+                  <a className={styles.ctaPrimary} href="/">
+                    Explore the map {Icon.arrow}
+                  </a>
+                  <a className={styles.ctaGhost} href="/get-my-list">Build my shortlist</a>
+                  <a className={styles.ctaGhost} href="/insights">Read insights</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p className={styles.trust}>
+            <strong>Who we are.</strong> TreasuryMap is powered by Simply Treasury, founded
+            by François Masquelier, Chairman of ATEL and EACT and former Head of Treasury at
+            RTL Group.
+          </p>
         </aside>
 
         {/* Right · form */}
@@ -123,7 +170,7 @@ const ContactUs = () => {
               {status === "error" && (
                 <div className={styles.errorBox}>
                   Something went wrong sending your message. Please try again or email us
-                  directly at <a href="mailto:francois@simplytreasury.com">francois@simplytreasury.com</a>.
+                  directly at <a href="mailto:contact@360crossmedia.com">contact@360crossmedia.com</a>.
                 </div>
               )}
 

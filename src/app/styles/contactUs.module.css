@@ -54,6 +54,126 @@
   margin: 0 0 28px;
 }
 
+/* ─── Audience value blocks (providers / treasurers) ─────────────────────── */
+.lead {
+  color: #3a4a66;
+  line-height: 1.6;
+  font-size: 1.02rem;
+  margin: 0 0 24px;
+  max-width: 480px;
+}
+
+.audience {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0 0 24px;
+}
+
+.audCard {
+  display: flex;
+  gap: 14px;
+  background: #fff;
+  border: 1px solid #e8edf5;
+  border-radius: 16px;
+  padding: 20px;
+  transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+
+.audCard:hover {
+  border-color: #cdddff;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -16px rgba(47, 111, 224, 0.4);
+}
+
+.audIcon {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0e2c5c, #2f6fe0);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.audBody {
+  min-width: 0;
+}
+
+.audTag {
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #2f6fe0;
+  margin-bottom: 4px;
+}
+
+.audTitle {
+  font-size: 1.08rem;
+  font-weight: 800;
+  color: #0e2c5c;
+  margin: 0 0 6px;
+}
+
+.audText {
+  color: #5a6a85;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  margin: 0 0 12px;
+}
+
+.audCtas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+
+.ctaPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #2f6fe0;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: gap 0.15s;
+}
+
+.ctaPrimary:hover {
+  gap: 10px;
+}
+
+.ctaGhost {
+  color: #5a6a85;
+  font-weight: 600;
+  font-size: 0.86rem;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.ctaGhost:hover {
+  color: #2f6fe0;
+  border-bottom-color: #2f6fe0;
+}
+
+.trust {
+  font-size: 0.82rem;
+  color: #9aa3b5;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.trust strong {
+  color: #5a6a85;
+  font-weight: 700;
+}
+
 /* contacts */
 .contacts {
   display: flex;
