@@ -14,6 +14,10 @@ import Script from 'next/script';
 const inter = Inter({ subsets: ["latin"] });
 
 const SITE_NAME = "TreasuryMap";
+// Public site origin · drives metadataBase, canonicals, robots and sitemap.
+// Same fallback as providers/[slug]/page.jsx and app/sitemap.js.
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://treasurymap-v2-production.up.railway.app";
 const DEFAULT_DESCRIPTION =
   "The Treasury Technology Landscape · discover treasury solutions, providers and integrators in one interactive map.";
 const DEFAULT_OG_IMAGE =
@@ -24,6 +28,7 @@ const DEFAULT_OG_IMAGE =
 const ICON_V = "4";
 
 export const metadata = {
+  metadataBase: new URL(SITE_URL),
   title: { default: SITE_NAME, template: `%s | ${SITE_NAME}` },
   description: DEFAULT_DESCRIPTION,
   icons: {
@@ -37,6 +42,7 @@ export const metadata = {
   openGraph: {
     title: SITE_NAME,
     description: DEFAULT_DESCRIPTION,
+    url: SITE_URL,
     type: "website",
     siteName: SITE_NAME,
     images: [DEFAULT_OG_IMAGE],
