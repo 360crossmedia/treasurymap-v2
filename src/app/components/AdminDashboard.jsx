@@ -135,7 +135,7 @@ export default function AdminDashboard() {
       if (!res || res.status !== 200) throw new Error();
     } catch (_) {
       setCompanies((cs) => cs.map((x) => (x.id === c.id ? { ...x, [field]: !next } : x)));
-      showToast("Update failed — reverted.", "err");
+      showToast("Update failed. Reverted.", "err");
     } finally {
       setBusy((b) => { const n = { ...b }; delete n[c.id]; return n; });
     }
@@ -152,7 +152,7 @@ export default function AdminDashboard() {
       if (!res || res.status !== 200) throw new Error();
     } catch (_) {
       setCompanies((cs) => cs.map((x) => (x.id === c.id ? { ...x, clientPackage: prev } : x)));
-      showToast("Update failed — reverted.", "err");
+      showToast("Update failed. Reverted.", "err");
     } finally {
       setBusy((b) => { const n = { ...b }; delete n[c.id]; return n; });
     }
@@ -210,10 +210,10 @@ export default function AdminDashboard() {
               {[
                 { k: "all", label: "Companies", val: stats.all, tone: "blue", hint: "All companies in the database." },
                 { k: "live", label: "Live on map", val: stats.live, tone: "green", hint: "Companies visible on the Treasury Map (live, with a logo and a category)." },
-                { k: "hidden", label: "Hidden", val: stats.hidden, tone: "slate", hint: "Companies not set live — not shown on the map." },
+                { k: "hidden", label: "Hidden", val: stats.hidden, tone: "slate", hint: "Companies not set live · not shown on the map." },
                 { k: "multiplayer", label: "Multiplayer", val: stats.multiplayer, tone: "teal", hint: "Companies flagged for the Multiplayer Map." },
                 { k: "clients", label: "Paid clients", val: stats.clients, tone: "green", hint: "Companies marked as paid clients." },
-                { k: "attention", label: "Needs attention", val: stats.attention, tone: "amber", hint: "Live companies with a logo but no sub-categories — their profile is incomplete. Click to see and fix them." },
+                { k: "attention", label: "Needs attention", val: stats.attention, tone: "amber", hint: "Live companies with a logo but no sub-categories · their profile is incomplete. Click to see and fix them." },
               ].map((s) => (
                 <button key={s.k} title={s.hint} className={`dash-stat ${s.tone} ${filter === s.k ? "active" : ""}`} onClick={() => setFilter(s.k)}>
                   <span className="dash-stat-v">{s.val}</span>
@@ -222,7 +222,7 @@ export default function AdminDashboard() {
               ))}
             </div>
 
-            {/* Quick actions — always reachable without scrolling past the table */}
+            {/* Quick actions · always reachable without scrolling past the table */}
             <div className="dash-quick">
               <button onClick={createCompany}>{I.plus} New company</button>
               <button onClick={() => router.push("/publicationsControl")}>{I.star} Publications</button>
@@ -230,7 +230,7 @@ export default function AdminDashboard() {
               <button onClick={() => router.push("/myaccount")}>{I.user} My account</button>
             </div>
 
-            {/* Latest publications — recency at a glance */}
+            {/* Latest publications · recency at a glance */}
             <div className="dash-card dash-pubs">
               <div className="dash-pubs-head">
                 <h3>Latest publications</h3>
@@ -278,7 +278,7 @@ export default function AdminDashboard() {
 
               {filter === "hidden" && (
                 <div className="dash-queue-note">
-                  📥 <b>Review queue</b> — companies not yet on the map, newest first. Flip <b>Live</b> when a vendor has finished uploading.
+                  📥 <b>Review queue</b> · companies not yet on the map, newest first. Flip <b>Live</b> when a vendor has finished uploading.
                 </div>
               )}
 
@@ -346,7 +346,7 @@ export default function AdminDashboard() {
               <section className="dash-card dash-getlisted">
                 <span className="dash-gl-eyebrow">Get on the map</span>
                 <h2 className="dash-card-title">Add your company to the Treasury Map</h2>
-                <p className="dash-card-sub">Create your company profile (logo, description, categories) — it’s free. When it’s ready, contact us to be featured live on the map.</p>
+                <p className="dash-card-sub">Create your company profile (logo, description, categories). It’s free. When it’s ready, contact us to be featured live on the map.</p>
                 <div className="dash-actions">
                   <button className="dash-btn primary" onClick={createCompany}>{I.plus} Create my company profile</button>
                 </div>
@@ -364,7 +364,7 @@ export default function AdminDashboard() {
                     <div className="dash-status-row">
                       {selected.live
                         ? <span className="dash-status live">● Live on the map</span>
-                        : <span className="dash-status draft">● Draft — not on the map yet</span>}
+                        : <span className="dash-status draft">● Draft · not on the map yet</span>}
                     </div>
                     <div className="dash-actions">
                       <button className="dash-btn primary" onClick={() => openEdit(selected.id)}>{I.edit} Edit listing</button>

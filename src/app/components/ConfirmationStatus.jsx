@@ -92,7 +92,7 @@ export default function ConfirmationStatus({ id, email, type = "longlist" }) {
         <div className="cfs-success-box">
           Your report has been sent to <strong>{email || "your email"}</strong>.
           <br/>
-          <span className="cfs-hint">It should arrive in a few moments — check your spam folder if you don’t see it.</span>
+          <span className="cfs-hint">It should arrive in a few moments · check your spam folder if you don’t see it.</span>
         </div>
       ) : failed ? (
         <div className="cfs-error-box">

@@ -65,7 +65,7 @@ const ContactUs = () => {
     <div className={styles.page}>
       <div className={styles.wrap}>
 
-        {/* Left — who we are + contacts */}
+        {/* Left · who we are + contacts */}
         <aside className={styles.left}>
           <span className={styles.eyebrow}>// Get in touch</span>
           <h1 className={styles.title}>Let's talk treasury technology</h1>
@@ -81,7 +81,7 @@ const ContactUs = () => {
 
         </aside>
 
-        {/* Right — form */}
+        {/* Right · form */}
         <div className={styles.card}>
           {status === "sent" ? (
             <div className={styles.successBox}>

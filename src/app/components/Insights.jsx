@@ -84,7 +84,7 @@ const Insights = () => {
 
   return (
     <div className={styles.container}>
-      {/* Hero — featured publication */}
+      {/* Hero · featured publication */}
       <a className={styles.hero} href={heroHref}>
         <div className={styles.heroCover} style={{ backgroundImage: `url(${coverImgFull(hero.coverImage, 900)})` }} />
         <div className={styles.heroBody}>
@@ -96,7 +96,7 @@ const Insights = () => {
         </div>
       </a>
 
-      {/* Grid — the rest */}
+      {/* Grid · the rest */}
       {rest.length > 0 && (
         <>
           <h3 className={styles.sectionTitle}>Latest insights</h3>

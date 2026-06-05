@@ -94,11 +94,11 @@ export default function GetMyListPage() {
   const [retainedTools, setRetainedTools] = useState("");
   const [otherSpecs, setOtherSpecs] = useState("");
 
-  // Catégories (cases à cocher pour la question 10) — fetched depuis le back
+  // Catégories (cases à cocher pour la question 10) · fetched depuis le back
   const [categories, setCategories] = useState([]);
   const [selectedCatIds, setSelectedCatIds] = useState([]);
 
-  const [website, setWebsite] = useState(""); // honeypot — ne JAMAIS afficher visuellement
+  const [website, setWebsite] = useState(""); // honeypot · ne JAMAIS afficher visuellement
   const [gdprAccepted, setGdprAccepted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
@@ -158,7 +158,7 @@ export default function GetMyListPage() {
           companyName: companyName.trim() || null,
           answers,
           categoryIds: selectedCatIds,
-          website, // honeypot — humain = "" toujours
+          website, // honeypot · humain = "" toujours
         }),
       });
       const data = await res.json();
@@ -194,7 +194,7 @@ export default function GetMyListPage() {
           {error && <div className={styles.errorBox}>{error}</div>}
 
           <form onSubmit={handleSubmit}>
-            {/* Bloc 1 — Identité */}
+            {/* Bloc 1 · Identité */}
             <div className={styles.card}>
               <h2 className={styles.sectionTitle}>About you</h2>
               <p className={styles.sectionSubtitle}>
@@ -238,7 +238,7 @@ export default function GetMyListPage() {
               </div>
             </div>
 
-            {/* Bloc 2 — Profil organisation (Q1, Q2, Q3, Q9) */}
+            {/* Bloc 2 · Profil organisation (Q1, Q2, Q3, Q9) */}
             <div className={styles.card}>
               <h2 className={styles.sectionTitle}>Your organisation</h2>
 
@@ -311,7 +311,7 @@ export default function GetMyListPage() {
               </div>
             </div>
 
-            {/* Bloc 3 — Besoins treasury (Q4, Q5) */}
+            {/* Bloc 3 · Besoins treasury (Q4, Q5) */}
             <div className={styles.card}>
               <h2 className={styles.sectionTitle}>Your treasury priorities</h2>
 
@@ -347,7 +347,7 @@ export default function GetMyListPage() {
               </div>
             </div>
 
-            {/* Bloc 4 — Stratégie (Q6, Q7, Q8) + retained tools */}
+            {/* Bloc 4 · Stratégie (Q6, Q7, Q8) + retained tools */}
             <div className={styles.card}>
               <h2 className={styles.sectionTitle}>Your strategy</h2>
 
@@ -401,12 +401,12 @@ export default function GetMyListPage() {
                   placeholder="e.g. 360T for FX dealing, Bloomberg for data, Treasury Spring for deposits..."
                 />
                 <p className={styles.fieldHint}>
-                  These tools will be flagged "RETAIN" in your report — Claude will recommend integrations rather than replacements.
+                  These tools will be flagged "RETAIN" in your report · Claude will recommend integrations rather than replacements.
                 </p>
               </div>
             </div>
 
-            {/* Bloc 5 — Catégories (Q10) */}
+            {/* Bloc 5 · Catégories (Q10) */}
             <div className={styles.card}>
               <h2 className={styles.sectionTitle}>
                 10. What categories of solutions are you looking for?
@@ -440,7 +440,7 @@ export default function GetMyListPage() {
               )}
             </div>
 
-            {/* Bloc 6 — Specs libres */}
+            {/* Bloc 6 · Specs libres */}
             <div className={styles.card}>
               <h2 className={styles.sectionTitle}>
                 Other specifications to be mentioned
@@ -468,7 +468,7 @@ export default function GetMyListPage() {
               </div>
             </div>
 
-            {/* Honeypot anti-bot — invisible aux humains, leurré pour les bots qui remplissent tout */}
+            {/* Honeypot anti-bot · invisible aux humains, leurré pour les bots qui remplissent tout */}
             <div
               aria-hidden="true"
               style={{

@@ -24,7 +24,7 @@ function deriveHq(location, countries) {
 // Build the per-category vendor groups.
 //  - default (homepage / "Treasury Map"): 1 logo per vendor, in its MAIN category.
 //  - multiplayer ("Multiplayer Map"): each vendor appears in EVERY category it
-//    is active in (companyCategories) — same vendor repeated across wedges.
+//    is active in (companyCategories) · same vendor repeated across wedges.
 function toCats(companies, countries = [], multiplayer = false) {
   if (!Array.isArray(companies)) return [];
   const byId = {};
@@ -32,7 +32,7 @@ function toCats(companies, countries = [], multiplayer = false) {
     const key = `category-${catId}`;
     if (!CAT_META[key]) return;
     if (!byId[catId]) byId[catId] = [];
-    // Golden rule: one logo per vendor per category — dedupe by NAME
+    // Golden rule: one logo per vendor per category · dedupe by NAME
     // (source data has duplicate records, e.g. two "Payflows" in TRMS).
     const nameKey = (c.name || "").trim().toLowerCase() || `id-${c.id}`;
     if (byId[catId].some((x) => x._k === nameKey)) return;
@@ -61,7 +61,7 @@ function toCats(companies, countries = [], multiplayer = false) {
 }
 
 // Build groups for the Multiplayer Map from the CURATED endpoint
-// (/api/v1/mapdata/multiplayerMap) — the exact same source the original
+// (/api/v1/mapdata/multiplayerMap) · the exact same source the original
 // multiplayer map used. Shape: { "category-N": [{ id, name, logo, live }] }.
 // Each vendor appears in every category it was curated into. We join to the
 // full companies list (by id) to recover sub-category / office data for filters.
@@ -81,7 +81,7 @@ function toCatsMultiplayer(mp, companies = [], countries = []) {
       if (!logo || !logo.live || !logo.logo) continue;
       const comp = byId[logo.id] || {};
       const name = logo.name || comp.name || "—";
-      // Golden rule: one logo per vendor per category — dedupe by name
+      // Golden rule: one logo per vendor per category · dedupe by name
       // (source data has duplicate records, e.g. two "Payflows" in TRMS).
       const dedupeKey = name.trim().toLowerCase() || `id-${logo.id}`;
       if (seen.has(dedupeKey)) continue;
@@ -111,7 +111,7 @@ export default function ProceduralMap({ multiplayer = false, filters, catSels = 
   const [miniCard, setMiniCard] = useState(null);  // A1
   const [noResults, setNoResults] = useState(false); // C2
 
-  // A1: navigate callback — opens mini-card instead of immediate navigation
+  // A1: navigate callback · opens mini-card instead of immediate navigation
   const handleNavigate = useCallback((payload) => {
     if (payload && typeof payload === "object" && payload.name) {
       setMiniCard(payload);
@@ -174,7 +174,7 @@ export default function ProceduralMap({ multiplayer = false, filters, catSels = 
         buildMap(root, cats, {
           cap: multiplayer ? 40 : 30,
           navigate: handleNavigate,
-          onCategoryClick: (code, full, hue) => { // A2 — uses ref, no rebuild on change
+          onCategoryClick: (code, full, hue) => { // A2 · uses ref, no rebuild on change
             if (onCategoryClickRef.current) onCategoryClickRef.current(code, full, hue);
           },
         });
@@ -190,7 +190,7 @@ export default function ProceduralMap({ multiplayer = false, filters, catSels = 
     })();
 
     return () => { cancelled = true; cleanup(); };
-  }, [handleNavigate, multiplayer]); // onCategoryClick intentionally excluded — handled via ref
+  }, [handleNavigate, multiplayer]); // onCategoryClick intentionally excluded · handled via ref
 
   // Apply combinable filters (AND across facets, OR within sub-categories).
   // When filtering, NON-matching logos are fully hidden so only the vendors
@@ -497,7 +497,7 @@ export default function ProceduralMap({ multiplayer = false, filters, catSels = 
         /* :not(.filtered-out) so this never overrides a filter-hidden token (which
            carries both .dim and .filtered-out); filtered-out must stay opacity 0. */
         .pmap-root.focusing .tok.dim:not(.filtered-out) { opacity: .1 !important; transition: opacity .18s ease; }
-        /* Filtered-out tokens fully hidden — !important beats the tokIn reveal animation */
+        /* Filtered-out tokens fully hidden · !important beats the tokIn reveal animation */
         .pmap-root .tok.filtered-out { opacity: 0 !important; pointer-events: none !important; }
         .pmap-root.focusing .aura.dim { opacity: .03 !important; }
         .pmap-root.focusing .aura.on  { opacity: .4 !important; }

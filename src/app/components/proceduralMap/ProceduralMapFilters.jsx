@@ -17,7 +17,7 @@ const IconCheck = () => (
   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2f6fe0" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: "auto", flexShrink: 0 }}><path d="M20 6L9 17l-5-5" /></svg>
 );
 
-// Generic searchable dropdown — single-select (Country) or multi-select (Sub-Category).
+// Generic searchable dropdown · single-select (Country) or multi-select (Sub-Category).
 function Dropdown({ label, placeholder, options, activeId, onPick, multi = false, selectedIds = [], onToggle, onClearMulti }) {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
@@ -152,7 +152,7 @@ export default function ProceduralMapFilters({
           )}
         </div>
 
-        {/* Category — multi-select (OR within facet) */}
+        {/* Category · multi-select (OR within facet) */}
         <div className="pf-col" style={{ position: "relative" }} ref={catRef}>
           <label className="pf-label">Category</label>
           <div className={`pf-ctl pf-select ${catSels.length ? "pf-active" : ""}`} onClick={() => setCatOpen(!catOpen)}>
@@ -179,7 +179,7 @@ export default function ProceduralMapFilters({
           )}
         </div>
 
-        {/* Sub-Category — multi-select (OR within facet) */}
+        {/* Sub-Category · multi-select (OR within facet) */}
         <Dropdown label="Sub-Category" placeholder="Select sub-categories" options={subCategories}
           multi selectedIds={subs.map((s) => s.value)}
           onToggle={(o) => onToggleSub({ value: o.id, label: o.name })}

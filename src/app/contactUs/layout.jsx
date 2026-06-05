@@ -1,6 +1,6 @@
 const TITLE = "Contact us | TreasuryMap";
 const DESCRIPTION =
-  "Get in touch with the TreasuryMap team at Simply Treasury. Questions about the Treasury Technology Landscape, your vendor profile, or partnerships — we'll get back to you.";
+  "Get in touch with the TreasuryMap team at Simply Treasury. Questions about the Treasury Technology Landscape, your vendor profile, or partnerships · we'll get back to you.";
 const URL = "https://treasurymap.com/contactUs";
 
 export const metadata = {

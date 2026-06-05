@@ -1,4 +1,4 @@
-// Procedural constellation engine — ported & reworked from the validated
+// Procedural constellation engine · ported & reworked from the validated
 // design mock (treasurymap-A.html). Every query is scoped to the `root`
 // element passed in, so it is safe inside React.
 //
@@ -29,7 +29,7 @@ const P = {
 
 // Base logo cell (at scale 1.0). Adaptive scale shrinks these per category.
 // Tuned (with map height 1150) so EVERY vendor of a category fits without
-// overlap and without silent drops — verified across screen widths ≥1280.
+// overlap and without silent drops · verified across screen widths ≥1280.
 const CELL = { w: 80, h: 46, imgW: 76, imgH: 42 };
 const H_GAP = 4;    // horizontal gap between logos on a ring
 const V_GAP = 5;    // radial gap between rings
@@ -111,7 +111,7 @@ export function buildMap(root, cats, opts = {}) {
   let c0 = base;
   cats.forEach((c, i) => { wid[i] = weights[i] / sumW * TAU; starts[i] = c0; c0 += wid[i]; });
 
-  // hard title-rectangle exclusion (map-local) — covers the full centre box
+  // hard title-rectangle exclusion (map-local) · covers the full centre box
   const _cb = ce.getBoundingClientRect();
   const TR = {
     l: _cb.left - _mb.left - 26,
@@ -279,7 +279,7 @@ export function buildMap(root, cats, opts = {}) {
     if (placed < N) {
       console.warn(
         `[ProceduralMap] ${c.code}: only ${placed}/${N} logos placed ` +
-        `(${N - placed} dropped — wedge too tight at min scale ${S_MIN}).`
+        `(${N - placed} dropped · wedge too tight at min scale ${S_MIN}).`
       );
     }
 
@@ -307,7 +307,7 @@ export function buildMap(root, cats, opts = {}) {
     map.appendChild(lab);
   });
 
-  // labels are fixed — no resolution pass
+  // labels are fixed · no resolution pass
 
   function focusCat(i) {
     map.classList.add("focusing");
@@ -340,7 +340,7 @@ function resolveLabels(map, W, H, cx, cy) {
     el: l,
     x: parseFloat(l.style.left), y: parseFloat(l.style.top),
     w: l.offsetWidth || 140, h: l.offsetHeight || 60,
-    // radial direction from centre — used to push outward
+    // radial direction from centre · used to push outward
     ax: parseFloat(l.style.left) - cx,
     ay: parseFloat(l.style.top)  - cy,
   }));
@@ -358,7 +358,7 @@ function resolveLabels(map, W, H, cx, cy) {
     clamp(p);
   };
 
-  // Separate labels from logos — push radially outward
+  // Separate labels from logos · push radially outward
   const sepFromToks = () => {
     let moved = false;
     for (const p of pos)
@@ -373,7 +373,7 @@ function resolveLabels(map, W, H, cx, cy) {
     return moved;
   };
 
-  // Separate labels from each other — push each radially outward by half
+  // Separate labels from each other · push each radially outward by half
   const sepFromLabels = () => {
     let moved = false;
     for (let i = 0; i < pos.length; i++)

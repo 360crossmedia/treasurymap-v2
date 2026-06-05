@@ -6,7 +6,7 @@ import CompanyPageClient from "../../companyPage/[companyId]/CompanyPageClient";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://treasurymap-v2-production.up.railway.app";
 
-// React.cache() deduplicates the fetch within a single request — generateMetadata
+// React.cache() deduplicates the fetch within a single request · generateMetadata
 // and the page Layout call this function but only ONE network request is made.
 const fetchCompanyBySlug = cache(async (slug) => {
   try {
@@ -87,7 +87,7 @@ export async function generateMetadata({ params }) {
       ? firstSentence
       : rawDesc.slice(0, 160)).trim();
   } else {
-    description = `${name} on the TreasuryMap Treasury Technology Landscape — categories, profile, and insights.`;
+    description = `${name} on the TreasuryMap Treasury Technology Landscape · categories, profile, and insights.`;
   }
 
   const canonical = `${SITE}/providers/${slugify(name)}`;

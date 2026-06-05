@@ -1,4 +1,4 @@
-// Server component — exporte les metadata SEO + Open Graph pour /get-my-list.
+// Server component · exporte les metadata SEO + Open Graph pour /get-my-list.
 // Le layout délègue children à la page (qui reste un client component).
 
 const TITLE = "Build my shortlist | TreasuryMap";

@@ -30,7 +30,7 @@ import { apiUploadSubOptions } from "../service/apiUploadSubOptions";
 import { apiGetSubOptionsByCompany } from "../service/apiGetSubOptionsByCompany";
 import { apiDeleteCompanyById } from "../service/apiDeleteCompanyById";
 
-// ── Section divider — turns the long form into clearly labelled sections ──────
+// ── Section divider · turns the long form into clearly labelled sections ──────
 const SectionHead = ({ n, title, sub, first }) => (
   <div
     style={{
@@ -154,7 +154,7 @@ const BodyForm = () => {
   const editingId = companyId || (backUpCompanyId ? Number(backUpCompanyId) : null);
 
   // Logo upload: accept common image formats. A transparent PNG still looks
-  // best on the map, but it is only a recommendation now — not enforced.
+  // best on the map, but it is only a recommendation now · not enforced.
   const handleLogoFile = (file) => {
     if (!file) return;
     setLogoError("");
@@ -286,7 +286,7 @@ const BodyForm = () => {
           dispatch(setIsLoading(false));
         }
       } else {
-        // CREATE — success depends only on the company being created.
+        // CREATE · success depends only on the company being created.
         // Answers + notification email are best-effort and never block the redirect.
         const isAdminCreate = userId == 1 || user == 1;
         if (isAdminCreate) {
@@ -471,7 +471,7 @@ const BodyForm = () => {
       </div>
       <div className={styles.rightContainer}>
         {isAdmin && (
-          <SectionHead first n="A" title="Admin · Visibility" sub="Only you see this — controls where the company shows up and its client status." />
+          <SectionHead first n="A" title="Admin · Visibility" sub="Only you see this · controls where the company shows up and its client status." />
         )}
         {(userId == 1 || backUpUserId == 1) && (
           <div className={styles.inputContainer}>
@@ -677,9 +677,9 @@ const BodyForm = () => {
 
         <SectionHead n="2" title="Positioning on the map" sub="Where and how your logo appears on the Treasury Map." />
         <div style={{ background: "#f0f6ff", border: "1px solid #e0ebfb", borderRadius: 12, padding: "12px 16px", marginBottom: 18, fontSize: 12.5, color: "#2a4a78", lineHeight: 1.55 }}>
-          <b>Main category</b> — where your single logo sits on the map.{" "}
-          <b>Categories</b> — every area you also operate in.{" "}
-          <b>Sub-categories</b> — the specific functions you cover (used by the map filters).
+          <b>Main category</b> · where your single logo sits on the map.{" "}
+          <b>Categories</b> · every area you also operate in.{" "}
+          <b>Sub-categories</b> · the specific functions you cover (used by the map filters).
         </div>
         <div className={styles.inputContainer}>
           <label className={styles.label} htmlFor="">

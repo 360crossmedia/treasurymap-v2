@@ -73,7 +73,7 @@ export default function MapExperience({ multiplayer = false }) {
   // Live total of unique vendors currently on this map (varies by mode).
   const totalVendors = vendors.length || 0;
 
-  // Drill-down panel (full category grid) — from clicking a category label.
+  // Drill-down panel (full category grid) · from clicking a category label.
   const drillCat = drillCode ? cats.find((c) => c.code === drillCode) : null;
   const drillId = drillCode ? CODE_TO_ID[drillCode] : null;
 
@@ -116,7 +116,7 @@ export default function MapExperience({ multiplayer = false }) {
           onMatchCount={setMatchCount}
         />
 
-        {/* Category drill-down — full grid of every vendor in the clicked category */}
+        {/* Category drill-down · full grid of every vendor in the clicked category */}
         {drillCat && (
           <CategoryPanel cat={drillCat} categoryId={drillId} onClose={() => setDrillCode(null)} />
         )}

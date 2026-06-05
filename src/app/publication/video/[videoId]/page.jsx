@@ -28,7 +28,7 @@ export async function generateMetadata({ params }) {
   if (!video) return {};
   const company = await fetchCompany(video.companyId);
   const canonical = `${SITE}/publication/video/${publicationSlug(video)}`;
-  const title = `${video.title}${company?.name ? ` — ${company.name}` : ""} | TreasuryMap`;
+  const title = `${video.title}${company?.name ? ` · ${company.name}` : ""} | TreasuryMap`;
   const description = (video.introduction || video.title || "").slice(0, 200);
   const image = video.coverImage;
   return {

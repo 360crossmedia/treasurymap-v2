@@ -10,7 +10,7 @@ import { setUser } from "../store/slices/user.slice";
 import { clearAuth } from "../service/authToken";
 import { usePathname } from "next/navigation";
 
-// TreasuryMap brand pin — crisp vector recreation of the official mark
+// TreasuryMap brand pin · crisp vector recreation of the official mark
 // (gradient teardrop + white aperture + water wave). Scales without pixelation.
 const PinIcon = () => (
   <svg className={styles.logoPinSvg} viewBox="0 0 40 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -97,7 +97,7 @@ const Navbar = ({ buttonLabel, multiplayerMap, set, rotate }) => {
             <span className={styles.linkSep} />
             <a className={styles.navbarA} href="/insights">Insights</a>
 
-            {/* Make my Selection — highlighted (new AI tool, points to Long List) */}
+            {/* Make my Selection · highlighted (new AI tool, points to Long List) */}
             <a className={styles.makeSelection} href="/get-my-list">
               <span className={styles.newDot} />
               Build my shortlist

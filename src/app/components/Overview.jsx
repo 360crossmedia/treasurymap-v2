@@ -24,7 +24,7 @@ const Overview = ({ initialCompany, qa = [] }) => {
         {/* Product */}
         {company?.productVersion && (
           <>
-            <h3 className={styles.subTitle}>Product{company?.productName ? ` — ${company.productName}` : ""}</h3>
+            <h3 className={styles.subTitle}>Product{company?.productName ? ` · ${company.productName}` : ""}</h3>
             <div
               className={styles.aboutText}
               dangerouslySetInnerHTML={{ __html: sanitizeRich(company.productVersion) }}
@@ -32,7 +32,7 @@ const Overview = ({ initialCompany, qa = [] }) => {
           </>
         )}
 
-        {/* Q&A — server-rendered */}
+        {/* Q&A · server-rendered */}
         {qa.length > 0 && (
           <>
             <h3 className={styles.subTitle}>More details</h3>

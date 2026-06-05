@@ -19,12 +19,12 @@ const HeaderArticle = ({ title }) => {
           letterSpacing: "-.01em",
         }}
       >
-        {isMedia ? `Media Zone — ${title}` : "Complete the company's information"}
+        {isMedia ? `Media Zone · ${title}` : "Complete the company's information"}
       </h1>
       <p style={{ fontSize: 14.5, color: "#5a6a85", margin: 0 }}>
         {isMedia
           ? "Create and manage this company's articles and videos."
-          : "Fill in what you have — you can always come back to complete the rest."}
+          : "Fill in what you have · you can always come back to complete the rest."}
       </p>
     </div>
   );

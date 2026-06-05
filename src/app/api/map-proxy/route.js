@@ -1,4 +1,4 @@
-// Server-side proxy — bypasses CORS restriction on the client back.
+// Server-side proxy · bypasses CORS restriction on the client back.
 // The client back only allows Origin: treasurymap.com, so browser requests
 // from localhost (dev) or our Railway front are blocked.
 // This route fetches server-side and forwards the JSON.

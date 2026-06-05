@@ -54,7 +54,7 @@ export default function BodyPublicationsControl() {
   const [typeF, setTypeF] = useState("all");
   const [statusF, setStatusF] = useState("all");
   const [sortDir, setSortDir] = useState("new"); // "new" = newest first, "old" = oldest first
-  const [newKind, setNewKind] = useState(null); // "article" | "video" — opens the company picker
+  const [newKind, setNewKind] = useState(null); // "article" | "video" · opens the company picker
   const [mediaPick, setMediaPick] = useState(false); // open Media Zone → pick a company first
 
   // Open a company's Media Zone (per-company articles/videos manager).
@@ -264,7 +264,7 @@ export default function BodyPublicationsControl() {
 
         {/* Featured (shown first, in order) */}
         <h2 className="pc-sec">
-          ★ Featured on Insights <span>shown first — use ↑↓ to set the order</span>
+          ★ Featured on Insights <span>shown first · use ↑↓ to set the order</span>
           {slotCount > 0 && (
             <span className={`pc-featcount ${featuredFull ? "full" : ""}`}>
               {featuredCount}/{slotCount}{featuredFull ? " · full" : ""}
@@ -373,11 +373,11 @@ export default function BodyPublicationsControl() {
                   <div className="pc-rowact">
                     <button
                       title={featuredPos[pubKey(p)]
-                        ? `Featured #${featuredPos[pubKey(p)]} — click to remove`
+                        ? `Featured #${featuredPos[pubKey(p)]} · click to remove`
                         : !p.live
                         ? "Set the publication live to feature it"
                         : featuredFull
-                        ? `Featured is full (${featuredCount}/${slotCount}) — remove one to add another`
+                        ? `Featured is full (${featuredCount}/${slotCount}) · remove one to add another`
                         : "Add to featured"}
                       className={`feat ${featuredPos[pubKey(p)] ? "on" : ""}`}
                       disabled={featuring === pubKey(p) || (!featuredPos[pubKey(p)] && (!p.live || featuredFull))}
@@ -400,7 +400,7 @@ export default function BodyPublicationsControl() {
       )}
       {mediaPick && (
         <PickCompanyModal
-          title="Open Media Zone — for which company?"
+          title="Open Media Zone · for which company?"
           cta="Open Media Zone →"
           companies={companies}
           onClose={() => setMediaPick(false)}
@@ -650,7 +650,7 @@ function CompanyPicker({ companies, value, onChange }) {
 function NewModal({ kind, companies, onClose, onContinue }) {
   return (
     <PickCompanyModal
-      title={`New ${kind} — for which company?`}
+      title={`New ${kind} · for which company?`}
       cta="Continue →"
       companies={companies}
       onClose={onClose}

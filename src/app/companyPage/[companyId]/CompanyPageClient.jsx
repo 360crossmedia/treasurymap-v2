@@ -45,7 +45,7 @@ export default function CompanyPageClient({ companyId, initialCompany, subcatego
   const company    = initialCompany;
   const [seeAll,   setSeeAll] = useState(false);
 
-  // Names resolved server-side (SSR'd) — no client fetch, good for SEO
+  // Names resolved server-side (SSR'd) · no client fetch, good for SEO
   const subcategories = subcategoryNames;
   const countries     = countryNames;
 
@@ -99,7 +99,7 @@ export default function CompanyPageClient({ companyId, initialCompany, subcatego
 
             {(mainMeta || otherCategories.length > 0) && (
               <div className={styles.badges}>
-                {/* Main category — highlighted (solid) */}
+                {/* Main category · highlighted (solid) */}
                 {mainMeta && (
                   <a
                     href={`/?category=${mainMeta.code}`}
@@ -109,13 +109,13 @@ export default function CompanyPageClient({ companyId, initialCompany, subcatego
                       color: "#fff",
                       borderColor: `hsl(${mainMeta.hue},60%,46%)`,
                     }}
-                    title={`Main category — ${mainMeta.full}`}
+                    title={`Main category · ${mainMeta.full}`}
                   >
                     <span className={styles.badgeStar}>★</span>
                     {mainMeta.code}
                   </a>
                 )}
-                {/* Other categories — light */}
+                {/* Other categories · light */}
                 {otherCategories.map((c) => (
                   <a
                     key={c.code}

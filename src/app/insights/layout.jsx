@@ -1,6 +1,6 @@
 const TITLE = "Insights | TreasuryMap";
 const DESCRIPTION =
-  "Articles, videos and research on treasury technology — curated insights from the TreasuryMap community and the Treasury Technology Landscape.";
+  "Articles, videos and research on treasury technology · curated insights from the TreasuryMap community and the Treasury Technology Landscape.";
 const URL = "https://treasurymap.com/insights";
 
 export const metadata = {

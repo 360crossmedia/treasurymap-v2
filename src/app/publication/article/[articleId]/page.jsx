@@ -28,7 +28,7 @@ export async function generateMetadata({ params }) {
   if (!article) return {};
   const company = await fetchCompany(article.companyId);
   const canonical = `${SITE}/publication/article/${publicationSlug(article)}`;
-  const title = `${article.title}${company?.name ? ` — ${company.name}` : ""} | TreasuryMap`;
+  const title = `${article.title}${company?.name ? ` · ${company.name}` : ""} | TreasuryMap`;
   const description = (article.introduction || article.title || "").slice(0, 200);
   const image = article.coverImage;
   return {
