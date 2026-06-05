@@ -449,7 +449,7 @@ export default function GetMyListPage() {
               <p className={styles.sectionSubtitle}>
                 Refine your request, add specific needs, name vendors you want compared,
                 ask for a particular angle. The more context you give, the more tailored
-                your Long List will be.
+                your shortlist will be.
               </p>
               <div className={styles.field}>
                 <textarea

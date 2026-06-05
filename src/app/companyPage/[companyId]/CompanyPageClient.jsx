@@ -240,7 +240,7 @@ export default function CompanyPageClient({ companyId, initialCompany, subcatego
         {/* Treasurer CTA */}
         <div className={styles.ctaTreasurer}>
           <h3>Building your shortlist?</h3>
-          <p>Get an AI-curated Long List matched to your treasury profile.</p>
+          <p>Get an AI-curated shortlist matched to your treasury profile.</p>
           <div className={styles.ctaTreasurerBtns}>
             <a href="/get-my-list" className={styles.ctaWhiteBtn}>Build my shortlist {I.arrow}</a>
           </div>
