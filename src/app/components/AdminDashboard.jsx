@@ -7,6 +7,9 @@ import { apiGetAllCompanies } from "../service/apiGetAllCompanies";
 import { apiGetCompaniesByOwner } from "../service/apiGetCompaniesByOwner";
 import { apiUpdateCompany } from "../service/apiUpdateCompany";
 import { apiGetAllUsers } from "../service/apiGetAllUsers";
+import { apiGetAllArticles } from "../service/apiGetAllArticles";
+import { apiGetAllVideos } from "../service/apiGetAllVideos";
+import { formatDateShort } from "../utils";
 import { cld } from "../utils/cloudinary";
 import { CAT_META } from "./proceduralMap/catMeta";
 
@@ -65,6 +68,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
   const [busy, setBusy] = useState({}); // id -> true while toggling
+  const [latestPubs, setLatestPubs] = useState(null); // admin: most recent articles/videos
 
   // vendor-path single select
   const [selectedId, setSelectedId] = useState(null);
@@ -88,6 +92,18 @@ export default function AdminDashboard() {
         setCompanies(a.sort((x, y) => (x.name || "").localeCompare(y.name || "")));
         setUsers(Object.fromEntries((userList || []).map((u) => [u.id, u.fullName || u.email])));
         if (uid !== 1 && a.length === 1) selectCompany(a[0].id);
+        // Admin: load the most recent publications across all companies.
+        if (uid === 1) {
+          Promise.all([apiGetAllArticles().catch(() => []), apiGetAllVideos().catch(() => [])])
+            .then(([arts, vids]) => {
+              const merged = [
+                ...(Array.isArray(arts) ? arts : []).map((x) => ({ ...x, isArticle: true })),
+                ...(Array.isArray(vids) ? vids : []).map((x) => ({ ...x, isArticle: false })),
+              ].sort((p, q) => new Date(q.createdAt || 0) - new Date(p.createdAt || 0));
+              setLatestPubs(merged.slice(0, 6));
+            })
+            .catch(() => setLatestPubs([]));
+        }
       } catch (_) {
         setCompanies([]);
       } finally {
@@ -212,6 +228,37 @@ export default function AdminDashboard() {
               <button onClick={() => router.push("/publicationsControl")}>{I.star} Publications</button>
               <button onClick={() => router.push("/accountsettings")}>{I.users} Accounts</button>
               <button onClick={() => router.push("/myaccount")}>{I.user} My account</button>
+            </div>
+
+            {/* Latest publications — recency at a glance */}
+            <div className="dash-card dash-pubs">
+              <div className="dash-pubs-head">
+                <h3>Latest publications</h3>
+                <button className="dash-pubs-all" onClick={() => router.push("/publicationsControl")}>Manage all →</button>
+              </div>
+              {latestPubs === null ? (
+                <p className="dash-pubs-empty">Loading…</p>
+              ) : latestPubs.length === 0 ? (
+                <p className="dash-pubs-empty">No publications yet.</p>
+              ) : (
+                <div className="dash-pubs-list">
+                  {latestPubs.map((p) => (
+                    <button
+                      key={`${p.isArticle ? "a" : "v"}-${p.id}`}
+                      className="dash-pub"
+                      onClick={() => router.push("/publicationsControl")}
+                      title="Open in Publications"
+                    >
+                      <span className={`dash-pub-type ${p.isArticle ? "art" : "vid"}`}>{p.isArticle ? "Article" : "Video"}</span>
+                      <span className="dash-pub-title">{p.title}</span>
+                      <span className="dash-pub-meta">
+                        {(companies.find((c) => c.id === p.companyId)?.name) || ""}
+                        {p.createdAt && <span className="dash-pub-date">{formatDateShort(p.createdAt)}</span>}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Toolbar */}
@@ -346,6 +393,20 @@ export default function AdminDashboard() {
         .dash-quick button { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1.5px solid #dce4ef; color: #2a3c5a; border-radius: 100px; padding: 9px 16px; font-size: 13.5px; font-weight: 600; cursor: pointer; transition: border-color .15s, background .15s, transform .15s; }
         .dash-quick button:hover { border-color: #b8c6db; background: #f7f9fc; transform: translateY(-1px); }
         .dash-quick button :global(svg) { color: #2f6fe0; }
+        .dash-pubs { padding: 18px 20px; margin-bottom: 18px; }
+        .dash-pubs-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+        .dash-pubs-head h3 { font-size: 14px; font-weight: 700; color: #0e2c5c; margin: 0; }
+        .dash-pubs-all { background: none; border: none; color: #2f6fe0; font-size: 13px; font-weight: 600; cursor: pointer; }
+        .dash-pubs-empty { color: #9aa3b5; font-size: 13.5px; margin: 4px 0; }
+        .dash-pubs-list { display: flex; flex-direction: column; gap: 2px; }
+        .dash-pub { display: flex; align-items: center; gap: 11px; padding: 9px 10px; border: none; background: none; border-radius: 9px; cursor: pointer; text-align: left; width: 100%; transition: background .14s; }
+        .dash-pub:hover { background: #f4f7fc; }
+        .dash-pub-type { flex-shrink: 0; font-size: 9.5px; font-weight: 700; padding: 2px 7px; border-radius: 100px; text-transform: uppercase; letter-spacing: .04em; }
+        .dash-pub-type.art { background: #e9f0fc; color: #2f6fe0; }
+        .dash-pub-type.vid { background: #fdeee0; color: #b06a18; }
+        .dash-pub-title { flex: 1; min-width: 0; font-size: 13.5px; font-weight: 600; color: #0e2c5c; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .dash-pub-meta { flex-shrink: 0; display: flex; align-items: center; gap: 10px; font-size: 12px; color: #9aa3b5; }
+        .dash-pub-date { font-family: 'JetBrains Mono', monospace; color: #5a6a85; }
 
         .dash-card { background: #fff; border: 1px solid #e6ecf5; border-radius: 18px; padding: 22px 24px; box-shadow: 0 10px 34px -18px rgba(10,26,51,.18); }
         .dash-card-title { font-size: 17px; font-weight: 700; color: #0e2c5c; margin: 0 0 14px; }

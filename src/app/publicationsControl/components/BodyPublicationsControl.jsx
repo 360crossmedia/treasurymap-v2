@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
-import { truncateHtmlString } from "../../utils";
+import { truncateHtmlString, formatDateShort } from "../../utils";
 import { apiGetMainPublications } from "@/app/service/apiGetMainPublication";
 import { apiUpdateMainPublication } from "@/app/service/apiUpdateMainPublication";
 import { apiGetAllCompanies } from "@/app/service/apiGetAllCompanies";
@@ -43,6 +43,7 @@ export default function BodyPublicationsControl() {
   const [search, setSearch] = useState("");
   const [typeF, setTypeF] = useState("all");
   const [statusF, setStatusF] = useState("all");
+  const [sortDir, setSortDir] = useState("new"); // "new" = newest first, "old" = oldest first
   const [newKind, setNewKind] = useState(null); // "article" | "video" — opens the company picker
   const [mediaPick, setMediaPick] = useState(false); // open Media Zone → pick a company first
 
@@ -110,7 +111,7 @@ export default function BodyPublicationsControl() {
   const visible = useMemo(() => {
     if (!allPubs) return [];
     const q = search.toLowerCase().trim();
-    return allPubs.filter((p) => {
+    const filtered = allPubs.filter((p) => {
       if (typeF === "article" && !p.isArticle) return false;
       if (typeF === "video" && p.isArticle) return false;
       if (statusF === "live" && !p.live) return false;
@@ -118,7 +119,9 @@ export default function BodyPublicationsControl() {
       if (q && !(p.title || "").toLowerCase().includes(q) && !(companyById[p.companyId] || "").toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [allPubs, search, typeF, statusF, companyById]);
+    const dir = sortDir === "old" ? 1 : -1;
+    return filtered.sort((a, b) => dir * (new Date(a.createdAt || 0) - new Date(b.createdAt || 0)));
+  }, [allPubs, search, typeF, statusF, sortDir, companyById]);
 
   return (
     <div className="pc">
@@ -173,6 +176,14 @@ export default function BodyPublicationsControl() {
               {[["all", "Any"], ["live", "Live"], ["draft", "Draft"]].map(([k, l]) => (
                 <button key={k} className={`pc-chip ${statusF === k ? "on" : ""}`} onClick={() => setStatusF(k)}>{l}</button>
               ))}
+              <span className="pc-sep" />
+              <button
+                className="pc-chip pc-sort"
+                onClick={() => setSortDir((d) => (d === "new" ? "old" : "new"))}
+                title="Toggle sort by publication date"
+              >
+                {sortDir === "new" ? "Newest first ↓" : "Oldest first ↑"}
+              </button>
             </div>
           </div>
           {allPubs === null ? (
@@ -282,6 +293,7 @@ export default function BodyPublicationsControl() {
         .pc-sep { width: 1px; height: 18px; background: #e3e9f2; margin: 0 2px; }
         .pc-chip { border: 1.5px solid #e3e9f2; background: #fff; color: #5a6a85; border-radius: 100px; padding: 6px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer; }
         .pc-chip.on { background: #eef4ff; border-color: #2f6fe0; color: #2f6fe0; }
+        .pc-sort { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
 
         .pc-back-drop { position: fixed; inset: 0; z-index: 400; background: rgba(10,26,51,.42); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 20px; }
         .pc-modal { background: #fff; border-radius: 18px; padding: 28px; max-width: 390px; text-align: center; box-shadow: 0 30px 80px -16px rgba(10,26,51,.4); }
@@ -356,6 +368,7 @@ function ChangeModal({ slot, companies, onClose, onSaved }) {
                       <input type="radio" name="pub" checked={!!sel} onChange={() => setSelected({ id: p.id, isArticle: p.isArticle })} />
                       <span className={`pcm-type ${p.isArticle ? "art" : "vid"}`}>{p.isArticle ? "Article" : "Video"}</span>
                       <span className="pcm-title">{p.title}</span>
+                      {p.createdAt && <span className="pcm-date">{formatDateShort(p.createdAt)}</span>}
                     </label>
                   );
                 })}
@@ -383,6 +396,7 @@ function ChangeModal({ slot, companies, onClose, onSaved }) {
         .pcm-type.vid { background: #fdeee0; color: #b06a18; }
         .pcm-type.art { background: #e9f0fc; color: #2f6fe0; }
         .pcm-title { flex: 1; min-width: 0; font-size: 13.5px; color: #0e2c5c; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .pcm-date { flex-shrink: 0; font-size: 11.5px; color: #9aa3b5; font-family: 'JetBrains Mono', monospace; }
         .pcm-err { color: #c0392b; font-size: 13px; margin: 8px 0 0; }
         .pcm-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
         .pcm-ghost { background: #f1f4f9; border: none; border-radius: 100px; padding: 11px 22px; font-weight: 600; color: #2a3c5a; cursor: pointer; }

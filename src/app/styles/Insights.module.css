@@ -196,6 +196,18 @@
   line-height: 1.55;
   margin: 0;
 }
+.cardMeta {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: auto 0 0;
+  padding-top: 10px;
+  border-top: 1px solid #f0f3f8;
+  font-size: 0.78rem;
+  color: #9aa3b5;
+  font-weight: 500;
+}
+.cardMetaDot { color: #cdd5e3; }
 
 /* ─── STATES ─────────────────────────────────────────────────────────────── */
 .empty {

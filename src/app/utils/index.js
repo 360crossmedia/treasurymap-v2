@@ -77,6 +77,14 @@ export const formatDate = (dateString) => {
   return formattedDate == "Invalid Date" ? "" : formattedDate;
 };
 
+// Compact date for cards/lists, e.g. "1 Jun 2026".
+export const formatDateShort = (dateString) => {
+  if (!dateString) return "";
+  const d = new Date(dateString);
+  if (isNaN(d.getTime())) return "";
+  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+};
+
 // FUNCTION TO FORMAT CATEGORY NAME TO SHOW ONLY THE NAME ON INSIGHTS NAVBAR
 export const formatCategoryName = (categoryName) => {
   const openingParenIndex = categoryName.indexOf("(");

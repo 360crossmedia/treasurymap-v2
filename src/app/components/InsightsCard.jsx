@@ -1,6 +1,6 @@
 "use client";
 import styles from "../styles/Insights.module.css";
-import { truncateHtmlString } from "../utils";
+import { truncateHtmlString, formatDateShort } from "../utils";
 import { publicationHref } from "../utils/slugify";
 import { coverImg } from "../utils/cloudinary";
 
@@ -20,6 +20,11 @@ const InsightsCard = ({ publication, companyName }) => {
       <div className={styles.cardBody}>
         <h3 className={styles.cardTitle}>{p.title}</h3>
         {excerpt && <p className={styles.cardExcerpt}>{excerpt}</p>}
+        <p className={styles.cardMeta}>
+          {companyName ? <span>{companyName}</span> : null}
+          {companyName && p.createdAt ? <span className={styles.cardMetaDot}>·</span> : null}
+          {p.createdAt ? <span>{formatDateShort(p.createdAt)}</span> : null}
+        </p>
       </div>
     </a>
   );
