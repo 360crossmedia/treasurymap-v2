@@ -26,6 +26,8 @@ const I = {
   back: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>,
   star: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>,
   starFill: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>,
+  up: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 15l-6-6-6 6"/></svg>,
+  down: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6"/></svg>,
   media: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4M10 8l5 3-5 3V8z"/></svg>,
 };
 
@@ -34,6 +36,7 @@ export default function BodyPublicationsControl() {
   const dispatch = useDispatch();
   const [mains, setMains] = useState(null);
   const [featuring, setFeaturing] = useState(null); // pubKey while promoting
+  const [reordering, setReordering] = useState(false); // while swapping featured slots
   const [companies, setCompanies] = useState([]);
   const [companyById, setCompanyById] = useState({});
   const [allPubs, setAllPubs] = useState(null);
@@ -119,8 +122,10 @@ export default function BodyPublicationsControl() {
     const rest = mains
       .filter((m) => m && m.id != null && featuredKey(m) !== k)
       .map((m) => ({ id: m.id, isArticle: !m.url }));
-    // Build the target ordering (length N, null = empty slot).
-    const target = isOn ? [...rest] : [{ id: p.id, isArticle: p.isArticle }, ...rest];
+    // Stars = membership only. Selecting appends to the first free slot WITHOUT
+    // reordering the existing ones (the order is set in the Featured section).
+    // Removing compacts the rest up, leaving a trailing empty slot.
+    const target = isOn ? [...rest] : [...rest, { id: p.id, isArticle: p.isArticle }];
     const newOrder = target.slice(0, N);
     while (newOrder.length < N) newOrder.push(null);
     setFeaturing(k);
@@ -137,7 +142,7 @@ export default function BodyPublicationsControl() {
       const results = await Promise.all(writes);
       if (results.some((r) => !r || r.status !== 200)) throw new Error("partial");
       await loadMains();
-      showToast(isOn ? "Removed from featured." : "Featured first on Insights.");
+      showToast(isOn ? "Removed from featured." : "Added to featured. Set its order below.");
     } catch (_) {
       showToast("Could not update featured. Please try again.", "err");
       await loadMains();
@@ -145,6 +150,30 @@ export default function BodyPublicationsControl() {
       setFeaturing(null);
     }
   };
+
+  // Reorder the featured list: swap a slot with its neighbour (move up/down).
+  const moveFeatured = async (i, dir) => {
+    if (!mains) return;
+    const j = i + dir;
+    if (j < 0 || j >= mains.length) return;
+    const a = mains[i], b = mains[j];
+    const payload = (m) => ({ publicationId: m && m.id != null ? m.id : null, isArticle: m && m.id != null ? !m.url : false });
+    setReordering(true);
+    try {
+      const results = await Promise.all([
+        apiUpdateMainPublication(i + 1, payload(b)),
+        apiUpdateMainPublication(j + 1, payload(a)),
+      ]);
+      if (results.some((r) => !r || r.status !== 200)) throw new Error("partial");
+      await loadMains();
+    } catch (_) {
+      showToast("Could not reorder. Please try again.", "err");
+      await loadMains();
+    } finally {
+      setReordering(false);
+    }
+  };
+
   const onSavedFeatured = async () => { await loadMains(); setModalSlot(null); showToast("Featured publication updated."); };
 
   const editPub = (p) => {
@@ -195,7 +224,7 @@ export default function BodyPublicationsControl() {
 
         {/* Featured (shown first, in order) */}
         <h2 className="pc-sec">
-          ★ Featured on Insights <span>shown first, in this order</span>
+          ★ Featured on Insights <span>shown first — use ↑↓ to set the order</span>
           {slotCount > 0 && (
             <span className={`pc-featcount ${featuredFull ? "full" : ""}`}>
               {featuredCount}/{slotCount}{featuredFull ? " · full" : ""}
@@ -215,6 +244,10 @@ export default function BodyPublicationsControl() {
                     <span className="pc-title">{p?.title ? truncateHtmlString(p.title, 80) : <em className="pc-muted">Empty</em>}</span>
                   </div>
                   {p?.id && <a className="pc-view" href={pubHref(p)} target="_blank" rel="noopener noreferrer">View ↗</a>}
+                  <div className="pc-reorder">
+                    <button title="Move up" disabled={i === 0 || reordering} onClick={() => moveFeatured(i, -1)}>{I.up}</button>
+                    <button title="Move down" disabled={i === mains.length - 1 || reordering} onClick={() => moveFeatured(i, 1)}>{I.down}</button>
+                  </div>
                   <button className="pc-change" onClick={() => setModalSlot(i + 1)}>Change</button>
                 </div>
               ))}
@@ -284,7 +317,7 @@ export default function BodyPublicationsControl() {
                         ? "Set the publication live to feature it"
                         : featuredFull
                         ? `Featured is full (${featuredCount}/${slotCount}) — remove one to add another`
-                        : "Feature first on Insights"}
+                        : "Add to featured"}
                       className={`feat ${featuredPos[pubKey(p)] ? "on" : ""}`}
                       disabled={featuring === pubKey(p) || (!featuredPos[pubKey(p)] && (!p.live || featuredFull))}
                       onClick={() => toggleFeature(p)}
@@ -369,6 +402,12 @@ export default function BodyPublicationsControl() {
         .pc-view { font-size: 12.5px; color: #2f6fe0; text-decoration: none; font-weight: 600; flex-shrink: 0; }
         .pc-view:hover { text-decoration: underline; }
         .pc-change { flex-shrink: 0; background: linear-gradient(135deg,#4D8DFF,#2f6fe0); color: #fff; border: none; padding: 8px 18px; border-radius: 100px; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 6px 16px -6px rgba(47,111,224,.55); }
+        .pc-reorder { display: inline-flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
+        .pc-reorder button { width: 26px; height: 17px; display: grid; place-items: center; border: 1px solid #e3e9f2; background: #fff; color: #5a6a85; cursor: pointer; padding: 0; }
+        .pc-reorder button:first-child { border-radius: 7px 7px 0 0; }
+        .pc-reorder button:last-child { border-radius: 0 0 7px 7px; border-top: none; }
+        .pc-reorder button:hover:not(:disabled) { background: #eef4ff; color: #2f6fe0; }
+        .pc-reorder button:disabled { opacity: .35; cursor: default; }
         .pc-rowact { display: inline-flex; gap: 5px; flex-shrink: 0; }
         .pc-rowact button { width: 31px; height: 31px; display: grid; place-items: center; border: none; background: #f4f7fc; border-radius: 8px; color: #5a6a85; cursor: pointer; transition: background .15s, color .15s; }
         .pc-rowact button:hover { background: #e7eef8; color: #0e2c5c; }
