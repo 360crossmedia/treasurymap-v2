@@ -46,6 +46,7 @@ const I = {
   users: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
   user: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
   search: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>,
+  mail2: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>,
 };
 
 const FILTERS = [
@@ -90,7 +91,7 @@ export default function AdminDashboard() {
         ]);
         const a = Array.isArray(list) ? list : [];
         setCompanies(a.sort((x, y) => (x.name || "").localeCompare(y.name || "")));
-        setUsers(Object.fromEntries((userList || []).map((u) => [u.id, u.fullName || u.email])));
+        setUsers(Object.fromEntries((userList || []).map((u) => [u.id, { name: u.fullName || u.email, email: u.email }])));
         if (uid !== 1 && a.length === 1) selectCompany(a[0].id);
         // Admin: load the most recent publications across all companies.
         if (uid === 1) {
@@ -320,7 +321,14 @@ export default function AdminDashboard() {
                               {c.clientPackage === "paid" ? "PAID CLIENT" : "FREE"}
                             </button>
                           </td>
-                          <td className="dash-owner">{users[c.userId] || (c.userId === 1 ? "Admin" : `#${c.userId}`)}</td>
+                          <td className="dash-owner">
+                            <span className="dash-owner-name">{users[c.userId]?.name || (c.userId === 1 ? "Admin" : `#${c.userId}`)}</span>
+                            {users[c.userId]?.email && (
+                              <a className="dash-owner-mail" href={`mailto:${users[c.userId].email}?subject=${encodeURIComponent(`TreasuryMap · ${c.name}`)}`} title={`Email ${users[c.userId].email}`}>
+                                {I.mail2} {users[c.userId].email}
+                              </a>
+                            )}
+                          </td>
                           <td className="dash-date">{timeAgo(c.updatedAt || c.createdAt)}</td>
                           <td className="ctr"><Switch on={!!c.live} busy={busy[c.id]} onClick={() => toggleField(c, "live")} /></td>
                           <td className="ctr"><Switch on={!!c.multiplayerMap} busy={busy[c.id]} onClick={() => toggleField(c, "multiplayerMap")} tone="teal" /></td>
@@ -368,7 +376,9 @@ export default function AdminDashboard() {
                     </div>
                     <div className="dash-actions">
                       <button className="dash-btn primary" onClick={() => openEdit(selected.id)}>{I.edit} Edit listing</button>
-                      <button className="dash-btn" onClick={() => openMedia(selected.id)}>{I.media} Media Zone</button>
+                      {selected.live
+                        ? <button className="dash-btn" onClick={() => openMedia(selected.id)}>{I.media} Media Zone</button>
+                        : <button className="dash-btn" disabled title="Available once your company is validated and live on the map">{I.media} Media Zone (locked)</button>}
                     </div>
                     {!selected.live && (
                       <div className="dash-featured">
@@ -492,7 +502,10 @@ export default function AdminDashboard() {
         .dash-client.free { background: #f1f4f9; color: #9aa3b5; }
         .dash-client:hover { filter: brightness(.96); }
         .dash-client:disabled { opacity: .55; cursor: default; }
-        .dash-owner { color: #6a788f; font-size: 12.5px; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .dash-owner { color: #6a788f; font-size: 12.5px; max-width: 220px; }
+        .dash-owner-name { display: block; color: #2a3c5a; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .dash-owner-mail { display: inline-flex; align-items: center; gap: 4px; margin-top: 2px; color: #2f6fe0; font-size: 11.5px; text-decoration: none; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .dash-owner-mail:hover { text-decoration: underline; }
         .dash-rowact { display: inline-flex; gap: 4px; }
         .dash-rowact button { width: 30px; height: 30px; display: grid; place-items: center; border: none; background: #f4f7fc; border-radius: 8px; color: #5a6a85; cursor: pointer; transition: background .15s, color .15s; }
         .dash-rowact button:hover { background: #e7eef8; color: #0e2c5c; }

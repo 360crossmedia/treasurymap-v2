@@ -44,8 +44,16 @@ export default function BodyMediaZone() {
 
   useEffect(() => {
     if (!companyId) return;
-    load();
-    apiGetCompanyData(companyId).then((c) => setCompanyName(c?.name || "")).catch(() => {});
+    apiGetCompanyData(companyId).then((c) => {
+      // Vendors can only manage media once their company is validated (live).
+      const isAdmin = typeof window !== "undefined" && String(localStorage.getItem("userId")) === "1";
+      if (c && c.live === false && !isAdmin) {
+        router.push("/dashboard");
+        return;
+      }
+      setCompanyName(c?.name || "");
+      load();
+    }).catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
