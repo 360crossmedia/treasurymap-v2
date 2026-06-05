@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import styles from "../styles/footerNew.module.css";
+import NewsletterForm from "./NewsletterForm";
 import bnpLogo from "../assets/BNP_logo.png";
 import intensumLogo from "../assets/intensum-logo.jpg";
 import kantoxLogo from "../assets/Kantox-logo.png";
@@ -11,6 +12,9 @@ const Footer = () => {
 
   return (
     <footer className={styles.footer}>
+      <div style={{ maxWidth: 1280, margin: "0 auto", width: "100%" }}>
+        <NewsletterForm variant="footer" />
+      </div>
       <div className={styles.top}>
         {/* Address */}
         <div className={styles.col}>
