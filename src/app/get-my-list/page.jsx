@@ -518,7 +518,7 @@ export default function GetMyListPage() {
                 disabled={!isValid || submitting}
               >
                 {submitting && <span className={styles.spinner} />}
-                {submitting ? "Generating..." : "Make Your Selection"}
+                {submitting ? "Generating..." : "Build my shortlist"}
               </button>
               <p className={styles.submitNote}>
                 You'll receive your personalised report by email in a few minutes.

@@ -38,7 +38,7 @@ export default function CategoryPanel({ cat, categoryId, onClose }) {
 
         <a className="catpanel-compare" href="/get-my-list"
           style={{ background: `linear-gradient(135deg,hsl(${hue},80%,55%),hsl(${hue},65%,38%))` }}>
-          Make my Selection →
+          Build my shortlist →
         </a>
       </div>
 

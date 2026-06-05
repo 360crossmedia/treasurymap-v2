@@ -156,7 +156,7 @@ export default function CompanyPageClient({ companyId, initialCompany, subcatego
                 </a>
               )}
               <a href="/get-my-list" className={styles.btnSecondary}>
-                Make my Selection {I.arrow}
+                Build my shortlist {I.arrow}
               </a>
             </div>
           </div>
@@ -242,7 +242,7 @@ export default function CompanyPageClient({ companyId, initialCompany, subcatego
           <h3>Building your shortlist?</h3>
           <p>Get an AI-curated Long List matched to your treasury profile.</p>
           <div className={styles.ctaTreasurerBtns}>
-            <a href="/get-my-list" className={styles.ctaWhiteBtn}>Make my Selection {I.arrow}</a>
+            <a href="/get-my-list" className={styles.ctaWhiteBtn}>Build my shortlist {I.arrow}</a>
           </div>
         </div>
 

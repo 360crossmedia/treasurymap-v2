@@ -100,7 +100,7 @@ const Navbar = ({ buttonLabel, multiplayerMap, set, rotate }) => {
             {/* Make my Selection — highlighted (new AI tool, points to Long List) */}
             <a className={styles.makeSelection} href="/get-my-list">
               <span className={styles.newDot} />
-              Make my Selection
+              Build my shortlist
             </a>
           </div>
         </div>
