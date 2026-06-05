@@ -322,10 +322,10 @@ export default function AdminDashboard() {
                             </button>
                           </td>
                           <td className="dash-owner">
-                            <span className="dash-owner-name">{users[c.userId]?.name || (c.userId === 1 ? "Admin" : `#${c.userId}`)}</span>
-                            {users[c.userId]?.email && (
-                              <a className="dash-owner-mail" href={`mailto:${users[c.userId].email}?subject=${encodeURIComponent(`TreasuryMap · ${c.name}`)}`} title={`Email ${users[c.userId].email}`}>
-                                {I.mail2} {users[c.userId].email}
+                            <span className="dash-owner-name">{c.ownerName || users[c.userId]?.name || (c.userId === 1 ? "Admin" : `#${c.userId}`)}</span>
+                            {(c.ownerEmail || users[c.userId]?.email) && (
+                              <a className="dash-owner-mail" href={`mailto:${c.ownerEmail || users[c.userId].email}?subject=${encodeURIComponent(`TreasuryMap · ${c.name}`)}`} title={`Email ${c.ownerEmail || users[c.userId].email}`}>
+                                {I.mail2} {c.ownerEmail || users[c.userId].email}
                               </a>
                             )}
                           </td>
