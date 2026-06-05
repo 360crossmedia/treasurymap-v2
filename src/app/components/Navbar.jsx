@@ -93,6 +93,8 @@ const Navbar = ({ buttonLabel, multiplayerMap, set, rotate }) => {
                 <span className={styles.linkSep} />
               </>
             )}
+            <a className={styles.navbarA} href="/providers">Providers</a>
+            <span className={styles.linkSep} />
             <a className={styles.navbarA} href="/contactUs">Contact us</a>
             <span className={styles.linkSep} />
             <a className={styles.navbarA} href="/insights">Insights</a>

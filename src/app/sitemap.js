@@ -35,6 +35,7 @@ export default async function sitemap() {
   // Public static pages that actually exist as routes.
   const staticPages = [
     { path: "", priority: 1.0, changeFrequency: "daily" },
+    { path: "/providers", priority: 0.9, changeFrequency: "daily" },
     { path: "/insights", priority: 0.7, changeFrequency: "weekly" },
     { path: "/multiplayer-map", priority: 0.6, changeFrequency: "weekly" },
     { path: "/contactUs", priority: 0.3, changeFrequency: "yearly" },

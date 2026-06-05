@@ -66,6 +66,8 @@ const Footer = () => {
       <div className={styles.bottom}>
         <span className={styles.copy}>© {year} TreasuryMap · Simply Treasury</span>
         <nav className={styles.links}>
+          <a className={styles.link} href="/providers">Providers</a>
+          <span className={styles.linkSep} />
           <a className={styles.link} href="/get-my-list">Build my shortlist</a>
           <span className={styles.linkSep} />
           <a className={styles.link} href="/gdpr">GDPR</a>
