@@ -24,6 +24,8 @@ const I = {
   trash: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>,
   search: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>,
   back: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>,
+  star: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>,
+  starFill: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>,
   media: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4M10 8l5 3-5 3V8z"/></svg>,
 };
 
@@ -31,6 +33,7 @@ export default function BodyPublicationsControl() {
   const router = useRouter();
   const dispatch = useDispatch();
   const [mains, setMains] = useState(null);
+  const [featuring, setFeaturing] = useState(null); // pubKey while promoting
   const [companies, setCompanies] = useState([]);
   const [companyById, setCompanyById] = useState({});
   const [allPubs, setAllPubs] = useState(null);
@@ -87,6 +90,49 @@ export default function BodyPublicationsControl() {
   }, []);
 
   const showToast = (msg, kind = "ok") => { setToast({ msg, kind }); setTimeout(() => setToast(null), 3000); };
+
+  // Featured helpers: which publications are featured, and at what position.
+  const featuredKey = (m) => `${m?.url ? "v" : "a"}-${m?.id}`;
+  const pubKey = (p) => `${p.isArticle ? "a" : "v"}-${p.id}`;
+  const featuredPos = useMemo(() => {
+    const map = {};
+    (mains || []).forEach((m, i) => { if (m && m.id != null) map[featuredKey(m)] = i + 1; });
+    return map;
+  }, [mains]);
+
+  // Promote a publication to Featured #1: insert at the top, shift the rest down,
+  // drop the last. Only the slots that actually change are written (in parallel).
+  const featureFirst = async (p) => {
+    if (!mains || !mains.length) return;
+    const N = mains.length;
+    const k = pubKey(p);
+    if (mains[0] && featuredKey(mains[0]) === k) { showToast("Already featured first."); return; }
+    const rest = mains
+      .filter((m) => m && m.id != null && featuredKey(m) !== k)
+      .map((m) => ({ id: m.id, isArticle: !m.url }));
+    const newOrder = [{ id: p.id, isArticle: p.isArticle }, ...rest].slice(0, N);
+    setFeaturing(k);
+    try {
+      const writes = [];
+      for (let i = 0; i < N; i++) {
+        const cur = mains[i] && mains[i].id != null ? featuredKey(mains[i]) : null;
+        const nx = newOrder[i] || null;
+        const nxKey = nx ? `${nx.isArticle ? "a" : "v"}-${nx.id}` : null;
+        if (cur !== nxKey) {
+          writes.push(apiUpdateMainPublication(i + 1, { publicationId: nx ? nx.id : null, isArticle: nx ? nx.isArticle : false }));
+        }
+      }
+      const results = await Promise.all(writes);
+      if (results.some((r) => !r || r.status !== 200)) throw new Error("partial");
+      await loadMains();
+      showToast("Featured first on Insights.");
+    } catch (_) {
+      showToast("Could not feature. Please try again.", "err");
+      await loadMains();
+    } finally {
+      setFeaturing(null);
+    }
+  };
   const onSavedFeatured = async () => { await loadMains(); setModalSlot(null); showToast("Featured publication updated."); };
 
   const editPub = (p) => {
@@ -204,6 +250,18 @@ export default function BodyPublicationsControl() {
                   {p.live ? <span className="pc-badge live">Live</span> : <span className="pc-badge draft">Draft</span>}
                   <a className="pc-view" href={p.isArticle ? `/publication/article/${p.id}` : `/publication/video/${p.id}`} target="_blank" rel="noopener noreferrer">View ↗</a>
                   <div className="pc-rowact">
+                    <button
+                      title={!p.live
+                        ? "Set the publication live to feature it"
+                        : featuredPos[pubKey(p)]
+                        ? `Featured #${featuredPos[pubKey(p)]} — move to top`
+                        : "Feature first on Insights"}
+                      className={`feat ${featuredPos[pubKey(p)] ? "on" : ""}`}
+                      disabled={!p.live || featuring === pubKey(p)}
+                      onClick={() => featureFirst(p)}
+                    >
+                      {featuredPos[pubKey(p)] ? I.starFill : I.star}
+                    </button>
                     <button title="Edit" onClick={() => editPub(p)}>{I.edit}</button>
                     <button title="Delete" className="del" onClick={() => setDelConfirm(p)}>{I.trash}</button>
                   </div>
@@ -286,6 +344,10 @@ export default function BodyPublicationsControl() {
         .pc-rowact button { width: 31px; height: 31px; display: grid; place-items: center; border: none; background: #f4f7fc; border-radius: 8px; color: #5a6a85; cursor: pointer; transition: background .15s, color .15s; }
         .pc-rowact button:hover { background: #e7eef8; color: #0e2c5c; }
         .pc-rowact button.del:hover { background: #fdeeee; color: #c0392b; }
+        .pc-rowact button.feat:hover { background: #fff7e6; color: #e0a32e; }
+        .pc-rowact button.feat.on { background: #fff4d9; color: #e0a32e; }
+        .pc-rowact button.feat:disabled { opacity: .45; cursor: default; }
+        .pc-rowact button.feat.on:disabled { opacity: 1; }
         .pc-toolbar { display: flex; align-items: center; gap: 12px; padding: 13px 16px; border-bottom: 1px solid #eef2f8; flex-wrap: wrap; }
         .pc-srch { display: flex; align-items: center; gap: 8px; background: #f4f7fc; border: 1.5px solid #e3e9f2; border-radius: 100px; padding: 8px 14px; color: #8a93a6; flex: 1; min-width: 180px; }
         .pc-srch input { border: none; outline: none; background: transparent; font-size: 13.5px; width: 100%; color: #0e2c5c; }
