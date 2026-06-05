@@ -22,7 +22,6 @@ export default function HomeIntro() {
           </p>
         </div>
         <div className="hi-actions">
-          <a className="hi-cta" href="/get-my-list">Build my shortlist →</a>
           <button
             type="button"
             className="hi-toggle"
@@ -81,17 +80,6 @@ export default function HomeIntro() {
           align-items: center;
           gap: 16px;
           flex-wrap: wrap;
-        }
-        .hi-cta {
-          background: #2f6fe0;
-          background-image: linear-gradient(90deg, #2f6fe0, #19a3e6);
-          color: #fff;
-          font-weight: 700;
-          font-size: 14px;
-          padding: 11px 20px;
-          border-radius: 10px;
-          text-decoration: none;
-          white-space: nowrap;
         }
         .hi-toggle {
           background: none;
