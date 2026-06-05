@@ -99,6 +99,9 @@ export default function BodyPublicationsControl() {
     (mains || []).forEach((m, i) => { if (m && m.id != null) map[featuredKey(m)] = i + 1; });
     return map;
   }, [mains]);
+  const slotCount = (mains || []).length;
+  const featuredCount = (mains || []).filter((m) => m && m.id != null).length;
+  const featuredFull = slotCount > 0 && featuredCount >= slotCount;
 
   // Toggle a publication's featured state.
   //  - Not featured  → insert at Featured #1, shift the rest down, drop the last.
@@ -109,6 +112,10 @@ export default function BodyPublicationsControl() {
     const N = mains.length;
     const k = pubKey(p);
     const isOn = !!featuredPos[k];
+    if (!isOn && featuredFull) {
+      showToast(`Featured is full (${featuredCount}/${slotCount}). Remove one first.`, "err");
+      return;
+    }
     const rest = mains
       .filter((m) => m && m.id != null && featuredKey(m) !== k)
       .map((m) => ({ id: m.id, isArticle: !m.url }));
@@ -187,7 +194,14 @@ export default function BodyPublicationsControl() {
         </header>
 
         {/* Featured (shown first, in order) */}
-        <h2 className="pc-sec">★ Featured on Insights <span>shown first, in this order</span></h2>
+        <h2 className="pc-sec">
+          ★ Featured on Insights <span>shown first, in this order</span>
+          {slotCount > 0 && (
+            <span className={`pc-featcount ${featuredFull ? "full" : ""}`}>
+              {featuredCount}/{slotCount}{featuredFull ? " · full" : ""}
+            </span>
+          )}
+        </h2>
         <div className="pc-card">
           {mains === null ? <p className="pc-pad pc-muted">Loading…</p> : mains.length === 0 ? (
             <p className="pc-pad pc-muted">No featured slots.</p>
@@ -268,9 +282,11 @@ export default function BodyPublicationsControl() {
                         ? `Featured #${featuredPos[pubKey(p)]} — click to remove`
                         : !p.live
                         ? "Set the publication live to feature it"
+                        : featuredFull
+                        ? `Featured is full (${featuredCount}/${slotCount}) — remove one to add another`
                         : "Feature first on Insights"}
                       className={`feat ${featuredPos[pubKey(p)] ? "on" : ""}`}
-                      disabled={featuring === pubKey(p) || (!p.live && !featuredPos[pubKey(p)])}
+                      disabled={featuring === pubKey(p) || (!featuredPos[pubKey(p)] && (!p.live || featuredFull))}
                       onClick={() => toggleFeature(p)}
                     >
                       {featuredPos[pubKey(p)] ? I.starFill : I.star}
@@ -357,6 +373,8 @@ export default function BodyPublicationsControl() {
         .pc-rowact button { width: 31px; height: 31px; display: grid; place-items: center; border: none; background: #f4f7fc; border-radius: 8px; color: #5a6a85; cursor: pointer; transition: background .15s, color .15s; }
         .pc-rowact button:hover { background: #e7eef8; color: #0e2c5c; }
         .pc-rowact button.del:hover { background: #fdeeee; color: #c0392b; }
+        .pc-featcount { font-size: 11.5px; font-weight: 700; padding: 2px 10px; border-radius: 100px; background: #eef4ff; color: #2f6fe0; font-family: 'JetBrains Mono', monospace; }
+        .pc-featcount.full { background: #fbe7e6; color: #c0392b; }
         .pc-featbadge { font-size: 10.5px; font-weight: 700; padding: 2px 9px; border-radius: 100px; flex-shrink: 0; background: #fff4d9; color: #cf8e1e; letter-spacing: .02em; }
         .pc-featbadge.first { background: linear-gradient(135deg,#f6b73c,#e0a32e); color: #fff; box-shadow: 0 2px 8px -2px rgba(224,163,46,.6); }
         .pc-rowact button.feat:hover { background: #fff7e6; color: #e0a32e; }
