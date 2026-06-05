@@ -9,6 +9,7 @@ import { setCompanyId } from "../store/slices/companyToUpdate.slice";
 import { setUser } from "../store/slices/user.slice";
 import { clearAuth } from "../service/authToken";
 import { usePathname } from "next/navigation";
+import NewsletterForm from "./NewsletterForm";
 
 // TreasuryMap brand pin — crisp vector recreation of the official mark
 // (gradient teardrop + white aperture + water wave). Scales without pixelation.
@@ -41,6 +42,7 @@ const Navbar = ({ buttonLabel, multiplayerMap, set, rotate }) => {
   const router   = useRouter();
   const dispatch = useDispatch();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [nlOpen,     setNlOpen]     = useState(false);
   const [loggedIn,   setLoggedIn]   = useState(undefined);
   const [isDesktop,  setIsDesktop]  = useState();
 
@@ -96,6 +98,15 @@ const Navbar = ({ buttonLabel, multiplayerMap, set, rotate }) => {
             <a className={styles.navbarA} href="/contactUs">Contact us</a>
             <span className={styles.linkSep} />
             <a className={styles.navbarA} href="/insights">Insights</a>
+            <span className={styles.linkSep} />
+            <button
+              type="button"
+              className={styles.navbarA}
+              style={{ background: "none", border: "none", cursor: "pointer", font: "inherit" }}
+              onClick={() => { setNlOpen(true); setIsMenuOpen(false); }}
+            >
+              Newsletter
+            </button>
 
             {/* Make my Selection — highlighted (new AI tool, points to Long List) */}
             <a className={styles.makeSelection} href="/get-my-list">
@@ -141,6 +152,15 @@ const Navbar = ({ buttonLabel, multiplayerMap, set, rotate }) => {
         </div>
 
       </nav>
+
+      {nlOpen && (
+        <div className={styles.nlBackdrop} onClick={() => setNlOpen(false)}>
+          <div className={styles.nlModal} onClick={(e) => e.stopPropagation()}>
+            <button className={styles.nlClose} onClick={() => setNlOpen(false)} aria-label="Close">✕</button>
+            <NewsletterForm variant="panel" />
+          </div>
+        </div>
+      )}
     </header>
   );
 };
