@@ -67,6 +67,7 @@ export default function AdminDashboard() {
   const userIdRedux = useSelector((s) => s.user);
 
   const [userId, setUserId] = useState(null);
+  const [session, setSession] = useState(null); // { id, email } decoded from the token
   const [companies, setCompanies] = useState([]);
   const [users, setUsers] = useState({});
   const [loading, setLoading] = useState(true);
@@ -98,6 +99,7 @@ export default function AdminDashboard() {
     if (tokenId) { try { localStorage.setItem("userId", String(tokenId)); } catch (_) {} }
     const uid = tokenId || Number(localStorage.getItem("userId")) || userIdRedux || null;
     setUserId(uid);
+    setSession(claims ? { id: tokenId, email: claims.email || null } : null);
     (async () => {
       try {
         const [list, userList] = await Promise.all([
@@ -243,7 +245,14 @@ export default function AdminDashboard() {
             <h1>Dashboard</h1>
             <p>{isAdmin ? "Manage every listing, publication and account." : "Manage your listing and media."}</p>
           </div>
-          <span className={`dash-role ${isAdmin ? "admin" : ""}`}>{isAdmin ? "Administrator" : "Vendor"}</span>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
+            <span className={`dash-role ${isAdmin ? "admin" : ""}`}>{isAdmin ? "Administrator" : "Vendor"}</span>
+            <span style={{ fontSize: 12, color: session?.email ? "#6a788f" : "#c0392b" }}>
+              {session?.email
+                ? `Signed in as ${session.email} (id ${session.id})`
+                : "Session not recognized · please log out and log in again"}
+            </span>
+          </div>
         </header>
 
         {/* ───────── ADMIN COMMAND CENTER ───────── */}
