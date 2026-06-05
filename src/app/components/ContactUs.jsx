@@ -105,7 +105,7 @@ const ContactUs = () => {
               <div className={styles.successIcon}>{Icon.check}</div>
               <h2 className={styles.successTitle}>Message sent</h2>
               <p className={styles.successText}>
-                Thanks for reaching out — we'll get back to you shortly.
+                Thanks for reaching out. We'll get back to you shortly.
               </p>
               <button className={styles.linkBtn} onClick={() => setStatus("idle")}>
                 Send another message
