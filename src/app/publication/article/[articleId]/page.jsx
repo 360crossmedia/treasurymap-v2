@@ -2,8 +2,9 @@ import { cache } from "react";
 import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
 import PublicationView from "../../../components/PublicationView";
+import { permanentRedirect } from "next/navigation";
 import { url } from "../../../service/url";
-import { slugify, idFromPublicationSlug } from "../../../utils/slugify";
+import { idFromPublicationSlug, publicationSlug } from "../../../utils/slugify";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://treasurymap-v2-production.up.railway.app";
 
@@ -26,8 +27,7 @@ export async function generateMetadata({ params }) {
   const article = await fetchArticle(id);
   if (!article) return {};
   const company = await fetchCompany(article.companyId);
-  const cs = slugify(company?.name);
-  const canonical = `${SITE}/publication/article/${cs ? `${cs}-${id}` : id}`;
+  const canonical = `${SITE}/publication/article/${publicationSlug(article)}`;
   const title = `${article.title}${company?.name ? ` — ${company.name}` : ""} | TreasuryMap`;
   const description = (article.introduction || article.title || "").slice(0, 200);
   const image = article.coverImage;
@@ -44,7 +44,6 @@ export async function generateMetadata({ params }) {
 }
 
 function JsonLd({ article, company, id }) {
-  const cs = slugify(company?.name);
   const data = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -55,7 +54,7 @@ function JsonLd({ article, company, id }) {
     dateModified: article.updatedAt || undefined,
     author: company?.name ? { "@type": "Organization", name: company.name } : undefined,
     publisher: { "@type": "Organization", name: "TreasuryMap" },
-    mainEntityOfPage: `${SITE}/publication/article/${cs ? `${cs}-${id}` : id}`,
+    mainEntityOfPage: `${SITE}/publication/article/${publicationSlug(article)}`,
   };
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />;
 }
@@ -64,6 +63,13 @@ export default async function ArticlePage({ params }) {
   const { articleId } = await params;
   const id = idFromPublicationSlug(articleId);
   const article = await fetchArticle(id);
+
+  // Canonicalise the URL: redirect bare-id or stale slugs to /{title-slug}-{id}.
+  if (article) {
+    const slug = publicationSlug(article);
+    if (slug && articleId !== slug) permanentRedirect(`/publication/article/${slug}`);
+  }
+
   const company = article ? await fetchCompany(article.companyId) : null;
   const catId   = company?.maincategory?.[0];
 

@@ -1,15 +1,10 @@
 "use client";
 import { formatDate } from "../utils";
 import styles from "../styles/Insights.module.css";
+import { publicationHref } from "../utils/slugify";
 
 const DoublePublicationAside = ({ publications }) => {
-  const handleHref = (index) => {
-    if (publications?.[index]?.url) {
-      return `/publication/video/${publications?.[index]?.id}`;
-    } else {
-      return `/publication/article/${publications?.[index]?.id}`;
-    }
-  };
+  const handleHref = (index) => publicationHref(publications?.[index]);
   return (
     <div className={styles.twoCards}>
       <div className={styles.miniCard}>

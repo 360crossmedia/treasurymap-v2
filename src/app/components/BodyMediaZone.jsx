@@ -10,6 +10,7 @@ import { apiGetCompanyData } from "../service/apiGetCompanyData";
 import { setArticleId } from "../store/slices/articleId.slice";
 import { setVideoId } from "../store/slices/videoId.slice";
 import { truncateHtmlString } from "../utils";
+import { publicationHref } from "../utils/slugify";
 
 const I = {
   edit: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>,
@@ -121,7 +122,7 @@ export default function BodyMediaZone() {
                       {it.createdAt && <span className="mz-date">{String(it.createdAt).slice(0, 10)}</span>}
                     </span>
                   </div>
-                  <a className="mz-view" href={`${hrefBase}${it.id}`} target="_blank" rel="noopener noreferrer">View ↗</a>
+                  <a className="mz-view" href={publicationHref(tab === "articles" ? { ...it, url: undefined } : { ...it })} target="_blank" rel="noopener noreferrer">View ↗</a>
                   <div className="mz-actions">
                     <button title="Edit" onClick={() => editItem(kind, it.id)}>{I.edit}</button>
                     <button title="Delete" className="del" onClick={() => setConfirm({ kind, id: it.id, title: it.title })}>{I.trash}</button>

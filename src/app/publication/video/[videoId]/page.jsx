@@ -2,8 +2,9 @@ import { cache } from "react";
 import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
 import PublicationView from "../../../components/PublicationView";
+import { permanentRedirect } from "next/navigation";
 import { url } from "../../../service/url";
-import { slugify, idFromPublicationSlug } from "../../../utils/slugify";
+import { idFromPublicationSlug, publicationSlug } from "../../../utils/slugify";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://treasurymap-v2-production.up.railway.app";
 
@@ -26,8 +27,7 @@ export async function generateMetadata({ params }) {
   const video = await fetchVideo(id);
   if (!video) return {};
   const company = await fetchCompany(video.companyId);
-  const cs = slugify(company?.name);
-  const canonical = `${SITE}/publication/video/${cs ? `${cs}-${id}` : id}`;
+  const canonical = `${SITE}/publication/video/${publicationSlug(video)}`;
   const title = `${video.title}${company?.name ? ` — ${company.name}` : ""} | TreasuryMap`;
   const description = (video.introduction || video.title || "").slice(0, 200);
   const image = video.coverImage;
@@ -44,7 +44,6 @@ export async function generateMetadata({ params }) {
 }
 
 function JsonLd({ video, company, id }) {
-  const cs = slugify(company?.name);
   const data = {
     "@context": "https://schema.org",
     "@type": "VideoObject",
@@ -54,7 +53,7 @@ function JsonLd({ video, company, id }) {
     uploadDate: video.createdAt || undefined,
     contentUrl: video.url || undefined,
     publisher: { "@type": "Organization", name: "TreasuryMap" },
-    mainEntityOfPage: `${SITE}/publication/video/${cs ? `${cs}-${id}` : id}`,
+    mainEntityOfPage: `${SITE}/publication/video/${publicationSlug(video)}`,
   };
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />;
 }
@@ -63,6 +62,13 @@ export default async function VideoPage({ params }) {
   const { videoId } = await params;
   const id = idFromPublicationSlug(videoId);
   const video = await fetchVideo(id);
+
+  // Canonicalise the URL: redirect bare-id or stale slugs to /{title-slug}-{id}.
+  if (video) {
+    const slug = publicationSlug(video);
+    if (slug && videoId !== slug) permanentRedirect(`/publication/video/${slug}`);
+  }
+
   const company = video ? await fetchCompany(video.companyId) : null;
   const catId   = company?.maincategory?.[0];
 

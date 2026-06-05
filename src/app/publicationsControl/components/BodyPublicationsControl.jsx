@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { truncateHtmlString, formatDateShort } from "../../utils";
+import { publicationHref } from "../../utils/slugify";
 import { apiGetMainPublications } from "@/app/service/apiGetMainPublication";
 import { apiUpdateMainPublication } from "@/app/service/apiUpdateMainPublication";
 import { apiGetAllCompanies } from "@/app/service/apiGetAllCompanies";
@@ -17,7 +18,7 @@ import { setVideoId } from "@/app/store/slices/videoId.slice";
 import { setCompanyId } from "@/app/store/slices/companyToUpdate.slice";
 
 const isVideo = (p) => !!p?.url;
-const pubHref = (p) => (isVideo(p) ? `/publication/video/${p?.id}` : `/publication/article/${p?.id}`);
+const pubHref = (p) => publicationHref(p);
 
 const I = {
   edit: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>,
@@ -349,7 +350,7 @@ export default function BodyPublicationsControl() {
                     </span>
                   )}
                   {p.live ? <span className="pc-badge live">Live</span> : <span className="pc-badge draft">Draft</span>}
-                  <a className="pc-view" href={p.isArticle ? `/publication/article/${p.id}` : `/publication/video/${p.id}`} target="_blank" rel="noopener noreferrer">View ↗</a>
+                  <a className="pc-view" href={publicationHref(p)} target="_blank" rel="noopener noreferrer">View ↗</a>
                   <div className="pc-rowact">
                     <button
                       title={featuredPos[pubKey(p)]

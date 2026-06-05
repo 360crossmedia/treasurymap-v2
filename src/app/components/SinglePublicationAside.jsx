@@ -1,15 +1,10 @@
 "use client";
 import styles from "../styles/Insights.module.css";
 import { formatDate } from "../utils";
+import { publicationHref } from "../utils/slugify";
 
 const SinglePublicationAside = ({ publication }) => {
-  const handleHref = (publication) => {
-    if (publication?.url) {
-      return `/publication/video/${publication?.id}`;
-    } else {
-      return `/publication/article/${publication?.id}`;
-    }
-  };
+  const handleHref = (publication) => publicationHref(publication);
   return (
     <div className={styles.card}>
       <a className={styles.link} href={handleHref(publication)}>
