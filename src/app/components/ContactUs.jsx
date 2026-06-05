@@ -15,8 +15,6 @@ const Icon = {
   check: <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>,
 };
 
-const ADDRESS = "1 rue de Chiny, L-1334 Luxembourg";
-
 const ContactUs = () => {
   const [form, setForm]     = useState({ name: "", email: "", company: "", message: "", website: "" });
   const [errors, setErrors] = useState({});
@@ -81,21 +79,6 @@ const ContactUs = () => {
             Association of Corporate Treasurers).
           </p>
 
-          <div className={styles.contacts}>
-            <a className={styles.contact} href="tel:+3312545545">
-              <span className={styles.contactIcon}>{Icon.phone}</span>
-              <span>+33 125 455 45</span>
-            </a>
-            <a className={styles.contact} href="mailto:francois@simplytreasury.com">
-              <span className={styles.contactIcon}>{Icon.mail}</span>
-              <span>francois@simplytreasury.com</span>
-            </a>
-            <a className={styles.contact} target="_blank" rel="noopener noreferrer"
-               href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ADDRESS)}`}>
-              <span className={styles.contactIcon}>{Icon.pin}</span>
-              <span>{ADDRESS}</span>
-            </a>
-          </div>
         </aside>
 
         {/* Right — form */}
