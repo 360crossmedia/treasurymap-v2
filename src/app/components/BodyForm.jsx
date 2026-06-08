@@ -225,7 +225,9 @@ const BodyForm = () => {
       let logo = "";
       if (image?.includes("https://")) logo = image;
       else if (file) logo = await uploadImage(file);
-      const users = await apiGetAllUsers();
+      // /users is admin-only now; a vendor would just get a 403. Only admins
+      // need the user list (to label the notification email by owner).
+      const users = isAdmin ? await apiGetAllUsers() : [];
 
       const data = {
         name: companyName,
@@ -301,6 +303,7 @@ const BodyForm = () => {
         if (result?.status == 201) {
           const newId = result?.data?.id;
           try { if (newId) await apiUploadAnswers(newId, answers); } catch (_) {}
+          try { if (newId) await apiUploadSubOptions(newId, selectedSubOptions); } catch (_) {}
           try {
             await apiSendCreateEmail({
               companyName,
