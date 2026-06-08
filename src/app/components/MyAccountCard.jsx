@@ -90,45 +90,34 @@ const MyAccountCard = () => {
   };
 
   const updatePassword = async () => {
-    if (passwordMatch) {
-      dispatch(setIsLoading(true));
+    if (!passwordMatch) return alert("Passwords don't match");
+    dispatch(setIsLoading(true));
+
+    // Admin acting on ANOTHER account is authorised by its token; it cannot know
+    // that user's current password, so skip the old-password re-check. A user
+    // changing their OWN password must confirm the current one.
+    const otherAccount = userIdToUpdate || backUpUserIdToUpdate;
+    if (!otherAccount) {
       const result = await apiLogin({
         email: email == oldEmail ? email.toLowerCase() : oldEmail.toLowerCase(),
         password: oldPassword,
       });
-      if (result?.status == 200) {
-        if (!userIdToUpdate && !backUpUserIdToUpdate) {
-          const updatePassword = await apiUpdatePassword(
-            userId ? userId : backUpUserId,
-            password
-          );
-          if (updatePassword.status == 200) {
-            dispatch(setIsLoading(false));
-            alert("Password updated successfully");
-            window.location.reload();
-          } else {
-            console.log(updatePassword);
-            dispatch(setIsLoading(false));
-          }
-        } else {
-          const updatePassword = await apiUpdatePassword(
-            userIdToUpdate ? userIdToUpdate : backUpUserIdToUpdate,
-            password
-          );
-          if (updatePassword.status == 200) {
-            dispatch(setIsLoading(false));
-            alert("Password updated successfully");
-            window.location.reload();
-          } else {
-            console.log(updatePassword);
-            dispatch(setIsLoading(false));
-          }
-        }
-      } else {
+      if (result?.status != 200) {
         alert("Wrong old password");
         dispatch(setIsLoading(false));
+        return;
       }
-    } else alert("Passwords don't match");
+    }
+
+    const target = otherAccount ? otherAccount : (userId ? userId : backUpUserId);
+    const res = await apiUpdatePassword(target, password);
+    dispatch(setIsLoading(false));
+    if (res?.status == 200) {
+      alert("Password updated successfully");
+      window.location.reload();
+    } else {
+      console.log(res);
+    }
   };
 
   const getUserData = async () => {
