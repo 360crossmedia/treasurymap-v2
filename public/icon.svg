@@ -1,20 +1,20 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="-8 -2 56 56" width="256" height="256">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 48" width="256" height="256">
   <defs>
-    <linearGradient id="tmPin" x1="20" y1="1" x2="20" y2="50" gradientUnits="userSpaceOnUse">
+    <linearGradient id="tmDrop" x1="20" y1="3" x2="20" y2="44" gradientUnits="userSpaceOnUse">
       <stop stop-color="#2f6fe0"/>
       <stop offset="1" stop-color="#19a3e6"/>
     </linearGradient>
-    <linearGradient id="tmWave" x1="20" y1="26" x2="20" y2="46" gradientUnits="userSpaceOnUse">
+    <linearGradient id="tmWave" x1="20" y1="30" x2="20" y2="44" gradientUnits="userSpaceOnUse">
       <stop stop-color="#7fe0ea"/>
       <stop offset="1" stop-color="#2db8dc"/>
     </linearGradient>
     <clipPath id="tmClip">
-      <path d="M20 1.6C10.9 1.6 3.5 9 3.5 18.1c0 11.6 16.5 31.9 16.5 31.9S36.5 29.7 36.5 18.1C36.5 9 29.1 1.6 20 1.6Z"/>
+      <path d="M20 3 C20 3 7 22 7 31 a13 13 0 1 0 26 0 C33 22 20 3 20 3 Z"/>
     </clipPath>
   </defs>
-  <path d="M20 1.6C10.9 1.6 3.5 9 3.5 18.1c0 11.6 16.5 31.9 16.5 31.9S36.5 29.7 36.5 18.1C36.5 9 29.1 1.6 20 1.6Z" fill="url(#tmPin)"/>
+  <path d="M20 3 C20 3 7 22 7 31 a13 13 0 1 0 26 0 C33 22 20 3 20 3 Z" fill="url(#tmDrop)"/>
   <g clip-path="url(#tmClip)">
-    <path d="M0 30c5-4 10.5-4 15.5 0s11 3 16-1l9-5v34H0V30Z" fill="url(#tmWave)" opacity="0.95"/>
-    <path d="M0 35.5c5.5-3.5 11 1 16-1.5s10.5 2 17.5-1.5V58H0V35.5Z" fill="#d2f0f6" opacity="0.5"/>
+    <path d="M0 33c5-3 10-3 15 0s11 3 16-1l9-3V48H0Z" fill="url(#tmWave)" opacity="0.95"/>
+    <path d="M0 38c5.5-3 11 1 16-1.5s10.5 2 18-1.5V48H0Z" fill="#d2f0f6" opacity="0.5"/>
   </g>
 </svg>
