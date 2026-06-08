@@ -2,7 +2,7 @@ import { cache } from "react";
 import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
 import PublicationView from "../../../components/PublicationView";
-import { permanentRedirect } from "next/navigation";
+import { permanentRedirect, notFound } from "next/navigation";
 import { url } from "../../../service/url";
 import { idFromPublicationSlug, publicationSlug } from "../../../utils/slugify";
 
@@ -63,6 +63,7 @@ export default async function ArticlePage({ params }) {
   const { articleId } = await params;
   const id = idFromPublicationSlug(articleId);
   const article = await fetchArticle(id);
+  if (!article) notFound(); // real 404 instead of a blank 200 page
 
   // Canonicalise the URL: redirect bare-id or stale slugs to /{title-slug}-{id}.
   if (article) {

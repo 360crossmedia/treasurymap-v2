@@ -94,12 +94,20 @@ export default function AdminDashboard() {
     let token = null;
     try { token = localStorage.getItem("token"); } catch (_) {}
     const claims = decodeToken(token);
-    const tokenId = claims && claims.id ? Number(claims.id) : null;
-    // Keep localStorage.userId in sync so the rest of the app agrees with the token.
-    if (tokenId) { try { localStorage.setItem("userId", String(tokenId)); } catch (_) {} }
-    const uid = tokenId || Number(localStorage.getItem("userId")) || userIdRedux || null;
+    // A missing OR expired token = no session. Never fall back to a stale
+    // localStorage.userId, which rendered a broken (data-less) admin view; send
+    // the user to log in instead.
+    const valid = claims && claims.id && (!claims.exp || claims.exp * 1000 > Date.now());
+    if (!valid) {
+      try { localStorage.removeItem("token"); localStorage.removeItem("userId"); } catch (_) {}
+      router.replace("/login");
+      return;
+    }
+    const tokenId = Number(claims.id);
+    try { localStorage.setItem("userId", String(tokenId)); } catch (_) {}
+    const uid = tokenId;
     setUserId(uid);
-    setSession(claims ? { id: tokenId, email: claims.email || null } : null);
+    setSession({ id: tokenId, email: claims.email || null });
     (async () => {
       try {
         const [list, userList] = await Promise.all([
