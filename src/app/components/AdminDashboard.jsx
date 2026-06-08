@@ -151,9 +151,15 @@ export default function AdminDashboard() {
     const link = `${window.location.origin}/linkupdate/${data.token}`;
     try {
       await navigator.clipboard.writeText(link);
-      alert(`Edit link copied, valid 30 days. Send it to the vendor:\n\n${link}`);
+      showToast(`Edit link copied for ${data.email || "the vendor"} · valid 30 days. Paste it into an email.`);
     } catch (_) {
-      window.prompt("Copy this edit link for the vendor (valid 30 days):", link);
+      // Clipboard blocked by the browser: show the link to copy manually. The
+      // token is long, so most of the URL is scrolled out of the field, hence
+      // the explicit "select all" hint.
+      window.prompt(
+        "Edit link (valid 30 days). It is long: press Cmd+A then Cmd+C to copy the whole thing:",
+        link
+      );
     }
   };
 
