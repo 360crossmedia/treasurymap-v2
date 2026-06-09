@@ -47,9 +47,9 @@ export default function ConfirmationStatus({ id, email, type = "longlist" }) {
 
   const subtitle = type === "compare"
     ? "A side-by-side vendor comparison PDF, delivered to your inbox."
-    : "A personalised shortlist, curated by AI, delivered to your inbox.";
+    : "A personalised shortlist, delivered to your inbox.";
 
-  const timing = type === "compare" ? "2–3 minutes" : "4–5 minutes";
+  const timing = type === "compare" ? "2-3 minutes" : "4-5 minutes";
 
   return (
     <div className="cfs-wrap">
