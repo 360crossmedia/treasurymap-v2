@@ -12,6 +12,8 @@ import { apiCreateMagicLink } from "../service/apiCreateMagicLink";
 import { apiSendSignUpAlert } from "../service/apiSendSignUpAlert";
 import { apiGetAllArticles } from "../service/apiGetAllArticles";
 import { apiGetAllVideos } from "../service/apiGetAllVideos";
+import { apiGetLonglistReports } from "../service/apiGetLonglistReports";
+import { url } from "../service/url";
 import { formatDateShort } from "../utils";
 import { cld } from "../utils/cloudinary";
 import { CAT_META } from "./proceduralMap/catMeta";
@@ -75,6 +77,7 @@ export default function AdminDashboard() {
   const [requested, setRequested] = useState(() => new Set()); // company ids the vendor asked to publish (this session)
   const [busy, setBusy] = useState({}); // id -> true while toggling
   const [latestPubs, setLatestPubs] = useState(null); // admin: most recent articles/videos
+  const [leads, setLeads] = useState(null); // admin: Build-my-shortlist requests
 
   // vendor-path single select
   const [selectedId, setSelectedId] = useState(null);
@@ -118,6 +121,12 @@ export default function AdminDashboard() {
         setCompanies(a.sort((x, y) => (x.name || "").localeCompare(y.name || "")));
         setUsers(Object.fromEntries((userList || []).map((u) => [u.id, { name: u.fullName || u.email, email: u.email }])));
         if (uid !== 1 && a.length === 1) selectCompany(a[0].id);
+        // Admin: load the Build-my-shortlist leads.
+        if (uid === 1) {
+          apiGetLonglistReports()
+            .then((r) => setLeads(Array.isArray(r) ? r : []))
+            .catch(() => setLeads([]));
+        }
         // Admin: load the most recent publications across all companies.
         if (uid === 1) {
           Promise.all([apiGetAllArticles().catch(() => []), apiGetAllVideos().catch(() => [])])
@@ -169,6 +178,31 @@ export default function AdminDashboard() {
         link
       );
     }
+  };
+
+  // Token-gated PDF link for a shortlist lead (admin only sees the token).
+  const leadPdfUrl = (l) =>
+    l && l.accessToken ? `${url}/api/v1/longlist/pdf/${l.id}?t=${l.accessToken}` : null;
+
+  // Export the shortlist leads to CSV (for the CRM).
+  const exportLeadsCsv = () => {
+    const rows = (leads || []).map((l) => ({
+      Date: l.createdAt ? new Date(l.createdAt).toISOString().slice(0, 10) : "",
+      Email: l.email || "",
+      Company: l.companyName || "",
+      Type: l.reportType === "comparison" ? "Comparison" : "Shortlist",
+      Categories: (l.categoryIds || []).join(" "),
+      Status: l.status || "",
+    }));
+    const headers = ["Date", "Email", "Company", "Type", "Categories", "Status"];
+    const esc = (v) => `"${String(v).replace(/"/g, '""')}"`;
+    const csv = [headers.join(","), ...rows.map((r) => headers.map((h) => esc(r[h])).join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `treasurymap-shortlist-leads-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(a.href);
   };
 
   // Vendor: one-click "request publication". Emails the TreasuryMap team and
@@ -324,6 +358,44 @@ export default function AdminDashboard() {
                       </span>
                     </button>
                   ))}
+                </div>
+              )}
+            </div>
+
+            {/* Shortlist leads · who requested a Build-my-shortlist */}
+            <div className="dash-card dash-leads">
+              <div className="dash-pubs-head">
+                <h3>Shortlist leads{Array.isArray(leads) && leads.length ? ` (${leads.length})` : ""}</h3>
+                {Array.isArray(leads) && leads.length > 0 && (
+                  <button className="dash-pubs-all" onClick={exportLeadsCsv}>Export CSV ↓</button>
+                )}
+              </div>
+              {leads === null ? (
+                <p className="dash-pubs-empty">Loading…</p>
+              ) : leads.length === 0 ? (
+                <p className="dash-pubs-empty">No shortlist requests yet.</p>
+              ) : (
+                <div className="dash-leads-scroll">
+                  <table className="dash-leads-table">
+                    <thead>
+                      <tr><th>Date</th><th>Email</th><th>Company</th><th>Type</th><th>Cat.</th><th>Status</th><th>PDF</th></tr>
+                    </thead>
+                    <tbody>
+                      {leads.map((l) => (
+                        <tr key={l.id}>
+                          <td className="nowrap">{l.createdAt ? formatDateShort(l.createdAt) : "—"}</td>
+                          <td><a href={`mailto:${l.email}?subject=${encodeURIComponent("TreasuryMap shortlist")}`}>{l.email}</a></td>
+                          <td>{l.companyName || "—"}</td>
+                          <td>{l.reportType === "comparison" ? "Compare" : "Shortlist"}</td>
+                          <td>{(l.categoryIds || []).length || (l.vendorIds || []).length || 0}</td>
+                          <td><span className={`dash-lead-status ${l.status}`}>{l.status}</span></td>
+                          <td>{l.status === "sent" && leadPdfUrl(l)
+                            ? <a href={leadPdfUrl(l)} target="_blank" rel="noopener noreferrer">Open</a>
+                            : "—"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               )}
             </div>
@@ -520,6 +592,20 @@ export default function AdminDashboard() {
         .dash-pubs-all { background: none; border: none; color: #2f6fe0; font-size: 13px; font-weight: 600; cursor: pointer; }
         .dash-pubs-empty { color: #9aa3b5; font-size: 13.5px; margin: 4px 0; }
         .dash-pubs-list { display: flex; flex-direction: column; gap: 2px; }
+
+        /* Shortlist leads table */
+        .dash-leads-scroll { max-height: 320px; overflow: auto; margin-top: 6px; border: 1px solid #eef2f8; border-radius: 10px; }
+        .dash-leads-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .dash-leads-table thead th { position: sticky; top: 0; background: #f4f8ff; color: #5a6a85; text-align: left; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; padding: 9px 12px; border-bottom: 1px solid #e1e7f1; }
+        .dash-leads-table td { padding: 9px 12px; border-bottom: 1px solid #f0f3f8; color: #2a3c5a; vertical-align: middle; }
+        .dash-leads-table tr:last-child td { border-bottom: none; }
+        .dash-leads-table td.nowrap { white-space: nowrap; color: #6a788f; }
+        .dash-leads-table a { color: #2f6fe0; text-decoration: none; }
+        .dash-leads-table a:hover { text-decoration: underline; }
+        .dash-lead-status { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; text-transform: capitalize; }
+        .dash-lead-status.sent { background: #e7f6ee; color: #1f8a52; }
+        .dash-lead-status.generating, .dash-lead-status.pending { background: #eef4ff; color: #2f6fe0; }
+        .dash-lead-status.failed { background: #fdeaea; color: #c0392b; }
         .dash-pub { display: flex; align-items: center; gap: 11px; padding: 9px 10px; border: none; background: none; border-radius: 9px; cursor: pointer; text-align: left; width: 100%; transition: background .14s; }
         .dash-pub:hover { background: #f4f7fc; }
         .dash-pub-type { flex-shrink: 0; font-size: 9.5px; font-weight: 700; padding: 2px 7px; border-radius: 100px; text-transform: uppercase; letter-spacing: .04em; }
