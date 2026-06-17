@@ -605,6 +605,7 @@ export default function AdminDashboard() {
         .dash-lead-status { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; text-transform: capitalize; }
         .dash-lead-status.sent { background: #e7f6ee; color: #1f8a52; }
         .dash-lead-status.generating, .dash-lead-status.pending { background: #eef4ff; color: #2f6fe0; }
+        .dash-lead-status.started { background: #fff3e0; color: #b26a00; }
         .dash-lead-status.failed { background: #fdeaea; color: #c0392b; }
         .dash-pub { display: flex; align-items: center; gap: 11px; padding: 9px 10px; border: none; background: none; border-radius: 9px; cursor: pointer; text-align: left; width: 100%; transition: background .14s; }
         .dash-pub:hover { background: #f4f7fc; }

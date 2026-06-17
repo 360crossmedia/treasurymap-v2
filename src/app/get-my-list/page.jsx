@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { url } from "../service/url";
+import { apiCaptureLead } from "../service/apiCaptureLead";
 import styles from "./styles.module.css";
 
 const COMPANY_SIZES = ["< €100M", "€100M – €1B", "€1B – €10B", "€10B+"];
@@ -102,6 +103,7 @@ export default function GetMyListPage() {
   const [gdprAccepted, setGdprAccepted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  const capturedRef = useRef(false); // anti-abandon: fire the early lead capture once
 
   useEffect(() => {
     fetch(`${url}/api/v1/longlist/categories`)
@@ -112,6 +114,15 @@ export default function GetMyListPage() {
 
   const toggleArray = (arr, setArr, value) => {
     setArr(arr.includes(value) ? arr.filter((x) => x !== value) : [...arr, value]);
+  };
+
+  // Capture the lead as soon as the email is valid (fire-and-forget, once), so a
+  // visitor who abandons the questionnaire is still contactable.
+  const maybeCaptureLead = () => {
+    const e = email.trim();
+    if (capturedRef.current || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) return;
+    capturedRef.current = true;
+    apiCaptureLead({ email: e, companyName: companyName.trim() || null, website });
   };
 
   const isValid =
@@ -210,6 +221,7 @@ export default function GetMyListPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  onBlur={maybeCaptureLead}
                   placeholder="you@company.com"
                   required
                 />
