@@ -163,7 +163,7 @@
 }
 .cardCover {
   position: relative;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 4 / 3; /* taller frame: portraits/headshots sit better, less crop */
   background-size: cover;
   background-position: center top; /* top-align so faces aren't cropped */
   background-color: #e7eef8;
