@@ -22,8 +22,14 @@ export async function POST(req) {
     if (Number(decoded && decoded.id) !== 1) {
       return NextResponse.json({ ok: false }, { status: 403 });
     }
+    // Insights list + every article and video detail page (dynamic routes).
     revalidatePath("/insights");
-    return NextResponse.json({ ok: true, revalidated: ["/insights"] });
+    revalidatePath("/publication/article/[articleId]", "page");
+    revalidatePath("/publication/video/[videoId]", "page");
+    return NextResponse.json({
+      ok: true,
+      revalidated: ["/insights", "/publication/article/*", "/publication/video/*"],
+    });
   } catch (e) {
     return NextResponse.json({ ok: false, error: "revalidate failed" }, { status: 500 });
   }

@@ -11,6 +11,7 @@ import { apiGetArticleById } from "../service/apiGetArticleById";
 import { apiGetVideoById } from "../service/apiGetVideoById";
 import { apiUpdateArticle } from "../service/apiUpdateArticle";
 import { apiUpdateVideo } from "../service/apiUpdateVideo";
+import { apiRevalidatePublications } from "../service/apiRevalidatePublications";
 import {
   formats,
   modules,
@@ -75,6 +76,7 @@ const BodyArticle = ({ isArticle }) => {
             });
             if (sendEmail?.status == 200) {
               dispatch(setIsLoading(false));
+              apiRevalidatePublications();
               alert("Article created succesfully");
               router.push("/mediaZone");
             } else {
@@ -111,6 +113,7 @@ const BodyArticle = ({ isArticle }) => {
             });
             if (sendEmail?.status == 200) {
               dispatch(setIsLoading(false));
+              apiRevalidatePublications();
               alert("Video created succesfully");
               router.push("/mediaZone");
             } else {
@@ -144,6 +147,7 @@ const BodyArticle = ({ isArticle }) => {
           });
           if (result?.status == 200) {
             dispatch(setIsLoading(false));
+            apiRevalidatePublications();
             alert("Article updated succesfully");
             router.push("/mediaZone");
           } else {
@@ -172,6 +176,7 @@ const BodyArticle = ({ isArticle }) => {
           });
           if (result.status == 200) {
             dispatch(setIsLoading(false));
+            apiRevalidatePublications();
             alert("Video updated succesfully");
             router.push("/mediaZone");
           } else {
