@@ -6,6 +6,7 @@ import { truncateHtmlString, formatDateShort } from "../../utils";
 import { publicationHref } from "../../utils/slugify";
 import { apiGetMainPublications } from "@/app/service/apiGetMainPublication";
 import { apiUpdateMainPublication } from "@/app/service/apiUpdateMainPublication";
+import { apiRevalidatePublications } from "@/app/service/apiRevalidatePublications";
 import { apiGetAllCompanies } from "@/app/service/apiGetAllCompanies";
 import { apiGetAllVideosByCompanyId } from "@/app/service/apiGetAllVideosByCompanyId";
 import { apiGetAllArticlesByCompanyId } from "@/app/service/apiGetAllArticlesByCompanyId";
@@ -154,6 +155,7 @@ export default function BodyPublicationsControl() {
       const results = await Promise.all(writes);
       if (results.some((r) => !r || r.status !== 200)) throw new Error("partial");
       await loadMains();
+      apiRevalidatePublications(); // flush the cached Insights page right away
       showToast(isOn ? "Removed from featured." : "Added to featured. Set its order below.");
     } catch (_) {
       showToast("Could not update featured. Please try again.", "err");
@@ -182,6 +184,7 @@ export default function BodyPublicationsControl() {
       const results = await Promise.all(writes);
       if (results.some((r) => !r || r.status !== 200)) throw new Error("partial");
       await loadMains();
+      apiRevalidatePublications(); // flush the cached Insights page right away
     } catch (_) {
       showToast("Could not reorder. Please try again.", "err");
       await loadMains();
