@@ -343,7 +343,7 @@ const BodyArticle = ({ isArticle }) => {
             rows="6"
             value={introduction}
             onChange={(e) => setIntroduction(e.target.value)}
-            maxLength={500}
+            maxLength={800}
           ></textarea>
         </div>
         {isArticle && (
