@@ -59,6 +59,19 @@
 
 .empty { font-size: 0.95rem; color: var(--muted); }
 
+/* Editorial: why it matters + selection criteria */
+.editorial { max-width: 820px; margin: 0 0 40px; }
+.editorialText { font-size: 0.98rem; line-height: 1.7; color: var(--ink); margin: 0 0 22px; }
+.criteriaTitle { font-size: 1rem; font-weight: 800; color: var(--navy); margin: 0 0 12px; }
+.criteria { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.criteria li {
+  position: relative; padding-left: 26px; font-size: 0.94rem; line-height: 1.55; color: var(--ink);
+}
+.criteria li::before {
+  content: ""; position: absolute; left: 4px; top: 9px; width: 8px; height: 8px;
+  border-radius: 2px; background: var(--blue);
+}
+
 .other { margin-top: 44px; padding-top: 28px; border-top: 1px solid var(--line); }
 .otherTitle { font-size: 1rem; font-weight: 800; color: var(--navy); margin: 0 0 14px; }
 .otherGrid { display: flex; flex-wrap: wrap; gap: 8px 10px; }

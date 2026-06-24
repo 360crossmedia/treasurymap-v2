@@ -43,6 +43,44 @@ export const CATEGORY_SUMMARY = {
   PSP: "Payment Service Providers that accept and process electronic payments, with FX, wallets, reporting and fraud protection.",
 };
 
+// "Why it matters for corporate treasurers" · one short paragraph per category.
+export const CATEGORY_WHY = {
+  TR: "Treasurers live or die by the quality of their reporting. Boards expect a clear, current view of cash, debt, liquidity and risk, and regulators expect it documented. Good reporting turns scattered data from banks, the TMS and ERP into decisions, and it is often the first capability a growing treasury professionalises.",
+  eBAM: "Managing bank accounts by paper and email is slow, error-prone and a real fraud and audit risk, especially across many banks and jurisdictions. eBAM gives treasury a controlled, auditable, standardised process for the entire account lifecycle, and is increasingly expected by auditors and KYC teams.",
+  BSG: "As soon as a company works with more than a handful of banks, bilateral connections become costly and fragile. A single gateway centralises connectivity, normalises formats and removes a major source of operational risk and reconciliation lag. It is the plumbing on which payments, reporting and forecasting all depend.",
+  PSP: "For treasuries supporting e-commerce, marketplaces or international sales, the PSP is where money actually enters the business. The choice affects acceptance rates, FX cost, settlement speed, cross-border reach and fraud exposure, so it belongs on the treasury risk register.",
+  FIDP: "Executing FX and rates deals by phone or email leaves money on the table and creates audit gaps. A dealing platform puts banks in live competition for best execution, time-stamps every trade and feeds the TMS automatically, improving both pricing and control.",
+  FDF: "Every downstream treasury process, revaluation, hedge accounting, forecasting and reporting, is only as good as the market data behind it. A reliable, automated data feed removes manual rate entry, a classic source of error, and keeps valuations defensible.",
+  ETL: "Treasury data lives in many systems that do not naturally talk to each other. ETL is the connective tissue that aggregates positions, exposures and flows into a single, clean dataset. Without it, treasurers spend their time on spreadsheets instead of decisions.",
+  CMA: "FX management is repetitive, rules-based and high-stakes, an ideal candidate for automation. CMA enforces the hedging policy consistently, removes manual errors across the exposure-to-hedge-accounting cycle, and frees the team from spreadsheet-driven hedging.",
+  CFF: "Cash visibility is the number one treasury priority, yet forecasting stays largely manual and Excel-bound in many companies. Dedicated tools consolidate data automatically, add scenario and sensitivity analysis, and increasingly use AI to sharpen accuracy, turning forecasting from a chore into a planning asset.",
+  TRMS: "The TRMS is the backbone of a mature treasury, the single system of record connecting cash, debt, investments, risk and accounting. Choosing one is a multi-year commitment that shapes how the whole function operates, which is why selection deserves real rigour.",
+  ERP: "For many mid-market companies, the ERP treasury module is the treasury system, with no separate TMS. Deep integration with financial data removes reconciliation overhead, but functional depth varies, so it is essential to know where the ERP module ends and a specialist tool is needed.",
+  FSC: "Working capital is often the cheapest source of liquidity a company has. Financial supply chain tools unlock it through supplier financing, dynamic discounting and receivables programmes, making them a direct lever on cash and a natural bridge between treasury, procurement and AP.",
+  OTS: "Not every treasury need fits a neat category. Bank fee analysis, KYC, guarantees, sanctions screening, netting and signature management each solve a specific, often painful problem. These specialist tools quietly remove risk and cost from the treasury stack.",
+  INT: "The best technology fails with a poor implementation. Integrators bring the methodology, platform expertise and change management that decide whether a project lands on time and delivers value. For most treasuries, the integrator choice is as consequential as the software choice.",
+  OUT: "Not every company has the scale or appetite to run treasury in-house. Outsourcing gives access to expert teams and dedicated technology under clear SLAs, covering anything from FX dealing to the full function, while leaving governance with the company.",
+};
+
+// "Key selection criteria" · 5 to 6 practitioner bullets per category.
+export const CATEGORY_CRITERIA = {
+  TR: ["Data coverage: can it pull from your TMS, ERP, all banks and market data sources?", "Real-time versus periodic: how fresh are positions and exposures?", "Self-service dashboards versus fixed reports, and board-ready outputs", "Regulatory and compliance reporting templates", "Drill-down from summary to transaction level", "Standalone tool or TMS module: does it fit your existing stack?"],
+  eBAM: ["SWIFT and ISO 20022 (acmt) message support", "Coverage of your banking partners", "Full lifecycle: open, maintain, close, mandates and signatories", "Audit trail, segregation of duties and approval workflows", "Integration with KYC and your TMS or ERP", "Reporting for legal and regulatory requirements"],
+  BSG: ["Protocol coverage: SWIFT, EBICS, host-to-host, APIs", "Format support and transformation (MT, ISO 20022 camt and pain, MT940, CSV, XML)", "Bank coverage and onboarding effort per bank", "Resilience, security and fraud controls", "Straight-through processing into TMS or ERP", "Pricing model: per bank, per message or flat"],
+  PSP: ["Acceptance methods and geographic reach", "FX handling and cross-border cost", "Settlement speed and reconciliation", "Fraud prevention and chargeback management", "Fees: transaction, FX margin and hidden costs", "Integration with your ERP or TMS and reporting"],
+  FIDP: ["Instrument coverage: FX spot, forward and swap, IRS, money market", "Multi-bank competitive execution and price discovery", "Pre- and post-trade analytics and audit trail", "Straight-through integration to your TMS", "Counterparty and bank coverage", "Compliance, best-execution and reporting support"],
+  FDF: ["Data types: FX rates, yield curves, credit, reference data", "Source quality, reliability and update frequency", "Delivery: file, API or direct system feed", "Integration with your TMS or ERP for revaluation", "Coverage of the instruments you actually hold", "Cost relative to in-house data sourcing"],
+  ETL: ["Connectors to your source systems (ERP, banks, trading, market data)", "Real-time API pipelines versus batch", "Treasury-specific data model and transformations", "Data quality, error handling and reconciliation", "Scalability as banks and entities are added", "Maintenance effort and dependency on IT"],
+  CMA: ["End-to-end coverage: exposure capture to hedge accounting", "Policy enforcement and automated hedge ratios", "Automated execution with bank counterparties", "IFRS 9 hedge accounting documentation", "ERP or TMS integration and exposure data quality", "Transparency of pricing and FX margins"],
+  CFF: ["Data sources: ERP, banks, AR and AP, other systems", "Forecast horizons: short, medium and long term", "Scenario, sensitivity and stress testing", "AI and ML forecasting and variance analysis", "Ease of updating and actuals versus forecast tracking", "Integration with the TMS and reporting"],
+  TRMS: ["Functional fit: cash, payments, debt, investments, risk, accounting", "Bank connectivity and market data integration", "Deployment: SaaS versus on-premise, and total cost of ownership", "Scalability across entities, currencies and geographies", "Implementation effort and integrator ecosystem", "Reporting, audit and regulatory support"],
+  ERP: ["Depth of the native treasury module versus a dedicated TMS", "Integration with the rest of the ERP financial data", "Bank connectivity and payment capabilities", "Where the module ends and a specialist tool is needed", "Implementation and upgrade complexity", "Total cost versus running a separate TMS"],
+  FSC: ["Programme types: reverse factoring, dynamic discounting, receivables finance", "Funder model: bank-funded, multi-funder or self-funded", "Supplier onboarding effort and reach", "Accounting treatment (on or off balance sheet) and audit comfort", "Integration with ERP or AP and treasury", "Pricing and impact on the cash conversion cycle"],
+  OTS: ["The specific problem solved (fees, KYC, guarantees, netting, screening)", "Fit with your existing TMS or ERP rather than overlap", "Integration and data requirements", "Regulatory relevance (sanctions, KYC, audit)", "Implementation effort versus the pain removed", "Vendor specialisation and references"],
+  INT: ["Platform expertise for your chosen TMS or ERP", "Track record on comparable treasury projects", "Methodology: project management, migration, change management", "Team seniority and continuity through the project", "Independence versus vendor affiliation", "Post go-live support model"],
+  OUT: ["Scope: FX dealing, cash, payments, reporting or full function", "SLAs, governance and control retained by you", "Technology used and reporting transparency", "Security, segregation of duties and audit", "Pricing model and scalability", "Exit and reversibility terms"],
+};
+
 // Ordered list (category-1 .. category-15) with id, code, full name, hue, SEO
 // slug, full definition and short summary.
 export const CATEGORIES = Object.entries(CAT_META).map(([key, m]) => {
@@ -56,6 +94,8 @@ export const CATEGORIES = Object.entries(CAT_META).map(([key, m]) => {
     slug: slugify(m.full),
     desc: CATEGORY_DESC[m.code] || "",
     summary: CATEGORY_SUMMARY[m.code] || "",
+    why: CATEGORY_WHY[m.code] || "",
+    criteria: CATEGORY_CRITERIA[m.code] || [],
   };
 });
 

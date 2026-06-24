@@ -114,6 +114,23 @@ export default async function CategoryPage({ params }) {
 
         <section className={styles.body}>
           <div className={styles.inner}>
+            {cat.why ? (
+              <div className={styles.editorial}>
+                <h2 className={styles.sectionTitle}>Why {cat.code} matters for corporate treasurers</h2>
+                <p className={styles.editorialText}>{cat.why}</p>
+                {cat.criteria?.length ? (
+                  <>
+                    <h3 className={styles.criteriaTitle}>What to look for when choosing</h3>
+                    <ul className={styles.criteria}>
+                      {cat.criteria.map((c) => (
+                        <li key={c}>{c}</li>
+                      ))}
+                    </ul>
+                  </>
+                ) : null}
+              </div>
+            ) : null}
+
             <h2 className={styles.sectionTitle}>
               {cat.full} providers
             </h2>
