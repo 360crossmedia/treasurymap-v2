@@ -14,5 +14,23 @@ TreasuryMap is published by Simply Treasury, founded by François Masquelier (Ch
 ## Categories on the map
 Treasury Management Systems (TMS/TRMS), Bank Single Gateway / connectivity (BSG), Payment Service Providers (PSP), Financial Instrument Dealing Platforms (FIDP), Currency Management Automation (CMA / FX), Cash Flow Forecasting (CFF), and more.
 
+## Category pages
+Each treasury-technology category has a dedicated page listing every provider on the map:
+- [Treasury Risk Management System (TRMS)](https://treasurymap.com/category/treasury-risk-management-system)
+- [Bank Single Gateway (BSG)](https://treasurymap.com/category/bank-single-gateway)
+- [Payment Service Provider (PSP)](https://treasurymap.com/category/payment-service-provider)
+- [Currency Management Automation (CMA / FX)](https://treasurymap.com/category/currency-management-automation)
+- [Cash-Flow Forecasting (CFF)](https://treasurymap.com/category/cash-flow-forecasting)
+- [Financial Instrument Dealing Platform (FIDP)](https://treasurymap.com/category/financial-instrument-dealing-platform)
+- [Financial Data Feeding (FDF)](https://treasurymap.com/category/financial-data-feeding)
+- [Enterprise Resource Planning (ERP)](https://treasurymap.com/category/enterprise-resource-planning)
+- [Extract Transform Load (ETL)](https://treasurymap.com/category/extract-transform-load)
+- [Financial Supply Chain (FSC)](https://treasurymap.com/category/financial-supply-chain)
+- [Electronic Bank Account Management (eBAM)](https://treasurymap.com/category/electronic-bank-account-management)
+- [Treasury Reporting (TR)](https://treasurymap.com/category/treasury-reporting)
+- [Integrators (INT)](https://treasurymap.com/category/integrators)
+- [Outsourcing (OUT)](https://treasurymap.com/category/outsourcing)
+- [Other Treasury Solutions (OTS)](https://treasurymap.com/category/other-treasury-solutions)
+
 ## Audience
 Corporate treasurers, treasury managers and CFOs of European multinationals (buy-side); treasury technology vendors and integrators (sell-side).

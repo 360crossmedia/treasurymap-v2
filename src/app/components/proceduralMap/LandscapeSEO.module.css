@@ -49,6 +49,8 @@
   color: var(--blue); background: #eef4ff; padding: 4px 9px; border-radius: 999px; margin-bottom: 10px;
 }
 .cat h3 { font-size: 1rem; font-weight: 800; color: var(--navy); margin: 0 0 6px; line-height: 1.2; }
+.catLink { color: inherit; text-decoration: none; }
+.catLink:hover { color: var(--blue); text-decoration: underline; }
 .cat p { font-size: 0.85rem; line-height: 1.45; color: var(--muted); margin: 0 0 12px; flex: 1; }
 .providers { display: flex; flex-wrap: wrap; gap: 5px 9px; margin-bottom: 10px; }
 .providers a { font-size: 0.8rem; color: var(--bd); text-decoration: none; border-bottom: 1px solid #d6e4fb; }

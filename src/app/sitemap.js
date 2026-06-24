@@ -1,5 +1,6 @@
 import { url } from "./service/url";
 import { slugify, publicationHref } from "./utils/slugify";
+import { CATEGORIES } from "./components/proceduralMap/categoryInfo";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://treasurymap-v2-production.up.railway.app";
@@ -67,5 +68,12 @@ export default async function sitemap() {
       priority: 0.6,
     }));
 
-  return [...staticPages, ...vendorPages, ...publicationPages];
+  // One landing page per treasury-technology category (/category/[slug]).
+  const categoryPages = CATEGORIES.map((c) => ({
+    url: `${SITE_URL}/category/${c.slug}`,
+    changeFrequency: "weekly",
+    priority: 0.7,
+  }));
+
+  return [...staticPages, ...categoryPages, ...vendorPages, ...publicationPages];
 }
