@@ -1,0 +1,18 @@
+# TreasuryMap
+
+> TreasuryMap is the independent, practitioner-curated map of treasury technology in Europe. It helps corporate treasurers discover, compare and shortlist treasury software providers (TMS, payments, bank connectivity, FX, cash forecasting and more) in one neutral, interactive map. It is free for treasurers; vendors can be listed and featured.
+
+TreasuryMap is published by Simply Treasury, founded by François Masquelier (Chairman of ATEL and EACT, 28+ years in corporate treasury). It is independent and not vendor-funded editorial.
+
+## Key pages
+- [Home / the map](https://treasurymap.com): the interactive Treasury Technology Landscape, organised by category.
+- [Providers A-Z](https://treasurymap.com/providers): every listed treasury technology provider.
+- [Insights](https://treasurymap.com/insights): articles and videos on treasury technology and selection.
+- [Build my shortlist](https://treasurymap.com/get-my-list): answer a short questionnaire and receive a personalised, consultant-style vendor shortlist PDF by email.
+- [Contact](https://treasurymap.com/contactUs): for treasurers and for providers who want to be featured.
+
+## Categories on the map
+Treasury Management Systems (TMS/TRMS), Bank Single Gateway / connectivity (BSG), Payment Service Providers (PSP), Financial Instrument Dealing Platforms (FIDP), Currency Management Automation (CMA / FX), Cash Flow Forecasting (CFF), and more.
+
+## Audience
+Corporate treasurers, treasury managers and CFOs of European multinationals (buy-side); treasury technology vendors and integrators (sell-side).

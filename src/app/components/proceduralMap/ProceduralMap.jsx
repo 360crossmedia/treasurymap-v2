@@ -314,10 +314,10 @@ export default function ProceduralMap({ multiplayer = false, filters, catSels = 
           </defs>
         </svg>
         <div className="center">
-          <h1>
+          <h2>
             THE TREASURY TECHNOLOGY LANDSCAPE
             {multiplayer && <span className="mp-badge">MULTIPLAYER MAP</span>}
-          </h1>
+          </h2>
         </div>
         <div className="tip" />
       </div>
@@ -433,12 +433,13 @@ export default function ProceduralMap({ multiplayer = false, filters, catSels = 
           position: absolute; transform: translate(-50%,-50%); z-index: 5;
           text-align: center; width: auto; white-space: nowrap; pointer-events: none;
         }
-        .pmap-root .center h1 {
+        .pmap-root .center h2 {
           font-family: 'Oswald', sans-serif; font-weight: 500; font-size: 40px;
           letter-spacing: .18em; line-height: 1; color: #0e2c5c; white-space: nowrap;
           text-shadow: 0 2px 26px rgba(255,255,255,.9);
+          margin: 0;
         }
-        .pmap-root .center h1 .mp-badge {
+        .pmap-root .center h2 .mp-badge {
           display: block; margin: 14px auto 0; width: fit-content;
           font-size: 23px; font-weight: 700; letter-spacing: .14em;
           color: #fff; background: linear-gradient(135deg, #17a87f, #0e7a5b);

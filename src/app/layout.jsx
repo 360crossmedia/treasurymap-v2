@@ -19,7 +19,7 @@ const SITE_NAME = "TreasuryMap";
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://treasurymap-v2-production.up.railway.app";
 const DEFAULT_DESCRIPTION =
-  "The Treasury Technology Landscape · discover treasury solutions, providers and integrators in one interactive map.";
+  "TreasuryMap is the independent, practitioner-curated map of treasury technology in Europe: find TMS, payments, FX and bank-connectivity providers in one interactive map.";
 const DEFAULT_OG_IMAGE =
   "https://res.cloudinary.com/dq7aof6vb/image/upload/f_auto,q_auto,w_1200/v1739685416/MultiplayerMapBg_z1htg0.png";
 
@@ -29,8 +29,12 @@ const ICON_V = "7";
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
-  title: { default: SITE_NAME, template: `%s | ${SITE_NAME}` },
+  title: {
+    default: "TreasuryMap · Independent Treasury Technology Map for Europe",
+    template: `%s | ${SITE_NAME}`,
+  },
   description: DEFAULT_DESCRIPTION,
+  alternates: { canonical: "/" },
   icons: {
     icon: [
       { url: `/icon.svg?v=${ICON_V}`, type: "image/svg+xml" },
@@ -55,10 +59,51 @@ export const metadata = {
   },
 };
 
+// Identity structured data (Organization + WebSite + Person). Tells search
+// engines and LLMs "who TreasuryMap is", which the SEO/GEO audit flagged as
+// missing on the home page.
+const STRUCTURED_DATA = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
+      name: SITE_NAME,
+      url: SITE_URL,
+      logo: `${SITE_URL}/icon.svg`,
+      description:
+        "The independent, practitioner-curated map of treasury technology in Europe.",
+      founder: { "@id": `${SITE_URL}/#francois` },
+      sameAs: ["https://www.simplytreasury.com"],
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      url: SITE_URL,
+      name: SITE_NAME,
+      publisher: { "@id": `${SITE_URL}/#organization` },
+    },
+    {
+      "@type": "Person",
+      "@id": `${SITE_URL}/#francois`,
+      name: "François Masquelier",
+      jobTitle: "Founder, TreasuryMap",
+      description:
+        "Founder of Simply Treasury, Chairman of ATEL and EACT, 28+ years in corporate treasury.",
+      worksFor: { "@id": `${SITE_URL}/#organization` },
+      sameAs: ["https://www.simplytreasury.com"],
+    },
+  ],
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(STRUCTURED_DATA) }}
+        />
         <Script
           strategy="afterInteractive"
           src="https://www.googletagmanager.com/gtag/js?id=G-3NPV4E3WWW"
