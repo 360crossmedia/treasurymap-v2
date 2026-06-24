@@ -33,11 +33,6 @@ const About = () => {
           </p>
         </header>
 
-        <div className={styles.lead}>
-          <strong>In a sector dominated by vendor marketing, an independent reference is rare.</strong>{" "}
-          That independence is the point.
-        </div>
-
         <h2 className={styles.sectionTitle}>How the map works</h2>
         <section className={styles.grid}>
           {CARDS.map((c) => (
