@@ -1,0 +1,14 @@
+"use client";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import About from "../components/About";
+
+export default function AboutPage() {
+  return (
+    <>
+      <Navbar buttonLabel="Log In" />
+      <About />
+      <Footer />
+    </>
+  );
+}

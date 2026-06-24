@@ -98,6 +98,8 @@ const Navbar = ({ buttonLabel, multiplayerMap, set, rotate }) => {
             <a className={styles.navbarA} href="/contactUs">Contact us</a>
             <span className={styles.linkSep} />
             <a className={styles.navbarA} href="/insights">Insights</a>
+            <span className={styles.linkSep} />
+            <a className={styles.navbarA} href="/about">About</a>
 
             {/* Make my Selection · highlighted (new AI tool, points to Long List) */}
             <a className={styles.makeSelection} href="/get-my-list">

@@ -29,7 +29,7 @@ export default async function LandscapeSEO() {
           Treasury technology in Europe, by category
         </h2>
         <p className={styles.lead}>
-          <strong>TreasuryMap</strong> is the independent, practitioner-curated map of treasury
+          <strong>TreasuryMap</strong> is the practitioner-curated map of treasury
           technology in Europe. It spans the full treasury stack across {categories.length} categories,
           from treasury and risk management systems to bank connectivity, FX, dealing platforms, cash
           forecasting and payments. Browse every category and the providers listed on the map below.
@@ -68,7 +68,7 @@ export default async function LandscapeSEO() {
         <p className={styles.foot}>
           TreasuryMap is published by{" "}
           <a href="https://www.simplytreasury.com" rel="noopener">Simply Treasury</a>, founded by
-          François Masquelier, Chairman of ATEL and EACT. Independent and not vendor-funded editorial.
+          François Masquelier, Chairman of ATEL and EACT.
         </p>
       </div>
     </section>
