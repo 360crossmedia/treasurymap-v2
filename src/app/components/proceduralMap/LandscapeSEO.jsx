@@ -10,24 +10,25 @@ import { providerHref } from "../../utils/slugify";
 import { CAT_META } from "./catMeta";
 import styles from "./LandscapeSEO.module.css";
 
-// One-line, practitioner-style definition per category code. Editorial copy ·
-// safe to tweak without touching the data wiring.
+// One-line definition per category code, condensed from the TreasuryMap report
+// (François Masquelier). Editorial copy · safe to tweak without touching the
+// data wiring.
 const DESC = {
-  FIDP: "Electronic platforms to deal FX, money-market and other instruments with banks.",
-  FDF: "Market data and pricing feeds for treasury: rates, FX, securities and ratings.",
-  CMA: "Automate FX exposure capture, hedging workflows and execution.",
-  INT: "Consultancies and integrators that implement and connect treasury technology.",
-  OTS: "Specialised tools across the wider treasury stack.",
-  TRMS: "Core systems that centralise cash, payments, risk and reporting across the group.",
-  ERP: "Enterprise resource planning systems that treasury connects to for finance data.",
-  OUT: "Outsourced treasury operations and managed services.",
-  ETL: "Data integration tools that extract, transform and load treasury data.",
-  FSC: "Supply-chain finance: receivables, payables and working-capital programmes.",
-  CFF: "Turn ERP and bank data into reliable, decision-ready cash forecasts.",
-  eBAM: "Manage bank accounts, signatories and mandates electronically.",
-  BSG: "Single gateways to every bank: SWIFT, EBICS, host-to-host and API connectivity.",
-  TR: "Dashboards, analytics and reporting for treasury.",
-  PSP: "Payment service providers and rails for corporate payments.",
+  FIDP: "Web-based platforms that put banks in live competition to trade FX, rates and OTC derivatives at best execution.",
+  FDF: "Feed TRMS, ERP and other systems with FX rates, yield curves and market data for pricing, accounting and revaluation.",
+  CMA: "Automate the full FX workflow: policy, hedge-ratio calculation, execution with banks and IFRS 9 hedge accounting.",
+  INT: "Consulting and implementation partners that select, integrate and optimise treasury technology, often platform-specialised.",
+  OTS: "Point solutions for specific needs: KYC, signature power, bank fee analysis, fraud and sanction screening, netting and more.",
+  TRMS: "The central system of record for treasury: cash, payments, risk and investments, integrated with ERP, banks and market data.",
+  ERP: "Enterprise systems with built-in treasury modules for cash, payments and bank connectivity, tightly tied to finance data.",
+  OUT: "Outsource part or all of treasury operations to third-party experts who execute FX, cash, payments and reporting under SLAs.",
+  ETL: "Data integration that extracts, transforms and loads financial data from banks, ERP and markets into treasury systems.",
+  FSC: "Optimise buyer-supplier flows: supply chain finance, dynamic discounting, receivables and payables for working capital.",
+  CFF: "Consolidate ERP and bank data into short-to-long-term cash forecasts, with scenario analysis and AI-assisted accuracy.",
+  eBAM: "Automate opening, maintaining and closing bank accounts and signatories with banks, on the SWIFT / ISO 20022 standard.",
+  BSG: "A single connectivity hub to exchange messages with every bank: SWIFT, ISO 20022, EBICS, APIs and legacy file formats.",
+  TR: "Real-time and periodic dashboards and analytics on cash, risk, hedging and liquidity, consolidated from TMS, ERP and banks.",
+  PSP: "Accept and process electronic payments, acting as gateway between merchants and banks, with FX, wallets and fraud protection.",
 };
 
 const PREVIEW_COUNT = 6; // provider names shown per card before "View all"
