@@ -1,0 +1,64 @@
+/* Server-rendered "Treasury technology by category" section.
+   Lives just under the map on the homepage · crawlable HTML for SEO/GEO.
+   Collapsed by default (<details>), compact. Colours match the site identity. */
+.wrap {
+  --navy: #0e2c5c;
+  --blue: #2f6fe0;
+  --bd: #1e478f;
+  --ink: #3a4a66;
+  --muted: #5a6a85;
+  --line: #e8edf5;
+  --bg: #f4f8ff;
+  background: var(--bg);
+  border-top: 1px solid #e1e7f1;
+  padding: 28px 24px 36px;
+}
+.inner { max-width: 1080px; margin: 0 auto; }
+
+.eyebrow {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--blue);
+}
+.title {
+  font-size: 1.3rem; font-weight: 800; color: var(--navy);
+  letter-spacing: -0.3px; line-height: 1.2; margin: 8px 0 10px;
+}
+.lead { font-size: 0.92rem; line-height: 1.55; color: var(--ink); max-width: 760px; margin: 0 0 18px; }
+.lead strong { color: var(--navy); font-weight: 700; }
+
+.collapse { border: 1px solid var(--line); border-radius: 16px; background: #fff; overflow: hidden; }
+.collapse > summary {
+  list-style: none; cursor: pointer; user-select: none;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 15px 22px; font-weight: 700; color: var(--navy); font-size: 0.95rem;
+}
+.collapse > summary::-webkit-details-marker { display: none; }
+.collapse > summary:hover { background: #f7faff; }
+.sumLeft { display: flex; align-items: center; gap: 12px; }
+.sumCount {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--blue); background: #eef4ff; padding: 4px 10px; border-radius: 999px; white-space: nowrap;
+}
+.chev { color: var(--blue); font-size: 20px; line-height: 1; transition: transform 0.2s; }
+.collapse[open] .chev { transform: rotate(180deg); }
+
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding: 6px 18px 22px; }
+.cat { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; }
+.tag {
+  align-self: flex-start; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--blue); background: #eef4ff; padding: 4px 9px; border-radius: 999px; margin-bottom: 10px;
+}
+.cat h3 { font-size: 1rem; font-weight: 800; color: var(--navy); margin: 0 0 6px; line-height: 1.2; }
+.cat p { font-size: 0.85rem; line-height: 1.45; color: var(--muted); margin: 0 0 12px; flex: 1; }
+.providers { display: flex; flex-wrap: wrap; gap: 5px 9px; margin-bottom: 10px; }
+.providers a { font-size: 0.8rem; color: var(--bd); text-decoration: none; border-bottom: 1px solid #d6e4fb; }
+.providers a:hover { border-bottom-color: var(--bd); }
+.all { font-size: 0.8rem; font-weight: 700; color: var(--blue); text-decoration: none; }
+.all:hover { text-decoration: underline; }
+
+.foot { margin-top: 22px; font-size: 0.88rem; line-height: 1.6; color: var(--muted); max-width: 800px; }
+.foot a { color: var(--blue); text-decoration: none; }
+.foot a:hover { text-decoration: underline; }
+
+@media (max-width: 880px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .grid { grid-template-columns: 1fr; } .wrap { padding: 24px 16px 30px; } }

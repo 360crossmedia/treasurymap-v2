@@ -15,7 +15,7 @@ const CODE_TO_ID = Object.fromEntries(
 
 // Shared map page body, used by both the homepage ("Treasury Map", 1 logo/vendor)
 // and /multiplayer-map ("Multiplayer Map", vendor repeated across every category).
-export default function MapExperience({ multiplayer = false }) {
+export default function MapExperience({ multiplayer = false, seoSection = null }) {
   const [filters, setFilters] = useState({});         // single-value facets: keyword / active
   const [catSels, setCatSels] = useState([]);         // multi-select categories [{code,hue,label}]
   const [subs, setSubs] = useState([]);               // multi-select sub-categories [{value,label}]
@@ -124,6 +124,8 @@ export default function MapExperience({ multiplayer = false }) {
           <CategoryPanel cat={drillCat} categoryId={drillId} onClose={() => setDrillCode(null)} />
         )}
       </div>
+      {/* Server-rendered SEO section (categories + providers) · homepage only. */}
+      {!multiplayer && seoSection}
       <Footer />
     </>
   );
