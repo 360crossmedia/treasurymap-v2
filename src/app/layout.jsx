@@ -35,6 +35,10 @@ export const metadata = {
   },
   description: DEFAULT_DESCRIPTION,
   alternates: { canonical: "/" },
+  verification: {
+    // Google Search Console · URL-prefix property (HTML tag method).
+    google: "RdmpWCorAO71Ej8qDaf7CDyUth6mXccCoIdsfdJwvK4",
+  },
   icons: {
     icon: [
       { url: `/icon.svg?v=${ICON_V}`, type: "image/svg+xml" },
