@@ -53,7 +53,11 @@ function JsonLd({ article, company, id }) {
     datePublished: article.createdAt || undefined,
     dateModified: article.updatedAt || undefined,
     author: company?.name ? { "@type": "Organization", name: company.name } : undefined,
-    publisher: { "@type": "Organization", name: "TreasuryMap" },
+    publisher: {
+      "@type": "Organization",
+      name: "TreasuryMap",
+      logo: { "@type": "ImageObject", url: `${SITE}/apple-icon.png` },
+    },
     mainEntityOfPage: `${SITE}/publication/article/${publicationSlug(article)}`,
   };
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />;

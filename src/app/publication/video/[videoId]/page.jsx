@@ -51,8 +51,12 @@ function JsonLd({ video, company, id }) {
     description: video.introduction || video.title,
     thumbnailUrl: video.coverImage || undefined,
     uploadDate: video.createdAt || undefined,
-    contentUrl: video.url || undefined,
-    publisher: { "@type": "Organization", name: "TreasuryMap" },
+    embedUrl: video.url || undefined,
+    publisher: {
+      "@type": "Organization",
+      name: "TreasuryMap",
+      logo: { "@type": "ImageObject", url: `${SITE}/apple-icon.png` },
+    },
     mainEntityOfPage: `${SITE}/publication/video/${publicationSlug(video)}`,
   };
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />;
