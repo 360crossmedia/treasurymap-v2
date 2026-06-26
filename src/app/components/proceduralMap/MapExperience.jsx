@@ -80,10 +80,8 @@ export default function MapExperience({ multiplayer = false, seoSection = null }
 
   return (
     <>
-      <link
-        href="https://fonts.googleapis.com/css2?family=Chivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Oswald:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet"
-      />
+      {/* Fonts are now loaded early in the document head (see layout.jsx) to
+          avoid a late font swap that shifted the layout (CLS). */}
       <Navbar buttonLabel="Log In" />
       {/* Onboarding strip · homepage only (not the /multiplayer-map view). */}
       {!multiplayer && <HomeIntro />}
