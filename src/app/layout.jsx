@@ -9,6 +9,7 @@ import "primereact/resources/themes/lara-light-cyan/theme.css";
 import LoadingLogic from "./components/LoadingLogic";
 import LoadingScreen from "./components/LoadingScreen";
 import ProtectedRoutes from "./components/ProtectedRoutes";
+import StyledJsxRegistry from "./StyledJsxRegistry";
 import Script from 'next/script';
 
 const inter = Inter({ subsets: ["latin"] });
@@ -139,10 +140,12 @@ export default function RootLayout({ children }) {
         <Providers>
           <ProtectedRoutes>
             <body className={inter.className}>
-              <LoadingLogic>
-                <LoadingScreen />
-              </LoadingLogic>
-              {children}
+              <StyledJsxRegistry>
+                <LoadingLogic>
+                  <LoadingScreen />
+                </LoadingLogic>
+                {children}
+              </StyledJsxRegistry>
               <Analytics />
               <SpeedInsights />
             </body>
