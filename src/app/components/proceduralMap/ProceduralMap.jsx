@@ -300,7 +300,7 @@ export default function ProceduralMap({ multiplayer = false, filters, catSels = 
         </div>
       )}
 
-      <div className={"pmap-root" + (multiplayer ? " pmap-root--mp" : "")} ref={rootRef}>
+      <div className={"pmap-root" + (multiplayer ? " pmap-root--mp" : "") + (loading ? " pmap-loading" : "")} ref={rootRef}>
         <div className="circuit" />
         <div className="titleglow" />
         <div className="auras" />
@@ -400,7 +400,12 @@ export default function ProceduralMap({ multiplayer = false, filters, catSels = 
           position: relative; height: 1150px; overflow: hidden;
           background: radial-gradient(ellipse 80% 76% at 50% 50%, #fbfdff 0%, #e7eef8 50%, #d2ddec 100%);
           font-family: 'Chivo', sans-serif; color: #0a1a33;
+          /* Reveal the map only once it is built and fonts are ready. The build
+             and font swap happen while invisible, so their layout shifts do not
+             count toward CLS (Core Web Vitals). Purely visual · no layout impact. */
+          opacity: 1; transition: opacity .5s ease;
         }
+        .pmap-root.pmap-loading { opacity: 0; }
         /* Multiplayer map: green circuit-board theme (echoes the original) */
         .pmap-root.pmap-root--mp {
           height: 1200px;
