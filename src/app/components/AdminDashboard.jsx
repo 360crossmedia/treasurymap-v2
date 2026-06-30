@@ -9,6 +9,7 @@ import { apiUpdateCompany } from "../service/apiUpdateCompany";
 import { apiGetAllUsers } from "../service/apiGetAllUsers";
 import { decodeToken } from "../service/decodeToken";
 import { apiCreateMagicLink } from "../service/apiCreateMagicLink";
+import { apiUpdatePassword } from "../service/apiUpdatePassword";
 import { apiSendSignUpAlert } from "../service/apiSendSignUpAlert";
 import { apiGetAllArticles } from "../service/apiGetAllArticles";
 import { apiGetAllVideos } from "../service/apiGetAllVideos";
@@ -74,6 +75,7 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState({});
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
+  const [pwReset, setPwReset] = useState(null); // { name, email, password } · shown once after an admin password reset
   const [requested, setRequested] = useState(() => new Set()); // company ids the vendor asked to publish (this session)
   const [busy, setBusy] = useState({}); // id -> true while toggling
   const [latestPubs, setLatestPubs] = useState(null); // admin: most recent articles/videos
@@ -177,6 +179,37 @@ export default function AdminDashboard() {
         "Edit link (valid 30 days). It is long: press Cmd+A then Cmd+C to copy the whole thing:",
         link
       );
+    }
+  };
+
+  // Admin: generate a fresh password for a vendor who lost theirs. The backend
+  // route (PUT /auth/updatePassword/:userId) only lets the account owner or the
+  // admin (id 1) do this, so it is safe. We generate a strong random password,
+  // set it, and show it ONCE so the admin can copy it and send it to the vendor.
+  const genPassword = (len = 14) => {
+    // No ambiguous chars (0/O, 1/l/I) so it is easy to read and re-type.
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
+    const buf = new Uint32Array(len);
+    (window.crypto || window.msCrypto).getRandomValues(buf);
+    let p = "";
+    for (let i = 0; i < len; i++) p += chars[buf[i] % chars.length];
+    return p;
+  };
+
+  const resetVendorPassword = async (c) => {
+    if (!c?.userId) { alert("This company has no owner account yet."); return; }
+    const email = c.ownerEmail || users[c.userId]?.email || "";
+    if (!window.confirm(`Generate a new password for ${c.name}${email ? ` (${email})` : ""}?\n\nThis replaces their current password immediately. You will see the new password once · copy it and send it to them.`)) return;
+    const pwd = genPassword();
+    try {
+      const res = await apiUpdatePassword(c.userId, pwd);
+      if (res?.status === 200) {
+        setPwReset({ name: c.name, email, password: pwd });
+      } else {
+        alert("Could not reset the password. Please try again.");
+      }
+    } catch (_) {
+      alert("Could not reset the password. Please try again.");
     }
   };
 
@@ -477,6 +510,9 @@ export default function AdminDashboard() {
                               <button title="Copy vendor edit link" aria-label="Copy vendor edit link" onClick={() => copyEditLink(c)}>
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                               </button>
+                              <button title="Reset vendor password" aria-label="Reset vendor password" onClick={() => resetVendorPassword(c)}>
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+                              </button>
                             </div>
                           </td>
                         </tr>
@@ -560,6 +596,41 @@ export default function AdminDashboard() {
       </div>
 
       {toast && <div className={`dash-toast ${toast.kind}`}>{toast.msg}</div>}
+
+      {pwReset && (
+        <div className="pwr-overlay" onClick={() => setPwReset(null)}>
+          <div className="pwr-card" onClick={(e) => e.stopPropagation()}>
+            <h3 className="pwr-title">New password for {pwReset.name}</h3>
+            {pwReset.email && <p className="pwr-email">{pwReset.email}</p>}
+            <div className="pwr-pw">
+              <code>{pwReset.password}</code>
+              <button
+                className="pwr-copy"
+                onClick={async () => {
+                  try { await navigator.clipboard.writeText(pwReset.password); showToast("Password copied."); }
+                  catch (_) { window.prompt("Copy the password:", pwReset.password); }
+                }}
+              >Copy</button>
+            </div>
+            <p className="pwr-note">It is already active. Copy it now · it will not be shown again. Send it to the vendor and ask them to change it after logging in.</p>
+            <button className="pwr-close" onClick={() => setPwReset(null)}>Done</button>
+          </div>
+        </div>
+      )}
+
+      <style jsx>{`
+        .pwr-overlay { position: fixed; inset: 0; z-index: 340; background: rgba(10,26,51,.45); display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .pwr-card { background: #fff; border-radius: 16px; padding: 26px 26px 22px; max-width: 420px; width: 100%; box-shadow: 0 24px 60px -16px rgba(10,26,51,.5); font-family: 'Chivo', system-ui, sans-serif; }
+        .pwr-title { margin: 0 0 2px; font-size: 1.05rem; font-weight: 800; color: #0e2c5c; }
+        .pwr-email { margin: 0 0 16px; font-size: .85rem; color: #6a788f; }
+        .pwr-pw { display: flex; align-items: stretch; gap: 8px; }
+        .pwr-pw code { flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; letter-spacing: .04em; background: #f4f7fc; border: 1px solid #e1e7f1; border-radius: 10px; padding: 12px 14px; color: #0a1a33; user-select: all; word-break: break-all; }
+        .pwr-copy { background: #2f6fe0; color: #fff; border: none; border-radius: 10px; padding: 0 16px; font-weight: 700; font-size: .9rem; cursor: pointer; }
+        .pwr-copy:hover { background: #1e478f; }
+        .pwr-note { margin: 14px 0 18px; font-size: .82rem; line-height: 1.5; color: #5a6a85; }
+        .pwr-close { width: 100%; background: #0e2c5c; color: #fff; border: none; border-radius: 10px; padding: 11px; font-weight: 700; cursor: pointer; }
+        .pwr-close:hover { background: #16386f; }
+      `}</style>
 
       <style jsx>{`
         .dash { min-height: 70vh; background: radial-gradient(ellipse 90% 60% at 50% 0%, #f4f8ff, #eef2f9 60%); padding: 38px 20px 70px; font-family: 'Chivo', system-ui, -apple-system, sans-serif; }
