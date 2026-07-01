@@ -10,6 +10,7 @@ import { apiGetAllUsers } from "../service/apiGetAllUsers";
 import { decodeToken } from "../service/decodeToken";
 import { apiCreateMagicLink } from "../service/apiCreateMagicLink";
 import { apiUpdatePassword } from "../service/apiUpdatePassword";
+import { apiRevalidatePublications } from "../service/apiRevalidatePublications";
 import { apiSendSignUpAlert } from "../service/apiSendSignUpAlert";
 import { apiGetAllArticles } from "../service/apiGetAllArticles";
 import { apiGetAllVideos } from "../service/apiGetAllVideos";
@@ -260,6 +261,9 @@ export default function AdminDashboard() {
     try {
       const res = await apiUpdateCompany(c.id, { [field]: next });
       if (!res || res.status !== 200) throw new Error();
+      // Flush the cached public pages (home section, /providers, category pages)
+      // so this vendor's live/map status change shows immediately.
+      apiRevalidatePublications();
     } catch (_) {
       setCompanies((cs) => cs.map((x) => (x.id === c.id ? { ...x, [field]: !next } : x)));
       showToast("Update failed. Reverted.", "err");

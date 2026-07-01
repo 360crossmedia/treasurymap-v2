@@ -9,7 +9,9 @@ import { CAT_META } from "./catMeta";
 
 export async function fetchCompanies() {
   try {
-    const res = await fetch(`${url}/api/v1/companies/`, { next: { revalidate: 3600 } });
+    // 5-min ISR fallback. Admin company edits also trigger on-demand
+    // revalidation (see /api/revalidate) so changes usually show immediately.
+    const res = await fetch(`${url}/api/v1/companies/`, { next: { revalidate: 300 } });
     if (!res.ok) return [];
     const data = await res.json();
     return Array.isArray(data) ? data : [];

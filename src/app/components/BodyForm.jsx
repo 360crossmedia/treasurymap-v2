@@ -18,6 +18,7 @@ import MultiSelect from "./MultiSelect";
 import { apiGetCompanyData } from "../service/apiGetCompanyData";
 import { apiGetCompanyAnswers } from "../service/apiGetCompanyAnswers";
 import { apiUpdateCompany } from "../service/apiUpdateCompany";
+import { apiRevalidatePublications } from "../service/apiRevalidatePublications";
 import { setCompanyId } from "../store/slices/companyToUpdate.slice";
 import Form from "react-bootstrap/Form";
 import { apiGetAllUsers } from "../service/apiGetAllUsers";
@@ -259,6 +260,9 @@ const BodyForm = () => {
           data
         );
         if (result?.status == 200) {
+          // Flush cached public pages so the edit shows immediately (admin only;
+          // best-effort, the 5-min ISR is the fallback for vendor self-edits).
+          apiRevalidatePublications();
           // The company (incl. logo) is saved at this point. Answers, sub-options
           // and the notification email are best-effort and must NEVER block the
           // success confirmation/redirect.
@@ -301,6 +305,7 @@ const BodyForm = () => {
         }
         const result = await apiCreateCompany(data);
         if (result?.status == 201) {
+          apiRevalidatePublications(); // flush cached public pages so the new vendor shows now
           const newId = result?.data?.id;
           try { if (newId) await apiUploadAnswers(newId, answers); } catch (_) {}
           try { if (newId) await apiUploadSubOptions(newId, selectedSubOptions); } catch (_) {}

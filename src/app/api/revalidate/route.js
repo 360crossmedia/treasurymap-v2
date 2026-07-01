@@ -26,9 +26,22 @@ export async function POST(req) {
     revalidatePath("/insights");
     revalidatePath("/publication/article/[articleId]", "page");
     revalidatePath("/publication/video/[videoId]", "page");
+    // Company-driven public pages: the homepage "by category" section, the
+    // /providers hub, and all 15 category landing pages. Flushed so a newly
+    // added or edited vendor shows immediately instead of after the ISR window.
+    revalidatePath("/");
+    revalidatePath("/providers");
+    revalidatePath("/category/[slug]", "page");
     return NextResponse.json({
       ok: true,
-      revalidated: ["/insights", "/publication/article/*", "/publication/video/*"],
+      revalidated: [
+        "/insights",
+        "/publication/article/*",
+        "/publication/video/*",
+        "/",
+        "/providers",
+        "/category/*",
+      ],
     });
   } catch (e) {
     return NextResponse.json({ ok: false, error: "revalidate failed" }, { status: 500 });
