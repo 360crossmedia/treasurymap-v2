@@ -199,6 +199,12 @@ export default function AdminDashboard() {
 
   const resetVendorPassword = async (c) => {
     if (!c?.userId) { alert("This company has no owner account yet."); return; }
+    if (Number(c.userId) === 1) {
+      alert(
+        `"${c.name}" is owned by the admin account, not by the vendor. Resetting here would change YOUR admin password.\n\nTo give the vendor their own login: have them sign up, then edit this listing and set them as the owner. You can reset their password after that.`
+      );
+      return;
+    }
     const email = c.ownerEmail || users[c.userId]?.email || "";
     if (!window.confirm(`Generate a new password for ${c.name}${email ? ` (${email})` : ""}?\n\nThis replaces their current password immediately. You will see the new password once · copy it and send it to them.`)) return;
     const pwd = genPassword();
