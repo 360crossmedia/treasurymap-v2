@@ -11,6 +11,7 @@ import { decodeToken } from "../service/decodeToken";
 import { apiCreateMagicLink } from "../service/apiCreateMagicLink";
 import { apiUpdatePassword } from "../service/apiUpdatePassword";
 import { apiRevalidatePublications } from "../service/apiRevalidatePublications";
+import { apiRegisterVendor } from "../service/apiRegisterVendor";
 import { apiSendSignUpAlert } from "../service/apiSendSignUpAlert";
 import { apiGetAllArticles } from "../service/apiGetAllArticles";
 import { apiGetAllVideos } from "../service/apiGetAllVideos";
@@ -218,6 +219,38 @@ export default function AdminDashboard() {
     } catch (_) {
       alert("Could not reset the password. Please try again.");
     }
+  };
+
+  // Admin: onboard a vendor whose listing is currently admin-owned. Creates a
+  // dedicated user account (their email + a generated password), transfers the
+  // listing to it, and shows the credentials once so the admin can send them.
+  // This is the clean way to hand a vendor their own login without asking them
+  // to self-register.
+  const createVendorLogin = async (c) => {
+    if (!c?.id) return;
+    const input = window.prompt(`Create a login for ${c.name}.\n\nEnter the vendor's email address:`, "");
+    if (input == null) return; // cancelled
+    const email = input.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert("Please enter a valid email address."); return; }
+    const pwd = genPassword();
+    // 1. Create the user account.
+    const reg = await apiRegisterVendor({ fullName: c.name, email, password: pwd });
+    if (!reg.ok || !reg.user?.id) {
+      alert(reg.status === 400
+        ? `Could not create the account. The email ${email} may already be in use.`
+        : "Could not create the account. Please try again.");
+      return;
+    }
+    // 2. Transfer the listing to the new account.
+    const upd = await apiUpdateCompany(c.id, { userId: reg.user.id });
+    if (!upd || upd.status !== 200) {
+      alert(`The account was created for ${email}, but assigning the listing failed. Assign the owner manually via Edit listing, then send the password.`);
+      return;
+    }
+    // 3. Reflect the new owner locally + flush the public pages.
+    setCompanies((cs) => cs.map((x) => (x.id === c.id ? { ...x, userId: reg.user.id, ownerEmail: email } : x)));
+    apiRevalidatePublications();
+    setPwReset({ name: c.name, email, password: pwd, isNew: true });
   };
 
   // Token-gated PDF link for a shortlist lead (admin only sees the token).
@@ -520,9 +553,15 @@ export default function AdminDashboard() {
                               <button title="Copy vendor edit link" aria-label="Copy vendor edit link" onClick={() => copyEditLink(c)}>
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                               </button>
-                              <button title="Reset vendor password" aria-label="Reset vendor password" onClick={() => resetVendorPassword(c)}>
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
-                              </button>
+                              {Number(c.userId) === 1 ? (
+                                <button title="Create vendor login" aria-label="Create vendor login" onClick={() => createVendorLogin(c)}>
+                                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+                                </button>
+                              ) : (
+                                <button title="Reset vendor password" aria-label="Reset vendor password" onClick={() => resetVendorPassword(c)}>
+                                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+                                </button>
+                              )}
                             </div>
                           </td>
                         </tr>
@@ -610,19 +649,37 @@ export default function AdminDashboard() {
       {pwReset && (
         <div className="pwr-overlay" onClick={() => setPwReset(null)}>
           <div className="pwr-card" onClick={(e) => e.stopPropagation()}>
-            <h3 className="pwr-title">New password for {pwReset.name}</h3>
-            {pwReset.email && <p className="pwr-email">{pwReset.email}</p>}
-            <div className="pwr-pw">
-              <code>{pwReset.password}</code>
-              <button
-                className="pwr-copy"
-                onClick={async () => {
+            <h3 className="pwr-title">
+              {pwReset.isNew ? `Login created for ${pwReset.name}` : `New password for ${pwReset.name}`}
+            </h3>
+            <p className="pwr-sub">
+              {pwReset.isNew
+                ? "The account is ready and now owns this listing. Send these credentials to the vendor."
+                : "The new password is already active. Send it to the vendor."}
+            </p>
+            {pwReset.email && (
+              <div className="pwr-field">
+                <span className="pwr-label">Email</span>
+                <div className="pwr-pw">
+                  <code>{pwReset.email}</code>
+                  <button className="pwr-copy" onClick={async () => {
+                    try { await navigator.clipboard.writeText(pwReset.email); showToast("Email copied."); }
+                    catch (_) { window.prompt("Copy the email:", pwReset.email); }
+                  }}>Copy</button>
+                </div>
+              </div>
+            )}
+            <div className="pwr-field">
+              <span className="pwr-label">Password</span>
+              <div className="pwr-pw">
+                <code>{pwReset.password}</code>
+                <button className="pwr-copy" onClick={async () => {
                   try { await navigator.clipboard.writeText(pwReset.password); showToast("Password copied."); }
                   catch (_) { window.prompt("Copy the password:", pwReset.password); }
-                }}
-              >Copy</button>
+                }}>Copy</button>
+              </div>
             </div>
-            <p className="pwr-note">It is already active. Copy it now · it will not be shown again. Send it to the vendor and ask them to change it after logging in.</p>
+            <p className="pwr-note">Copy the password now · it will not be shown again. Ask the vendor to change it after their first login (My Account).</p>
             <button className="pwr-close" onClick={() => setPwReset(null)}>Done</button>
           </div>
         </div>
@@ -632,7 +689,9 @@ export default function AdminDashboard() {
         .pwr-overlay { position: fixed; inset: 0; z-index: 340; background: rgba(10,26,51,.45); display: flex; align-items: center; justify-content: center; padding: 20px; }
         .pwr-card { background: #fff; border-radius: 16px; padding: 26px 26px 22px; max-width: 420px; width: 100%; box-shadow: 0 24px 60px -16px rgba(10,26,51,.5); font-family: 'Chivo', system-ui, sans-serif; }
         .pwr-title { margin: 0 0 2px; font-size: 1.05rem; font-weight: 800; color: #0e2c5c; }
-        .pwr-email { margin: 0 0 16px; font-size: .85rem; color: #6a788f; }
+        .pwr-sub { margin: 0 0 16px; font-size: .85rem; line-height: 1.45; color: #6a788f; }
+        .pwr-field { margin-bottom: 12px; }
+        .pwr-label { display: block; margin-bottom: 5px; font-size: .72rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #8a93a6; }
         .pwr-pw { display: flex; align-items: stretch; gap: 8px; }
         .pwr-pw code { flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; letter-spacing: .04em; background: #f4f7fc; border: 1px solid #e1e7f1; border-radius: 10px; padding: 12px 14px; color: #0a1a33; user-select: all; word-break: break-all; }
         .pwr-copy { background: #2f6fe0; color: #fff; border: none; border-radius: 10px; padding: 0 16px; font-weight: 700; font-size: .9rem; cursor: pointer; }
