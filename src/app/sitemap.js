@@ -39,6 +39,7 @@ export default async function sitemap() {
     { path: "/providers", priority: 0.9, changeFrequency: "daily" },
     { path: "/insights", priority: 0.7, changeFrequency: "weekly" },
     { path: "/multiplayer-map", priority: 0.6, changeFrequency: "weekly" },
+    { path: "/partners", priority: 0.5, changeFrequency: "monthly" },
     { path: "/contactUs", priority: 0.3, changeFrequency: "yearly" },
     { path: "/gdpr", priority: 0.2, changeFrequency: "yearly" },
   ].map((p) => ({

@@ -45,7 +45,7 @@ const Footer = () => {
         </div>
 
         {/* Official partners */}
-        <div className={`${styles.col} ${styles.colCenter}`}>
+        <a href="/partners" className={`${styles.col} ${styles.colCenter}`} style={{ textDecoration: "none" }}>
           <span className={styles.label}>Official partners</span>
           <div className={styles.partners}>
             <Image src={bnpLogo} alt="BNP Paribas" width={100} height={30} className={styles.partnerLogo} />
@@ -54,7 +54,7 @@ const Footer = () => {
             <span className={styles.dotSep} />
             <Image src={kantoxLogo} alt="Kantox" width={100} height={30} className={styles.partnerLogoSm} />
           </div>
-        </div>
+        </a>
 
         {/* Powered by */}
         <div className={`${styles.col} ${styles.colRight}`}>
@@ -73,6 +73,8 @@ const Footer = () => {
           <a className={styles.link} href="/providers">Providers</a>
           <span className={styles.linkSep} />
           <a className={styles.link} href="/get-my-list">Build my shortlist</a>
+          <span className={styles.linkSep} />
+          <a className={styles.link} href="/partners">Partners</a>
           <span className={styles.linkSep} />
           <a className={styles.link} href="/gdpr">GDPR</a>
         </nav>
