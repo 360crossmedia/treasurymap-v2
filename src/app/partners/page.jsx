@@ -3,14 +3,19 @@ import Footer from "../components/Footer";
 import bnpLogo from "../assets/BNP_logo.png";
 import intensumLogo from "../assets/intensum-logo.jpg";
 import kantoxLogo from "../assets/Kantox-logo.png";
+import { url } from "../service/url";
+import { publicationHref } from "../utils/slugify";
 import styles from "./partners.module.css";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://treasurymap-v2-production.up.railway.app";
 
 // Official partners. Editorial content · edit here to change the showcase.
-// `featured` (optional) is a list of { title, href } shown under the card; leave
-// it empty to hide the section until the partner has content to highlight.
+//  - `companyId`: when set, the partner's "Featured content" is pulled
+//    automatically from their live publications (published via the admin Media
+//    Zone). No double entry · publish once, it shows here and in Insights.
+//  - `featured`: manual fallback list of { title, href } used only when there is
+//    no companyId (e.g. external links for a partner with no listing).
 const PARTNERS = [
   {
     name: "BNP Paribas",
@@ -19,6 +24,7 @@ const PARTNERS = [
     website: "https://cib.bnpparibas",
     description:
       "A leading European bank. Its corporate and institutional banking arm supports corporate treasurers with cash management, financing, FX and payments across a global network.",
+    companyId: null, // no listing yet · set once a BNP company record exists
     featured: [],
   },
   {
@@ -28,6 +34,7 @@ const PARTNERS = [
     website: "https://www.intensum.com",
     description:
       "Treasury and finance transformation specialists. Intensum helps corporates select, implement and optimise treasury and SAP finance technology across Europe.",
+    companyId: 148,
     featured: [],
   },
   {
@@ -37,9 +44,44 @@ const PARTNERS = [
     website: "https://www.kantox.com",
     description:
       "Kantox automates the entire FX workflow, from exposure capture to hedging and execution, so treasurers remove currency risk without manual effort.",
+    companyId: 155,
     featured: [],
   },
 ];
+
+// Live articles + videos, fetched once and grouped by companyId so each partner
+// card can show its own most recent publications (max 3).
+async function getPublicationsByCompany() {
+  const get = async (path) => {
+    try {
+      const r = await fetch(`${url}/api/v1/${path}`, { next: { revalidate: 300 } });
+      if (!r.ok) return [];
+      const d = await r.json();
+      return Array.isArray(d) ? d : d?.data || [];
+    } catch {
+      return [];
+    }
+  };
+  const [articles, videos] = await Promise.all([get("publications"), get("videos")]);
+  const byCompany = {};
+  for (const p of [...articles, ...videos]) {
+    if (!p || !p.live || p.companyId == null) continue;
+    (byCompany[p.companyId] ||= []).push(p);
+  }
+  for (const id of Object.keys(byCompany)) {
+    byCompany[id].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+  }
+  return byCompany;
+}
+
+function partnerFeatured(partner, byCompany) {
+  if (partner.companyId && byCompany[partner.companyId]) {
+    return byCompany[partner.companyId]
+      .slice(0, 3)
+      .map((p) => ({ title: p.title, href: publicationHref(p) }));
+  }
+  return partner.featured || [];
+}
 
 export const metadata = {
   title: "Partners",
@@ -83,7 +125,8 @@ const JSON_LD = {
   ],
 };
 
-export default function PartnersPage() {
+export default async function PartnersPage() {
+  const byCompany = await getPublicationsByCompany();
   return (
     <>
       <script
@@ -107,31 +150,34 @@ export default function PartnersPage() {
         <section className={styles.body}>
           <div className={styles.inner}>
             <div className={styles.grid}>
-              {PARTNERS.map((p) => (
-                <article key={p.name} className={styles.card}>
-                  <span className={styles.logoBox}>
-                    <img src={p.logo.src} alt={`${p.name} logo`} />
-                  </span>
-                  <span className={styles.tag}>{p.tag}</span>
-                  <h2 className={styles.name}>{p.name}</h2>
-                  <p className={styles.desc}>{p.description}</p>
-                  <a className={styles.site} href={p.website} target="_blank" rel="noopener noreferrer">
-                    Visit website &rarr;
-                  </a>
-                  {p.featured?.length ? (
-                    <div className={styles.featured}>
-                      <span className={styles.fLabel}>Featured content</span>
-                      <ul>
-                        {p.featured.map((f) => (
-                          <li key={f.href}>
-                            <a href={f.href}>{f.title}</a>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ) : null}
-                </article>
-              ))}
+              {PARTNERS.map((p) => {
+                const featured = partnerFeatured(p, byCompany);
+                return (
+                  <article key={p.name} className={styles.card}>
+                    <span className={styles.logoBox}>
+                      <img src={p.logo.src} alt={`${p.name} logo`} />
+                    </span>
+                    <span className={styles.tag}>{p.tag}</span>
+                    <h2 className={styles.name}>{p.name}</h2>
+                    <p className={styles.desc}>{p.description}</p>
+                    <a className={styles.site} href={p.website} target="_blank" rel="noopener noreferrer">
+                      Visit website &rarr;
+                    </a>
+                    {featured.length ? (
+                      <div className={styles.featured}>
+                        <span className={styles.fLabel}>Featured content</span>
+                        <ul>
+                          {featured.map((f) => (
+                            <li key={f.href}>
+                              <a href={f.href}>{f.title}</a>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
+                  </article>
+                );
+              })}
             </div>
           </div>
         </section>

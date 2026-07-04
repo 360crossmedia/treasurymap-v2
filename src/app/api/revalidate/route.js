@@ -32,6 +32,7 @@ export async function POST(req) {
     revalidatePath("/");
     revalidatePath("/providers");
     revalidatePath("/category/[slug]", "page");
+    revalidatePath("/partners");
     return NextResponse.json({
       ok: true,
       revalidated: [
