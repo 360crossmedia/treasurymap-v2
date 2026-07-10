@@ -19,18 +19,21 @@ export const newsletter = {
   // Field name Zoho expects for the email (default for Campaigns embeds).
   emailField: "CONTACT_EMAIL",
 
-  // Hidden fields copied verbatim from the TreasuryMap Zoho signup form
-  // (resolved from the list's embed link).
+  // Hidden fields taken verbatim from the TreasuryMap Zoho signup form's actual
+  // inputs (the QuickForm optin view). The exact set/values matter: a wrong
+  // `mode` or missing submitType/formType makes weboptin reject with error 10404
+  // ("invalid characters"), which the iframe POST swallows silently.
   hidden: {
+    submitType: "optinCustomView",
+    emailReportId: "",
+    formType: "QuickForm",
     zx: "14ac32dc43",
     zcvers: "2.0",
-    mode: "OPTIN",
+    oldListIds: "",
+    mode: "OptinCreateView",
     zcld: "1167f174aa0462c1",
     zctd: "1167f174a96b8dc1",
-    "document.charset": "UTF-8",
     zc_trackCode: "ZCFORMVIEW",
-    oldListIds: "",
     zc_formIx: "3z49e7c7be1c576ef11c63e3dec5c1d965eb2e5caeae99c8902d1beeab8eb2a980",
-    viewFrom: "SignupFormEmbedInApp",
   },
 };
