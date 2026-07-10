@@ -100,8 +100,12 @@ export default function NewsletterForm({ variant = "banner" }) {
   );
 }
 
+// Global (not scoped): this <style> lives in a module-level const, outside the
+// component's JSX scope, so scoped styled-jsx would generate a jsx-<hash> class
+// that never lands on the .nl-* elements and the form would render unstyled.
+// The nl- prefix keeps these class names collision-free.
 const styleTag = (
-  <style jsx>{`
+  <style jsx global>{`
     .nl { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
     .nl-inner { width: 100%; }
 
