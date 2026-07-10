@@ -145,12 +145,12 @@ const styleTag = (
       padding: 22px 0 6px;
       margin: 0 0 6px;
     }
-    .nl--footer .nl-inner { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+    .nl--footer .nl-inner { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
     .nl--footer .nl-label {
       text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.72rem;
       font-weight: 700; color: #2f6fe0; white-space: nowrap;
     }
-    .nl--footer .nl-form { flex: 1 1 320px; min-width: 260px; }
+    .nl--footer .nl-form { width: 100%; max-width: 460px; }
     .nl--footer .nl-input { background: #fff; border: 1px solid #d7deea; color: #0e2c5c; }
     .nl--footer .nl-btn { background: #2f6fe0; color: #fff; }
     .nl--footer .nl-btn:hover { background: #1e478f; }
