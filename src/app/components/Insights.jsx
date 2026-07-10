@@ -8,7 +8,6 @@ import { publicationHref } from "../utils/slugify";
 import { coverImg, coverImgFull } from "../utils/cloudinary";
 import { url } from "../service/url";
 import { apiGetFullMainPublications } from "../service/apiGetFullMainPublications";
-import NewsletterForm from "./NewsletterForm";
 
 const Insights = ({ initialPubs = null, initialCompanyById = {} }) => {
   // Seed from the server-rendered list when present (SSR/SEO); otherwise null
@@ -72,7 +71,6 @@ const Insights = ({ initialPubs = null, initialCompanyById = {} }) => {
   if (error || !pubs?.length) {
     return (
       <div className={styles.container}>
-        <NewsletterForm variant="banner" />
         <div className={styles.empty}>
           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#c0c8d8" strokeWidth="1.5">
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
@@ -90,7 +88,6 @@ const Insights = ({ initialPubs = null, initialCompanyById = {} }) => {
 
   return (
     <div className={styles.container}>
-      <NewsletterForm variant="banner" />
       {/* Hero · featured publication */}
       <a className={styles.hero} href={heroHref}>
         <div className={styles.heroCover} style={{ backgroundImage: `url(${coverImgFull(hero.coverImage, 900)})` }} />
