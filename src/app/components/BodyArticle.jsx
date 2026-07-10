@@ -101,6 +101,7 @@ const BodyArticle = ({ isArticle }) => {
               url: urlReadyToSubmit,
               coverImage,
               introduction,
+              body,
               tags,
               live,
             }
@@ -171,6 +172,7 @@ const BodyArticle = ({ isArticle }) => {
             url: urlReadyToSubmit,
             coverImage,
             introduction,
+            body,
             tags,
             live,
           });
@@ -219,6 +221,7 @@ const BodyArticle = ({ isArticle }) => {
       setLive(videoData?.live);
       setIsUpdate(true);
       setIntroduction(videoData?.introduction);
+      setBody(videoData?.body);
       setIsMainPublication(thisPublicationIsMainPublication);
     }
   };
@@ -334,14 +337,14 @@ const BodyArticle = ({ isArticle }) => {
         </div>
         <div className={styles.inputContainer}>
           <label className={styles.label} htmlFor="description">
-            {isArticle ? "Introduction" : "Description"}
+            {isArticle ? "Introduction" : "Short summary"}
           </label>
           <textarea
             className={styles.inputTextArea}
             placeholder={
               isArticle
                 ? "Enter article introduction"
-                : "Enter video description"
+                : "Short summary shown on cards and previews"
             }
             name="description"
             id="description"
@@ -351,22 +354,19 @@ const BodyArticle = ({ isArticle }) => {
             maxLength={800}
           ></textarea>
         </div>
-        {isArticle && (
-          <>
-            <div className={styles.inputContainer}>
-              <label>
-                Body <span className={styles.required}>*</span>
-              </label>
-              <QuillEditor
-                className={styles.customButton}
-                formats={formats}
-                modules={modules}
-                value={body}
-                onChange={setBody}
-              />
-            </div>
-          </>
-        )}
+        <div className={styles.inputContainer}>
+          <label>
+            {isArticle ? "Body" : "Description"}{" "}
+            {isArticle && <span className={styles.required}>*</span>}
+          </label>
+          <QuillEditor
+            className={styles.customButton}
+            formats={formats}
+            modules={modules}
+            value={body}
+            onChange={setBody}
+          />
+        </div>
         <div className={styles.inputContainer}>
           <label className={styles.label} htmlFor="">
             Insert tags related to the {isArticle ? "article" : "video"}{" "}

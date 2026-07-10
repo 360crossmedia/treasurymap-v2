@@ -107,8 +107,8 @@ const PublicationView = ({ publication, company, category, related = [], company
           p.coverImage && <img className={styles.cover} src={coverImgFull(p.coverImage, 1400)} alt={p.title || "Cover"} />
         )}
 
-        {/* Body (article only) */}
-        {!isVideo && p.body && (
+        {/* Rich body · articles and videos (a video's formatted description). */}
+        {p.body && (
           <div className={styles.body} dangerouslySetInnerHTML={{ __html: sanitizeRich(p.body) }} />
         )}
 
