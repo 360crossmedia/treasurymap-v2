@@ -1,14 +1,8 @@
 "use client";
-import { useState } from "react";
-import { CAT_META } from "./catMeta";
-
-const CATS = Object.values(CAT_META);
 
 // Compact onboarding strip shown only on the homepage (above the map). Gives a
-// first-time visitor a one-line value prop, the primary "Build my shortlist"
-// CTA, and an expandable legend that decodes the category acronyms.
+// first-time visitor a one-line value prop.
 export default function HomeIntro() {
-  const [showLegend, setShowLegend] = useState(false);
   return (
     <section className="hi">
       <div className="hi-inner">
@@ -18,29 +12,7 @@ export default function HomeIntro() {
           </h1>
           <p className="hi-sub">Explore vetted providers across every treasury category, or answer 10 quick questions to get a personalised shortlist.</p>
         </div>
-        <div className="hi-actions">
-          <button
-            type="button"
-            className="hi-toggle"
-            aria-expanded={showLegend}
-            onClick={() => setShowLegend((v) => !v)}
-          >
-            <span className="hi-i">i</span> What do the codes mean?
-          </button>
-        </div>
       </div>
-
-      {showLegend && (
-        <div className="hi-legend">
-          {CATS.map((c) => (
-            <div className="hi-code" key={c.code}>
-              <span className="hi-dot" style={{ background: `hsl(${c.hue},70%,55%)` }} />
-              <b>{c.code}</b>
-              <span className="hi-name">{c.full}</span>
-            </div>
-          ))}
-        </div>
-      )}
 
       <style jsx>{`
         .hi {
