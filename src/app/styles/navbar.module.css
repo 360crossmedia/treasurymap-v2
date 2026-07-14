@@ -133,6 +133,25 @@
 }
 .navbarAFeature:hover { color: #2f6fe0; }
 
+/* Newsletter — soft accent chip so it stands out from the plain text links
+   without competing with the solid CTA pills. */
+.newsletterLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #2f6fe0;
+  background: #eef4ff;
+  border: 1px solid #d6e4fb;
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 999px;
+  transition: background 0.15s, border-color 0.15s;
+}
+.newsletterLink:hover { background: #e0ecfe; border-color: #b9d3fb; }
+.newsletterLink svg { flex: none; }
+
 /* Make my Selection — highlighted pill (promoted new tool) */
 .makeSelection {
   display: inline-flex;

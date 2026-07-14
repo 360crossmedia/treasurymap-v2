@@ -104,7 +104,10 @@ const Navbar = ({ buttonLabel, multiplayerMap, set, rotate }) => {
             {newsletter.enabled && newsletter.optinUrl && (
               <>
                 <span className={styles.linkSep} />
-                <a className={styles.navbarA} href={newsletter.optinUrl} target="_blank" rel="noopener noreferrer">Newsletter</a>
+                <a className={styles.newsletterLink} href={newsletter.optinUrl} target="_blank" rel="noopener noreferrer">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+                  Newsletter
+                </a>
               </>
             )}
 
