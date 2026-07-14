@@ -9,6 +9,7 @@ import { setCompanyId } from "../store/slices/companyToUpdate.slice";
 import { setUser } from "../store/slices/user.slice";
 import { clearAuth } from "../service/authToken";
 import { usePathname } from "next/navigation";
+import { newsletter } from "../config/newsletter";
 
 // TreasuryMap brand pin · crisp vector recreation of the official mark
 // (gradient teardrop + white aperture + water wave). Scales without pixelation.
@@ -100,6 +101,12 @@ const Navbar = ({ buttonLabel, multiplayerMap, set, rotate }) => {
             <a className={styles.navbarA} href="/insights">Insights</a>
             <span className={styles.linkSep} />
             <a className={styles.navbarA} href="/about">About</a>
+            {newsletter.enabled && newsletter.optinUrl && (
+              <>
+                <span className={styles.linkSep} />
+                <a className={styles.navbarA} href={newsletter.optinUrl} target="_blank" rel="noopener noreferrer">Subscribe</a>
+              </>
+            )}
 
             {/* Make my Selection · highlighted (new AI tool, points to Long List) */}
             <a className={styles.makeSelection} href="/get-my-list">
