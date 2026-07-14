@@ -104,7 +104,7 @@ const Navbar = ({ buttonLabel, multiplayerMap, set, rotate }) => {
             {newsletter.enabled && newsletter.optinUrl && (
               <>
                 <span className={styles.linkSep} />
-                <a className={styles.navbarA} href={newsletter.optinUrl} target="_blank" rel="noopener noreferrer">Subscribe</a>
+                <a className={styles.navbarA} href={newsletter.optinUrl} target="_blank" rel="noopener noreferrer">Newsletter</a>
               </>
             )}
 
