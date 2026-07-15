@@ -38,7 +38,9 @@ export default async function CategoryPage({ params }) {
 
   const providers = await getCategoryProviders(cat.id);
 
-  // Structured data: breadcrumb + the category as a collection of providers.
+  // Structured data: breadcrumb + the category as a collection of providers,
+  // reviewed by a named treasury expert (E-E-A-T), plus a FAQPage when the
+  // category has Q&A · the strongest GEO / rich-result signal.
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -60,6 +62,8 @@ export default async function CategoryPage({ params }) {
         name: `${cat.full} (${cat.code}) providers in Europe`,
         description: cat.summary,
         isPartOf: { "@id": `${SITE_URL}/#website` },
+        about: { "@type": "Thing", name: cat.full },
+        reviewedBy: { "@id": `${SITE_URL}/#francois` },
         mainEntity: {
           "@type": "ItemList",
           numberOfItems: providers.length,
@@ -71,6 +75,20 @@ export default async function CategoryPage({ params }) {
           })),
         },
       },
+      ...(cat.faq?.length
+        ? [
+            {
+              "@type": "FAQPage",
+              "@id": `${SITE_URL}/category/${cat.slug}#faq`,
+              isPartOf: { "@id": `${SITE_URL}/category/${cat.slug}` },
+              mainEntity: cat.faq.map((f) => ({
+                "@type": "Question",
+                name: f.q,
+                acceptedAnswer: { "@type": "Answer", text: f.a },
+              })),
+            },
+          ]
+        : []),
     ],
   };
 
@@ -128,6 +146,11 @@ export default async function CategoryPage({ params }) {
                     </ul>
                   </>
                 ) : null}
+                <p className={styles.byline}>
+                  Curated and reviewed by{" "}
+                  <strong>François Masquelier</strong>, Founder of Simply Treasury,
+                  Chairman of ATEL and EACT, 28+ years in corporate treasury.
+                </p>
               </div>
             ) : null}
 
@@ -152,6 +175,22 @@ export default async function CategoryPage({ params }) {
             ) : (
               <p className={styles.empty}>No providers are listed in this category yet.</p>
             )}
+
+            {cat.faq?.length ? (
+              <div className={styles.faq}>
+                <h2 className={styles.sectionTitle}>
+                  {cat.full}: frequently asked questions
+                </h2>
+                <div className={styles.faqList}>
+                  {cat.faq.map((f, i) => (
+                    <details key={i} className={styles.faqItem} open={i === 0}>
+                      <summary className={styles.faqQ}>{f.q}</summary>
+                      <p className={styles.faqA}>{f.a}</p>
+                    </details>
+                  ))}
+                </div>
+              </div>
+            ) : null}
 
             <div className={styles.other}>
               <h2 className={styles.otherTitle}>Explore other categories</h2>
