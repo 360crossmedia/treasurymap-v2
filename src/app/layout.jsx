@@ -10,6 +10,7 @@ import LoadingLogic from "./components/LoadingLogic";
 import LoadingScreen from "./components/LoadingScreen";
 import ProtectedRoutes from "./components/ProtectedRoutes";
 import StyledJsxRegistry from "./StyledJsxRegistry";
+import AnalyticsEvents from "./components/AnalyticsEvents";
 import Script from 'next/script';
 
 const inter = Inter({ subsets: ["latin"] });
@@ -146,6 +147,7 @@ export default function RootLayout({ children }) {
                 </LoadingLogic>
                 {children}
               </StyledJsxRegistry>
+              <AnalyticsEvents />
               <Analytics />
               <SpeedInsights />
             </body>
