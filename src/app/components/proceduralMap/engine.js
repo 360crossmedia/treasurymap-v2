@@ -36,12 +36,12 @@ const V_GAP = 5;    // radial gap between rings
 const SEP_GAP = 6;  // clearance kept from the wedge separator line (px)
 const S_MIN = 0.46; // smallest allowed logo scale (densest cats shrink to this)
 
-// Paying clients get a visibly larger logo. The slot grid is uniform and the
-// gaps are tiny (H_GAP/V_GAP), so an enlarged token cannot simply overflow: it
-// has to claim the space of the neighbouring slots it now covers. Placement
-// below drops those swallowed slots, and the scale search reserves room for
-// them, so a premium logo never overlaps its neighbours.
-const PAID_SCALE = 1.4;
+// Paying clients get a slightly larger logo. Kept deliberately small: slots sit
+// H_GAP apart, so a token can only grow into that gap before it would overlap
+// its neighbour. The safe bound is 1 + 2*H_GAP/(CELL.w*s), i.e. 1.1 at full
+// scale and more headroom as s shrinks. Staying under it means the enlargement
+// needs no extra slots, so no category has to shrink to pay for it.
+const PAID_SCALE = 1.08;
 
 export function teardownMap(root) {
   if (!root) return;
@@ -228,40 +228,22 @@ export function buildMap(root, cats, opts = {}) {
     auras.appendChild(au);
 
     // --- pick the largest scale that fits N logos in this wedge ---
-    // Each enlarged (paying) logo swallows roughly one neighbouring slot, so
-    // ask the layout for that many extra slots to avoid dropping vendors.
-    const paidCount = c.items.slice(0, N).filter((it) => it.paid).length;
-    const need = N + paidCount;
     let s = 1.0;
     let slots = layoutSlots(i, s);
-    while (s > S_MIN && slots.length < need) {
+    while (s > S_MIN && slots.length < N) {
       s = Math.round((s - 0.05) * 100) / 100;
       slots = layoutSlots(i, s);
     }
 
     // --- place N logos at that scale ---
-    const baseW = CELL.w * s, baseH = CELL.h * s;
-    const remaining = slots.slice();
     let placed = 0;
-    while (placed < N && remaining.length) {
-      const sl = remaining.shift();
+    for (const sl of slots) {
+      if (placed >= N) break;
       const it = c.items[placed];
       const isPaid = !!it.paid;
       const f = isPaid ? PAID_SCALE : 1;
-      const tokW = baseW * f, tokH = baseH * f;
+      const tokW = CELL.w * s * f, tokH = CELL.h * s * f;
       const imgW = CELL.imgW * s * f, imgH = CELL.imgH * s * f;
-
-      // A premium token is wider than its slot, so it covers the slots next to
-      // it. Drop those so no other logo is drawn underneath it.
-      if (isPaid) {
-        for (let k = remaining.length - 1; k >= 0; k--) {
-          const o = remaining[k];
-          if (Math.abs(o.x - sl.x) < (tokW + baseW) / 2 + H_GAP &&
-              Math.abs(o.y - sl.y) < (tokH + baseH) / 2 + V_GAP) {
-            remaining.splice(k, 1);
-          }
-        }
-      }
 
       const t = document.createElement("div");
       t.className = "tok" + (isPaid ? " tok-paid" : ""); t.dataset.cat = i;
