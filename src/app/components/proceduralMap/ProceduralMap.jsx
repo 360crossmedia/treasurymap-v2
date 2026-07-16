@@ -45,6 +45,7 @@ function toCats(companies, countries = [], multiplayer = false) {
       sub: c.companySubcategories || [],
       active: c.companyOffices || [],
       hq: deriveHq(c.location, countries),
+      paid: String(c.clientPackage || "").toLowerCase() === "paid",
     });
   };
   for (const c of companies) {
@@ -56,7 +57,15 @@ function toCats(companies, countries = [], multiplayer = false) {
     .sort((a, b) => Number(a[0]) - Number(b[0]))
     .map(([catId, items]) => {
       const meta = CAT_META[`category-${catId}`];
-      return { code: meta.code, full: meta.full, hue: meta.hue, total: items.length, items };
+      // Paying clients first. The map only keeps the logos that physically fit
+      // its wedge (the engine drops overlapping slots, and how many fit depends
+      // on the viewport), taking them in list order. Without this, order was
+      // effectively "oldest record first", so recent paying clients were the
+      // first to be cut and their visibility silently depended on the visitor's
+      // screen size. Array.sort is stable, so the existing order is preserved
+      // within the paid and unpaid groups.
+      const ordered = [...items].sort((a, b) => Number(b.paid) - Number(a.paid));
+      return { code: meta.code, full: meta.full, hue: meta.hue, total: ordered.length, items: ordered };
     });
 }
 
