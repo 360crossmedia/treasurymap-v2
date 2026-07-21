@@ -240,10 +240,6 @@ export function buildMap(root, cats, opts = {}) {
       slots = layoutSlots(i, s);
     }
 
-    // Target factor to bring every paid logo to the same absolute box width,
-    // never below its category base (f >= 1).
-    const paidF = Math.max(1, PAID_TARGET_W / (CELL.w * s));
-
     // --- place N logos, enlarging paying clients where there is spare room ---
     const remaining = slots.slice();
     let placed = 0;
@@ -252,6 +248,9 @@ export function buildMap(root, cats, opts = {}) {
       const it = c.items[placed];
       const isPaid = !!it.paid;
       let f = 1;
+      // Target box width for this logo (per-vendor override, else the shared
+      // paid target), brought to a factor, never below the category base.
+      const paidF = Math.max(1, (it.boostW || PAID_TARGET_W) / (CELL.w * s));
       if (isPaid && paidF > 1) {
         // Slots this enlarged token would cover (must be freed so nothing draws
         // underneath). Only take them if enough slots remain for the vendors

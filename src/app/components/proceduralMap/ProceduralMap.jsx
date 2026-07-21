@@ -21,6 +21,11 @@ function deriveHq(location, countries) {
   return out;
 }
 
+// Per-vendor logo-box override (internal px width) for specific paying clients
+// that asked for extra prominence, keyed by company id. Overrides the shared
+// PAID_TARGET_W in the engine for just that vendor.
+const LOGO_SIZE_OVERRIDE = { 195: 72 }; // Orbian · ~50px on screen
+
 // Build the per-category vendor groups.
 //  - default (homepage / "Treasury Map"): 1 logo per vendor, in its MAIN category.
 //  - multiplayer ("Multiplayer Map"): each vendor appears in EVERY category it
@@ -46,6 +51,7 @@ function toCats(companies, countries = [], multiplayer = false) {
       active: c.companyOffices || [],
       hq: deriveHq(c.location, countries),
       paid: String(c.clientPackage || "").toLowerCase() === "paid",
+      boostW: LOGO_SIZE_OVERRIDE[c.id] || 0,
     });
   };
   for (const c of companies) {
