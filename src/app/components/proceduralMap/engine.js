@@ -41,7 +41,7 @@ const S_MIN = 0.46; // smallest allowed logo scale (densest cats shrink to this)
 // never touches its neighbour · no reflow, no dropped vendors. Where the wedge
 // is dense (small scale) the gap is proportionally bigger, so paid logos there
 // reach the full target; where it is full-scale they grow a little less.
-const PAID_SCALE = 1.2;
+const PAID_SCALE = 1.6;
 
 export function teardownMap(root) {
   if (!root) return;
@@ -228,25 +228,45 @@ export function buildMap(root, cats, opts = {}) {
     auras.appendChild(au);
 
     // --- pick the largest scale that fits N logos in this wedge ---
+    // Reserve extra slots so an enlarged paid logo can swallow the neighbours it
+    // covers without ever dropping a vendor.
+    const paidCount = c.items.slice(0, N).filter((it) => it.paid).length;
+    const need = N + Math.ceil((PAID_SCALE - 1) + 1) * paidCount;
     let s = 1.0;
     let slots = layoutSlots(i, s);
-    while (s > S_MIN && slots.length < N) {
+    while (s > S_MIN && slots.length < need) {
       s = Math.round((s - 0.05) * 100) / 100;
       slots = layoutSlots(i, s);
     }
 
-    // --- place N logos at that scale ---
+    // --- place N logos, enlarging paying clients where there is spare room ---
+    const remaining = slots.slice();
     let placed = 0;
-    for (const sl of slots) {
-      if (placed >= N) break;
+    while (placed < N && remaining.length) {
+      const sl = remaining.shift();
       const it = c.items[placed];
       const isPaid = !!it.paid;
-      // Grow paying clients, but only as far as the local grid gap allows so an
-      // enlarged logo never touches its neighbour (and no category has to shrink
-      // or drop a vendor to make room). Bigger gains would need the logo asset
-      // to be less wide · a flat banner stays short whatever the box size.
-      const safeF = Math.min(1 + (2 * H_GAP) / (CELL.w * s), 1 + (2 * V_GAP) / (CELL.h * s));
-      const f = isPaid ? Math.min(PAID_SCALE, safeF) : 1;
+      let f = 1;
+      if (isPaid) {
+        // Slots this enlarged token would cover (must be freed so nothing draws
+        // underneath). Only take them if enough slots remain for the vendors
+        // still to place · otherwise fall back to a gap-only bump (no overlap,
+        // no drop).
+        const tW = CELL.w * s * PAID_SCALE, tH = CELL.h * s * PAID_SCALE;
+        const covered = [];
+        for (let k = 0; k < remaining.length; k++) {
+          const o = remaining[k];
+          if (Math.abs(o.x - sl.x) < (tW + CELL.w * s) / 2 + H_GAP &&
+              Math.abs(o.y - sl.y) < (tH + CELL.h * s) / 2 + V_GAP) covered.push(k);
+        }
+        const vendorsLeft = N - placed - 1;
+        if (remaining.length - covered.length >= vendorsLeft) {
+          f = PAID_SCALE;
+          for (let j = covered.length - 1; j >= 0; j--) remaining.splice(covered[j], 1);
+        } else {
+          f = Math.min(PAID_SCALE, Math.min(1 + (2 * H_GAP) / (CELL.w * s), 1 + (2 * V_GAP) / (CELL.h * s)));
+        }
+      }
       const tokW = CELL.w * s * f, tokH = CELL.h * s * f;
       const imgW = CELL.imgW * s * f, imgH = CELL.imgH * s * f;
 
