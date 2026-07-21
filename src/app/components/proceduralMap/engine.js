@@ -36,12 +36,12 @@ const V_GAP = 5;    // radial gap between rings
 const SEP_GAP = 6;  // clearance kept from the wedge separator line (px)
 const S_MIN = 0.46; // smallest allowed logo scale (densest cats shrink to this)
 
-// Paying clients get a slightly larger logo. Kept deliberately small: slots sit
-// H_GAP apart, so a token can only grow into that gap before it would overlap
-// its neighbour. The safe bound is 1 + 2*H_GAP/(CELL.w*s), i.e. 1.1 at full
-// scale and more headroom as s shrinks. Staying under it means the enlargement
-// needs no extra slots, so no category has to shrink to pay for it.
-const PAID_SCALE = 1.08;
+// Target enlargement for paying clients. The actual factor is clamped per
+// category to the room in the grid gap (see placement), so an enlarged logo
+// never touches its neighbour · no reflow, no dropped vendors. Where the wedge
+// is dense (small scale) the gap is proportionally bigger, so paid logos there
+// reach the full target; where it is full-scale they grow a little less.
+const PAID_SCALE = 1.18;
 
 export function teardownMap(root) {
   if (!root) return;
@@ -241,7 +241,11 @@ export function buildMap(root, cats, opts = {}) {
       if (placed >= N) break;
       const it = c.items[placed];
       const isPaid = !!it.paid;
-      const f = isPaid ? PAID_SCALE : 1;
+      // Grow paying clients, but only as far as the local grid gap allows so an
+      // enlarged logo never touches its neighbour (whichever of width/height is
+      // the binding constraint wins).
+      const safeF = Math.min(1 + (2 * H_GAP) / (CELL.w * s), 1 + (2 * V_GAP) / (CELL.h * s));
+      const f = isPaid ? Math.min(PAID_SCALE, safeF) : 1;
       const tokW = CELL.w * s * f, tokH = CELL.h * s * f;
       const imgW = CELL.imgW * s * f, imgH = CELL.imgH * s * f;
 
