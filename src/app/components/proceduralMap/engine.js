@@ -257,8 +257,8 @@ export function buildMap(root, cats, opts = {}) {
         // it only frees the slots it visually covers so nothing draws under it.
         f = paidF;
         const tW = CELL.w * s * f, tH = CELL.h * s * f;
-        posX = cx + Math.cos(theta) * it.bisectorR;
-        posY = cy + Math.sin(theta) * it.bisectorR;
+        posX = cx + Math.cos(theta) * it.bisectorR + (it.boostDx || 0);
+        posY = cy + Math.sin(theta) * it.bisectorR + (it.boostDy || 0);
         for (let k = remaining.length - 1; k >= 0; k--) {
           const o = remaining[k];
           if (Math.abs(o.x - posX) < (tW + CELL.w * s) / 2 + H_GAP &&
