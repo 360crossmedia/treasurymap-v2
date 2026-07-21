@@ -251,7 +251,11 @@ export function buildMap(root, cats, opts = {}) {
       // Target box width for this logo (per-vendor override, else the shared
       // paid target), brought to a factor, never below the category base.
       const paidF = Math.max(1, (it.boostW || PAID_TARGET_W) / (CELL.w * s));
-      if (isPaid && paidF > 1) {
+      if (it.bisectorR) {
+        // Placed off-grid, centred on the wedge bisector (see below), so it
+        // takes its full target size · nothing else occupies that spot.
+        f = paidF;
+      } else if (isPaid && paidF > 1) {
         // Slots this enlarged token would cover (must be freed so nothing draws
         // underneath). Only take them if enough slots remain for the vendors
         // still to place · otherwise fall back to a gap-only bump (no overlap,
@@ -280,8 +284,14 @@ export function buildMap(root, cats, opts = {}) {
       t.dataset.sub    = "," + (it.sub    || []).join(",") + ",";
       t.dataset.active = "," + (it.active || []).join(",") + ",";
       t.dataset.hq     = "," + (it.hq     || []).join(",") + ",";
-      // Optional per-vendor vertical nudge (positive = lower on the map).
-      t.style.left = sl.x + "px"; t.style.top = (sl.y + (it.boostDy || 0)) + "px";
+      // Position: grid slot by default (+ optional vertical nudge), OR centred
+      // on the wedge bisector at a chosen radius for a per-vendor override.
+      let posX = sl.x, posY = sl.y + (it.boostDy || 0);
+      if (it.bisectorR) {
+        posX = cx + Math.cos(theta) * it.bisectorR - tokW / 2;
+        posY = cy + Math.sin(theta) * it.bisectorR - tokH / 2;
+      }
+      t.style.left = posX + "px"; t.style.top = posY + "px";
       t.style.width = tokW + "px"; t.style.height = tokH + "px";
       t.style.setProperty("--tglow", "hsla(" + c.hue + ",80%,45%,.6)");
       const img = document.createElement("img");
