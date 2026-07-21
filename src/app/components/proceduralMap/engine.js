@@ -280,7 +280,8 @@ export function buildMap(root, cats, opts = {}) {
       t.dataset.sub    = "," + (it.sub    || []).join(",") + ",";
       t.dataset.active = "," + (it.active || []).join(",") + ",";
       t.dataset.hq     = "," + (it.hq     || []).join(",") + ",";
-      t.style.left = sl.x + "px"; t.style.top = sl.y + "px";
+      // Optional per-vendor vertical nudge (positive = lower on the map).
+      t.style.left = sl.x + "px"; t.style.top = (sl.y + (it.boostDy || 0)) + "px";
       t.style.width = tokW + "px"; t.style.height = tokH + "px";
       t.style.setProperty("--tglow", "hsla(" + c.hue + ",80%,45%,.6)");
       const img = document.createElement("img");
