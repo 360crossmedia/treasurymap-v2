@@ -26,7 +26,7 @@ function deriveHq(location, countries) {
 //   w  · target logo-box width in internal px (overrides the shared paid size)
 //   dy · vertical nudge in internal px (positive = lower on the map)
 const LOGO_OVERRIDE = {
-  195: { w: 79, dy: 120 }, // Orbian · ~55px on screen, nudged down
+  195: { w: 79, dy: 15 }, // Orbian · ~55px on screen, between Komgo and Surecomp
 };
 
 // Build the per-category vendor groups.
