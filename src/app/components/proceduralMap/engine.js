@@ -41,7 +41,7 @@ const S_MIN = 0.46; // smallest allowed logo scale (densest cats shrink to this)
 // never touches its neighbour · no reflow, no dropped vendors. Where the wedge
 // is dense (small scale) the gap is proportionally bigger, so paid logos there
 // reach the full target; where it is full-scale they grow a little less.
-const PAID_SCALE = 1.18;
+const PAID_SCALE = 1.2;
 
 export function teardownMap(root) {
   if (!root) return;
@@ -242,8 +242,9 @@ export function buildMap(root, cats, opts = {}) {
       const it = c.items[placed];
       const isPaid = !!it.paid;
       // Grow paying clients, but only as far as the local grid gap allows so an
-      // enlarged logo never touches its neighbour (whichever of width/height is
-      // the binding constraint wins).
+      // enlarged logo never touches its neighbour (and no category has to shrink
+      // or drop a vendor to make room). Bigger gains would need the logo asset
+      // to be less wide · a flat banner stays short whatever the box size.
       const safeF = Math.min(1 + (2 * H_GAP) / (CELL.w * s), 1 + (2 * V_GAP) / (CELL.h * s));
       const f = isPaid ? Math.min(PAID_SCALE, safeF) : 1;
       const tokW = CELL.w * s * f, tokH = CELL.h * s * f;
