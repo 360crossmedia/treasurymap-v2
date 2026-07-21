@@ -286,10 +286,12 @@ export function buildMap(root, cats, opts = {}) {
       t.dataset.hq     = "," + (it.hq     || []).join(",") + ",";
       // Position: grid slot by default (+ optional vertical nudge), OR centred
       // on the wedge bisector at a chosen radius for a per-vendor override.
+      // Tokens are centred on their (left, top) via CSS translate(-50%), so a
+      // slot/bisector point is used as-is · no half-size subtraction.
       let posX = sl.x, posY = sl.y + (it.boostDy || 0);
       if (it.bisectorR) {
-        posX = cx + Math.cos(theta) * it.bisectorR - tokW / 2;
-        posY = cy + Math.sin(theta) * it.bisectorR - tokH / 2;
+        posX = cx + Math.cos(theta) * it.bisectorR;
+        posY = cy + Math.sin(theta) * it.bisectorR;
       }
       t.style.left = posX + "px"; t.style.top = posY + "px";
       t.style.width = tokW + "px"; t.style.height = tokH + "px";

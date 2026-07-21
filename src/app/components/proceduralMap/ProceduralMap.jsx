@@ -28,7 +28,7 @@ function deriveHq(location, countries) {
 //   bisectorR · place the logo centred on its category's bisector (the middle of
 //               the two dashed wedge lines) at this radius from the map centre
 const LOGO_OVERRIDE = {
-  195: { w: 93, bisectorR: 235 }, // Orbian · ~65px, centred on the FSC bisector
+  195: { w: 93, bisectorR: 193 }, // Orbian · ~65px, centred on the FSC bisector
 };
 
 // Build the per-category vendor groups.
