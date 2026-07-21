@@ -288,7 +288,7 @@ export function buildMap(root, cats, opts = {}) {
       // on the wedge bisector at a chosen radius for a per-vendor override.
       // Tokens are centred on their (left, top) via CSS translate(-50%), so a
       // slot/bisector point is used as-is · no half-size subtraction.
-      let posX = sl.x, posY = sl.y + (it.boostDy || 0);
+      let posX = sl.x + (it.boostDx || 0), posY = sl.y + (it.boostDy || 0);
       if (it.bisectorR) {
         posX = cx + Math.cos(theta) * it.bisectorR;
         posY = cy + Math.sin(theta) * it.bisectorR;

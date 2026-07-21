@@ -24,11 +24,12 @@ function deriveHq(location, countries) {
 // Per-vendor logo overrides for specific paying clients that asked for extra
 // prominence, keyed by company id:
 //   w         · target logo-box width in internal px (overrides shared paid size)
-//   dy        · vertical nudge in internal px (positive = lower on the map)
+//   dx / dy   · nudge in internal px (dx>0 = right, dy>0 = lower on the map)
 //   bisectorR · place the logo centred on its category's bisector (the middle of
 //               the two dashed wedge lines) at this radius from the map centre
 const LOGO_OVERRIDE = {
-  195: { w: 93, bisectorR: 193 }, // Orbian · ~65px, centred on the FSC bisector
+  195: { w: 81, bisectorR: 193 }, // Orbian · ~57px, centred on the FSC bisector
+  242: { dx: -45, dy: 18 },       // Surecomp · nudged down and a bit left
 };
 
 // Build the per-category vendor groups.
@@ -57,6 +58,7 @@ function toCats(companies, countries = [], multiplayer = false) {
       hq: deriveHq(c.location, countries),
       paid: String(c.clientPackage || "").toLowerCase() === "paid",
       boostW: LOGO_OVERRIDE[c.id]?.w || 0,
+      boostDx: LOGO_OVERRIDE[c.id]?.dx || 0,
       boostDy: LOGO_OVERRIDE[c.id]?.dy || 0,
       bisectorR: LOGO_OVERRIDE[c.id]?.bisectorR || 0,
     });
