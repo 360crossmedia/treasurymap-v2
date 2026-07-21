@@ -36,12 +36,13 @@ const V_GAP = 5;    // radial gap between rings
 const SEP_GAP = 6;  // clearance kept from the wedge separator line (px)
 const S_MIN = 0.46; // smallest allowed logo scale (densest cats shrink to this)
 
-// Target enlargement for paying clients. The actual factor is clamped per
-// category to the room in the grid gap (see placement), so an enlarged logo
-// never touches its neighbour · no reflow, no dropped vendors. Where the wedge
-// is dense (small scale) the gap is proportionally bigger, so paid logos there
-// reach the full target; where it is full-scale they grow a little less.
-const PAID_SCALE = 1.6;
+// Paying clients all target the SAME absolute logo-box width (internal px),
+// whatever their category's density · so a paid logo looks consistent across the
+// map instead of ballooning in sparse wedges. A paid logo is never shrunk below
+// its category's base size, and never grown past what the local grid can absorb
+// without overlapping or dropping a vendor (see placement). 64 ≈ the FSC paid
+// size the sizing was tuned against (~45px on screen).
+const PAID_TARGET_W = 64;
 
 export function teardownMap(root) {
   if (!root) return;
@@ -231,13 +232,17 @@ export function buildMap(root, cats, opts = {}) {
     // Reserve extra slots so an enlarged paid logo can swallow the neighbours it
     // covers without ever dropping a vendor.
     const paidCount = c.items.slice(0, N).filter((it) => it.paid).length;
-    const need = N + Math.ceil((PAID_SCALE - 1) + 1) * paidCount;
+    const need = N + paidCount;
     let s = 1.0;
     let slots = layoutSlots(i, s);
     while (s > S_MIN && slots.length < need) {
       s = Math.round((s - 0.05) * 100) / 100;
       slots = layoutSlots(i, s);
     }
+
+    // Target factor to bring every paid logo to the same absolute box width,
+    // never below its category base (f >= 1).
+    const paidF = Math.max(1, PAID_TARGET_W / (CELL.w * s));
 
     // --- place N logos, enlarging paying clients where there is spare room ---
     const remaining = slots.slice();
@@ -247,12 +252,12 @@ export function buildMap(root, cats, opts = {}) {
       const it = c.items[placed];
       const isPaid = !!it.paid;
       let f = 1;
-      if (isPaid) {
+      if (isPaid && paidF > 1) {
         // Slots this enlarged token would cover (must be freed so nothing draws
         // underneath). Only take them if enough slots remain for the vendors
         // still to place · otherwise fall back to a gap-only bump (no overlap,
         // no drop).
-        const tW = CELL.w * s * PAID_SCALE, tH = CELL.h * s * PAID_SCALE;
+        const tW = CELL.w * s * paidF, tH = CELL.h * s * paidF;
         const covered = [];
         for (let k = 0; k < remaining.length; k++) {
           const o = remaining[k];
@@ -261,10 +266,10 @@ export function buildMap(root, cats, opts = {}) {
         }
         const vendorsLeft = N - placed - 1;
         if (remaining.length - covered.length >= vendorsLeft) {
-          f = PAID_SCALE;
+          f = paidF;
           for (let j = covered.length - 1; j >= 0; j--) remaining.splice(covered[j], 1);
         } else {
-          f = Math.min(PAID_SCALE, Math.min(1 + (2 * H_GAP) / (CELL.w * s), 1 + (2 * V_GAP) / (CELL.h * s)));
+          f = Math.min(paidF, Math.min(1 + (2 * H_GAP) / (CELL.w * s), 1 + (2 * V_GAP) / (CELL.h * s)));
         }
       }
       const tokW = CELL.w * s * f, tokH = CELL.h * s * f;
