@@ -28,8 +28,14 @@ function deriveHq(location, countries) {
 //   bisectorR · place the logo centred on its category's bisector (the middle of
 //               the two dashed wedge lines) at this radius from the map centre
 const LOGO_OVERRIDE = {
-  195: { w: 81, bisectorR: 193 },          // Orbian · ~57px, on the FSC axis
+  195: { w: 81, bisectorR: 193, dx: -12 }, // Orbian · ~57px, on the FSC axis, a touch left
   242: { bisectorR: 232, dx: -42, dy: 6 }, // Surecomp · on the axis, just below-left of Orbian
+};
+
+// Whole-category vertical nudge (internal px, positive = lower on the map),
+// keyed by category code · shifts every logo of that wedge down together.
+const CATEGORY_NUDGE = {
+  FSC: { dy: 18 },
 };
 
 // Build the per-category vendor groups.
@@ -80,7 +86,7 @@ function toCats(companies, countries = [], multiplayer = false) {
       // screen size. Array.sort is stable, so the existing order is preserved
       // within the paid and unpaid groups.
       const ordered = [...items].sort((a, b) => Number(b.paid) - Number(a.paid));
-      return { code: meta.code, full: meta.full, hue: meta.hue, total: ordered.length, items: ordered };
+      return { code: meta.code, full: meta.full, hue: meta.hue, total: ordered.length, items: ordered, catDy: CATEGORY_NUDGE[meta.code]?.dy || 0 };
     });
 }
 

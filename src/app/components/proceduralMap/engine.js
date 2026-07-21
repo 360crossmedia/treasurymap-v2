@@ -301,6 +301,8 @@ export function buildMap(root, cats, opts = {}) {
       t.dataset.sub    = "," + (it.sub    || []).join(",") + ",";
       t.dataset.active = "," + (it.active || []).join(",") + ",";
       t.dataset.hq     = "," + (it.hq     || []).join(",") + ",";
+      // Whole-category vertical nudge (moves the entire wedge's logos together).
+      posY += (c.catDy || 0);
       t.style.left = posX + "px"; t.style.top = posY + "px";
       t.style.width = tokW + "px"; t.style.height = tokH + "px";
       t.style.setProperty("--tglow", "hsla(" + c.hue + ",80%,45%,.6)");
