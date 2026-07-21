@@ -243,38 +243,55 @@ export function buildMap(root, cats, opts = {}) {
     // --- place N logos, enlarging paying clients where there is spare room ---
     const remaining = slots.slice();
     let placed = 0;
-    while (placed < N && remaining.length) {
-      const sl = remaining.shift();
+    while (placed < N) {
       const it = c.items[placed];
       const isPaid = !!it.paid;
-      let f = 1;
       // Target box width for this logo (per-vendor override, else the shared
       // paid target), brought to a factor, never below the category base.
       const paidF = Math.max(1, (it.boostW || PAID_TARGET_W) / (CELL.w * s));
+      let f = 1, posX, posY;
+
       if (it.bisectorR) {
-        // Placed off-grid, centred on the wedge bisector (see below), so it
-        // takes its full target size · nothing else occupies that spot.
+        // Off-grid: centred on the wedge bisector at full target size. It does
+        // NOT consume a grid slot (that would leave a hole in the constellation);
+        // it only frees the slots it visually covers so nothing draws under it.
         f = paidF;
-      } else if (isPaid && paidF > 1) {
-        // Slots this enlarged token would cover (must be freed so nothing draws
-        // underneath). Only take them if enough slots remain for the vendors
-        // still to place · otherwise fall back to a gap-only bump (no overlap,
-        // no drop).
-        const tW = CELL.w * s * paidF, tH = CELL.h * s * paidF;
-        const covered = [];
-        for (let k = 0; k < remaining.length; k++) {
+        const tW = CELL.w * s * f, tH = CELL.h * s * f;
+        posX = cx + Math.cos(theta) * it.bisectorR;
+        posY = cy + Math.sin(theta) * it.bisectorR;
+        for (let k = remaining.length - 1; k >= 0; k--) {
           const o = remaining[k];
-          if (Math.abs(o.x - sl.x) < (tW + CELL.w * s) / 2 + H_GAP &&
-              Math.abs(o.y - sl.y) < (tH + CELL.h * s) / 2 + V_GAP) covered.push(k);
+          if (Math.abs(o.x - posX) < (tW + CELL.w * s) / 2 + H_GAP &&
+              Math.abs(o.y - posY) < (tH + CELL.h * s) / 2 + V_GAP) remaining.splice(k, 1);
         }
-        const vendorsLeft = N - placed - 1;
-        if (remaining.length - covered.length >= vendorsLeft) {
-          f = paidF;
-          for (let j = covered.length - 1; j >= 0; j--) remaining.splice(covered[j], 1);
-        } else {
-          f = Math.min(paidF, Math.min(1 + (2 * H_GAP) / (CELL.w * s), 1 + (2 * V_GAP) / (CELL.h * s)));
+      } else {
+        if (!remaining.length) break;
+        const sl = remaining.shift();
+        if (isPaid && paidF > 1) {
+          // Slots this enlarged token would cover (must be freed so nothing draws
+          // underneath). Only take them if enough slots remain for the vendors
+          // still to place · otherwise fall back to a gap-only bump.
+          const tW = CELL.w * s * paidF, tH = CELL.h * s * paidF;
+          const covered = [];
+          for (let k = 0; k < remaining.length; k++) {
+            const o = remaining[k];
+            if (Math.abs(o.x - sl.x) < (tW + CELL.w * s) / 2 + H_GAP &&
+                Math.abs(o.y - sl.y) < (tH + CELL.h * s) / 2 + V_GAP) covered.push(k);
+          }
+          const vendorsLeft = N - placed - 1;
+          if (remaining.length - covered.length >= vendorsLeft) {
+            f = paidF;
+            for (let j = covered.length - 1; j >= 0; j--) remaining.splice(covered[j], 1);
+          } else {
+            f = Math.min(paidF, Math.min(1 + (2 * H_GAP) / (CELL.w * s), 1 + (2 * V_GAP) / (CELL.h * s)));
+          }
         }
+        // Tokens are centred on their (left, top) via CSS translate(-50%), so the
+        // slot centre is used as-is (+ optional per-vendor nudge).
+        posX = sl.x + (it.boostDx || 0);
+        posY = sl.y + (it.boostDy || 0);
       }
+
       const tokW = CELL.w * s * f, tokH = CELL.h * s * f;
       const imgW = CELL.imgW * s * f, imgH = CELL.imgH * s * f;
 
@@ -284,15 +301,6 @@ export function buildMap(root, cats, opts = {}) {
       t.dataset.sub    = "," + (it.sub    || []).join(",") + ",";
       t.dataset.active = "," + (it.active || []).join(",") + ",";
       t.dataset.hq     = "," + (it.hq     || []).join(",") + ",";
-      // Position: grid slot by default (+ optional vertical nudge), OR centred
-      // on the wedge bisector at a chosen radius for a per-vendor override.
-      // Tokens are centred on their (left, top) via CSS translate(-50%), so a
-      // slot/bisector point is used as-is · no half-size subtraction.
-      let posX = sl.x + (it.boostDx || 0), posY = sl.y + (it.boostDy || 0);
-      if (it.bisectorR) {
-        posX = cx + Math.cos(theta) * it.bisectorR;
-        posY = cy + Math.sin(theta) * it.bisectorR;
-      }
       t.style.left = posX + "px"; t.style.top = posY + "px";
       t.style.width = tokW + "px"; t.style.height = tokH + "px";
       t.style.setProperty("--tglow", "hsla(" + c.hue + ",80%,45%,.6)");
