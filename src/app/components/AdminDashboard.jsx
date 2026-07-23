@@ -10,6 +10,7 @@ import { apiGetAllUsers } from "../service/apiGetAllUsers";
 import { decodeToken } from "../service/decodeToken";
 import { apiCreateMagicLink } from "../service/apiCreateMagicLink";
 import { apiUpdatePassword } from "../service/apiUpdatePassword";
+import { apiUpdateUser } from "../service/apiUpdateUser";
 import { apiRevalidatePublications } from "../service/apiRevalidatePublications";
 import { apiRegisterVendor } from "../service/apiRegisterVendor";
 import { apiSendSignUpAlert } from "../service/apiSendSignUpAlert";
@@ -218,6 +219,36 @@ export default function AdminDashboard() {
       }
     } catch (_) {
       alert("Could not reset the password. Please try again.");
+    }
+  };
+
+  // Admin: change the login email of a vendor's account (e.g. a listing created
+  // under a placeholder "vendor@admin.com" address that must move to the real
+  // client's email). Updates the existing account in place · no duplicate user,
+  // ownership unchanged. The client can then use Forgot password on that email.
+  const changeVendorEmail = async (c) => {
+    if (!c?.userId) { alert("This company has no owner account yet."); return; }
+    if (Number(c.userId) === 1) {
+      alert(`"${c.name}" is owned by the admin account. Create a vendor login first (the person+key icon), then you can change its email.`);
+      return;
+    }
+    const current = c.ownerEmail || users[c.userId]?.email || "";
+    const input = window.prompt(`Change the login email for ${c.name}.\n\nCurrent: ${current || "(unknown)"}\nNew email (the client will use this to log in / reset):`, current);
+    if (input == null) return; // cancelled
+    const email = input.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert("Please enter a valid email address."); return; }
+    if (email === current.toLowerCase()) return;
+    try {
+      const res = await apiUpdateUser(c.userId, { email });
+      if (res?.status === 200) {
+        setCompanies((cs) => cs.map((x) => (x.id === c.id ? { ...x, ownerEmail: email } : x)));
+        setUsers((u) => ({ ...u, [c.userId]: { ...(u[c.userId] || {}), email } }));
+        showToast(`Login email for ${c.name} changed to ${email}. Tell them to use Forgot password with it.`);
+      } else {
+        alert(`Could not change the email. ${email} may already be in use by another account.`);
+      }
+    } catch (_) {
+      alert(`Could not change the email. ${email} may already be in use by another account.`);
     }
   };
 
@@ -558,9 +589,14 @@ export default function AdminDashboard() {
                                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
                                 </button>
                               ) : (
-                                <button title="Reset vendor password" aria-label="Reset vendor password" onClick={() => resetVendorPassword(c)}>
-                                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
-                                </button>
+                                <>
+                                  <button title="Change login email" aria-label="Change login email" onClick={() => changeVendorEmail(c)}>
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                                  </button>
+                                  <button title="Reset vendor password" aria-label="Reset vendor password" onClick={() => resetVendorPassword(c)}>
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+                                  </button>
+                                </>
                               )}
                             </div>
                           </td>
