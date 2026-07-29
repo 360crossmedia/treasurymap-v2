@@ -408,7 +408,7 @@ export default function ProceduralMap({ multiplayer = false, filters, catSels = 
       // full size, so scaling the title down afterwards keeps its clear band and
       // just makes the wordmark smaller and less dominant over the logos.
       const ctr = wide.querySelector(".center");
-      if (ctr) ctr.style.transform = "translate(-50%,-50%) scale(0.8)";
+      if (ctr) ctr.style.transform = "translate(-50%,-50%) scale(0.8)"; // keep centred, just smaller
       wide.style.transformOrigin = "top left";
       wide.style.transform = `scale(${mScale})`;
 
@@ -441,6 +441,36 @@ export default function ProceduralMap({ multiplayer = false, filters, catSels = 
       ]);
       imgEls.forEach((im) => { const d = resolved.get(im.getAttribute("src")); if (d) im.src = d; });
 
+      // Embed the brand webfonts (Chivo / Oswald / JetBrains Mono). Without this,
+      // html-to-image renders the export in system fallback fonts — its own font
+      // collector throws on the cross-origin Google Fonts stylesheet. We build the
+      // embed CSS ourselves: fetch each Google Fonts stylesheet, then inline its
+      // gstatic woff2 files as data URIs so the snapshot uses the real fonts.
+      let fontEmbedCSS = "";
+      try {
+        const sheetUrls = [...document.querySelectorAll('link[rel="stylesheet"]')]
+          .map((l) => l.href).filter((h) => /fonts\.googleapis\.com/.test(h));
+        let css = (await Promise.all(sheetUrls.map((h) =>
+          fetch(h).then((r) => r.text()).catch(() => "")))).join("\n");
+        const fontUrls = [...new Set(css.match(/https:\/\/fonts\.gstatic\.com\/[^)'"]+/g) || [])];
+        const fmap = {};
+        await Promise.race([
+          Promise.all(fontUrls.map(async (u) => {
+            try {
+              const b = await fetch(u).then((r) => r.blob());
+              fmap[u] = await new Promise((res) => {
+                const fr = new FileReader();
+                fr.onload = () => res(fr.result); fr.onerror = () => res(null);
+                fr.readAsDataURL(b);
+              });
+            } catch { fmap[u] = null; }
+          })),
+          new Promise((r) => setTimeout(r, 10000)),
+        ]);
+        fontUrls.forEach((u) => { if (fmap[u]) css = css.split(u).join(fmap[u]); });
+        fontEmbedCSS = css;
+      } catch { fontEmbedCSS = ""; }
+
       const dataUrl = await Promise.race([
         toPng(frame, {
           pixelRatio: 1,           // exact Full HD · 1920×1080
@@ -448,7 +478,9 @@ export default function ProceduralMap({ multiplayer = false, filters, catSels = 
           width: FRAME_W,
           height: FRAME_H,
           cacheBust: false,        // logos are already inlined as data URIs above
-          skipFonts: true,         // keep already-rendered fonts; avoids a cross-origin CSS read
+          // Use our self-built font CSS when available (real brand fonts);
+          // otherwise skip fonts to avoid html-to-image's cross-origin CSS read.
+          ...(fontEmbedCSS ? { fontEmbedCSS } : { skipFonts: true }),
         }),
         new Promise((_, rej) => setTimeout(() => rej(new Error("Map export timed out")), 30000)),
       ]);
