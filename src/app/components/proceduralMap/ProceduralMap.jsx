@@ -408,7 +408,7 @@ export default function ProceduralMap({ multiplayer = false, filters, catSels = 
       // full size, so scaling the title down afterwards keeps its clear band and
       // just makes the wordmark smaller and less dominant over the logos.
       const ctr = wide.querySelector(".center");
-      if (ctr) ctr.style.transform = "translate(-50%,-50%) scale(0.6)";
+      if (ctr) ctr.style.transform = "translate(-50%,-50%) scale(0.8)";
       wide.style.transformOrigin = "top left";
       wide.style.transform = `scale(${mScale})`;
 
