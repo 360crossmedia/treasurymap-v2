@@ -133,6 +133,7 @@ function toCatsMultiplayer(mp, companies = [], countries = []) {
 
 export default function ProceduralMap({ multiplayer = false, filters, catSels = [], subs = [], onCategoryClick, onClear, onVendors, onCats, onFilterOptions, onMatchCount }) {
   const rootRef             = useRef(null);
+  const catsRef             = useRef(null);   // latest category data · used by the poster export
   const router              = useRouter();
   // Use a ref for onCategoryClick so it never triggers a map rebuild
   const onCategoryClickRef  = useRef(onCategoryClick);
@@ -199,6 +200,7 @@ export default function ProceduralMap({ multiplayer = false, filters, catSels = 
       if (cancelled || !rootRef.current) { setLoading(false); return; }
 
       const root = rootRef.current;
+      catsRef.current = cats;   // expose for the poster export
       const render = () => {
         teardownMap(root);
         buildMap(root, cats, {
@@ -289,8 +291,165 @@ export default function ProceduralMap({ multiplayer = false, filters, catSels = 
     return () => window.removeEventListener("keydown", onKey);
   }, [onClear]);
 
+  // Download the FULL map as a dated PNG. We snapshot an off-screen clone (with
+  // every filter stripped) + an elegant dated footer, so the export is always the
+  // complete constellation and the visitor's on-screen filtered view is untouched.
+  const [exporting, setExporting] = useState(false);
+  const downloadMap = async () => {
+    const root = rootRef.current;
+    if (!root || exporting) return;
+    setExporting(true);
+    try {
+      const { toPng } = await import("html-to-image");
+      if (!catsRef.current || !catsRef.current.length) {
+        alert("The map is still loading. Please try again in a moment.");
+        setExporting(false);
+        return;
+      }
+
+      // ── Poster canvas · Full HD 16:9 landscape ──
+      const FRAME_W = 1920, FRAME_H = 1080;
+      const LEFT_W  = 660;                 // dark branding panel
+      const GREEN   = "#35e0a1";
+      const NAVY    = "#0b1a36";
+      // The constellation is tuned for desktop widths ≥1280; we rebuild it wide
+      // (not the visitor's narrow, possibly-filtered on-screen map) so the export
+      // is always the spacious landscape layout.
+      const MAP_W = 1500, MAP_H = 1150;              // height 1150 = engine's tuned value
+      // Browser mock-up window on the right half. Its content area matches the map
+      // aspect so the constellation fills it edge-to-edge (no margins, larger logos).
+      const BW = 1184, TBAR = 46;
+      const CW = BW;
+      const CH = Math.round(CW * MAP_H / MAP_W);      // == map aspect
+      const BH = CH + TBAR;
+      const BX = LEFT_W + Math.round((FRAME_W - LEFT_W - BW) / 2);
+      const BY = Math.round((FRAME_H - BH) / 2);
+      const mScale = Math.min(CW / MAP_W, CH / MAP_H);
+      const dispW = Math.round(MAP_W * mScale), dispH = Math.round(MAP_H * mScale);
+
+      // NB: the capture frame must live ON-SCREEN (top-left of the viewport).
+      // html-to-image paints elements at their real page coordinates, so a frame
+      // parked far off-screen (e.g. left:-99999px) renders entirely outside the
+      // canvas → a blank PNG with no error. We hide it behind the page instead
+      // (negative z-index + pointer-events:none), which does not affect the
+      // capture since html-to-image serialises the DOM subtree, not the screen.
+      const frame = document.createElement("div");
+      frame.id = "pmap-export-frame";
+      frame.style.cssText = `position:fixed;left:0;top:0;z-index:-2147483647;pointer-events:none;width:${FRAME_W}px;height:${FRAME_H}px;background:#e9eff8;font-family:'Chivo',sans-serif;overflow:hidden;`;
+
+      // Freeze the tokIn reveal animation (fill-mode:both restarts on the fresh
+      // clone and would be snapshotted mid-fade at opacity < 1).
+      const freeze = document.createElement("style");
+      freeze.textContent =
+        "#pmap-export-frame *, #pmap-export-frame *::before, #pmap-export-frame *::after" +
+        "{animation:none!important;transition:none!important;animation-delay:0s!important;}";
+      frame.appendChild(freeze);
+
+      // ── Left: dark branding panel ──
+      const nCats = catsRef.current.length;
+      const nProv = catsRef.current.reduce((s, c) => s + (c.total || 0), 0);
+      const dateStr = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+      const panel = document.createElement("div");
+      panel.style.cssText = `position:absolute;left:0;top:0;width:${LEFT_W}px;height:${FRAME_H}px;box-sizing:border-box;padding:74px 62px;background:linear-gradient(160deg,#0d1f42,#0a1631);display:flex;flex-direction:column;`;
+      panel.innerHTML =
+        `<div style="display:inline-flex;align-self:flex-start;align-items:center;gap:7px;background:#fff;padding:11px 18px;border-radius:13px;">` +
+          `<span style="font-size:24px;font-weight:700;color:#0a1a33;letter-spacing:-.01em;">Treasury</span>` +
+          `<span style="font-size:24px;font-weight:800;color:#0a1a33;text-transform:uppercase;letter-spacing:.03em;">MAP</span>` +
+          `<svg width="18" height="18" viewBox="0 0 24 24" fill="${GREEN}"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z"/></svg>` +
+        `</div>` +
+        `<h2 style="margin:50px 0 0;font-size:62px;line-height:1.04;font-weight:800;color:#fff;letter-spacing:-.01em;">The Treasury<br/>Technology<br/>Landscape</h2>` +
+        `<div style="width:92px;height:7px;background:${GREEN};border-radius:4px;margin-top:30px;"></div>` +
+        `<div style="margin-top:28px;font-size:21px;font-weight:600;color:#dbe3f2;">${nCats} categories <span style="color:#5a6a86;">·</span> ${nProv} providers</div>` +
+        `<div style="margin-top:12px;font-size:16px;font-weight:600;letter-spacing:.01em;color:${GREEN};">As of ${dateStr}</div>` +
+        `<div style="flex:1 1 auto;"></div>` +
+        `<div style="display:inline-flex;align-self:flex-start;align-items:center;gap:12px;background:${GREEN};color:#06231a;font-size:18px;font-weight:800;padding:16px 30px;border-radius:100px;box-shadow:0 10px 30px -8px rgba(53,224,161,.5);">` +
+          `Explore the full map` +
+          `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#06231a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>` +
+        `</div>` +
+        `<div style="margin-top:38px;font-size:26px;font-weight:800;color:#fff;letter-spacing:.01em;">www.treasurymap.com</div>`;
+      frame.appendChild(panel);
+
+      // ── Right: browser mock-up window ──
+      const browser = document.createElement("div");
+      browser.style.cssText = `position:absolute;left:${BX}px;top:${BY}px;width:${BW}px;height:${BH}px;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 40px 90px -30px rgba(10,26,51,.45),0 6px 20px -10px rgba(10,26,51,.3);`;
+      browser.innerHTML =
+        `<div style="height:${TBAR}px;background:#f1f3f8;border-bottom:1px solid #e4e8f0;display:flex;align-items:center;padding:0 18px;box-sizing:border-box;">` +
+          `<span style="width:12px;height:12px;border-radius:50%;background:#ff5f57;"></span>` +
+          `<span style="width:12px;height:12px;border-radius:50%;background:#febc2e;margin-left:8px;"></span>` +
+          `<span style="width:12px;height:12px;border-radius:50%;background:#28c840;margin-left:8px;"></span>` +
+          `<div style="flex:1 1 auto;display:flex;justify-content:center;">` +
+            `<div style="background:#fff;border:1px solid #e3e7ee;border-radius:8px;padding:6px 18px;font-size:13px;color:#5a6474;min-width:300px;text-align:center;">treasurymap.com</div>` +
+          `</div>` +
+        `</div>`;
+      // Map viewport inside the browser.
+      const mapClip = document.createElement("div");
+      mapClip.style.cssText = `position:relative;width:${CW}px;height:${CH}px;overflow:hidden;background:#eef2f8;`;
+      const mapWrap = document.createElement("div");
+      mapWrap.style.cssText = `position:absolute;left:${Math.round((CW - dispW) / 2)}px;top:${Math.round((CH - dispH) / 2)}px;width:${dispW}px;height:${dispH}px;overflow:hidden;`;
+
+      // Wide rebuild of the constellation.
+      const wide = root.cloneNode(true);
+      wide.classList.remove("focusing", "pmap-loading");
+      wide.style.opacity = "1";
+      wide.style.width = `${MAP_W}px`;
+      wide.style.height = `${MAP_H}px`;
+      mapWrap.appendChild(wide);
+      mapClip.appendChild(mapWrap);
+      browser.appendChild(mapClip);
+      frame.appendChild(browser);
+
+      document.body.appendChild(frame);
+
+      // Re-lay out the constellation at the wide size, THEN scale to fit (scaling
+      // before buildMap would corrupt the getBoundingClientRect title measurement).
+      teardownMap(wide);
+      buildMap(wide, catsRef.current, { cap: multiplayer ? 40 : 30 });
+      wide.style.transformOrigin = "top left";
+      wide.style.transform = `scale(${mScale})`;
+
+      // Wait for fonts + freshly-created logo <img> nodes to decode, but BOUND
+      // the wait: a single stalled cross-origin image would otherwise hang
+      // decode() forever. Race the whole batch against a hard cap, then proceed.
+      if (document.fonts && document.fonts.ready) { try { await document.fonts.ready; } catch {} }
+      const decodeAll = Promise.all([...wide.querySelectorAll("img")].map((im) =>
+        im.decode ? im.decode().catch(() => {}) : Promise.resolve()));
+      await Promise.race([decodeAll, new Promise((r) => setTimeout(r, 4000))]);
+
+      const dataUrl = await Promise.race([
+        toPng(frame, {
+          pixelRatio: 1,           // exact Full HD · 1920×1080
+          backgroundColor: "#e9eff8",
+          width: FRAME_W,
+          height: FRAME_H,
+          cacheBust: true,
+          skipFonts: true,         // keep already-rendered fonts; avoids a cross-origin CSS read
+        }),
+        new Promise((_, rej) => setTimeout(() => rej(new Error("Map export timed out")), 30000)),
+      ]);
+      if (frame.parentNode) document.body.removeChild(frame);
+
+      const a = document.createElement("a");
+      a.href = dataUrl;
+      a.download = `TreasuryMap-${new Date().toISOString().slice(0, 10)}.png`;
+      a.click();
+    } catch (e) {
+      console.error("Map export failed", e);
+      alert("Sorry, the map could not be exported. Please try again.");
+    } finally {
+      setExporting(false);
+    }
+  };
+
   return (
     <div style={{ position: "relative" }}>
+      <button className="pmap-download" onClick={downloadMap} disabled={exporting}
+              title="Download the full map as a dated image">
+        {exporting
+          ? <span className="pmap-dl-spin" aria-hidden="true" />
+          : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>}
+        {exporting ? "Preparing…" : "Download map"}
+      </button>
+
       {/* C1: Loading spinner */}
       {loading && (
         <div className="pmap-spinner">
@@ -366,6 +525,32 @@ export default function ProceduralMap({ multiplayer = false, filters, catSels = 
           animation: spin .8s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Download map button (elegant glass pill, top-right) ── */
+        .pmap-download {
+          position: absolute; top: 16px; right: 16px; z-index: 16;
+          display: inline-flex; align-items: center; gap: 8px;
+          background: rgba(255,255,255,.90);
+          -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+          border: 1px solid #dbe4f0; color: #0e2c5c;
+          font-family: 'Chivo', sans-serif; font-size: 13.5px; font-weight: 600;
+          padding: 9px 16px; border-radius: 100px; cursor: pointer;
+          box-shadow: 0 6px 18px -8px rgba(10,26,51,.25);
+          transition: transform .18s, box-shadow .18s, background .18s;
+        }
+        .pmap-download:hover:not(:disabled) {
+          transform: translateY(-1px); background: #fff;
+          box-shadow: 0 10px 26px -8px rgba(10,26,51,.32);
+        }
+        .pmap-download:disabled { opacity: .7; cursor: default; }
+        .pmap-dl-spin {
+          width: 15px; height: 15px; border-radius: 50%;
+          border: 2px solid #cdd8ea; border-top-color: #2f6fe0;
+          animation: spin .7s linear infinite;
+        }
+        @media (max-width: 620px) {
+          .pmap-download { top: 10px; right: 10px; padding: 8px 13px; font-size: 12.5px; }
+        }
 
         /* ── No results ── */
         .pmap-no-results {
