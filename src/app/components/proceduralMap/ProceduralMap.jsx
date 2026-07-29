@@ -404,6 +404,12 @@ export default function ProceduralMap({ multiplayer = false, filters, catSels = 
       // before buildMap would corrupt the getBoundingClientRect title measurement).
       teardownMap(wide);
       buildMap(wide, catsRef.current, { cap: multiplayer ? 40 : 30 });
+      // Hide the centre watermark: the poster's left panel already carries the
+      // "The Treasury Technology Landscape" title, so repeating it over the
+      // constellation is redundant and crowds the logos. buildMap has already
+      // reserved the centre, so hiding it just leaves a clean radial core.
+      const ctr = wide.querySelector(".center"); if (ctr) ctr.style.display = "none";
+      const glow = wide.querySelector(".titleglow"); if (glow) glow.style.display = "none";
       wide.style.transformOrigin = "top left";
       wide.style.transform = `scale(${mScale})`;
 
