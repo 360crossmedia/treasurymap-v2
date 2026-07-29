@@ -407,13 +407,34 @@ export default function ProceduralMap({ multiplayer = false, filters, catSels = 
       wide.style.transformOrigin = "top left";
       wide.style.transform = `scale(${mScale})`;
 
-      // Wait for fonts + freshly-created logo <img> nodes to decode, but BOUND
-      // the wait: a single stalled cross-origin image would otherwise hang
-      // decode() forever. Race the whole batch against a hard cap, then proceed.
       if (document.fonts && document.fonts.ready) { try { await document.fonts.ready; } catch {} }
-      const decodeAll = Promise.all([...wide.querySelectorAll("img")].map((im) =>
-        im.decode ? im.decode().catch(() => {}) : Promise.resolve()));
-      await Promise.race([decodeAll, new Promise((r) => setTimeout(r, 4000))]);
+
+      // Inline every logo as a data URI BEFORE capture. The logos are served
+      // cross-origin from Cloudinary; letting html-to-image fetch them at capture
+      // time is racy and often yields a logo-less (blank) export. We fetch each
+      // unique URL once (CORS), convert to a data URI, and swap it into the clone
+      // so the snapshot has only same-origin data — deterministic, no CORS race.
+      const imgEls = [...wide.querySelectorAll("img")];
+      const bySrc = new Map();
+      imgEls.forEach((im) => {
+        const s = im.getAttribute("src");
+        if (!s || bySrc.has(s)) return;
+        bySrc.set(s, fetch(s, { mode: "cors", cache: "force-cache" })
+          .then((r) => (r.ok ? r.blob() : null))
+          .then((b) => b && new Promise((res) => {
+            const fr = new FileReader();
+            fr.onload = () => res(fr.result);
+            fr.onerror = () => res(null);
+            fr.readAsDataURL(b);
+          }))
+          .catch(() => null));
+      });
+      const resolved = new Map();
+      await Promise.race([
+        Promise.all([...bySrc.entries()].map(async ([s, p]) => { resolved.set(s, await p); })),
+        new Promise((r) => setTimeout(r, 15000)),
+      ]);
+      imgEls.forEach((im) => { const d = resolved.get(im.getAttribute("src")); if (d) im.src = d; });
 
       const dataUrl = await Promise.race([
         toPng(frame, {
@@ -421,7 +442,7 @@ export default function ProceduralMap({ multiplayer = false, filters, catSels = 
           backgroundColor: "#e9eff8",
           width: FRAME_W,
           height: FRAME_H,
-          cacheBust: true,
+          cacheBust: false,        // logos are already inlined as data URIs above
           skipFonts: true,         // keep already-rendered fonts; avoids a cross-origin CSS read
         }),
         new Promise((_, rej) => setTimeout(() => rej(new Error("Map export timed out")), 30000)),
