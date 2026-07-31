@@ -349,6 +349,29 @@ export default function ProceduralMap({ multiplayer = false, filters, catSels = 
       const nCats = catsRef.current.length;
       const nProv = catsRef.current.reduce((s, c) => s + (c.total || 0), 0);
       const dateStr = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+
+      // Grab the partner + powered-by logos from the page and inline them
+      // (same-origin, so a plain fetch → data URI works). They live in a white
+      // card in the export because the logos are dark on the navy panel.
+      // Scope to the footer so we grab the partner logos, not same-named vendor
+      // logos on the map (e.g. "BGL BNP Paribas", "Kantox by BNP Paribas").
+      const footEl = document.querySelector("footer") || document;
+      const grabLogo = async (re) => {
+        const im = [...footEl.querySelectorAll("img")].find((x) => re.test(x.alt || ""));
+        if (!im) return null;
+        try {
+          const b = await fetch(im.src).then((r) => r.blob());
+          return await new Promise((res) => {
+            const fr = new FileReader();
+            fr.onload = () => res(fr.result); fr.onerror = () => res(null);
+            fr.readAsDataURL(b);
+          });
+        } catch { return null; }
+      };
+      const [bnpLogo, intensumLogo, kantoxLogo, crossLogo] = await Promise.all([
+        grabLogo(/bnp/i), grabLogo(/intensum/i), grabLogo(/kantox/i), grabLogo(/360|crossmedia/i),
+      ]);
+
       const panel = document.createElement("div");
       panel.style.cssText = `position:absolute;left:0;top:0;width:${LEFT_W}px;height:${FRAME_H}px;box-sizing:border-box;padding:74px 62px;background:linear-gradient(160deg,#0d1f42,#0a1631);display:flex;flex-direction:column;`;
       panel.innerHTML =
@@ -361,12 +384,29 @@ export default function ProceduralMap({ multiplayer = false, filters, catSels = 
         `<div style="width:92px;height:7px;background:${GREEN};border-radius:4px;margin-top:30px;"></div>` +
         `<div style="margin-top:28px;font-size:21px;font-weight:600;color:#dbe3f2;">${nCats} categories <span style="color:#5a6a86;">·</span> ${nProv} providers</div>` +
         `<div style="margin-top:12px;font-size:16px;font-weight:600;letter-spacing:.01em;color:${GREEN};">As of ${dateStr}</div>` +
+        `<div style="margin-top:22px;font-size:15px;line-height:1.55;color:#9fb0cc;max-width:520px;">TreasuryMap is published by <span style="color:#fff;font-weight:700;">Simply Treasury</span>, founded by François Masquelier, Chairman of ATEL and EACT.</div>` +
         `<div style="flex:1 1 auto;"></div>` +
-        `<div style="display:inline-flex;align-self:flex-start;align-items:center;gap:12px;background:${GREEN};color:#06231a;font-size:18px;font-weight:800;padding:16px 30px;border-radius:100px;box-shadow:0 10px 30px -8px rgba(53,224,161,.5);">` +
+        // White card · dark partner logos stay legible against the navy panel.
+        `<div style="background:#fff;border-radius:14px;padding:18px 24px;">` +
+          `<div style="font-size:10px;font-weight:800;letter-spacing:.16em;color:#9aa6ba;text-transform:uppercase;text-align:center;">Official Partners</div>` +
+          `<div style="display:flex;align-items:center;justify-content:center;gap:22px;margin-top:13px;">` +
+            (bnpLogo ? `<img src="${bnpLogo}" style="height:26px;object-fit:contain;"/>` : "") +
+            `<span style="width:4px;height:4px;border-radius:50%;background:#cdd6e4;flex:none;"></span>` +
+            (intensumLogo ? `<img src="${intensumLogo}" style="height:30px;object-fit:contain;"/>` : "") +
+            `<span style="width:4px;height:4px;border-radius:50%;background:#cdd6e4;flex:none;"></span>` +
+            (kantoxLogo ? `<img src="${kantoxLogo}" style="height:23px;object-fit:contain;"/>` : "") +
+          `</div>` +
+          `<div style="height:1px;background:#eef1f6;margin:16px 0 14px;"></div>` +
+          `<div style="display:flex;align-items:center;justify-content:center;gap:14px;">` +
+            `<span style="font-size:10px;font-weight:800;letter-spacing:.16em;color:#9aa6ba;text-transform:uppercase;">Powered by</span>` +
+            (crossLogo ? `<img src="${crossLogo}" style="height:22px;object-fit:contain;"/>` : "") +
+          `</div>` +
+        `</div>` +
+        `<div style="display:inline-flex;align-self:flex-start;align-items:center;gap:12px;margin-top:26px;background:${GREEN};color:#06231a;font-size:18px;font-weight:800;padding:16px 30px;border-radius:100px;box-shadow:0 10px 30px -8px rgba(53,224,161,.5);">` +
           `Explore the full map` +
           `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#06231a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>` +
         `</div>` +
-        `<div style="margin-top:38px;font-size:26px;font-weight:800;color:#fff;letter-spacing:.01em;">www.treasurymap.com</div>`;
+        `<div style="margin-top:24px;font-size:26px;font-weight:800;color:#fff;letter-spacing:.01em;">www.treasurymap.com</div>`;
       frame.appendChild(panel);
 
       // ── Right: browser mock-up window ──
