@@ -17,6 +17,7 @@ const Insights = ({ initialPubs = null, initialCompanyById = {} }) => {
   const [pubs, setPubs]   = useState(hasInitial ? initialPubs : null);
   const [error, setError] = useState(false);
   const [companyById, setCompanyById] = useState(initialCompanyById); // companyId -> name (for SEO URLs)
+  const [query, setQuery] = useState(""); // client-side search over the loaded list
 
   useEffect(() => {
     if (hasInitial) return; // server already provided the data
@@ -88,36 +89,120 @@ const Insights = ({ initialPubs = null, initialCompanyById = {} }) => {
   const heroVideo = !!hero.url;
   const heroHref = publicationHref(hero, companyById[hero.companyId]);
 
+  // Client-side search: match title, provider name and the excerpt/body text.
+  const q = query.trim().toLowerCase();
+  const searching = q.length > 0;
+  const matches = (p) => {
+    const hay = [p.title, companyById[p.companyId], p.introduction, p.body]
+      .filter(Boolean).join(" ").replace(/<[^>]+>/g, " ").toLowerCase();
+    return hay.includes(q);
+  };
+  const results = searching ? pubs.filter(matches) : [];
+
   return (
     <div className={styles.container}>
       <NewsletterForm variant="banner" />
-      {/* Hero · featured publication */}
-      <a className={styles.hero} href={heroHref}>
-        <div className={styles.heroCover} style={{ backgroundImage: `url(${coverImgFull(hero.coverImage, 900)})` }} />
-        <div className={styles.heroBody}>
-          <span className={styles.heroType}>{heroVideo ? "▶ Featured video" : "Featured article"}</span>
-          <h2 className={styles.heroTitle}>{hero.title}</h2>
-          <p className={styles.heroExcerpt}>
-            {truncateHtmlString(heroVideo ? hero.introduction : (hero.body || hero.introduction || ""), 240)}
-          </p>
-        </div>
-      </a>
 
-      {/* Grid · the rest */}
-      {rest.length > 0 && (
+      {/* Search bar */}
+      <div className="ins-search">
+        <svg className="ins-search-ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search insights, providers, topics…"
+          aria-label="Search insights"
+        />
+        {searching && (
+          <button className="ins-search-clear" onClick={() => setQuery("")} aria-label="Clear search">✕</button>
+        )}
+      </div>
+
+      {searching ? (
         <>
-          <h3 className={styles.sectionTitle}>Latest insights</h3>
-          <div className={styles.grid}>
-            {rest.map((p) => (
-              <InsightsCard
-                key={`${p.url ? "v" : "a"}-${p.id}`}
-                publication={p}
-                companyName={companyById[p.companyId]}
-              />
-            ))}
-          </div>
+          <h3 className={styles.sectionTitle}>
+            {results.length} result{results.length === 1 ? "" : "s"} for “{query.trim()}”
+          </h3>
+          {results.length > 0 ? (
+            <div className={styles.grid}>
+              {results.map((p) => (
+                <InsightsCard
+                  key={`${p.url ? "v" : "a"}-${p.id}`}
+                  publication={p}
+                  companyName={companyById[p.companyId]}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className={styles.empty} style={{ padding: "24px 0" }}>
+              No insights match your search. Try another term.
+            </p>
+          )}
+        </>
+      ) : (
+        <>
+          {/* Hero · featured publication */}
+          <a className={styles.hero} href={heroHref}>
+            <div className={styles.heroCover} style={{ backgroundImage: `url(${coverImgFull(hero.coverImage, 900)})` }} />
+            <div className={styles.heroBody}>
+              <span className={styles.heroType}>{heroVideo ? "▶ Featured video" : "Featured article"}</span>
+              <h2 className={styles.heroTitle}>{hero.title}</h2>
+              <p className={styles.heroExcerpt}>
+                {truncateHtmlString(heroVideo ? hero.introduction : (hero.body || hero.introduction || ""), 240)}
+              </p>
+            </div>
+          </a>
+
+          {/* Grid · the rest */}
+          {rest.length > 0 && (
+            <>
+              <h3 className={styles.sectionTitle}>Latest insights</h3>
+              <div className={styles.grid}>
+                {rest.map((p) => (
+                  <InsightsCard
+                    key={`${p.url ? "v" : "a"}-${p.id}`}
+                    publication={p}
+                    companyName={companyById[p.companyId]}
+                  />
+                ))}
+              </div>
+            </>
+          )}
         </>
       )}
+
+      <style jsx>{`
+        .ins-search {
+          position: relative;
+          max-width: 560px;
+          margin: 4px auto 30px;
+        }
+        .ins-search-ic {
+          position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+          color: #8a97ad; pointer-events: none;
+        }
+        .ins-search input {
+          width: 100%; box-sizing: border-box;
+          padding: 14px 44px 14px 46px;
+          border: 1px solid #dbe4f0; border-radius: 12px;
+          background: #fff; color: #0e2c5c;
+          font-size: 15px; font-family: inherit;
+          outline: none; transition: border-color .15s, box-shadow .15s;
+        }
+        .ins-search input::placeholder { color: #9aa6ba; }
+        .ins-search input:focus {
+          border-color: #2f6fe0;
+          box-shadow: 0 0 0 3px rgba(47,111,224,.14);
+        }
+        .ins-search-clear {
+          position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+          width: 26px; height: 26px; border: none; border-radius: 50%;
+          background: #eef2f8; color: #5a6a85; cursor: pointer;
+          font-size: 12px; line-height: 1; display: grid; place-items: center;
+          transition: background .15s, color .15s;
+        }
+        .ins-search-clear:hover { background: #e0e7f1; color: #0e2c5c; }
+      `}</style>
     </div>
   );
 };
