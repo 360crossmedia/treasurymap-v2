@@ -33,6 +33,9 @@ export async function POST(req) {
     revalidatePath("/providers");
     revalidatePath("/category/[slug]", "page");
     revalidatePath("/partners");
+    // Individual vendor profile pages (edited company data must show at once).
+    revalidatePath("/companyPage/[companyId]", "page");
+    revalidatePath("/providers/[slug]", "page");
     return NextResponse.json({
       ok: true,
       revalidated: [
