@@ -62,6 +62,7 @@ function toCats(companies, countries = [], multiplayer = false) {
       sub: c.companySubcategories || [],
       active: c.companyOffices || [],
       hq: deriveHq(c.location, countries),
+      reach: Number(c.countriesCount) > 0 ? Number(c.countriesCount) : 0, // self-declared country count
       paid: String(c.clientPackage || "").toLowerCase() === "paid",
       boostW: LOGO_OVERRIDE[c.id]?.w || 0,
       boostDx: LOGO_OVERRIDE[c.id]?.dx || 0,
@@ -256,8 +257,11 @@ export default function ProceduralMap({ multiplayer = false, filters, catSels = 
     const subVals = (subs || []).map((s) => String(s.value));
     const anyActive = !!(catCodes.length || fkw || fac || freach || subVals.length);
 
-    // Distinct countries a vendor is present in (from the office list on the token).
-    const countryCount = (t) => new Set((t.dataset.active || "").split(",").map((x) => x.trim()).filter(Boolean)).size;
+    // Country reach: the self-declared number when set (data-reach), else the
+    // distinct office-country count.
+    const countryCount = (t) => t.dataset.reach
+      ? Number(t.dataset.reach)
+      : new Set((t.dataset.active || "").split(",").map((x) => x.trim()).filter(Boolean)).size;
     const inReach = (n, bucket) =>
       bucket === "1-5"   ? n >= 1 && n <= 5  :
       bucket === "6-10"  ? n >= 6 && n <= 10 :

@@ -121,6 +121,7 @@ const BodyForm = () => {
   const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
   const [selectedSubCategoryIds, setSelectedSubCategoryIds] = useState([]);
   const [selectedCountriesIds, setSelectedCountriesIds] = useState([]);
+  const [countriesCount, setCountriesCount] = useState(""); // optional self-declared country reach
   const [companyDescription, setCompanyDescription] = useState("");
   const [creationDate, setCreationDate] = useState("");
   const [companyWebsite, setCompanyWebsite] = useState("");
@@ -236,6 +237,8 @@ const BodyForm = () => {
         companySubcategories: selectedSubCategoryIds,
         description: companyDescription,
         companyOffices: selectedCountriesIds,
+        countriesCount:
+          countriesCount === "" || countriesCount == null ? null : Number(countriesCount),
         userId: !userId ? backUpUserId : userId,
         live: isLive,
         multiplayerMap: isMultiplayerMap,
@@ -377,6 +380,9 @@ const BodyForm = () => {
     setEmployees(companyData?.employees);
     setLocation(companyData?.location);
     setSelectedCountriesIds(companyData?.companyOffices);
+    setCountriesCount(
+      companyData?.countriesCount == null ? "" : String(companyData.countriesCount)
+    );
     setCompanyWebsite(companyData?.companyWebsite);
     setProductName(companyData?.productName);
     setProductVersion(companyData?.productVersion);
@@ -650,6 +656,20 @@ const BodyForm = () => {
             options={countries}
             value={selectedCountriesIds}
             set={setSelectedCountriesIds}
+          />
+        </div>
+        <div className={styles.inputContainer}>
+          <label className={styles.label} htmlFor="countriesCount">
+            Number of countries (optional)
+          </label>
+          <input
+            id="countriesCount"
+            className={styles.input}
+            type="number"
+            min="0"
+            placeholder="e.g. 100 · for a wide reach, skip picking every country above"
+            value={countriesCount}
+            onChange={(e) => setCountriesCount(e.target.value)}
           />
         </div>
         <div className={styles.inputContainer}>
