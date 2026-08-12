@@ -6,6 +6,15 @@ const CATEGORIES = Object.entries(CAT_META)
   .map(([key, v]) => ({ key, code: v.code, full: v.full, hue: v.hue, n: parseInt(key.split("-")[1]) }))
   .sort((a, b) => a.n - b.n);
 
+// "Number of countries" presence buckets (filters vendors by how many countries
+// they operate in · plain hyphens, no dashes per house style).
+const REACH_BUCKETS = [
+  { id: "1-5",   name: "1-5 countries" },
+  { id: "6-10",  name: "6-10 countries" },
+  { id: "11-20", name: "11-20 countries" },
+  { id: "20+",   name: "20+ countries" },
+];
+
 const IconSearch = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4-4" /></svg>
 );
@@ -125,6 +134,7 @@ export default function ProceduralMapFilters({
     if (f.type === "keyword") return f.label;
     if (f.type === "category") return f.code;
     if (f.type === "active") return countries.find((c) => String(c.id) === String(f.value))?.name || "Country";
+    if (f.type === "reach") return f.label || "Reach";
     return "";
   };
   const removeChip = (f) => { if (f.type === "keyword") setKeyword(""); onRemoveFilter(f.type); };
@@ -189,6 +199,11 @@ export default function ProceduralMapFilters({
         <Dropdown label="Country" placeholder="Select country" options={countries}
           activeId={filters.active?.value}
           onPick={(o) => o ? onAddFilter({ type: "active", value: o.id, label: o.name }) : onRemoveFilter("active")} />
+
+        {/* Countries covered · number-of-countries buckets */}
+        <Dropdown label="Countries covered" placeholder="Any reach" options={REACH_BUCKETS}
+          activeId={filters.reach?.value}
+          onPick={(o) => o ? onAddFilter({ type: "reach", value: o.id, label: o.name }) : onRemoveFilter("reach")} />
       </div>
 
       {/* Active filter chips */}

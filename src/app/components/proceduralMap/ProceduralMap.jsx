@@ -252,8 +252,17 @@ export default function ProceduralMap({ multiplayer = false, filters, catSels = 
     const fkw  = filters?.keyword && String(filters.keyword.value || "").trim()
       ? String(filters.keyword.value).toLowerCase().trim() : null;
     const fac  = filters?.active;
+    const freach = filters?.reach; // presence breadth bucket (number of countries)
     const subVals = (subs || []).map((s) => String(s.value));
-    const anyActive = !!(catCodes.length || fkw || fac || subVals.length);
+    const anyActive = !!(catCodes.length || fkw || fac || freach || subVals.length);
+
+    // Distinct countries a vendor is present in (from the office list on the token).
+    const countryCount = (t) => new Set((t.dataset.active || "").split(",").map((x) => x.trim()).filter(Boolean)).size;
+    const inReach = (n, bucket) =>
+      bucket === "1-5"   ? n >= 1 && n <= 5  :
+      bucket === "6-10"  ? n >= 6 && n <= 10 :
+      bucket === "11-20" ? n >= 11 && n <= 20 :
+      bucket === "20+"   ? n > 20 : true;
 
     if (!anyActive) {
       root.classList.remove("focusing");
@@ -267,6 +276,7 @@ export default function ProceduralMap({ multiplayer = false, filters, catSels = 
       if (catIdxSet.size && !catIdxSet.has(t.dataset.cat)) return false;
       if (fkw && !(t.querySelector("img")?.alt || "").toLowerCase().includes(fkw)) return false;
       if (fac && !(t.dataset.active || "").includes("," + fac.value + ",")) return false;
+      if (freach && !inReach(countryCount(t), freach.value)) return false;
       if (subVals.length && !subVals.some((v) => (t.dataset.sub || "").includes("," + v + ","))) return false;
       return true;
     };
