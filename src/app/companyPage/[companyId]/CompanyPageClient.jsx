@@ -60,12 +60,14 @@ export default function CompanyPageClient({ companyId, initialCompany, subcatego
     .filter((c) => !mainMeta || c.code !== mainMeta.code);
   const websites = parseWebsites(company?.companyWebsite);
   const offices  = company?.companyOffices ?? [];
+  // Country reach: the self-declared number when set, else the office count.
+  const reach = Number(company?.countriesCount) > 0 ? Number(company.countriesCount) : offices.length;
 
   const facts = [
     company?.creationDate && { icon: I.founded, label: "Founded", value: company.creationDate },
     company?.employees    && { icon: I.employees, label: "Employees", value: company.employees },
     company?.location     && { icon: I.hq, label: "Headquarters", value: company.location },
-    offices.length > 0    && { icon: I.globe, label: "Active in", value: `${offices.length} countries` },
+    reach > 0             && { icon: I.globe, label: "Active in", value: `${reach} ${reach === 1 ? "country" : "countries"}` },
   ].filter(Boolean);
 
   return (
