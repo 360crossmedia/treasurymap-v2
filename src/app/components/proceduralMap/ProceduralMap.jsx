@@ -495,6 +495,18 @@ export default function ProceduralMap({ multiplayer = false, filters, catSels = 
       ]);
       imgEls.forEach((im) => { const d = resolved.get(im.getAttribute("src")); if (d) im.src = d; });
 
+      // The cloned logos carry loading="lazy". Inside the off-screen export frame,
+      // the ones outside the viewport never load (offsetWidth 0) and vanish from
+      // the snapshot · only the handful in the visible region survived. Force eager
+      // loading, re-trigger the src, and await decode so EVERY logo is painted.
+      await Promise.all(imgEls.map((im) => {
+        im.loading = "eager";
+        im.removeAttribute("loading");
+        const s = im.getAttribute("src");
+        if (s) im.setAttribute("src", s);
+        return im.decode ? im.decode().catch(() => {}) : Promise.resolve();
+      }));
+
       // Embed the brand webfonts (Chivo / Oswald / JetBrains Mono). Without this,
       // html-to-image renders the export in system fallback fonts — its own font
       // collector throws on the cross-origin Google Fonts stylesheet. We build the
