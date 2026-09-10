@@ -537,18 +537,28 @@ export default function ProceduralMap({ multiplayer = false, filters, catSels = 
         fontEmbedCSS = css;
       } catch { fontEmbedCSS = ""; }
 
-      const dataUrl = await Promise.race([
-        toPng(frame, {
-          pixelRatio: 1,           // exact Full HD · 1920×1080
-          backgroundColor: "#e9eff8",
-          width: FRAME_W,
-          height: FRAME_H,
-          cacheBust: false,        // logos are already inlined as data URIs above
-          // Use our self-built font CSS when available (real brand fonts);
-          // otherwise skip fonts to avoid html-to-image's cross-origin CSS read.
-          ...(fontEmbedCSS ? { fontEmbedCSS } : { skipFonts: true }),
-        }),
-        new Promise((_, rej) => setTimeout(() => rej(new Error("Map export timed out")), 30000)),
+      const pngOpts = {
+        pixelRatio: 1,           // exact Full HD · 1920×1080
+        backgroundColor: "#e9eff8",
+        width: FRAME_W,
+        height: FRAME_H,
+        cacheBust: false,        // logos are already inlined as data URIs above
+        // Use our self-built font CSS when available (real brand fonts);
+        // otherwise skip fonts to avoid html-to-image's cross-origin CSS read.
+        ...(fontEmbedCSS ? { fontEmbedCSS } : { skipFonts: true }),
+      };
+      // html-to-image serialises the subtree into an SVG <foreignObject> and
+      // rasterises it by loading that SVG as ONE image. With ~220 nested data-URI
+      // logos, Chrome paints the SVG before its nested images have decoded inside
+      // it, so a single pass drops most logos. Rendering a few times in sequence
+      // warms the nested-image decode cache so the FINAL pass carries every logo.
+      // (This multi-pass workaround is recommended by html-to-image's author.)
+      let dataUrl;
+      await Promise.race([
+        (async () => {
+          for (let i = 0; i < 3; i++) dataUrl = await toPng(frame, pngOpts);
+        })(),
+        new Promise((_, rej) => setTimeout(() => rej(new Error("Map export timed out")), 45000)),
       ]);
       if (frame.parentNode) document.body.removeChild(frame);
 
