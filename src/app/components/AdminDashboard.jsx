@@ -9,6 +9,9 @@ import { apiUpdateCompany } from "../service/apiUpdateCompany";
 import { apiGetAllUsers } from "../service/apiGetAllUsers";
 import { decodeToken } from "../service/decodeToken";
 import { apiCreateMagicLink } from "../service/apiCreateMagicLink";
+import { apiListCompanyAdmins } from "../service/apiListCompanyAdmins";
+import { apiAddCompanyAdmin } from "../service/apiAddCompanyAdmin";
+import { apiRemoveCompanyAdmin } from "../service/apiRemoveCompanyAdmin";
 import { apiUpdatePassword } from "../service/apiUpdatePassword";
 import { apiUpdateUser } from "../service/apiUpdateUser";
 import { apiRevalidatePublications } from "../service/apiRevalidatePublications";
@@ -79,6 +82,10 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
   const [pwReset, setPwReset] = useState(null); // { name, email, password } · shown once after an admin password reset
+  // Manage-admins modal: { company, list, loading, busy, newEmail, link }
+  const [adminsModal, setAdminsModal] = useState(null);
+  const adminsModalRef = useRef(null);
+  useEffect(() => { adminsModalRef.current = adminsModal; }, [adminsModal]);
   const [requested, setRequested] = useState(() => new Set()); // company ids the vendor asked to publish (this session)
   const [busy, setBusy] = useState({}); // id -> true while toggling
   const [latestPubs, setLatestPubs] = useState(null); // admin: most recent articles/videos
@@ -282,6 +289,52 @@ export default function AdminDashboard() {
     setCompanies((cs) => cs.map((x) => (x.id === c.id ? { ...x, userId: reg.user.id, ownerEmail: email } : x)));
     apiRevalidatePublications();
     setPwReset({ name: c.name, email, password: pwd, isNew: true });
+  };
+
+  // ─── Manage additional admins for a company ───
+  const openAdmins = async (c) => {
+    if (!c?.id) return;
+    setAdminsModal({ company: c, list: [], loading: true, busy: false, newEmail: "", link: null });
+    const list = await apiListCompanyAdmins(c.id);
+    setAdminsModal((m) => (m && m.company.id === c.id
+      ? { ...m, list: Array.isArray(list) ? list : [], loading: false }
+      : m));
+  };
+
+  const addAdmin = async () => {
+    const m0 = adminsModalRef.current;
+    if (!m0 || m0.busy) return;
+    const email = (m0.newEmail || "").trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert("Please enter a valid email address."); return; }
+    setAdminsModal((m) => (m ? { ...m, busy: true } : m));
+    const res = await apiAddCompanyAdmin(m0.company.id, { email, fullName: m0.company.name });
+    if (!res.ok) {
+      alert(res.message || "Could not add this admin.");
+      setAdminsModal((m) => (m ? { ...m, busy: false } : m));
+      return;
+    }
+    const link = `${window.location.origin}/linkupdate/${res.data.token}`;
+    const list = await apiListCompanyAdmins(m0.company.id);
+    setAdminsModal((m) => (m
+      ? { ...m, list: Array.isArray(list) ? list : m.list, busy: false, newEmail: "", link: { email: res.data.user.email, url: link, created: res.data.created } }
+      : m));
+    showToast(res.data.created ? `Account created for ${res.data.user.email}. Send them the edit link.` : `${res.data.user.email} added as admin.`);
+  };
+
+  const removeAdmin = async (userId, email) => {
+    const m0 = adminsModalRef.current;
+    if (!m0) return;
+    if (!window.confirm(`Remove ${email || "this admin"} from ${m0.company.name}? They will no longer be able to edit this listing.`)) return;
+    setAdminsModal((m) => (m ? { ...m, busy: true } : m));
+    const res = await apiRemoveCompanyAdmin(m0.company.id, userId);
+    if (!res.ok) { alert(res.message || "Could not remove this admin."); setAdminsModal((m) => (m ? { ...m, busy: false } : m)); return; }
+    setAdminsModal((m) => (m ? { ...m, list: m.list.filter((a) => a.id !== userId), busy: false } : m));
+    showToast("Admin removed.");
+  };
+
+  const copyAdminLink = async (link) => {
+    try { await navigator.clipboard.writeText(link); showToast("Edit link copied. Paste it into an email."); }
+    catch (_) { window.prompt("Edit link (valid 30 days). Cmd+A then Cmd+C to copy:", link); }
   };
 
   // Token-gated PDF link for a shortlist lead (admin only sees the token).
@@ -590,6 +643,9 @@ export default function AdminDashboard() {
                                 </button>
                               ) : (
                                 <>
+                                  <button title="Manage admins" aria-label="Manage admins" onClick={() => openAdmins(c)}>
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                  </button>
                                   <button title="Change login email" aria-label="Change login email" onClick={() => changeVendorEmail(c)}>
                                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                                   </button>
@@ -721,6 +777,62 @@ export default function AdminDashboard() {
         </div>
       )}
 
+      {adminsModal && (
+        <div className="pwr-overlay" onClick={() => setAdminsModal(null)}>
+          <div className="pwr-card adm-card" onClick={(e) => e.stopPropagation()}>
+            <h3 className="pwr-title">Admins · {adminsModal.company.name}</h3>
+            <p className="pwr-sub">Everyone listed here can edit this listing. The owner is the primary login; add as many extra admins as you need.</p>
+
+            {adminsModal.loading ? (
+              <p className="adm-empty">Loading…</p>
+            ) : (
+              <ul className="adm-list">
+                {adminsModal.list.map((a) => (
+                  <li key={a.id} className="adm-row">
+                    <span className="adm-info">
+                      <span className="adm-mail">{a.email}</span>
+                      <span className={`adm-role ${a.role}`}>{a.role === "owner" ? "Owner" : "Admin"}</span>
+                    </span>
+                    {a.role === "owner" ? (
+                      <span className="adm-lock" title="The primary owner is changed via “Change login email”">—</span>
+                    ) : (
+                      <button className="adm-remove" disabled={adminsModal.busy} onClick={() => removeAdmin(a.id, a.email)} title="Remove this admin">Remove</button>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <div className="adm-add">
+              <input
+                type="email"
+                className="adm-input"
+                placeholder="new.admin@company.com"
+                value={adminsModal.newEmail}
+                disabled={adminsModal.busy}
+                onChange={(e) => setAdminsModal((m) => (m ? { ...m, newEmail: e.target.value } : m))}
+                onKeyDown={(e) => { if (e.key === "Enter") addAdmin(); }}
+              />
+              <button className="adm-addbtn" disabled={adminsModal.busy} onClick={addAdmin}>Add admin</button>
+            </div>
+
+            {adminsModal.link && (
+              <div className="adm-linkbox">
+                <p className="adm-linknote">
+                  {adminsModal.link.created ? "Account created" : "Added"} for <b>{adminsModal.link.email}</b>. Send them this edit link (valid 30 days) to get in without a password:
+                </p>
+                <div className="pwr-pw">
+                  <code>{adminsModal.link.url}</code>
+                  <button className="pwr-copy" onClick={() => copyAdminLink(adminsModal.link.url)}>Copy</button>
+                </div>
+              </div>
+            )}
+
+            <button className="pwr-close" onClick={() => setAdminsModal(null)}>Done</button>
+          </div>
+        </div>
+      )}
+
       <style jsx>{`
         .pwr-overlay { position: fixed; inset: 0; z-index: 340; background: rgba(10,26,51,.45); display: flex; align-items: center; justify-content: center; padding: 20px; }
         .pwr-card { background: #fff; border-radius: 16px; padding: 26px 26px 22px; max-width: 420px; width: 100%; box-shadow: 0 24px 60px -16px rgba(10,26,51,.5); font-family: 'Chivo', system-ui, sans-serif; }
@@ -735,6 +847,30 @@ export default function AdminDashboard() {
         .pwr-note { margin: 14px 0 18px; font-size: .82rem; line-height: 1.5; color: #5a6a85; }
         .pwr-close { width: 100%; background: #0e2c5c; color: #fff; border: none; border-radius: 10px; padding: 11px; font-weight: 700; cursor: pointer; }
         .pwr-close:hover { background: #16386f; }
+
+        .adm-card { max-width: 460px; }
+        .adm-empty { font-size: .85rem; color: #6a788f; margin: 6px 0 14px; }
+        .adm-list { list-style: none; margin: 0 0 14px; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+        .adm-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #f6f8fc; border: 1px solid #e6ecf5; border-radius: 10px; padding: 9px 12px; }
+        .adm-info { display: flex; align-items: center; gap: 10px; min-width: 0; }
+        .adm-mail { font-size: .88rem; color: #0e2c5c; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .adm-role { flex-shrink: 0; font-size: .62rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 3px 8px; border-radius: 100px; }
+        .adm-role.owner { background: #dbe8ff; color: #1e4ba8; }
+        .adm-role.admin { background: #e3f6ec; color: #1f8a52; }
+        .adm-lock { color: #b7c0d0; font-weight: 700; padding-right: 6px; }
+        .adm-remove { background: #fff; color: #c0392b; border: 1px solid #f0cfca; border-radius: 8px; padding: 6px 12px; font-size: .78rem; font-weight: 700; cursor: pointer; flex-shrink: 0; }
+        .adm-remove:hover:not(:disabled) { background: #fdecea; }
+        .adm-remove:disabled { opacity: .5; cursor: default; }
+        .adm-add { display: flex; gap: 8px; margin-bottom: 4px; }
+        .adm-input { flex: 1; min-width: 0; font-size: .9rem; border: 1px solid #e1e7f1; border-radius: 10px; padding: 11px 13px; color: #0a1a33; font-family: inherit; }
+        .adm-input:focus { outline: none; border-color: #2f6fe0; box-shadow: 0 0 0 3px rgba(47,111,224,.12); }
+        .adm-addbtn { background: #2f6fe0; color: #fff; border: none; border-radius: 10px; padding: 0 16px; font-weight: 700; font-size: .88rem; cursor: pointer; flex-shrink: 0; }
+        .adm-addbtn:hover:not(:disabled) { background: #1e478f; }
+        .adm-addbtn:disabled { opacity: .5; cursor: default; }
+        .adm-linkbox { margin: 14px 0 4px; padding: 13px 14px; background: #f0f6ff; border: 1px solid #d6e4fb; border-radius: 12px; }
+        .adm-linknote { margin: 0 0 10px; font-size: .82rem; line-height: 1.45; color: #40506b; }
+        .adm-linkbox .pwr-pw code { font-size: .74rem; }
+        .adm-card .pwr-close { margin-top: 18px; }
       `}</style>
 
       <style jsx>{`
