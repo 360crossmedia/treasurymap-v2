@@ -31,20 +31,18 @@ const Insights = ({ initialPubs = null, initialCompanyById = {} }) => {
         ]);
         if (cancelled) return;
         setCompanyById(Object.fromEntries((companies || []).map((c) => [c.id, c.name])));
-        // Featured (in the admin-chosen slot order) come FIRST, then everything
-        // else newest-first. So Publications control actually drives the top.
+        // Most recent first, always: merge featured + all, dedupe, sort by date
+        // descending so the newest publication is the hero and leads the grid.
         const key = (p) => `${p.url ? "v" : "a"}-${p.id}`;
         const seen = new Set();
-        const orderedFeatured = [];
-        for (const p of featured || []) {
+        const merged = [];
+        for (const p of [...(featured || []), ...(all || [])]) {
           if (!p || !p.coverImage || seen.has(key(p))) continue;
           seen.add(key(p));
-          orderedFeatured.push(p);
+          merged.push(p);
         }
-        const rest = (all || [])
-          .filter((p) => p && p.coverImage && !seen.has(key(p)))
-          .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-        setPubs([...orderedFeatured, ...rest]);
+        merged.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+        setPubs(merged);
       } catch {
         if (!cancelled) setError(true);
       }

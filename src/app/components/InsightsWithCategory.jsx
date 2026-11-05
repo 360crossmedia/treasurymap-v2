@@ -28,7 +28,13 @@ const InsightsWithCategory = ({ categoryId, initialCategory = null, initialPubs 
       if (cancelled) return;
       setCategory(cat);
       setCompanyById(Object.fromEntries((companies || []).map((c) => [c.id, c.name])));
-      setPubs(Array.isArray(list) ? list.filter((p) => p?.live && p?.coverImage) : []);
+      setPubs(
+        Array.isArray(list)
+          ? list
+              .filter((p) => p?.live && p?.coverImage)
+              .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)) // most recent first
+          : []
+      );
     })();
     return () => { cancelled = true; };
   }, [categoryId]);

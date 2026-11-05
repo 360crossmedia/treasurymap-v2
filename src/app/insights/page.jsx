@@ -19,8 +19,10 @@ async function getJson(path) {
   }
 }
 
-// Same ordering the client used (featured first in admin slot order, then the
-// rest newest-first), computed server-side so the list lands in the SSR HTML.
+// Most recent first, always. Featured + all publications are merged and
+// deduped, then sorted by date descending, so a freshly published article
+// lands at the top (and becomes the hero) regardless of the admin featured
+// slots. Computed server-side so the order lands in the SSR HTML.
 async function getInsightsData() {
   const [featured, all, companies] = await Promise.all([
     getJson("mainPublications/full"),
@@ -30,16 +32,14 @@ async function getInsightsData() {
   const companyById = Object.fromEntries((companies || []).map((c) => [c.id, c.name]));
   const key = (p) => `${p.url ? "v" : "a"}-${p.id}`;
   const seen = new Set();
-  const orderedFeatured = [];
-  for (const p of featured || []) {
+  const merged = [];
+  for (const p of [...(featured || []), ...(all || [])]) {
     if (!p || !p.coverImage || seen.has(key(p))) continue;
     seen.add(key(p));
-    orderedFeatured.push(p);
+    merged.push(p);
   }
-  const rest = (all || [])
-    .filter((p) => p && p.coverImage && !seen.has(key(p)))
-    .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-  return { pubs: [...orderedFeatured, ...rest], companyById };
+  merged.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+  return { pubs: merged, companyById };
 }
 
 export const metadata = {
