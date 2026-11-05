@@ -1,5 +1,6 @@
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import eactLogo from "../assets/eact-logo-white.png";
 import styles from "./survey.module.css";
 
 const SITE_URL =
@@ -78,27 +79,64 @@ export default function SurveyPage() {
 
       <main className={styles.page}>
         <section className={styles.hero}>
+          {/* constellation motif · dot grid + a few mint nodes/links */}
+          <span className={styles.dots} aria-hidden="true" />
+          <svg className={styles.constellation} viewBox="0 0 1200 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <g stroke="#34e0a1" strokeWidth="1" opacity="0.5" fill="none">
+              <path d="M120 70 L300 150 L240 300 M300 150 L520 110" />
+              <path d="M980 90 L860 210 L1040 260 M860 210 L720 150" />
+            </g>
+            <g fill="#34e0a1">
+              <circle cx="120" cy="70" r="3.5" /><circle cx="300" cy="150" r="4" />
+              <circle cx="240" cy="300" r="3" /><circle cx="520" cy="110" r="3" />
+              <circle cx="980" cy="90" r="3.5" /><circle cx="860" cy="210" r="4" />
+              <circle cx="1040" cy="260" r="3" /><circle cx="720" cy="150" r="3" />
+            </g>
+          </svg>
+
           <div className={styles.inner}>
-            <span className={styles.eyebrow}>// Treasury Technology Survey 2026</span>
             <div className={styles.cobrand}>
-              <b>TreasuryMap</b> in partnership with <b>EACT</b>
+              <b>TreasuryMap</b>
+              <span className={styles.cobrandSep}>in partnership with</span>
+              <img src={eactLogo.src} alt="EACT" className={styles.eactLogo} />
             </div>
+            <span className={styles.eyebrow}>Treasury Technology Survey 2026</span>
             <h1 className={styles.h1}>How do European corporates really choose their treasury technology?</h1>
             <p className={styles.lead}>
-              The independent benchmark of how treasury teams select, use and rate their technology.
-              Add your voice in a few minutes. The aggregated results feed the TreasuryMap landscape
-              and the EACT community, and you get the findings first.
+              The independent benchmark every treasurer should shape. Add your voice in five minutes.
             </p>
-            <div className={styles.meta}>
-              <span><span className={styles.dot}>&bull;</span> Around 5 minutes</span>
-              <span><span className={styles.dot}>&bull;</span> Anonymous and aggregated</span>
-              <span><span className={styles.dot}>&bull;</span> Results shared with every respondent</span>
+
+            <div className={styles.chips}>
+              <span className={styles.chip}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                5 minutes
+              </span>
+              <span className={styles.chip}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+                Anonymous
+              </span>
+              <span className={styles.chip}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M5 12v9h14v-9M12 8C12 8 11 3 8 3a2.5 2.5 0 0 0 0 5h8a2.5 2.5 0 0 0 0-5c-3 0-4 5-4 5z"/></svg>
+                Results first
+              </span>
+            </div>
+
+            <div className={styles.stats}>
+              <span><b>234</b> solutions mapped</span>
+              <span className={styles.statDot}>&bull;</span>
+              <span><b>15</b> categories</span>
+              <span className={styles.statDot}>&bull;</span>
+              <span>Backed by the <b>EACT</b></span>
             </div>
           </div>
         </section>
 
         <section className={styles.embedWrap}>
           <div className={styles.card}>
+            <div className={styles.cardHead}>
+              <span className={styles.cardDot} aria-hidden="true" />
+              6 quick steps · about 5 minutes · your answers stay anonymous
+            </div>
             <div id="zf_div_survey">
               <iframe
                 title="Treasury Technology Survey 2026"
